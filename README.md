@@ -1,36 +1,108 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FaloClaro - Learn European Portuguese
 
-## Getting Started
+A web application for learning European Portuguese (pt-PT) through repetition of high-frequency sentences.
 
-First, run the development server:
+## Core Principles
+
+- Learning through listening + repeating full sentences
+- No on-the-fly generation of audio or translations
+- All content is pre-generated, stored, and cached
+- User controls repetition, speed, and pacing
+
+## Tech Stack
+
+- **Frontend**: Next.js 16 (App Router)
+- **Deployment**: Vercel
+- **Database & Storage**: Supabase
+- **Audio**: Pre-generated neural TTS (pt-PT)
+
+## Setup Instructions
+
+### 1. Supabase Setup (New Project)
+
+1. Go to [Supabase](https://app.supabase.com) and create a **new project** (separate from FlipTrip)
+2. In the SQL Editor, run the schema from `database/schema.sql`
+3. Go to Settings → API and copy:
+   - Project URL
+   - `anon` `public` key
+
+### 2. Environment Variables
+
+1. Copy `.env.local.example` to `.env.local`
+2. Fill in your Supabase credentials:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 3. GitHub Setup (New Repository)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Create a **new repository** on GitHub (e.g., `faloclaro-app`)
+2. Initialize and push:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+git remote add origin https://github.com/yourusername/faloclaro-app.git
+git branch -M main
+git push -u origin main
+```
 
-## Learn More
+### 4. Vercel Setup (New Project)
 
-To learn more about Next.js, take a look at the following resources:
+1. Go to [Vercel](https://vercel.com) and create a **new project**
+2. Import your GitHub repository
+3. Add environment variables:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+4. Deploy
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 5. Audio Files
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Upload pre-generated audio files to Supabase Storage:
+1. Create a bucket named `audio` (public)
+2. Upload audio files (MP3 format recommended)
+3. Update `phrases.audio_url` in the database with the public URLs
 
-## Deploy on Vercel
+## Database Schema
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **clusters**: Learning scope categories
+- **phrases**: Portuguese sentences with audio URLs
+- **translations**: Multi-language translations
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+See `database/schema.sql` for the complete schema.
+
+## Development
+
+```bash
+npm install
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000)
+
+## Project Structure
+
+```
+app/
+  clusters/      # Screen 1: Cluster selection
+  phrases/       # Screen 2: Phrase list
+  player/        # Screen 3: Audio player (core)
+  methodology/   # Screen 4: Method explanation + donation
+lib/
+  supabase.ts    # Supabase client
+database/
+  schema.sql     # Database schema
+types/
+  index.ts       # TypeScript types
+```
+
+## Important Notes
+
+- This is a **completely separate project** from FlipTrip
+- Uses its own Supabase project, GitHub repo, and Vercel deployment
+- No user authentication required (v1)
+- All audio is pre-generated (no runtime TTS)
+
+## License
+
+Private project - All rights reserved

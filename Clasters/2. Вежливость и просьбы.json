@@ -1,0 +1,251 @@
+{
+  "cluster_id": 2,
+  "cluster_name": "Вежливость и просьбы",
+  "language": "pt-PT",
+  "translation_language": "ru",
+  "phrases": [
+    {
+      "pt": "Pode repetir isso um pouco mais devagar, por favor?",
+      "ru": "Можете повторить это немного медленнее, пожалуйста?",
+      "register": "polite",
+      "explicit": false
+    },
+    {
+      "pt": "Importa-se de esperar só um momento, por favor?",
+      "ru": "Не могли бы вы подождать буквально минутку?",
+      "register": "polite",
+      "explicit": false
+    },
+    {
+      "pt": "Pode ajudar-me com isto, se faz favor?",
+      "ru": "Можете помочь мне с этим, пожалуйста?",
+      "register": "polite",
+      "explicit": false
+    },
+    {
+      "pt": "Peço desculpa pelo incómodo causado.",
+      "ru": "Прошу прощения за доставленные неудобства.",
+      "register": "polite",
+      "explicit": false
+    },
+    {
+      "pt": "Agradeço muito a sua ajuda.",
+      "ru": "Я очень благодарен(на) за вашу помощь.",
+      "register": "polite",
+      "explicit": false
+    },
+    {
+      "pt": "Pode explicar isso de forma mais simples, por favor?",
+      "ru": "Можете объяснить это попроще, пожалуйста?",
+      "register": "polite",
+      "explicit": false
+    },
+    {
+      "pt": "Desculpe interromper, mas tenho uma dúvida.",
+      "ru": "Извините, что перебиваю, но у меня есть вопрос.",
+      "register": "polite",
+      "explicit": false
+    },
+    {
+      "pt": "Se não se importar, podemos falar depois.",
+      "ru": "Если вы не против, можем поговорить позже.",
+      "register": "polite",
+      "explicit": false
+    },
+    {
+      "pt": "Obrigado por me avisar com antecedência.",
+      "ru": "Спасибо, что предупредили заранее.",
+      "register": "polite",
+      "explicit": false
+    },
+    {
+      "pt": "Muito obrigado pelo seu tempo.",
+      "ru": "Большое спасибо за ваше время.",
+      "register": "polite",
+      "explicit": false
+    },
+
+    {
+      "pt": "Pode confirmar isso para mim, por favor?",
+      "ru": "Можете подтвердить это для меня, пожалуйста?",
+      "register": "polite",
+      "explicit": false
+    },
+    {
+      "pt": "Desculpe, acho que me enganei.",
+      "ru": "Извините, кажется, я ошибся(лась).",
+      "register": "polite",
+      "explicit": false
+    },
+    {
+      "pt": "Lamento, não foi essa a minha intenção.",
+      "ru": "Простите, это не было моей целью.",
+      "register": "polite",
+      "explicit": false
+    },
+    {
+      "pt": "Pode falar um pouco mais alto, por favor?",
+      "ru": "Можете говорить немного громче, пожалуйста?",
+      "register": "polite",
+      "explicit": false
+    },
+    {
+      "pt": "Se fizer o favor de esperar um pouco.",
+      "ru": "Будьте добры, подождите немного.",
+      "register": "polite",
+      "explicit": false
+    },
+    {
+      "pt": "Agradeço se me puder ajudar com isso.",
+      "ru": "Буду благодарен(на), если сможете помочь с этим.",
+      "register": "polite",
+      "explicit": false
+    },
+    {
+      "pt": "Desculpe, não percebi bem o seu nome.",
+      "ru": "Извините, я не расслышал(а) ваше имя.",
+      "register": "polite",
+      "explicit": false
+    },
+    {
+      "pt": "Não há problema, compreendo perfeitamente.",
+      "ru": "Нет проблем, я прекрасно понимаю.",
+      "register": "polite",
+      "explicit": false
+    },
+    {
+      "pt": "Obrigado pela sua paciência.",
+      "ru": "Спасибо за ваше терпение.",
+      "register": "polite",
+      "explicit": false
+    },
+    {
+      "pt": "Pode enviar-me isso mais tarde, por favor?",
+      "ru": "Можете прислать мне это позже, пожалуйста?",
+      "register": "polite",
+      "explicit": false
+    },
+
+    {
+      "pt": "Peço desculpa pelo atraso, houve um imprevisto.",
+      "ru": "Прошу прощения за опоздание, возникла непредвиденная ситуация.",
+      "register": "polite",
+      "explicit": false
+    },
+    {
+      "pt": "Se não for incómodo, agradecia.",
+      "ru": "Если это не затруднит, буду признателен(на).",
+      "register": "polite",
+      "explicit": false
+    },
+    {
+      "pt": "Pode deixar, eu trato disso.",
+      "ru": "Не беспокойтесь, я этим займусь.",
+      "register": "polite",
+      "explicit": false
+    },
+    {
+      "pt": "Importa-se que façamos isso mais tarde?",
+      "ru": "Вы не против, если мы сделаем это позже?",
+      "register": "polite",
+      "explicit": false
+    },
+    {
+      "pt": "Desculpe a confusão, foi um mal-entendido.",
+      "ru": "Извините за путаницу, это было недоразумение.",
+      "register": "polite",
+      "explicit": false
+    },
+    {
+      "pt": "Pode verificar isso quando tiver um momento?",
+      "ru": "Можете проверить это, когда у вас будет минутка?",
+      "register": "polite",
+      "explicit": false
+    },
+    {
+      "pt": "Agradeço desde já a sua atenção.",
+      "ru": "Заранее благодарю за ваше внимание.",
+      "register": "polite",
+      "explicit": false
+    },
+    {
+      "pt": "Desculpe, poderia esclarecer isso melhor?",
+      "ru": "Извините, не могли бы вы прояснить это лучше?",
+      "register": "polite",
+      "explicit": false
+    },
+    {
+      "pt": "Se for possível, preferia assim.",
+      "ru": "Если возможно, я бы предпочёл(ла) так.",
+      "register": "polite",
+      "explicit": false
+    },
+    {
+      "pt": "Obrigado por compreender a situação.",
+      "ru": "Спасибо за понимание ситуации.",
+      "register": "polite",
+      "explicit": false
+    },
+
+    {
+      "pt": "Pode falar comigo quando tiver um momento?",
+      "ru": "Можете поговорить со мной, когда у вас будет минутка?",
+      "register": "polite",
+      "explicit": false
+    },
+    {
+      "pt": "Lamento incomodar, mas preciso de ajuda.",
+      "ru": "Извините за беспокойство, но мне нужна помощь.",
+      "register": "polite",
+      "explicit": false
+    },
+    {
+      "pt": "Se não se importar, gostaria de perguntar algo.",
+      "ru": "Если вы не против, я хотел(а) бы кое-что спросить.",
+      "register": "polite",
+      "explicit": false
+    },
+    {
+      "pt": "Obrigado por tratar disso tão rapidamente.",
+      "ru": "Спасибо, что так быстро этим занялись.",
+      "register": "polite",
+      "explicit": false
+    },
+    {
+      "pt": "Desculpe, pode repetir a última parte?",
+      "ru": "Извините, можете повторить последнюю часть?",
+      "register": "polite",
+      "explicit": false
+    },
+    {
+      "pt": "Agradecia que me avisasse com antecedência.",
+      "ru": "Я был(а) бы признателен(на), если бы вы предупредили заранее.",
+      "register": "polite",
+      "explicit": false
+    },
+    {
+      "pt": "Pode dar-me um minuto para verificar isso?",
+      "ru": "Можете дать мне минуту, чтобы это проверить?",
+      "register": "polite",
+      "explicit": false
+    },
+    {
+      "pt": "Obrigado por ter esperado.",
+      "ru": "Спасибо, что подождали.",
+      "register": "polite",
+      "explicit": false
+    },
+    {
+      "pt": "Se não for pedir muito, agradecia.",
+      "ru": "Если это не слишком сложно, буду признателен(на).",
+      "register": "polite",
+      "explicit": false
+    },
+    {
+      "pt": "Desculpe, pode ajudar-me um instante?",
+      "ru": "Извините, можете помочь мне на минутку?",
+      "register": "polite",
+      "explicit": false
+    }
+  ]
+}

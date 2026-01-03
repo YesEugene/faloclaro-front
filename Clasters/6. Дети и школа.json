@@ -1,0 +1,251 @@
+{
+  "cluster_id": 6,
+  "cluster_name": "Дети и школа",
+  "language": "pt-PT",
+  "translation_language": "ru",
+  "phrases": [
+    {
+      "pt": "A escola avisou-nos com antecedência.",
+      "ru": "Школа предупредила нас заранее.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "A minha filha está muito cansada hoje.",
+      "ru": "Моя дочь сегодня очень устала.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Precisamos de falar com a professora.",
+      "ru": "Нам нужно поговорить с учительницей.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Ele esqueceu-se do trabalho de casa.",
+      "ru": "Он забыл домашнее задание.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Hoje houve um problema na escola.",
+      "ru": "Сегодня в школе была проблема.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "A reunião é amanhã de manhã.",
+      "ru": "Собрание завтра утром.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Ela está a adaptar-se aos poucos.",
+      "ru": "Она понемногу адаптируется.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Isso é normal para a idade dela.",
+      "ru": "Это нормально для её возраста.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Temos de ajudar com os deveres de casa.",
+      "ru": "Нам нужно помочь с домашними заданиями.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "A escola pediu uma autorização assinada.",
+      "ru": "Школа попросила подписанное разрешение.",
+      "register": "neutral",
+      "explicit": false
+    },
+
+    {
+      "pt": "Hoje ela chegou a casa mais cedo.",
+      "ru": "Сегодня она пришла домой раньше.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Ele não se sentiu bem durante as aulas.",
+      "ru": "Ему стало плохо во время уроков.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "A professora enviou uma mensagem.",
+      "ru": "Учительница отправила сообщение.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Temos de preparar a mochila para amanhã.",
+      "ru": "Нам нужно подготовить рюкзак на завтра.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Hoje houve uma atividade especial na escola.",
+      "ru": "Сегодня в школе было специальное мероприятие.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Ela está um pouco nervosa com o teste.",
+      "ru": "Она немного нервничает из-за контрольной.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "O horário da escola mudou esta semana.",
+      "ru": "Расписание школы изменилось на этой неделе.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Ele precisa de mais tempo para se concentrar.",
+      "ru": "Ему нужно больше времени, чтобы сосредоточиться.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "A escola organizou uma reunião de pais.",
+      "ru": "Школа организовала родительское собрание.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Ela gosta muito da nova professora.",
+      "ru": "Ей очень нравится новая учительница.",
+      "register": "neutral",
+      "explicit": false
+    },
+
+    {
+      "pt": "Hoje ele teve dificuldades na aula.",
+      "ru": "Сегодня у него были трудности на уроке.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Temos de falar sobre isso com calma.",
+      "ru": "Нам нужно спокойно об этом поговорить.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Ela esqueceu-se do lanche hoje.",
+      "ru": "Сегодня она забыла перекус.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "O professor pediu mais atenção em aula.",
+      "ru": "Учитель попросил быть внимательнее на уроке.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Ele ficou contente com a nota.",
+      "ru": "Он был доволен оценкой.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Hoje ela não quis ir à escola.",
+      "ru": "Сегодня она не хотела идти в школу.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "A escola enviou um aviso importante.",
+      "ru": "Школа прислала важное уведомление.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Ele precisa de descansar depois das aulas.",
+      "ru": "Ему нужно отдохнуть после занятий.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Ela está a aprender a organizar-se melhor.",
+      "ru": "Она учится лучше организовываться.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Temos de verificar o calendário escolar.",
+      "ru": "Нам нужно проверить школьный календарь.",
+      "register": "neutral",
+      "explicit": false
+    },
+
+    {
+      "pt": "Hoje ele trouxe trabalhos para terminar.",
+      "ru": "Сегодня он принёс задания, которые нужно закончить.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "A escola recomendou falar com um especialista.",
+      "ru": "Школа рекомендовала поговорить со специалистом.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Ela ficou chateada depois da aula.",
+      "ru": "После урока она расстроилась.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "O professor explicou a situação com calma.",
+      "ru": "Учитель спокойно объяснил ситуацию.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Temos de apoiar mais nesta fase.",
+      "ru": "Нам нужно больше поддерживать на этом этапе.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Ela está a fazer progressos aos poucos.",
+      "ru": "Она постепенно делает успехи.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Hoje houve mudanças no plano escolar.",
+      "ru": "Сегодня были изменения в школьном плане.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Ele precisa de ajuda com a leitura.",
+      "ru": "Ему нужна помощь с чтением.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "A escola pediu feedback aos pais.",
+      "ru": "Школа попросила отзыв у родителей.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Vamos falar disso novamente com a escola.",
+      "ru": "Давайте ещё раз обсудим это со школой.",
+      "register": "neutral",
+      "explicit": false
+    }
+  ]
+}

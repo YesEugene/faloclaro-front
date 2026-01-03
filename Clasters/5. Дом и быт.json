@@ -1,0 +1,251 @@
+{
+  "cluster_id": 5,
+  "cluster_name": "Дом и быт",
+  "language": "pt-PT",
+  "translation_language": "ru",
+  "phrases": [
+    {
+      "pt": "Preciso de arrumar a casa hoje.",
+      "ru": "Мне нужно сегодня прибраться дома.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Esqueci-me de comprar isso ontem.",
+      "ru": "Я забыл(а) купить это вчера.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Temos de resolver isto em casa.",
+      "ru": "Нам нужно решить это дома.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "A cozinha ficou uma confusão.",
+      "ru": "На кухне получился полный беспорядок.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Vou tratar disso mais tarde.",
+      "ru": "Я займусь этим позже.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Falta-nos alguma coisa no frigorífico.",
+      "ru": "В холодильнике чего-то не хватает.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "A casa está muito silenciosa hoje.",
+      "ru": "Сегодня дома очень тихо.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Deixei isso em cima da mesa.",
+      "ru": "Я оставил(а) это на столе.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Temos de falar sobre isto em casa.",
+      "ru": "Нам нужно поговорить об этом дома.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Hoje não tenho energia para nada.",
+      "ru": "Сегодня у меня нет сил ни на что.",
+      "register": "neutral",
+      "explicit": false
+    },
+
+    {
+      "pt": "Preciso de fazer uma limpeza geral.",
+      "ru": "Мне нужно сделать генеральную уборку.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Ainda não lavei a loiça.",
+      "ru": "Я ещё не помыл(а) посуду.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "A roupa ainda está a secar.",
+      "ru": "Одежда ещё сохнет.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Tenho de pôr a roupa a lavar.",
+      "ru": "Мне нужно поставить стирку.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "A casa precisa de uma boa arrumação.",
+      "ru": "Дому нужна хорошая уборка.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Vou preparar alguma coisa para comer.",
+      "ru": "Я приготовлю что-нибудь поесть.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Não sei onde deixei as chaves.",
+      "ru": "Я не знаю, куда положил(а) ключи.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Tenho de sair para fazer compras.",
+      "ru": "Мне нужно выйти за покупками.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Hoje ficamos em casa.",
+      "ru": "Сегодня мы остаёмся дома.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "A casa está demasiado fria hoje.",
+      "ru": "Сегодня дома слишком холодно.",
+      "register": "neutral",
+      "explicit": false
+    },
+
+    {
+      "pt": "A casa está muito quente esta noite.",
+      "ru": "Сегодня вечером дома очень жарко.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Tenho de chamar alguém para arranjar isto.",
+      "ru": "Мне нужно вызвать кого-то, чтобы это починили.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Isto avariou outra vez.",
+      "ru": "Это снова сломалось.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Temos de trocar esta lâmpada.",
+      "ru": "Нам нужно поменять эту лампочку.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Vou abrir a janela um pouco.",
+      "ru": "Я немного открою окно.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Esqueci-me de desligar a luz.",
+      "ru": "Я забыл(а) выключить свет.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Tenho de tirar o lixo.",
+      "ru": "Мне нужно вынести мусор.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Vamos jantar em casa hoje.",
+      "ru": "Сегодня будем ужинать дома.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "A casa está cheia de coisas.",
+      "ru": "Дом завален вещами.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Não encontro o comando da televisão.",
+      "ru": "Я не могу найти пульт от телевизора.",
+      "register": "neutral",
+      "explicit": false
+    },
+
+    {
+      "pt": "Tenho de organizar melhor este espaço.",
+      "ru": "Мне нужно лучше организовать это пространство.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "A casa está um bocado desarrumada.",
+      "ru": "В доме немного неубрано.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Vou descansar um pouco em casa.",
+      "ru": "Я немного отдохну дома.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Hoje não me apetece sair de casa.",
+      "ru": "Сегодня мне не хочется выходить из дома.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Temos de fazer uma lista de compras.",
+      "ru": "Нам нужно составить список покупок.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Vou pôr isto no sítio certo.",
+      "ru": "Я положу это на своё место.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "A casa parece mais calma agora.",
+      "ru": "Сейчас дома стало спокойнее.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Temos visitas hoje à noite.",
+      "ru": "Сегодня вечером у нас гости.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Vou fechar a porta à chave.",
+      "ru": "Я закрою дверь на ключ.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Acho que precisamos de mudar algumas coisas em casa.",
+      "ru": "Думаю, нам нужно кое-что изменить дома.",
+      "register": "neutral",
+      "explicit": false
+    }
+  ]
+}

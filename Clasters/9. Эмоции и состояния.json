@@ -1,0 +1,251 @@
+{
+  "cluster_id": 9,
+  "cluster_name": "Эмоции и состояния",
+  "language": "pt-PT",
+  "translation_language": "ru",
+  "phrases": [
+    {
+      "pt": "Hoje sinto-me bastante cansado.",
+      "ru": "Сегодня я чувствую себя довольно уставшим(ей).",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Isto deixa-me um pouco ansioso.",
+      "ru": "Это немного меня тревожит.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Não estou num bom dia hoje.",
+      "ru": "Сегодня у меня не самый лучший день.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Sinto-me mais tranquilo agora.",
+      "ru": "Сейчас я чувствую себя спокойнее.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Isso deixou-me um pouco desconfortável.",
+      "ru": "Это заставило меня почувствовать дискомфорт.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Estou a precisar de uma pausa.",
+      "ru": "Мне нужна пауза.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Isto está a stressar-me bastante.",
+      "ru": "Это меня довольно сильно напрягает.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Hoje estou de melhor humor.",
+      "ru": "Сегодня я в лучшем настроении.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Preciso de ficar sozinho um pouco.",
+      "ru": "Мне нужно немного побыть одному(ой).",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Isto é emocionalmente pesado para mim.",
+      "ru": "Это для меня эмоционально тяжело.",
+      "register": "neutral",
+      "explicit": false
+    },
+
+    {
+      "pt": "Sinto-me um pouco sobrecarregado hoje.",
+      "ru": "Сегодня я чувствую себя немного перегруженным(ой).",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Estou bastante irritado com esta situação.",
+      "ru": "Меня довольно сильно раздражает эта ситуация.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Isto deixou-me de mau humor.",
+      "ru": "Это испортило мне настроение.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Sinto-me mais confiante agora.",
+      "ru": "Сейчас я чувствую себя увереннее.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Hoje estou particularmente sensível.",
+      "ru": "Сегодня я особенно чувствителен(на).",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Isto deixou-me bastante frustrado.",
+      "ru": "Это меня довольно сильно расстроило.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Estou a sentir muita pressão ultimamente.",
+      "ru": "В последнее время я чувствую большое давление.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Hoje sinto-me mais positivo.",
+      "ru": "Сегодня я чувствую себя более позитивно.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Preciso de acalmar um pouco.",
+      "ru": "Мне нужно немного успокоиться.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Isto deixou-me sem energia.",
+      "ru": "Это лишило меня сил.",
+      "register": "neutral",
+      "explicit": false
+    },
+
+    {
+      "pt": "Sinto-me um pouco perdido com tudo isto.",
+      "ru": "Я чувствую себя немного потерянным(ой) во всём этом.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Hoje estou mais calmo do que ontem.",
+      "ru": "Сегодня я спокойнее, чем вчера.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Isto afetou-me mais do que eu esperava.",
+      "ru": "Это повлияло на меня сильнее, чем я ожидал(а).",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Sinto-me um pouco desmotivado hoje.",
+      "ru": "Сегодня я чувствую себя немного немотивированным(ой).",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Estou satisfeito com o resultado.",
+      "ru": "Я доволен(на) результатом.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Isto deixou-me preocupado.",
+      "ru": "Это меня обеспокоило.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Hoje sinto-me emocionalmente esgotado.",
+      "ru": "Сегодня я чувствую себя эмоционально вымотанным(ой).",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Sinto-me aliviado depois disso.",
+      "ru": "После этого мне стало легче.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Isto deixou-me mais confuso.",
+      "ru": "Это сделало меня ещё более растерянным(ой).",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Hoje estou com pouca paciência.",
+      "ru": "Сегодня у меня мало терпения.",
+      "register": "neutral",
+      "explicit": false
+    },
+
+    {
+      "pt": "Sinto-me um pouco inseguro em relação a isso.",
+      "ru": "Я чувствую некоторую неуверенность по этому поводу.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Isto deixou-me bastante satisfeito.",
+      "ru": "Это меня очень порадовало.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Hoje sinto-me mais equilibrado.",
+      "ru": "Сегодня я чувствую себя более уравновешенно.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Estou um pouco tenso neste momento.",
+      "ru": "Сейчас я немного напряжён(на).",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Isto mexeu bastante comigo.",
+      "ru": "Это сильно меня задело.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Sinto-me mais tranquilo depois de falar.",
+      "ru": "После разговора мне стало спокойнее.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Hoje estou a sentir-me melhor.",
+      "ru": "Сегодня я чувствую себя лучше.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Isto deixou-me emocionalmente cansado.",
+      "ru": "Это меня эмоционально утомило.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Sinto-me mais confiante com o tempo.",
+      "ru": "Со временем я чувствую себя увереннее.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Hoje não me sinto muito bem.",
+      "ru": "Сегодня я чувствую себя не очень хорошо.",
+      "register": "neutral",
+      "explicit": false
+    }
+  ]
+}

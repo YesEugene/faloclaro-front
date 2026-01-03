@@ -1,0 +1,312 @@
+{
+  "cluster_id": 12,
+  "cluster_name": "Фразы из фильмов",
+  "language": "pt-PT",
+  "translation_language": "ru",
+  "phrases": [
+    {
+      "pt": "Vou fazer-lhe uma proposta irrecusável.",
+      "ru": "Я сделаю ему предложение, от которого он не сможет отказаться.",
+      "register": "neutral",
+      "explicit": false,
+      "movie": {
+        "title_pt": "O Padrinho",
+        "original_title": "The Godfather",
+        "character": "Vito Corleone",
+        "year": 1972
+      }
+    },
+    {
+      "pt": "Aqui está o Johnny.",
+      "ru": "Вот и Джонни.",
+      "register": "neutral",
+      "explicit": false,
+      "movie": {
+        "title_pt": "O Iluminado",
+        "original_title": "The Shining",
+        "character": "Jack Torrance",
+        "year": 1980
+      }
+    },
+    {
+      "pt": "A vida é como uma caixa de chocolates.",
+      "ru": "Жизнь — как коробка шоколадных конфет.",
+      "register": "neutral",
+      "explicit": false,
+      "movie": {
+        "title_pt": "Forrest Gump",
+        "original_title": "Forrest Gump",
+        "character": "Forrest Gump",
+        "year": 1994
+      }
+    },
+    {
+      "pt": "Ninguém põe o Baby num canto.",
+      "ru": "Никто не ставит Бэби в угол.",
+      "register": "neutral",
+      "explicit": false,
+      "movie": {
+        "title_pt": "Dirty Dancing",
+        "original_title": "Dirty Dancing",
+        "character": "Johnny Castle",
+        "year": 1987
+      }
+    },
+    {
+      "pt": "Vou voltar.",
+      "ru": "Я вернусь.",
+      "register": "neutral",
+      "explicit": false,
+      "movie": {
+        "title_pt": "O Exterminador Implacável",
+        "original_title": "The Terminator",
+        "character": "Terminator",
+        "year": 1984
+      }
+    },
+
+    {
+      "pt": "Houston, temos um problema.",
+      "ru": "Хьюстон, у нас проблема.",
+      "register": "neutral",
+      "explicit": false,
+      "movie": {
+        "title_pt": "Apollo 13",
+        "original_title": "Apollo 13",
+        "character": "Jim Lovell",
+        "year": 1995
+      }
+    },
+    {
+      "pt": "Até aqui, tudo bem.",
+      "ru": "Пока всё идёт нормально.",
+      "register": "neutral",
+      "explicit": false,
+      "movie": {
+        "title_pt": "La Haine",
+        "original_title": "La Haine",
+        "character": "Narrador",
+        "year": 1995
+      }
+    },
+    {
+      "pt": "Sou demasiado velho para isto.",
+      "ru": "Я слишком стар для этого.",
+      "register": "neutral",
+      "explicit": false,
+      "movie": {
+        "title_pt": "Máquina Mortífera",
+        "original_title": "Lethal Weapon",
+        "character": "Roger Murtaugh",
+        "year": 1987
+      }
+    },
+    {
+      "pt": "Que a força esteja contigo.",
+      "ru": "Да пребудет с тобой сила.",
+      "register": "neutral",
+      "explicit": false,
+      "movie": {
+        "title_pt": "Star Wars",
+        "original_title": "Star Wars",
+        "character": "Obi-Wan Kenobi",
+        "year": 1977
+      }
+    },
+    {
+      "pt": "Não estamos mais no Kansas.",
+      "ru": "Мы больше не в Канзасе.",
+      "register": "neutral",
+      "explicit": false,
+      "movie": {
+        "title_pt": "O Feiticeiro de Oz",
+        "original_title": "The Wizard of Oz",
+        "character": "Dorothy",
+        "year": 1939
+      }
+    },
+
+    {
+      "pt": "Vejo pessoas mortas.",
+      "ru": "Я вижу мёртвых людей.",
+      "register": "neutral",
+      "explicit": false,
+      "movie": {
+        "title_pt": "O Sexto Sentido",
+        "original_title": "The Sixth Sense",
+        "character": "Cole Sear",
+        "year": 1999
+      }
+    },
+    {
+      "pt": "Mostra-me o dinheiro!",
+      "ru": "Покажи мне деньги!",
+      "register": "neutral",
+      "explicit": false,
+      "movie": {
+        "title_pt": "Jerry Maguire",
+        "original_title": "Jerry Maguire",
+        "character": "Rod Tidwell",
+        "year": 1996
+      }
+    },
+    {
+      "pt": "Isto é o início de algo grande.",
+      "ru": "Это начало чего-то большого.",
+      "register": "neutral",
+      "explicit": false,
+      "movie": {
+        "title_pt": "Casablanca",
+        "original_title": "Casablanca",
+        "character": "Rick Blaine",
+        "year": 1942
+      }
+    },
+    {
+      "pt": "Eu sou o rei do mundo!",
+      "ru": "Я король мира!",
+      "register": "neutral",
+      "explicit": false,
+      "movie": {
+        "title_pt": "Titanic",
+        "original_title": "Titanic",
+        "character": "Jack Dawson",
+        "year": 1997
+      }
+    },
+    {
+      "pt": "Continuamos a correr.",
+      "ru": "Мы продолжаем бежать.",
+      "register": "neutral",
+      "explicit": false,
+      "movie": {
+        "title_pt": "Matrix",
+        "original_title": "The Matrix",
+        "character": "Morpheus",
+        "year": 1999
+      }
+    },
+
+    {
+      "pt": "Porque tão sério?",
+      "ru": "Почему так серьёзно?",
+      "register": "neutral",
+      "explicit": false,
+      "movie": {
+        "title_pt": "O Cavaleiro das Trevas",
+        "original_title": "The Dark Knight",
+        "character": "Joker",
+        "year": 2008
+      }
+    },
+    {
+      "pt": "Vou fazer isto à minha maneira.",
+      "ru": "Я сделаю это по-своему.",
+      "register": "neutral",
+      "explicit": false,
+      "movie": {
+        "title_pt": "Scarface",
+        "original_title": "Scarface",
+        "character": "Tony Montana",
+        "year": 1983
+      }
+    },
+    {
+      "pt": "Já não há volta a dar.",
+      "ru": "Назад дороги нет.",
+      "register": "neutral",
+      "explicit": false,
+      "movie": {
+        "title_pt": "O Senhor dos Anéis",
+        "original_title": "The Lord of the Rings",
+        "character": "Frodo",
+        "year": 2001
+      }
+    },
+    {
+      "pt": "Eles podem tirar-nos a vida, mas não a liberdade.",
+      "ru": "Они могут отнять у нас жизнь, но не свободу.",
+      "register": "neutral",
+      "explicit": false,
+      "movie": {
+        "title_pt": "Braveheart",
+        "original_title": "Braveheart",
+        "character": "William Wallace",
+        "year": 1995
+      }
+    },
+    {
+      "pt": "Eu vejo-te.",
+      "ru": "Я тебя вижу.",
+      "register": "neutral",
+      "explicit": false,
+      "movie": {
+        "title_pt": "Avatar",
+        "original_title": "Avatar",
+        "character": "Neytiri",
+        "year": 2009
+      }
+    },
+
+    {
+      "pt": "Vamos resolver isto.",
+      "ru": "Давайте с этим разберёмся.",
+      "register": "neutral",
+      "explicit": false,
+      "movie": {
+        "title_pt": "Pulp Fiction",
+        "original_title": "Pulp Fiction",
+        "character": "Jules Winnfield",
+        "year": 1994
+      }
+    },
+    {
+      "pt": "É isso que fazemos.",
+      "ru": "Вот что мы делаем.",
+      "register": "neutral",
+      "explicit": false,
+      "movie": {
+        "title_pt": "Clube da Luta",
+        "original_title": "Fight Club",
+        "character": "Tyler Durden",
+        "year": 1999
+      }
+    },
+    {
+      "pt": "Ainda há esperança.",
+      "ru": "Надежда всё ещё есть.",
+      "register": "neutral",
+      "explicit": false,
+      "movie": {
+        "title_pt": "Interestelar",
+        "original_title": "Interstellar",
+        "character": "Cooper",
+        "year": 2014
+      }
+    },
+    {
+      "pt": "Temos de falar.",
+      "ru": "Нам нужно поговорить.",
+      "register": "neutral",
+      "explicit": false,
+      "movie": {
+        "title_pt": "Vários filmes",
+        "original_title": "—",
+        "character": "—",
+        "year": null
+      }
+    },
+    {
+      "pt": "Tudo vai ficar bem.",
+      "ru": "Всё будет хорошо.",
+      "register": "neutral",
+      "explicit": false,
+      "movie": {
+        "title_pt": "O Rei Leão",
+        "original_title": "The Lion King",
+        "character": "Mufasa",
+        "year": 1994
+      }
+    }
+  ]
+}

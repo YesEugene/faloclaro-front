@@ -1,0 +1,251 @@
+{
+  "cluster_id": 1,
+  "cluster_name": "Реакции и ответы",
+  "language": "pt-PT",
+  "translation_language": "ru",
+  "phrases": [
+    {
+      "pt": "Acho que isso faz sentido para mim.",
+      "ru": "Думаю, в этом есть смысл для меня.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Não tenho a certeza se concordo totalmente.",
+      "ru": "Я не уверен(а), что полностью с этим согласен(на).",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Isso não me parece uma boa ideia.",
+      "ru": "Это не кажется мне хорошей идеей.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Prefiro pensar nisso com mais calma.",
+      "ru": "Я предпочитаю обдумать это спокойнее.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Isso depende muito da situação.",
+      "ru": "Это сильно зависит от ситуации.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Não estava à espera dessa resposta.",
+      "ru": "Я не ожидал(а) такого ответа.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Isso faz mais sentido agora.",
+      "ru": "Теперь это имеет больше смысла.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Não me sinto confortável com isso.",
+      "ru": "Мне с этим некомфортно.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Talvez seja melhor deixar assim.",
+      "ru": "Возможно, лучше оставить всё как есть.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Preciso de pensar melhor nisso.",
+      "ru": "Мне нужно лучше это обдумать.",
+      "register": "neutral",
+      "explicit": false
+    },
+
+    {
+      "pt": "Para ser honesto, não esperava isso.",
+      "ru": "Если честно, я этого не ожидал(а).",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Vejo a situação de outra forma.",
+      "ru": "Я вижу эту ситуацию по-другому.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Isso muda um pouco as coisas.",
+      "ru": "Это немного меняет ситуацию.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Não é exatamente o que eu pensei.",
+      "ru": "Это не совсем то, что я думал(а).",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Faz sentido do teu ponto de vista.",
+      "ru": "Это имеет смысл с твоей точки зрения.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Não tenho uma resposta neste momento.",
+      "ru": "У меня сейчас нет ответа.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Talvez possamos falar disso depois.",
+      "ru": "Возможно, мы сможем обсудить это позже.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Isso não corresponde ao que eu esperava.",
+      "ru": "Это не соответствует тому, чего я ожидал(а).",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Para mim, isso não é assim tão simples.",
+      "ru": "Для меня это не так уж просто.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Nunca tinha pensado nisso dessa maneira.",
+      "ru": "Я никогда не думал(а) об этом таким образом.",
+      "register": "neutral",
+      "explicit": false
+    },
+
+    {
+      "pt": "Isso levanta algumas dúvidas para mim.",
+      "ru": "Это вызывает у меня некоторые сомнения.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Não me parece a melhor solução.",
+      "ru": "Это не кажется мне лучшим решением.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Isso faz-me reconsiderar a ideia.",
+      "ru": "Это заставляет меня пересмотреть идею.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Preciso de mais informação para decidir.",
+      "ru": "Мне нужно больше информации, чтобы решить.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Não vejo isso como um problema sério.",
+      "ru": "Я не вижу в этом серьёзной проблемы.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Isso não era bem o que eu queria dizer.",
+      "ru": "Это не совсем то, что я хотел(а) сказать.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Tenho sentimentos mistos em relação a isso.",
+      "ru": "У меня смешанные чувства по этому поводу.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Não estou totalmente convencido disso.",
+      "ru": "Я не до конца в этом убеждён(на).",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Isso merece ser pensado com mais atenção.",
+      "ru": "Это стоит обдумать более внимательно.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Não é assim tão claro para mim.",
+      "ru": "Для меня это не так уж ясно.",
+      "register": "neutral",
+      "explicit": false
+    },
+
+    {
+      "pt": "Isso não me deixa totalmente tranquilo.",
+      "ru": "Это не даёт мне полного спокойствия.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Tenho uma opinião um pouco diferente.",
+      "ru": "У меня немного другое мнение.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Isso não estava nos meus planos.",
+      "ru": "Это не входило в мои планы.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Não é algo que eu decidiria agora.",
+      "ru": "Это не то, что я бы решил(а) сейчас.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Isso pode ter várias interpretações.",
+      "ru": "Это можно интерпретировать по-разному.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Não tenho a mesma opinião sobre isso.",
+      "ru": "У меня другое мнение по этому поводу.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Isso faz-me pensar duas vezes.",
+      "ru": "Это заставляет меня подумать дважды.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Não estou totalmente de acordo com isso.",
+      "ru": "Я не полностью с этим согласен(на).",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Isso não é tão simples quanto parece.",
+      "ru": "Это не так просто, как кажется.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Preciso de refletir um pouco mais.",
+      "ru": "Мне нужно ещё немного подумать.",
+      "register": "neutral",
+      "explicit": false
+    }
+  ]
+}

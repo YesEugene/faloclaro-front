@@ -1,0 +1,251 @@
+{
+  "cluster_id": 8,
+  "cluster_name": "Кафе и рестораны",
+  "language": "pt-PT",
+  "translation_language": "ru",
+  "phrases": [
+    {
+      "pt": "Gostava de pedir algo para comer.",
+      "ru": "Я хотел(а) бы заказать что-нибудь поесть.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Pode recomendar algum prato típico?",
+      "ru": "Можете порекомендовать какое-нибудь местное блюдо?",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "A conta, por favor, quando puder.",
+      "ru": "Счёт, пожалуйста, когда сможете.",
+      "register": "polite",
+      "explicit": false
+    },
+    {
+      "pt": "Isto não foi exatamente o que eu pedi.",
+      "ru": "Это не совсем то, что я заказывал(а).",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Está tudo muito bom, obrigado.",
+      "ru": "Всё очень вкусно, спасибо.",
+      "register": "polite",
+      "explicit": false
+    },
+    {
+      "pt": "Pode trazer mais um copo de água, por favor?",
+      "ru": "Можете принести ещё один стакан воды, пожалуйста?",
+      "register": "polite",
+      "explicit": false
+    },
+    {
+      "pt": "Preferia algo mais leve.",
+      "ru": "Я бы предпочёл(ла) что-нибудь полегче.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Podemos sentar-nos ali fora?",
+      "ru": "Мы можем сесть снаружи?",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Quanto tempo demora o pedido?",
+      "ru": "Сколько времени займёт заказ?",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Podemos pagar separados?",
+      "ru": "Мы можем заплатить раздельно?",
+      "register": "neutral",
+      "explicit": false
+    },
+
+    {
+      "pt": "Gostava de ver a ementa, por favor.",
+      "ru": "Я хотел(а) бы посмотреть меню, пожалуйста.",
+      "register": "polite",
+      "explicit": false
+    },
+    {
+      "pt": "Há alguma opção vegetariana hoje?",
+      "ru": "Есть ли сегодня вегетарианские варианты?",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Pode ser sem picante, por favor?",
+      "ru": "Можно без острого, пожалуйста?",
+      "register": "polite",
+      "explicit": false
+    },
+    {
+      "pt": "Este prato vem com acompanhamento?",
+      "ru": "Это блюдо подаётся с гарниром?",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Gostava de pedir a sobremesa.",
+      "ru": "Я хотел(а) бы заказать десерт.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Pode trazer o café depois, por favor?",
+      "ru": "Можете принести кофе позже, пожалуйста?",
+      "register": "polite",
+      "explicit": false
+    },
+    {
+      "pt": "Isto está um pouco frio.",
+      "ru": "Это немного холодное.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Pode aquecer um pouco mais isto?",
+      "ru": "Можете это немного подогреть?",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Preferia carne bem passada.",
+      "ru": "Я бы предпочёл(ла) хорошо прожаренное мясо.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Pode ser só um café curto?",
+      "ru": "Можно просто короткий кофе (эспрессо)?",
+      "register": "neutral",
+      "explicit": false
+    },
+
+    {
+      "pt": "Estamos prontos para pedir agora.",
+      "ru": "Мы готовы сделать заказ.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Pode trazer um prato para partilhar?",
+      "ru": "Можете принести блюдо на двоих?",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Há alguma sugestão do dia?",
+      "ru": "Есть ли блюдо дня?",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Gostava de algo sem lactose.",
+      "ru": "Я хотел(а) бы что-нибудь без лактозы.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Pode trazer mais pão, por favor?",
+      "ru": "Можете принести ещё хлеба, пожалуйста?",
+      "register": "polite",
+      "explicit": false
+    },
+    {
+      "pt": "A comida ainda vai demorar?",
+      "ru": "Еда ещё долго будет готовиться?",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Isto não está bem temperado.",
+      "ru": "Это плохо приправлено.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Pode trazer a conta quando puder?",
+      "ru": "Можете принести счёт, когда будет удобно?",
+      "register": "polite",
+      "explicit": false
+    },
+    {
+      "pt": "Gostava de pagar com cartão.",
+      "ru": "Я хотел(а) бы расплатиться картой.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Aceitam cartões aqui?",
+      "ru": "Здесь принимают карты?",
+      "register": "neutral",
+      "explicit": false
+    },
+
+    {
+      "pt": "Podemos ficar mais um pouco?",
+      "ru": "Мы можем посидеть ещё немного?",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Pode trazer a sobremesa para partilhar?",
+      "ru": "Можете принести десерт на двоих?",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Está tudo pronto, obrigado.",
+      "ru": "Всё готово, спасибо.",
+      "register": "polite",
+      "explicit": false
+    },
+    {
+      "pt": "Gostámos muito da refeição.",
+      "ru": "Нам очень понравилась еда.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Pode recomendar um bom vinho?",
+      "ru": "Можете порекомендовать хорошее вино?",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Preferimos algo sem álcool.",
+      "ru": "Мы предпочитаем что-нибудь без алкоголя.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "A mesa está reservada?",
+      "ru": "Этот столик зарезервирован?",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Temos uma reserva para duas pessoas.",
+      "ru": "У нас бронь на двоих.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Pode preparar isto para levar?",
+      "ru": "Можете приготовить это с собой?",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Gostava de levar o resto, por favor.",
+      "ru": "Я хотел(а) бы забрать остатки с собой, пожалуйста.",
+      "register": "polite",
+      "explicit": false
+    }
+  ]
+}

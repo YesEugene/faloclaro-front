@@ -1,0 +1,251 @@
+{
+  "cluster_id": 10,
+  "cluster_name": "Связки речи",
+  "language": "pt-PT",
+  "translation_language": "ru",
+  "phrases": [
+    {
+      "pt": "Acho que isso depende da situação.",
+      "ru": "Думаю, это зависит от ситуации.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Talvez seja melhor esperar um pouco.",
+      "ru": "Возможно, лучше немного подождать.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Então, o que fazemos agora?",
+      "ru": "Итак, что мы делаем теперь?",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Na verdade, não pensei nisso.",
+      "ru": "На самом деле я об этом не подумал(а).",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "No fundo, é sempre a mesma coisa.",
+      "ru": "По сути, это всегда одно и то же.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "De qualquer forma, temos de decidir.",
+      "ru": "В любом случае, нам нужно принять решение.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Pelo menos tentámos resolver isso.",
+      "ru": "По крайней мере, мы попытались это решить.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "No entanto, não é tão simples assim.",
+      "ru": "Однако всё не так просто.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Por isso, prefiro não arriscar.",
+      "ru": "Поэтому я предпочитаю не рисковать.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Em geral, funciona dessa forma.",
+      "ru": "В целом это работает так.",
+      "register": "neutral",
+      "explicit": false
+    },
+
+    {
+      "pt": "De certa forma, concordo contigo.",
+      "ru": "В некотором смысле я с тобой согласен(на).",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Por outro lado, vejo alguns riscos.",
+      "ru": "С другой стороны, я вижу некоторые риски.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Ainda assim, vale a pena tentar.",
+      "ru": "Тем не менее, стоит попробовать.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Antes de mais, precisamos de esclarecer isto.",
+      "ru": "Прежде всего, нам нужно это прояснить.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Depois disso, podemos avançar.",
+      "ru": "После этого мы можем двигаться дальше.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "De acordo com isso, faz sentido esperar.",
+      "ru": "С учётом этого имеет смысл подождать.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Em princípio, não vejo problema.",
+      "ru": "В принципе, я не вижу проблемы.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Na prática, as coisas são diferentes.",
+      "ru": "На практике всё обстоит иначе.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "No final, tudo depende do contexto.",
+      "ru": "В итоге всё зависит от контекста.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "De momento, não temos uma resposta.",
+      "ru": "На данный момент у нас нет ответа.",
+      "register": "neutral",
+      "explicit": false
+    },
+
+    {
+      "pt": "Em primeiro lugar, temos de falar disso.",
+      "ru": "В первую очередь нам нужно это обсудить.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Além disso, há outros fatores a considerar.",
+      "ru": "Кроме того, есть и другие факторы, которые нужно учесть.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Por enquanto, vamos deixar assim.",
+      "ru": "Пока давай оставим всё как есть.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "No mínimo, precisamos de tentar.",
+      "ru": "Как минимум, нам нужно попробовать.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Em todo o caso, temos de avançar.",
+      "ru": "В любом случае, нам нужно двигаться вперёд.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Por agora, isso chega.",
+      "ru": "На данный момент этого достаточно.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Com isso em mente, faz sentido continuar.",
+      "ru": "Имея это в виду, имеет смысл продолжать.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "De certa maneira, isto é positivo.",
+      "ru": "В некотором смысле это позитивно.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Apesar disso, continuo com dúvidas.",
+      "ru": "Несмотря на это, у меня всё ещё есть сомнения.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "No geral, estou de acordo.",
+      "ru": "В целом я согласен(на).",
+      "register": "neutral",
+      "explicit": false
+    },
+
+    {
+      "pt": "Por esse motivo, precisamos de rever isto.",
+      "ru": "По этой причине нам нужно это пересмотреть.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "A partir daqui, tudo fica mais claro.",
+      "ru": "С этого момента всё становится яснее.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Em resumo, temos duas opções.",
+      "ru": "В итоге у нас есть два варианта.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "De resto, não há muito a acrescentar.",
+      "ru": "В остальном добавить особо нечего.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Com o tempo, isso vai esclarecer-se.",
+      "ru": "Со временем это прояснится.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Entretanto, vamos avançando.",
+      "ru": "Тем временем будем двигаться дальше.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "No fim das contas, tudo se resolve.",
+      "ru": "В конечном счёте всё решается.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "De um modo geral, concordo com isso.",
+      "ru": "В общем и целом я с этим согласен(на).",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Dito isto, precisamos de agir.",
+      "ru": "С учётом сказанного, нам нужно действовать.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "A partir daí, tudo mudou.",
+      "ru": "С этого момента всё изменилось.",
+      "register": "neutral",
+      "explicit": false
+    }
+  ]
+}

@@ -1,0 +1,245 @@
+{
+  "cluster_id": 7,
+  "cluster_name": "Магазины и сервисы",
+  "language": "pt-PT",
+  "translation_language": "ru",
+  "phrases": [
+    {
+      "pt": "Pode dizer-me quanto custa isto?",
+      "ru": "Можете сказать, сколько это стоит?",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Gostava de trocar este produto.",
+      "ru": "Я хотел(а) бы обменять этот товар.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Não foi isto que eu pedi.",
+      "ru": "Это не то, что я заказывал(а).",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Preciso de ajuda com este serviço.",
+      "ru": "Мне нужна помощь с этой услугой.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "O pagamento não passou corretamente.",
+      "ru": "Платёж не прошёл корректно.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Pode verificar isso no sistema?",
+      "ru": "Можете проверить это в системе?",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Ainda está dentro da garantia?",
+      "ru": "Это всё ещё на гарантии?",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Isso demora muito tempo?",
+      "ru": "Это займёт много времени?",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Preciso de marcar uma visita técnica.",
+      "ru": "Мне нужно записаться на визит специалиста.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Pode enviar-me a fatura por email?",
+      "ru": "Можете прислать мне счёт по электронной почте?",
+      "register": "neutral",
+      "explicit": false
+    },
+
+    {
+      "pt": "Gostava de cancelar este serviço.",
+      "ru": "Я хотел(а) бы отменить эту услугу.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Há algum problema com este pedido.",
+      "ru": "С этим заказом есть какая-то проблема.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Pode explicar-me como isto funciona?",
+      "ru": "Можете объяснить, как это работает?",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Este serviço está incluído no preço?",
+      "ru": "Эта услуга входит в стоимость?",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Preciso de atualizar os meus dados.",
+      "ru": "Мне нужно обновить мои данные.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Isto não corresponde ao que foi combinado.",
+      "ru": "Это не соответствует тому, о чём мы договаривались.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Pode confirmar se está tudo certo?",
+      "ru": "Можете подтвердить, что всё в порядке?",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Ainda não recebi nenhuma confirmação.",
+      "ru": "Я ещё не получил(а) никакого подтверждения.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Gostava de saber quais são as opções.",
+      "ru": "Я хотел(а) бы узнать, какие есть варианты.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Pode ajudar-me a resolver este problema?",
+      "ru": "Можете помочь мне решить эту проблему?",
+      "register": "neutral",
+      "explicit": false
+    },
+
+    {
+      "pt": "Este valor parece-me demasiado alto.",
+      "ru": "Эта сумма кажется мне слишком высокой.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Há alguma alternativa mais barata?",
+      "ru": "Есть ли более дешёвая альтернатива?",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Gostava de falar com alguém responsável.",
+      "ru": "Я хотел(а) бы поговорить с ответственным сотрудником.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Pode indicar-me onde tratar disso?",
+      "ru": "Можете подсказать, где этим занимаются?",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Isto pode ser resolvido hoje?",
+      "ru": "Это можно решить сегодня?",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Ainda está dentro do prazo?",
+      "ru": "Это всё ещё в сроке?",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Preciso de uma cópia do contrato.",
+      "ru": "Мне нужна копия договора.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Pode dizer-me quais são os próximos passos?",
+      "ru": "Можете сказать, какие следующие шаги?",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Isto ficou diferente do que esperava.",
+      "ru": "Это получилось не так, как я ожидал(а).",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Preciso de confirmar alguns detalhes.",
+      "ru": "Мне нужно уточнить некоторые детали.",
+      "register": "neutral",
+      "explicit": false
+    },
+
+    {
+      "pt": "Gostava de saber quando fica pronto.",
+      "ru": "Я хотел(а) бы знать, когда это будет готово.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Este serviço foi recomendado pela escola.",
+      "ru": "Эту услугу рекомендовала школа.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Pode ajudar-me a preencher este formulário?",
+      "ru": "Можете помочь мне заполнить эту форму?",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Ainda estou à espera de uma resposta.",
+      "ru": "Я всё ещё жду ответа.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Isto tem algum custo adicional?",
+      "ru": "Есть ли за это дополнительная плата?",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Pode indicar-me o horário de funcionamento?",
+      "ru": "Можете подсказать часы работы?",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Gostava de fazer uma reclamação.",
+      "ru": "Я хотел(а) бы подать жалобу.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Este pedido ainda está em processamento.",
+      "ru": "Этот запрос всё ещё в обработке.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Pode avisar-me quando estiver pronto?",
+      "ru": "Можете сообщить мне, когда будет готово?",
+      "register": "neutral",
+      "explicit": false
+    }
+  ]
+}

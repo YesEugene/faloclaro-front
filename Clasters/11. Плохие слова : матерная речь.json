@@ -1,0 +1,246 @@
+{
+  "cluster_id": 11,
+  "cluster_name": "Плохие слова / матерная речь",
+  "language": "pt-PT",
+  "translation_language": "ru",
+  "explicit_cluster": true,
+  "phrases": [
+    {
+      "pt": "Isto é uma grande merda.",
+      "ru": "Это полная херня.",
+      "register": "vulgar",
+      "explicit": true
+    },
+    {
+      "pt": "Estou farto desta porcaria toda.",
+      "ru": "Меня заебало всё это дерьмо.",
+      "register": "vulgar",
+      "explicit": true
+    },
+    {
+      "pt": "Isto correu mesmo mal, foda-se.",
+      "ru": "Всё реально пошло по пизде, блядь.",
+      "register": "vulgar",
+      "explicit": true
+    },
+    {
+      "pt": "Não percebo esta merda nenhuma.",
+      "ru": "Я ни хрена не понимаю в этом дерьме.",
+      "register": "vulgar",
+      "explicit": true
+    },
+    {
+      "pt": "Esta situação está a dar-me cabo dos nervos.",
+      "ru": "Эта ситуация мне просто выносит мозг.",
+      "register": "vulgar",
+      "explicit": true
+    },
+    {
+      "pt": "Isto é uma palhaçada do caralho.",
+      "ru": "Это какая-то ебаная клоунада.",
+      "register": "vulgar",
+      "explicit": true
+    },
+    {
+      "pt": "Estou completamente lixado hoje.",
+      "ru": "Я сегодня в полном пиздеце.",
+      "register": "vulgar",
+      "explicit": true
+    },
+    {
+      "pt": "Que se foda, já não quero saber.",
+      "ru": "Да пошло оно всё нахуй, мне уже плевать.",
+      "register": "vulgar",
+      "explicit": true
+    },
+    {
+      "pt": "Isto é mesmo para esquecer, foda-se.",
+      "ru": "Это вообще пиздец, лучше забыть.",
+      "register": "vulgar",
+      "explicit": true
+    },
+    {
+      "pt": "Não tenho paciência para esta merda.",
+      "ru": "У меня нет терпения на это дерьмо.",
+      "register": "vulgar",
+      "explicit": true
+    },
+
+    {
+      "pt": "Estou cansado desta merda toda.",
+      "ru": "Я устал от всего этого дерьма.",
+      "register": "vulgar",
+      "explicit": true
+    },
+    {
+      "pt": "Isto está a correr como o caralho.",
+      "ru": "Всё идёт через жопу.",
+      "register": "vulgar",
+      "explicit": true
+    },
+    {
+      "pt": "Que merda de dia, a sério.",
+      "ru": "Ну и ебаный день, честно.",
+      "register": "vulgar",
+      "explicit": true
+    },
+    {
+      "pt": "Não acredito nesta merda.",
+      "ru": "Я не могу поверить в это дерьмо.",
+      "register": "vulgar",
+      "explicit": true
+    },
+    {
+      "pt": "Isto não faz sentido nenhum, foda-se.",
+      "ru": "Это вообще ни хуя не имеет смысла.",
+      "register": "vulgar",
+      "explicit": true
+    },
+    {
+      "pt": "Estou a perder a paciência com isto.",
+      "ru": "Я начинаю заёбываться от этого.",
+      "register": "vulgar",
+      "explicit": true
+    },
+    {
+      "pt": "Esta situação é uma merda pegada.",
+      "ru": "Эта ситуация — сплошное дерьмо.",
+      "register": "vulgar",
+      "explicit": true
+    },
+    {
+      "pt": "Não era suposto ser esta merda.",
+      "ru": "Это вообще не должно было быть таким пиздецом.",
+      "register": "vulgar",
+      "explicit": true
+    },
+    {
+      "pt": "Isto está a ir tudo pelo cano abaixo.",
+      "ru": "Всё летит к хуям.",
+      "register": "vulgar",
+      "explicit": true
+    },
+    {
+      "pt": "Estou mesmo farto desta situação.",
+      "ru": "Меня реально заебала эта ситуация.",
+      "register": "vulgar",
+      "explicit": true
+    },
+
+    {
+      "pt": "Que puta de confusão, foda-se.",
+      "ru": "Какой ебаный бардак, блядь.",
+      "register": "vulgar",
+      "explicit": true
+    },
+    {
+      "pt": "Isto está uma verdadeira merda.",
+      "ru": "Это просто лютый пиздец.",
+      "register": "vulgar",
+      "explicit": true
+    },
+    {
+      "pt": "Não sei que caralho fazer agora.",
+      "ru": "Я не знаю, что, блядь, теперь делать.",
+      "register": "vulgar",
+      "explicit": true
+    },
+    {
+      "pt": "Estou sem paciência para isto hoje.",
+      "ru": "Сегодня у меня ноль терпения на это дерьмо.",
+      "register": "vulgar",
+      "explicit": true
+    },
+    {
+      "pt": "Isto deu completamente para o torto.",
+      "ru": "Всё пошло совсем по пизде.",
+      "register": "vulgar",
+      "explicit": true
+    },
+    {
+      "pt": "Que se lixe tudo, preciso de um tempo.",
+      "ru": "Да пошло всё нахуй, мне нужен перерыв.",
+      "register": "vulgar",
+      "explicit": true
+    },
+    {
+      "pt": "Esta merda está a repetir-se sempre.",
+      "ru": "Это дерьмо постоянно повторяется.",
+      "register": "vulgar",
+      "explicit": true
+    },
+    {
+      "pt": "Estou mesmo à beira de explodir.",
+      "ru": "Я реально на грани, сейчас взорвусь.",
+      "register": "vulgar",
+      "explicit": true
+    },
+    {
+      "pt": "Isto é stressante para caralho.",
+      "ru": "Это пиздец как стрессово.",
+      "register": "vulgar",
+      "explicit": true
+    },
+    {
+      "pt": "Já chega desta merda.",
+      "ru": "Хватит уже этого дерьма.",
+      "register": "vulgar",
+      "explicit": true
+    },
+
+    {
+      "pt": "Não tenho energia para lidar com isto.",
+      "ru": "У меня нет сил разбираться с этим дерьмом.",
+      "register": "vulgar",
+      "explicit": true
+    },
+    {
+      "pt": "Isto está a sair completamente do controlo.",
+      "ru": "Это всё выходит из-под контроля к хуям.",
+      "register": "vulgar",
+      "explicit": true
+    },
+    {
+      "pt": "Estou cansado de levar com esta merda.",
+      "ru": "Я устал всё это дерьмо на себе тащить.",
+      "register": "vulgar",
+      "explicit": true
+    },
+    {
+      "pt": "Que merda foi esta agora?",
+      "ru": "Что это, блядь, сейчас было?",
+      "register": "vulgar",
+      "explicit": true
+    },
+    {
+      "pt": "Isto não pode ser sério, foda-se.",
+      "ru": "Это не может быть серьёзно, блядь.",
+      "register": "vulgar",
+      "explicit": true
+    },
+    {
+      "pt": "Estou mesmo saturado desta porcaria.",
+      "ru": "Я реально пресытился этим дерьмом.",
+      "register": "vulgar",
+      "explicit": true
+    },
+    {
+      "pt": "Tudo isto é uma perda de tempo do caralho.",
+      "ru": "Всё это — ебаная трата времени.",
+      "register": "vulgar",
+      "explicit": true
+    },
+    {
+      "pt": "Isto está a dar cabo de mim.",
+      "ru": "Это меня просто добивает.",
+      "register": "vulgar",
+      "explicit": true
+    },
+    {
+      "pt": "Não tenho cabeça para esta merda hoje.",
+      "ru": "Сегодня у меня нет головы на это дерьмо.",
+      "register": "vulgar",
+      "explicit": true
+    }
+  ]
+}

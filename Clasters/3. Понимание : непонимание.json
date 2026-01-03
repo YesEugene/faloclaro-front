@@ -1,0 +1,251 @@
+{
+  "cluster_id": 3,
+  "cluster_name": "Понимание / непонимание",
+  "language": "pt-PT",
+  "translation_language": "ru",
+  "phrases": [
+    {
+      "pt": "Não percebi bem o que quis dizer.",
+      "ru": "Я не совсем понял(а), что вы имели в виду.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Agora percebo melhor a situação.",
+      "ru": "Теперь я лучше понимаю ситуацию.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Pode explicar isso de outra forma?",
+      "ru": "Можете объяснить это по-другому?",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Ainda não está totalmente claro para mim.",
+      "ru": "Мне всё ещё не до конца понятно.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Acho que entendi a ideia geral.",
+      "ru": "Думаю, я понял(а) общую идею.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Não tenho a certeza se compreendi bem.",
+      "ru": "Я не уверен(а), что правильно понял(а).",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Isso ajuda-me a perceber melhor.",
+      "ru": "Это помогает мне лучше понять.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Continuo com algumas dúvidas sobre isso.",
+      "ru": "У меня всё ещё есть некоторые сомнения по этому поводу.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Pode dar-me um exemplo mais concreto?",
+      "ru": "Можете привести более конкретный пример?",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Agora faz muito mais sentido para mim.",
+      "ru": "Теперь для меня это имеет гораздо больше смысла.",
+      "register": "neutral",
+      "explicit": false
+    },
+
+    {
+      "pt": "Não estou a perceber bem esta parte.",
+      "ru": "Я не очень понимаю эту часть.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Pode repetir essa parte outra vez?",
+      "ru": "Можете повторить эту часть ещё раз?",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Percebo o que quer dizer, em parte.",
+      "ru": "Я отчасти понимаю, что вы хотите сказать.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Não consegui acompanhar tudo o que disse.",
+      "ru": "Я не смог(ла) уловить всё, что вы сказали.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Pode falar um pouco mais devagar?",
+      "ru": "Можете говорить немного медленнее?",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Isso não ficou muito claro para mim.",
+      "ru": "Для меня это было не очень понятно.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Agora percebo o que estava a dizer.",
+      "ru": "Теперь я понимаю, что вы имели в виду.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Ainda tenho dificuldade em perceber isso.",
+      "ru": "Мне всё ещё трудно это понять.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Pode explicar isso passo a passo?",
+      "ru": "Можете объяснить это шаг за шагом?",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Isso começa a fazer sentido agora.",
+      "ru": "Теперь это начинает иметь смысл.",
+      "register": "neutral",
+      "explicit": false
+    },
+
+    {
+      "pt": "Não tenho a certeza se entendi corretamente.",
+      "ru": "Я не уверен(а), что понял(а) правильно.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Pode clarificar um pouco melhor?",
+      "ru": "Можете немного прояснить это?",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Perdi-me um pouco a meio da explicação.",
+      "ru": "Я немного потерялся(лась) в середине объяснения.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Isso não corresponde ao que eu entendi.",
+      "ru": "Это не соответствует тому, как я это понял(а).",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Agora está mais claro para mim.",
+      "ru": "Теперь мне стало понятнее.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Pode dizer isso de maneira mais simples?",
+      "ru": "Можете сказать это более простыми словами?",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Não acompanhei bem essa parte.",
+      "ru": "Я плохо уловил(а) эту часть.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Acho que agora estou a perceber.",
+      "ru": "Думаю, теперь я начинаю понимать.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Isso esclarece bastante as coisas.",
+      "ru": "Это многое проясняет.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Pode confirmar se entendi bem?",
+      "ru": "Можете подтвердить, что я правильно понял(а)?",
+      "register": "neutral",
+      "explicit": false
+    },
+
+    {
+      "pt": "Ainda preciso de algum tempo para entender.",
+      "ru": "Мне всё ещё нужно немного времени, чтобы понять.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Não estou a conseguir perceber isto agora.",
+      "ru": "Я сейчас не могу это понять.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Isso foi explicado de forma clara.",
+      "ru": "Это было объяснено понятно.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Agora consigo ver a lógica disso.",
+      "ru": "Теперь я вижу в этом логику.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Ainda tenho algumas perguntas sobre isso.",
+      "ru": "У меня всё ещё есть несколько вопросов по этому поводу.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Pode voltar a explicar a última parte?",
+      "ru": "Можете ещё раз объяснить последнюю часть?",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Isso ajuda-me a entender melhor o contexto.",
+      "ru": "Это помогает мне лучше понять контекст.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Acho que agora entendi corretamente.",
+      "ru": "Думаю, теперь я понял(а) правильно.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Ainda não consegui perceber tudo.",
+      "ru": "Мне пока не удалось понять всё.",
+      "register": "neutral",
+      "explicit": false
+    },
+    {
+      "pt": "Obrigado por explicar com tanta clareza.",
+      "ru": "Спасибо, что так понятно объяснили.",
+      "register": "polite",
+      "explicit": false
+    }
+  ]
+}
