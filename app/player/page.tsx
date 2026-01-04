@@ -309,12 +309,18 @@ function PlayerContent() {
     if (Math.abs(currentOffset) > threshold) {
       if (currentOffset > 0) {
         // Swipe right - previous phrase
-        if (idx > 0) {
+        if (isRandomMode) {
+          const randomIndex = getRandomPhraseIndex();
+          navigateToPhrase(randomIndex);
+        } else if (idx > 0) {
           navigateToPhrase(idx - 1);
         }
       } else {
         // Swipe left - next phrase
-        if (idx < phrases.length - 1) {
+        if (isRandomMode) {
+          const randomIndex = getRandomPhraseIndex();
+          navigateToPhrase(randomIndex);
+        } else if (idx < phrases.length - 1) {
           navigateToPhrase(idx + 1);
         }
       }
@@ -349,11 +355,19 @@ function PlayerContent() {
       
       if (Math.abs(currentOffset) > threshold) {
         if (currentOffset > 0) {
-          if (idx > 0) {
+          // Swipe right - previous phrase
+          if (isRandomMode) {
+            const randomIndex = getRandomPhraseIndex();
+            navigateToPhrase(randomIndex);
+          } else if (idx > 0) {
             navigateToPhrase(idx - 1);
           }
         } else {
-          if (idx < phrases.length - 1) {
+          // Swipe left - next phrase
+          if (isRandomMode) {
+            const randomIndex = getRandomPhraseIndex();
+            navigateToPhrase(randomIndex);
+          } else if (idx < phrases.length - 1) {
             navigateToPhrase(idx + 1);
           }
         }
