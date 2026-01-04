@@ -284,8 +284,8 @@ export default function ClustersPage() {
                 
                 {/* Title - bottom left with 20px padding */}
                 <div className="absolute bottom-[20px] left-[20px] right-4">
-                  {/* All cluster titles are black and same size (except "All Clusters") */}
-                  <div className="font-medium text-black drop-shadow-sm text-left leading-tight text-[17px]">
+                  {/* All cluster titles are black and same size (except "All Clusters" and "Movie Quotes") */}
+                  <div className="font-medium text-black drop-shadow-sm text-left leading-tight text-[13px]">
                     {cluster.name === 'Profanity' && language === 'ru' ? (
                       <>
                         Плохие<br />
