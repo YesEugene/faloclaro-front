@@ -97,21 +97,28 @@ function PlayerContent() {
     setCurrentRepeat(0);
   }, [phrase, phrase?.audio_url, playbackSpeed]);
 
-  // Auto-play when phrase changes via auto-advance
-  useEffect(() => {
-    if (autoPlay && phrase && phrase.audio_url && !loading) {
-      // Small delay to ensure audio element is ready
-      const timer = setTimeout(() => {
-        // startPlayback checks audioRef.current internally
-        startPlayback();
-        // Remove autoPlay parameter from URL after starting playback
-        const newUrl = new URL(window.location.href);
-        newUrl.searchParams.delete('autoPlay');
-        router.replace(newUrl.pathname + newUrl.search, { scroll: false });
-      }, 150);
-      return () => clearTimeout(timer);
+  // Handle auto-play when audio is loaded
+  const handleAudioLoaded = useCallback(() => {
+    if (autoPlay && audioRef.current && phrase && phrase.audio_url) {
+      // Remove autoPlay parameter from URL
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.delete('autoPlay');
+      router.replace(newUrl.pathname + newUrl.search, { scroll: false });
+      
+      // Start playback
+      audioRef.current.playbackRate = playbackSpeed;
+      audioRef.current.currentTime = 0;
+      audioRef.current.play()
+        .then(() => {
+          setIsPlaying(true);
+          setCurrentRepeat(0);
+        })
+        .catch((error) => {
+          console.error('Auto-play failed:', error);
+          setIsPlaying(false);
+        });
     }
-  }, [autoPlay, phrase?.id, phrase?.audio_url, loading, startPlayback, router]);
+  }, [autoPlay, phrase, phrase?.audio_url, playbackSpeed, router]);
 
   useEffect(() => {
     localStorage.setItem('pauseBetweenRepeats', pauseBetweenRepeats.toString());
@@ -513,6 +520,7 @@ function PlayerContent() {
               ref={audioRef}
               src={phrase.audio_url}
               onEnded={handleAudioEnded}
+              onLoadedData={handleAudioLoaded}
               preload="auto"
             />
           )}
