@@ -356,17 +356,17 @@ function TestContent() {
               }}
             >
               {/* Progress Indicator */}
-              <div className="text-white text-center mt-5 mb-5 opacity-50">
+              <div className="text-black text-center mt-5 mb-5 opacity-50">
                 Test
               </div>
 
               {/* Portuguese Text */}
-              <div className="text-4xl font-bold mb-5 text-center opacity-50" style={{ color: '#ECF700' }}>
+              <div className="text-4xl font-bold mb-5 text-center opacity-50" style={{ color: '#000000' }}>
                 {nextPhrase.portuguese_text}
               </div>
               
               {/* IPA Transcription */}
-              <div className="text-base text-center mb-5 font-mono opacity-50" style={{ color: '#FFCDCD' }}>
+              <div className="text-base text-center mb-5 font-mono opacity-50" style={{ color: '#A9A789' }}>
                 {nextPhrase.ipa_transcription ? `/${nextPhrase.ipa_transcription}/` : ''}
               </div>
             </div>
@@ -391,17 +391,17 @@ function TestContent() {
             onMouseDown={handleMouseDown}
           >
             {/* Progress Indicator - Top Center */}
-            <div className="text-white text-center mt-5 mb-5">
+            <div className="text-black text-center mt-5 mb-5">
               Test
             </div>
 
             {/* Portuguese Text */}
-            <div className="text-4xl font-bold mb-5 text-center" style={{ color: '#ECF700' }}>
+            <div className="text-4xl font-bold mb-5 text-center" style={{ color: '#000000' }}>
               {phrase.portuguese_text}
             </div>
             
             {/* IPA Transcription */}
-            <div className="text-base text-center mb-5 font-mono" style={{ color: '#FFCDCD' }}>
+            <div className="text-base text-center mb-5 font-mono" style={{ color: '#A9A789' }}>
               {phrase.ipa_transcription ? `/${phrase.ipa_transcription}/` : 'Тут должна быть транскрипция фразы'}
             </div>
 
@@ -409,7 +409,7 @@ function TestContent() {
             {!showTranslation && (
               <button
                 onClick={() => setShowTranslation(true)}
-                className="text-white text-center mb-4 hover:opacity-80 transition-opacity underline"
+                className="text-black text-center mb-4 hover:opacity-80 transition-opacity underline"
               >
                 {t.viewTranslation}
               </button>
