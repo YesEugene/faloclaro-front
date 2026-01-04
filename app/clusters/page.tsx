@@ -15,55 +15,55 @@ const clusterConfig: Record<string, {
   isLarge?: boolean;
 }> = {
   'All Clusters': {
-    color: '#B474FF',
+    color: '#94B7F2',
     icon: '👾',
   },
   'Beginner': {
-    color: '#FFD700',
+    color: '#FDFFA4',
     icon: '⭐',
   },
   'Reactions and Responses': {
-    color: '#429AD2',
+    color: '#FBDDC3',
     icon: '💬',
   },
   'Politeness and Requests': {
-    color: '#F06C36',
+    color: '#FAF7BF',
     icon: '👌',
   },
   'Understanding / Not Understanding': {
-    color: '#74FFB5',
+    color: '#FBC3C8',
     icon: '🙃',
   },
   'Movement, Time, Pauses': {
-    color: '#F03668',
+    color: '#84E9F3',
     icon: '⏳',
   },
   'Home and Daily Life': {
-    color: '#EFE748',
+    color: '#E9B0E4',
     icon: '🏠',
   },
   'Children and School': {
-    color: '#FF9D3B',
+    color: '#90F5D9',
     icon: '👶',
   },
   'Shops and Services': {
-    color: '#C2E8B4',
+    color: '#B2FDB0',
     icon: '🛒',
   },
   'Cafes and Restaurants': {
-    color: '#CD2626',
+    color: '#91B7FF',
     icon: '☕',
   },
   'Emotions and States': {
-    color: '#E0D589',
+    color: '#84D4F2',
     icon: '🤡',
   },
   'Speech Connectors': {
-    color: '#5ECAA1',
+    color: '#FA9A9D',
     icon: '💭',
   },
   'Profanity': {
-    color: '#4D48E3',
+    color: '#ADA0FF',
     icon: '😠',
   },
   'Movie Quotes': {
@@ -284,34 +284,17 @@ export default function ClustersPage() {
                 
                 {/* Title - bottom left with 20px padding */}
                 <div className="absolute bottom-[20px] left-[20px] right-4">
-                  {/* Clusters with black text */}
-                  {['Understanding / Not Understanding', 'Home and Daily Life', 'Shops and Services', 'Emotions and States'].includes(cluster.name) ? (
-                    <div className={`font-medium text-black drop-shadow-sm text-left leading-tight ${
-                      displayName.length > 15 ? 'text-[12px]' : 'text-[17px]'
-                    }`}>
-                      {cluster.name === 'Profanity' && language === 'ru' ? (
-                        <>
-                          Плохие<br />
-                          слова
-                        </>
-                      ) : (
-                        displayName
-                      )}
-                    </div>
-                  ) : (
-                    <div className={`font-medium text-white drop-shadow-md text-left leading-tight ${
-                      displayName.length > 15 ? 'text-[12px]' : 'text-[17px]'
-                    }`}>
-                      {cluster.name === 'Profanity' && language === 'ru' ? (
-                        <>
-                          Плохие<br />
-                          слова
-                        </>
-                      ) : (
-                        displayName
-                      )}
-                    </div>
-                  )}
+                  {/* All cluster titles are black and same size (except "All Clusters") */}
+                  <div className="font-medium text-black drop-shadow-sm text-left leading-tight text-[17px]">
+                    {cluster.name === 'Profanity' && language === 'ru' ? (
+                      <>
+                        Плохие<br />
+                        слова
+                      </>
+                    ) : (
+                      displayName
+                    )}
+                  </div>
                 </div>
                 
                 {/* Checkbox - top right */}
