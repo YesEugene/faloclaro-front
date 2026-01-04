@@ -366,7 +366,7 @@ function TestContent() {
               </div>
               
               {/* IPA Transcription */}
-              <div className="text-base text-center mb-5 font-mono opacity-50" style={{ color: '#A9A789' }}>
+              <div className="text-base text-center mb-5 font-mono opacity-50" style={{ color: '#000000' }}>
                 {nextPhrase.ipa_transcription ? `/${nextPhrase.ipa_transcription}/` : ''}
               </div>
             </div>
@@ -401,23 +401,13 @@ function TestContent() {
             </div>
             
             {/* IPA Transcription */}
-            <div className="text-base text-center mb-5 font-mono" style={{ color: '#A9A789' }}>
+            <div className="text-base text-center mb-5 font-mono" style={{ color: '#000000' }}>
               {phrase.ipa_transcription ? `/${phrase.ipa_transcription}/` : 'Тут должна быть транскрипция фразы'}
             </div>
 
-            {/* View Translation Button */}
-            {!showTranslation && (
-              <button
-                onClick={() => setShowTranslation(true)}
-                className="text-black text-center mb-4 hover:opacity-80 transition-opacity underline"
-              >
-                {t.viewTranslation}
-              </button>
-            )}
-
             {/* Translation on White Card */}
             {showTranslation && (
-              <div className="mt-auto mx-[10px] mb-[10px]">
+              <div className="mt-auto mx-[10px] mb-[30px]">
                 {translation ? (
                   <div className="bg-white rounded-[20px] p-4 text-center">
                     <div className="text-xl text-gray-900 font-medium">
@@ -434,6 +424,16 @@ function TestContent() {
               </div>
             )}
 
+            {/* View Translation Button - Bottom */}
+            {!showTranslation && (
+              <button
+                onClick={() => setShowTranslation(true)}
+                className="absolute bottom-[30px] left-0 right-0 text-black text-center hover:opacity-80 transition-opacity underline"
+              >
+                {t.viewTranslation}
+              </button>
+            )}
+
             {/* Audio Element */}
             {phrase.audio_url && (
               <audio
@@ -445,13 +445,33 @@ function TestContent() {
           </div>
         </div>
 
-        {/* Next Phrase Button */}
-        <button
-          onClick={handleNextPhrase}
-          className="w-full px-4 py-3 rounded-[10px] bg-[#F03F3F] text-white hover:opacity-90 transition-colors text-center font-semibold"
-        >
-          {t.nextPhrase}
-        </button>
+        {/* Next Phrase Icon Button */}
+        <div className="flex justify-center items-center mt-6 mb-6">
+          <button
+            onClick={handleNextPhrase}
+            className="w-16 h-16 rounded-full bg-white border-2 border-black hover:bg-gray-100 transition-colors flex items-center justify-center cursor-pointer"
+            aria-label={t.nextPhrase}
+          >
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              {/* First triangle */}
+              <path
+                d="M6 4L14 12L6 20V4Z"
+                fill="black"
+              />
+              {/* Second triangle */}
+              <path
+                d="M11 4L19 12L11 20V4Z"
+                fill="black"
+              />
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
   );
