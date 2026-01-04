@@ -193,18 +193,18 @@ export default function ClustersPage() {
         </div>
 
         {/* Navigation Bar */}
-        <div className="max-w-md mx-auto px-4 flex gap-[10px]">
+        <div className="max-w-md mx-auto px-4 grid grid-cols-3 gap-[10px]">
           <Link 
             href="/methodology" 
-            className="flex-1 px-4 py-2 rounded-[10px] text-white hover:opacity-90 transition-colors text-center font-medium"
-            style={{ backgroundColor: '#559D53', transform: 'translateY(1px)', fontWeight: 500 }}
+            className="col-span-2 px-4 py-2 rounded-[10px] bg-white border-2 border-gray-300 text-black hover:bg-gray-50 transition-colors text-center font-medium"
+            style={{ transform: 'translateY(1px)', fontWeight: 500 }}
           >
             {t.about}
           </Link>
           <Link 
             href="/test" 
-            className="flex-1 px-4 py-2 rounded-[10px] text-white hover:opacity-90 transition-colors text-center font-medium"
-            style={{ backgroundColor: '#F03F3F', transform: 'translateY(1px)', fontWeight: 500 }}
+            className="col-span-1 px-4 py-2 rounded-[10px] bg-white border-2 border-gray-300 text-black hover:bg-gray-50 transition-colors text-center font-medium"
+            style={{ transform: 'translateY(1px)', fontWeight: 500 }}
           >
             {t.test}
           </Link>
