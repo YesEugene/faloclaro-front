@@ -30,6 +30,7 @@ function PlayerContent() {
   const [repeatCount, setRepeatCount] = useState<number | 'infinite'>('infinite');
   const [currentRepeat, setCurrentRepeat] = useState(0);
   const [showSettings, setShowSettings] = useState(false);
+  const [isRandomMode, setIsRandomMode] = useState(false);
 
   // Swipe state
   const [swipeOffset, setSwipeOffset] = useState(0);
@@ -47,6 +48,7 @@ function PlayerContent() {
     const savedSpeed = localStorage.getItem('playbackSpeed');
     const savedPause = localStorage.getItem('pauseBetweenRepeats');
     const savedRepeat = localStorage.getItem('repeatCount');
+    const savedRandom = localStorage.getItem('isRandomMode');
     
     if (savedSpeed) setPlaybackSpeed(parseFloat(savedSpeed));
     if (savedPause) setPauseBetweenRepeats(parseFloat(savedPause));
@@ -57,6 +59,7 @@ function PlayerContent() {
         setRepeatCount(parseInt(savedRepeat));
       }
     }
+    if (savedRandom) setIsRandomMode(savedRandom === 'true');
   }, []);
 
   useEffect(() => {
@@ -127,6 +130,10 @@ function PlayerContent() {
   useEffect(() => {
     localStorage.setItem('repeatCount', repeatCount.toString());
   }, [repeatCount]);
+
+  useEffect(() => {
+    localStorage.setItem('isRandomMode', isRandomMode.toString());
+  }, [isRandomMode]);
 
   useEffect(() => {
     return () => {
@@ -210,9 +217,14 @@ function PlayerContent() {
     if (newRepeat >= maxRepeats) {
       setIsPlaying(false);
       // Auto-advance to next phrase with auto-play
-      if (repeatCount !== 'infinite' && currentIndex < phrases.length - 1) {
+      if (repeatCount !== 'infinite') {
         setTimeout(() => {
-          navigateToPhrase(currentIndex + 1, true); // Pass true to auto-play
+          if (isRandomMode) {
+            const randomIndex = getRandomPhraseIndex();
+            navigateToPhrase(randomIndex, true); // Pass true to auto-play
+          } else if (currentIndex < phrases.length - 1) {
+            navigateToPhrase(currentIndex + 1, true); // Pass true to auto-play
+          }
         }, 500);
       }
       return;
@@ -235,6 +247,18 @@ function PlayerContent() {
     }
   };
 
+  const getRandomPhraseIndex = (): number => {
+    if (phrases.length === 0) return 0;
+    if (phrases.length === 1) return 0;
+    
+    let randomIndex;
+    do {
+      randomIndex = Math.floor(Math.random() * phrases.length);
+    } while (randomIndex === currentIndex && phrases.length > 1);
+    
+    return randomIndex;
+  };
+
   const navigateToPhrase = (index: number, shouldAutoPlay: boolean = false) => {
     if (index < 0 || index >= phrases.length) return;
     const newPhrase = phrases[index];
@@ -243,11 +267,21 @@ function PlayerContent() {
   };
 
   const handlePrevious = () => {
-    navigateToPhrase(currentIndex - 1);
+    if (isRandomMode) {
+      const randomIndex = getRandomPhraseIndex();
+      navigateToPhrase(randomIndex);
+    } else {
+      navigateToPhrase(currentIndex - 1);
+    }
   };
 
   const handleNext = () => {
-    navigateToPhrase(currentIndex + 1);
+    if (isRandomMode) {
+      const randomIndex = getRandomPhraseIndex();
+      navigateToPhrase(randomIndex);
+    } else {
+      navigateToPhrase(currentIndex + 1);
+    }
   };
 
   // Swipe handlers
@@ -335,7 +369,7 @@ function PlayerContent() {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [isDragging, startX, phrases.length]);
+  }, [isDragging, startX, phrases.length, isRandomMode, currentIndex]);
 
   // Update refs when values change
   useEffect(() => {
@@ -368,6 +402,7 @@ function PlayerContent() {
       next: 'Next phrase',
       settings: 'Settings',
       nextPhrase: 'Next phrase',
+      randomMode: 'Random Mode',
     },
     pt: {
       loading: 'A carregar...',
@@ -384,6 +419,7 @@ function PlayerContent() {
       next: 'Próxima frase',
       settings: 'Configurações',
       nextPhrase: 'Próxima frase',
+      randomMode: 'Modo Aleatório',
     },
     ru: {
       loading: 'Загрузка...',
@@ -400,6 +436,7 @@ function PlayerContent() {
       next: 'Следующая фраза',
       settings: 'Настройки',
       nextPhrase: 'Следующая фраза',
+      randomMode: 'Случайный порядок',
     },
   };
 
@@ -636,7 +673,7 @@ function PlayerContent() {
           </div>
 
           {/* Repeat Count */}
-          <div className="mb-4">
+          <div className="mb-6">
             <label className="block mb-2 font-medium">{t.repeatCount}</label>
             <div className="flex flex-wrap gap-2">
               <button
@@ -663,6 +700,50 @@ function PlayerContent() {
                 </button>
               ))}
             </div>
+          </div>
+
+          {/* Random Mode */}
+          <div className="mb-4">
+            <label className="block mb-3 font-medium">{t.randomMode}</label>
+            <button
+              onClick={() => setIsRandomMode(!isRandomMode)}
+              className={`w-full px-4 py-3 rounded-lg flex items-center justify-center gap-3 transition-colors ${
+                isRandomMode
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-200 text-gray-700'
+              }`}
+            >
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                />
+              </svg>
+              <span className="font-medium">
+                {t.randomMode}
+              </span>
+              {isRandomMode && (
+                <svg
+                  className="w-5 h-5"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              )}
+            </button>
           </div>
 
           {isPlaying && repeatCount !== 'infinite' && (
