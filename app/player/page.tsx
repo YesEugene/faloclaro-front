@@ -503,12 +503,13 @@ function PlayerContent() {
           <button
             onClick={handlePlayPause}
             disabled={!phrase.audio_url}
-            className="p-4 rounded-full bg-[#F03F3F] text-white disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+            className="p-4 rounded-full bg-[#F03F3F] text-white disabled:opacity-50 disabled:cursor-not-allowed shadow-lg flex items-center justify-center"
             aria-label={isPlaying ? t.pause : t.play}
           >
             {isPlaying ? (
-              <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M5.5 3.5A.5.5 0 016 4v12a.5.5 0 01-1 0V4a.5.5 0 01.5-.5zm5 0A.5.5 0 0111 4v12a.5.5 0 01-1 0V4a.5.5 0 01.5-.5z" />
+              <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20" style={{ display: 'block', margin: '0 auto' }}>
+                <rect x="6" y="3" width="3.5" height="14" rx="0.75" />
+                <rect x="10.5" y="3" width="3.5" height="14" rx="0.75" />
               </svg>
             ) : (
               <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">

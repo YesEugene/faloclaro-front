@@ -192,15 +192,15 @@ export default function ClustersPage() {
         <div className="max-w-md mx-auto px-4 flex gap-[10px]">
           <Link 
             href="/methodology" 
-            className="flex-1 px-4 py-2 rounded-[10px] text-white hover:opacity-90 transition-colors text-center"
-            style={{ backgroundColor: '#559D53' }}
+            className="flex-1 px-4 py-2 rounded-[10px] text-white hover:opacity-90 transition-colors text-center font-medium"
+            style={{ backgroundColor: '#559D53', transform: 'translateY(1px)', fontWeight: 500 }}
           >
             {t.about}
           </Link>
           <Link 
             href="/test" 
-            className="flex-1 px-4 py-2 rounded-[10px] text-white hover:opacity-90 transition-colors text-center"
-            style={{ backgroundColor: '#F03F3F' }}
+            className="flex-1 px-4 py-2 rounded-[10px] text-white hover:opacity-90 transition-colors text-center font-medium"
+            style={{ backgroundColor: '#F03F3F', transform: 'translateY(1px)', fontWeight: 500 }}
           >
             {t.test}
           </Link>
