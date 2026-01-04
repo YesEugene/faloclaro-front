@@ -9,6 +9,8 @@
       "ru": "Я сделаю ему предложение, от которого он не сможет отказаться.",
       "register": "neutral",
       "explicit": false,
+      "ipa_transcription": "ˈvou fɐˈzeɾʎɨ ˈumɐ pɾuˈpoʃtɐ iʁɨkuˈzavɛɫ",
+      "translations": [{ "language_code": "en", "text": "I’m going to make him an offer he can’t refuse." }],
       "movie": {
         "title_pt": "O Padrinho",
         "original_title": "The Godfather",
@@ -21,6 +23,8 @@
       "ru": "Вот и Джонни.",
       "register": "neutral",
       "explicit": false,
+      "ipa_transcription": "ɐˈki ʃˈta u ˈʒɔni",
+      "translations": [{ "language_code": "en", "text": "Here’s Johnny." }],
       "movie": {
         "title_pt": "O Iluminado",
         "original_title": "The Shining",
@@ -33,6 +37,8 @@
       "ru": "Жизнь — как коробка шоколадных конфет.",
       "register": "neutral",
       "explicit": false,
+      "ipa_transcription": "ɐ ˈvidɐ ɛ ˈkɔmu ˈumɐ ˈkajʃɐ dɨ ʃukuˈlatɨʃ",
+      "translations": [{ "language_code": "en", "text": "Life is like a box of chocolates." }],
       "movie": {
         "title_pt": "Forrest Gump",
         "original_title": "Forrest Gump",
@@ -45,6 +51,8 @@
       "ru": "Никто не ставит Бэби в угол.",
       "register": "neutral",
       "explicit": false,
+      "ipa_transcription": "nĩˈɡẽj pɐ̃j u ˈbɛjbi nũ ˈkɐ̃tu",
+      "translations": [{ "language_code": "en", "text": "Nobody puts Baby in a corner." }],
       "movie": {
         "title_pt": "Dirty Dancing",
         "original_title": "Dirty Dancing",
@@ -57,6 +65,8 @@
       "ru": "Я вернусь.",
       "register": "neutral",
       "explicit": false,
+      "ipa_transcription": "ˈvou vuɫˈtaɾ",
+      "translations": [{ "language_code": "en", "text": "I’ll be back." }],
       "movie": {
         "title_pt": "O Exterminador Implacável",
         "original_title": "The Terminator",
@@ -70,6 +80,8 @@
       "ru": "Хьюстон, у нас проблема.",
       "register": "neutral",
       "explicit": false,
+      "ipa_transcription": "ˈustõ ˈtẽmuʃ ˈũ pɾuˈblɛmɐ",
+      "translations": [{ "language_code": "en", "text": "Houston, we have a problem." }],
       "movie": {
         "title_pt": "Apollo 13",
         "original_title": "Apollo 13",
@@ -82,6 +94,8 @@
       "ru": "Пока всё идёт нормально.",
       "register": "neutral",
       "explicit": false,
+      "ipa_transcription": "ɐˈtɛ ɐˈki ˈtudu ˈbẽj",
+      "translations": [{ "language_code": "en", "text": "So far, so good." }],
       "movie": {
         "title_pt": "La Haine",
         "original_title": "La Haine",
@@ -94,6 +108,8 @@
       "ru": "Я слишком стар для этого.",
       "register": "neutral",
       "explicit": false,
+      "ipa_transcription": "ˈsou dɨmɐˈzjadu ˈvɛʎu ˈpaɾɐ ˈiʃtu",
+      "translations": [{ "language_code": "en", "text": "I’m too old for this." }],
       "movie": {
         "title_pt": "Máquina Mortífera",
         "original_title": "Lethal Weapon",
@@ -106,6 +122,8 @@
       "ru": "Да пребудет с тобой сила.",
       "register": "neutral",
       "explicit": false,
+      "ipa_transcription": "kɨ ɐ ˈfoɾsɐ ʃˈteʒɐ kõˈtiɡu",
+      "translations": [{ "language_code": "en", "text": "May the Force be with you." }],
       "movie": {
         "title_pt": "Star Wars",
         "original_title": "Star Wars",
@@ -118,6 +136,8 @@
       "ru": "Мы больше не в Канзасе.",
       "register": "neutral",
       "explicit": false,
+      "ipa_transcription": "nɐ̃w ʃˈtɐmuʃ ˈmajʃ nu ˈkɐ̃zɐʃ",
+      "translations": [{ "language_code": "en", "text": "We’re not in Kansas anymore." }],
       "movie": {
         "title_pt": "O Feiticeiro de Oz",
         "original_title": "The Wizard of Oz",
@@ -131,6 +151,8 @@
       "ru": "Я вижу мёртвых людей.",
       "register": "neutral",
       "explicit": false,
+      "ipa_transcription": "ˈveʒu pɨˈsoɐʃ ˈmɔɾtɐʃ",
+      "translations": [{ "language_code": "en", "text": "I see dead people." }],
       "movie": {
         "title_pt": "O Sexto Sentido",
         "original_title": "The Sixth Sense",
@@ -143,6 +165,8 @@
       "ru": "Покажи мне деньги!",
       "register": "neutral",
       "explicit": false,
+      "ipa_transcription": "ˈmɔʃtɾɐmɨ u dĩˈɲejɾu",
+      "translations": [{ "language_code": "en", "text": "Show me the money!" }],
       "movie": {
         "title_pt": "Jerry Maguire",
         "original_title": "Jerry Maguire",
@@ -155,6 +179,8 @@
       "ru": "Это начало чего-то большого.",
       "register": "neutral",
       "explicit": false,
+      "ipa_transcription": "ˈiʃtu ɛ u iˈnisju dɨ ˈaɫɡu ˈɡɾɐ̃dɨ",
+      "translations": [{ "language_code": "en", "text": "This is the beginning of something big." }],
       "movie": {
         "title_pt": "Casablanca",
         "original_title": "Casablanca",
@@ -167,6 +193,8 @@
       "ru": "Я король мира!",
       "register": "neutral",
       "explicit": false,
+      "ipa_transcription": "ew ˈsou u ˈʁɛj du ˈmũdu",
+      "translations": [{ "language_code": "en", "text": "I’m the king of the world!" }],
       "movie": {
         "title_pt": "Titanic",
         "original_title": "Titanic",
@@ -179,6 +207,8 @@
       "ru": "Мы продолжаем бежать.",
       "register": "neutral",
       "explicit": false,
+      "ipa_transcription": "kõtĩˈnwɐmuʃ ɐ kuˈʁeɾ",
+      "translations": [{ "language_code": "en", "text": "We keep running." }],
       "movie": {
         "title_pt": "Matrix",
         "original_title": "The Matrix",
@@ -192,6 +222,8 @@
       "ru": "Почему так серьёзно?",
       "register": "neutral",
       "explicit": false,
+      "ipa_transcription": "puɾˈkɛ tɐ̃w ˈsɛɾju",
+      "translations": [{ "language_code": "en", "text": "Why so serious?" }],
       "movie": {
         "title_pt": "O Cavaleiro das Trevas",
         "original_title": "The Dark Knight",
@@ -204,6 +236,8 @@
       "ru": "Я сделаю это по-своему.",
       "register": "neutral",
       "explicit": false,
+      "ipa_transcription": "ˈvou fɐˈzeɾ ˈiʃtu a ˈmiɲɐ mɐnɐjˈɾɐ",
+      "translations": [{ "language_code": "en", "text": "I’ll do it my way." }],
       "movie": {
         "title_pt": "Scarface",
         "original_title": "Scarface",
@@ -216,6 +250,8 @@
       "ru": "Назад дороги нет.",
       "register": "neutral",
       "explicit": false,
+      "ipa_transcription": "ʒa nɐ̃w a ˈvɔɫtɐ ɐ ˈdaɾ",
+      "translations": [{ "language_code": "en", "text": "There’s no turning back." }],
       "movie": {
         "title_pt": "O Senhor dos Anéis",
         "original_title": "The Lord of the Rings",
@@ -228,6 +264,8 @@
       "ru": "Они могут отнять у нас жизнь, но не свободу.",
       "register": "neutral",
       "explicit": false,
+      "ipa_transcription": "ˈelɨʃ ˈpɔdɐ̃w tiˈɾaɾnuʃ ɐ ˈvidɐ maʃ nɐ̃w ɐ libɨɾˈdadɨ",
+      "translations": [{ "language_code": "en", "text": "They may take our lives, but they’ll never take our freedom." }],
       "movie": {
         "title_pt": "Braveheart",
         "original_title": "Braveheart",
@@ -240,6 +278,8 @@
       "ru": "Я тебя вижу.",
       "register": "neutral",
       "explicit": false,
+      "ipa_transcription": "ew ˈveʒu tɨ",
+      "translations": [{ "language_code": "en", "text": "I see you." }],
       "movie": {
         "title_pt": "Avatar",
         "original_title": "Avatar",
@@ -253,6 +293,8 @@
       "ru": "Давайте с этим разберёмся.",
       "register": "neutral",
       "explicit": false,
+      "ipa_transcription": "ˈvɐmuʃ ʁɨzuɫˈvɛɾ ˈiʃtu",
+      "translations": [{ "language_code": "en", "text": "Let’s sort this out." }],
       "movie": {
         "title_pt": "Pulp Fiction",
         "original_title": "Pulp Fiction",
@@ -265,6 +307,8 @@
       "ru": "Вот что мы делаем.",
       "register": "neutral",
       "explicit": false,
+      "ipa_transcription": "ɛ ˈisu kɨ fɐˈzẽmuʃ",
+      "translations": [{ "language_code": "en", "text": "That’s what we do." }],
       "movie": {
         "title_pt": "Clube da Luta",
         "original_title": "Fight Club",
@@ -277,6 +321,8 @@
       "ru": "Надежда всё ещё есть.",
       "register": "neutral",
       "explicit": false,
+      "ipa_transcription": "ɐˈĩdɐ a ʃpɨˈɾɐ̃sɐ",
+      "translations": [{ "language_code": "en", "text": "There’s still hope." }],
       "movie": {
         "title_pt": "Interestelar",
         "original_title": "Interstellar",
@@ -289,6 +335,8 @@
       "ru": "Нам нужно поговорить.",
       "register": "neutral",
       "explicit": false,
+      "ipa_transcription": "ˈtẽmuʃ dɨ fɐˈlaɾ",
+      "translations": [{ "language_code": "en", "text": "We need to talk." }],
       "movie": {
         "title_pt": "Vários filmes",
         "original_title": "—",
@@ -301,6 +349,8 @@
       "ru": "Всё будет хорошо.",
       "register": "neutral",
       "explicit": false,
+      "ipa_transcription": "ˈtudu ˈvaj fiˈkaɾ ˈbẽj",
+      "translations": [{ "language_code": "en", "text": "Everything will be fine." }],
       "movie": {
         "title_pt": "O Rei Leão",
         "original_title": "The Lion King",

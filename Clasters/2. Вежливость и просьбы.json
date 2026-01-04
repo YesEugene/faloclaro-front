@@ -8,244 +8,325 @@
       "pt": "Pode repetir isso um pouco mais devagar, por favor?",
       "ru": "Можете повторить это немного медленнее, пожалуйста?",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈpɔdɨ ʁɨpɨˈtiɾ ˈisu ˈũ ˈpoku ˈmajʃ dɨvɐˈɡaɾ puɾ fɐˈvoɾ",
+      "translations": [{ "language_code": "en", "text": "Could you repeat that a bit more slowly, please?" }]
     },
     {
       "pt": "Importa-se de esperar só um momento, por favor?",
       "ru": "Не могли бы вы подождать буквально минутку?",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ĩˈpɔɾtɐsɨ dɨ ʃpɨˈɾaɾ ˈsɔ ˈũ muˈmẽtu puɾ fɐˈvoɾ",
+      "translations": [{ "language_code": "en", "text": "Would you mind waiting just a moment, please?" }]
     },
     {
       "pt": "Pode ajudar-me com isto, se faz favor?",
       "ru": "Можете помочь мне с этим, пожалуйста?",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈpɔdɨ ɐʒuˈdaɾmɨ kõ ˈiʃtu sɨ faʃ fɐˈvoɾ",
+      "translations": [{ "language_code": "en", "text": "Could you help me with this, please?" }]
     },
     {
       "pt": "Peço desculpa pelo incómodo causado.",
       "ru": "Прошу прощения за доставленные неудобства.",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈpesu dɨʃˈkulpɐ ˈpelu ĩˈkɔmodu kɐwˈzadu",
+      "translations": [{ "language_code": "en", "text": "I apologise for the inconvenience caused." }]
     },
     {
       "pt": "Agradeço muito a sua ajuda.",
       "ru": "Я очень благодарен(на) за вашу помощь.",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ɐɡɾɐˈdesu ˈmũjtu ɐ ˈsuɐ ɐˈʒudɐ",
+      "translations": [{ "language_code": "en", "text": "I really appreciate your help." }]
     },
     {
       "pt": "Pode explicar isso de forma mais simples, por favor?",
       "ru": "Можете объяснить это попроще, пожалуйста?",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈpɔdɨ ʃplɨˈkaɾ ˈisu dɨ ˈfɔɾmɐ ˈmajʃ ˈsĩplɨʃ puɾ fɐˈvoɾ",
+      "translations": [{ "language_code": "en", "text": "Could you explain that in a simpler way, please?" }]
     },
     {
       "pt": "Desculpe interromper, mas tenho uma dúvida.",
       "ru": "Извините, что перебиваю, но у меня есть вопрос.",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "dɨʃˈkulpɨ ĩtɨʁõˈpeɾ mɐʃ ˈtẽɲu ˈumɐ ˈduβidɐ",
+      "translations": [{ "language_code": "en", "text": "Sorry to interrupt, but I have a question." }]
     },
     {
       "pt": "Se não se importar, podemos falar depois.",
       "ru": "Если вы не против, можем поговорить позже.",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "sɨ nɐ̃w sɨ ĩpɔɾˈtaɾ puˈdɛmuʃ fɐˈlaɾ dɨˈpojʃ",
+      "translations": [{ "language_code": "en", "text": "If you don’t mind, we can talk later." }]
     },
     {
       "pt": "Obrigado por me avisar com antecedência.",
       "ru": "Спасибо, что предупредили заранее.",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "uβɾiˈɡadu puɾ mɨ ɐviˈzaɾ kõ ɐ̃tɨsɨˈdẽsjɐ",
+      "translations": [{ "language_code": "en", "text": "Thank you for letting me know in advance." }]
     },
     {
       "pt": "Muito obrigado pelo seu tempo.",
       "ru": "Большое спасибо за ваше время.",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈmũjtu uβɾiˈɡadu ˈpelu ˈsew ˈtẽpu",
+      "translations": [{ "language_code": "en", "text": "Thank you very much for your time." }]
     },
 
     {
       "pt": "Pode confirmar isso para mim, por favor?",
       "ru": "Можете подтвердить это для меня, пожалуйста?",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈpɔdɨ kõfiɾˈmaɾ ˈisu ˈpaɾɐ mĩ puɾ fɐˈvoɾ",
+      "translations": [{ "language_code": "en", "text": "Could you confirm that for me, please?" }]
     },
     {
       "pt": "Desculpe, acho que me enganei.",
       "ru": "Извините, кажется, я ошибся(лась).",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "dɨʃˈkulpɨ ˈaʃu kɨ mɨ ẽɡɐˈnɐj",
+      "translations": [{ "language_code": "en", "text": "Sorry, I think I made a mistake." }]
     },
     {
       "pt": "Lamento, não foi essa a minha intenção.",
       "ru": "Простите, это не было моей целью.",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "lɐˈmẽtu nɐ̃w ˈfoj ˈesɐ ɐ ˈmiɲɐ ĩtẽˈsɐ̃w",
+      "translations": [{ "language_code": "en", "text": "I’m sorry, that wasn’t my intention." }]
     },
     {
       "pt": "Pode falar um pouco mais alto, por favor?",
       "ru": "Можете говорить немного громче, пожалуйста?",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈpɔdɨ fɐˈlaɾ ˈũ ˈpoku ˈmajʃ ˈaɫtu puɾ fɐˈvoɾ",
+      "translations": [{ "language_code": "en", "text": "Could you speak a bit louder, please?" }]
     },
     {
       "pt": "Se fizer o favor de esperar um pouco.",
       "ru": "Будьте добры, подождите немного.",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "sɨ fiˈzeɾ u fɐˈvoɾ dɨ ʃpɨˈɾaɾ ˈũ ˈpoku",
+      "translations": [{ "language_code": "en", "text": "If you would be so kind as to wait a moment." }]
     },
+
     {
       "pt": "Agradeço se me puder ajudar com isso.",
       "ru": "Буду благодарен(на), если сможете помочь с этим.",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ɐɡɾɐˈdesu sɨ mɨ puˈdeɾ ɐʒuˈdaɾ kõ ˈisu",
+      "translations": [{ "language_code": "en", "text": "I would appreciate it if you could help me with that." }]
     },
     {
       "pt": "Desculpe, não percebi bem o seu nome.",
       "ru": "Извините, я не расслышал(а) ваше имя.",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "dɨʃˈkulpɨ nɐ̃w pɨɾˈsɛbi bẽ u ˈsew ˈnomɨ",
+      "translations": [{ "language_code": "en", "text": "Sorry, I didn’t quite catch your name." }]
     },
     {
       "pt": "Não há problema, compreendo perfeitamente.",
       "ru": "Нет проблем, я прекрасно понимаю.",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "nɐ̃w a pɾuˈblɛmɐ kõpɾɨˈẽdu pɨɾfɐjˈtɐmẽtɨ",
+      "translations": [{ "language_code": "en", "text": "No problem, I completely understand." }]
     },
     {
       "pt": "Obrigado pela sua paciência.",
       "ru": "Спасибо за ваше терпение.",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "uβɾiˈɡadu ˈpelɐ ˈsuɐ pɐsjˈẽsjɐ",
+      "translations": [{ "language_code": "en", "text": "Thank you for your patience." }]
     },
     {
       "pt": "Pode enviar-me isso mais tarde, por favor?",
       "ru": "Можете прислать мне это позже, пожалуйста?",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈpɔdɨ ẽviˈaɾmɨ ˈisu ˈmajʃ ˈtaɾdɨ puɾ fɐˈvoɾ",
+      "translations": [{ "language_code": "en", "text": "Could you send that to me later, please?" }]
     },
 
     {
       "pt": "Peço desculpa pelo atraso, houve um imprevisto.",
       "ru": "Прошу прощения за опоздание, возникла непредвиденная ситуация.",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈpesu dɨʃˈkulpɐ ˈpelu ɐˈtɾazu ˈoβɨ ˈũ ĩpɾɨˈviʃtu",
+      "translations": [{ "language_code": "en", "text": "I’m sorry for the delay, something unexpected came up." }]
     },
     {
       "pt": "Se não for incómodo, agradecia.",
       "ru": "Если это не затруднит, буду признателен(на).",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "sɨ nɐ̃w foɾ ĩˈkɔmodu ɐɡɾɐdɨˈsiɐ",
+      "translations": [{ "language_code": "en", "text": "If it’s not too much trouble, I’d appreciate it." }]
     },
     {
       "pt": "Pode deixar, eu trato disso.",
       "ru": "Не беспокойтесь, я этим займусь.",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈpɔdɨ dɨjˈʃaɾ ew ˈtɾatu ˈdisu",
+      "translations": [{ "language_code": "en", "text": "Don’t worry, I’ll take care of it." }]
     },
     {
       "pt": "Importa-se que façamos isso mais tarde?",
       "ru": "Вы не против, если мы сделаем это позже?",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ĩˈpɔɾtɐsɨ kɨ fɐˈsɐmuʃ ˈisu ˈmajʃ ˈtaɾdɨ",
+      "translations": [{ "language_code": "en", "text": "Would you mind if we did this later?" }]
     },
     {
       "pt": "Desculpe a confusão, foi um mal-entendido.",
       "ru": "Извините за путаницу, это было недоразумение.",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "dɨʃˈkulpɨ ɐ kõfuˈzɐ̃w ˈfoj ˈũ maɫ ẽtẽˈdidu",
+      "translations": [{ "language_code": "en", "text": "Sorry for the confusion, it was a misunderstanding." }]
     },
     {
       "pt": "Pode verificar isso quando tiver um momento?",
       "ru": "Можете проверить это, когда у вас будет минутка?",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈpɔdɨ vɨɾifiˈkaɾ ˈisu ˈkwɐ̃du tiˈveɾ ˈũ muˈmẽtu",
+      "translations": [{ "language_code": "en", "text": "Could you check this when you have a moment?" }]
     },
     {
       "pt": "Agradeço desde já a sua atenção.",
       "ru": "Заранее благодарю за ваше внимание.",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ɐɡɾɐˈdesu ˈdɨʒdɨ ʒa ɐ ˈsuɐ ɐtẽˈsɐ̃w",
+      "translations": [{ "language_code": "en", "text": "Thank you in advance for your attention." }]
     },
     {
       "pt": "Desculpe, poderia esclarecer isso melhor?",
       "ru": "Извините, не могли бы вы прояснить это лучше?",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "dɨʃˈkulpɨ puˈdeɾjɐ ʃklɐɾɨˈseɾ ˈisu mɨˈʎɔɾ",
+      "translations": [{ "language_code": "en", "text": "Sorry, could you clarify that a bit more?" }]
     },
     {
       "pt": "Se for possível, preferia assim.",
       "ru": "Если возможно, я бы предпочёл(ла) так.",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "sɨ foɾ puˈsivɛɫ pɾɨfɨˈɾiɐ ɐˈsĩ",
+      "translations": [{ "language_code": "en", "text": "If possible, I would prefer it that way." }]
     },
     {
       "pt": "Obrigado por compreender a situação.",
       "ru": "Спасибо за понимание ситуации.",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "uβɾiˈɡadu puɾ kõpɾɨˈẽdɛɾ ɐ sitwɐˈsɐ̃w",
+      "translations": [{ "language_code": "en", "text": "Thank you for understanding the situation." }]
     },
 
     {
       "pt": "Pode falar comigo quando tiver um momento?",
       "ru": "Можете поговорить со мной, когда у вас будет минутка?",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈpɔdɨ fɐˈlaɾ kõˈmiɡu ˈkwɐ̃du tiˈveɾ ˈũ muˈmẽtu",
+      "translations": [{ "language_code": "en", "text": "Could you talk to me when you have a moment?" }]
     },
     {
       "pt": "Lamento incomodar, mas preciso de ajuda.",
       "ru": "Извините за беспокойство, но мне нужна помощь.",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "lɐˈmẽtu ĩkũˈmodaɾ mɐʃ pɾɨˈsizu dɨ ɐˈʒudɐ",
+      "translations": [{ "language_code": "en", "text": "Sorry to bother you, but I need help." }]
     },
     {
       "pt": "Se não se importar, gostaria de perguntar algo.",
       "ru": "Если вы не против, я хотел(а) бы кое-что спросить.",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "sɨ nɐ̃w sɨ ĩpɔɾˈtaɾ ɡuʃˈtaɾjɐ dɨ pɾɨɡũˈtaɾ ˈaɫɡu",
+      "translations": [{ "language_code": "en", "text": "If you don’t mind, I’d like to ask something." }]
     },
     {
       "pt": "Obrigado por tratar disso tão rapidamente.",
       "ru": "Спасибо, что так быстро этим занялись.",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "uβɾiˈɡadu puɾ tɾɐˈtaɾ ˈdisu tɐ̃w ʁɐpidɐˈmẽtɨ",
+      "translations": [{ "language_code": "en", "text": "Thank you for handling this so quickly." }]
     },
     {
       "pt": "Desculpe, pode repetir a última parte?",
       "ru": "Извините, можете повторить последнюю часть?",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "dɨʃˈkulpɨ ˈpɔdɨ ʁɨpɨˈtiɾ ɐ ˈuɫtimɐ ˈpaɾtɨ",
+      "translations": [{ "language_code": "en", "text": "Sorry, could you repeat the last part?" }]
     },
     {
       "pt": "Agradecia que me avisasse com antecedência.",
       "ru": "Я был(а) бы признателен(на), если бы вы предупредили заранее.",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ɐɡɾɐdɨˈsiɐ kɨ mɨ ɐviˈsasɨ kõ ɐ̃tɨsɨˈdẽsjɐ",
+      "translations": [{ "language_code": "en", "text": "I would appreciate it if you could let me know in advance." }]
     },
     {
       "pt": "Pode dar-me um minuto para verificar isso?",
       "ru": "Можете дать мне минуту, чтобы это проверить?",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈpɔdɨ ˈdaɾmɨ ˈũ miˈnutu ˈpaɾɐ vɨɾifiˈkaɾ ˈisu",
+      "translations": [{ "language_code": "en", "text": "Could you give me a minute to check this?" }]
     },
     {
       "pt": "Obrigado por ter esperado.",
       "ru": "Спасибо, что подождали.",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "uβɾiˈɡadu puɾ teɾ ʃpɨˈɾadu",
+      "translations": [{ "language_code": "en", "text": "Thank you for waiting." }]
     },
     {
       "pt": "Se não for pedir muito, agradecia.",
       "ru": "Если это не слишком сложно, буду признателен(на).",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "sɨ nɐ̃w foɾ pɨˈdiɾ ˈmũjtu ɐɡɾɐdɨˈsiɐ",
+      "translations": [{ "language_code": "en", "text": "If it’s not asking too much, I’d appreciate it." }]
     },
     {
       "pt": "Desculpe, pode ajudar-me um instante?",
       "ru": "Извините, можете помочь мне на минутку?",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "dɨʃˈkulpɨ ˈpɔdɨ ɐʒuˈdaɾmɨ ˈũ ĩʃˈtɐ̃tɨ",
+      "translations": [{ "language_code": "en", "text": "Sorry, could you help me for a moment?" }]
     }
   ]
 }

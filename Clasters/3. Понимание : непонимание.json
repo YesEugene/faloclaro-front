@@ -8,244 +8,324 @@
       "pt": "Não percebi bem o que quis dizer.",
       "ru": "Я не совсем понял(а), что вы имели в виду.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "nɐ̃w pɨɾˈsɛbi bẽ u kɨ ˈkiʃ dɨˈzeɾ",
+      "translations": [{ "language_code": "en", "text": "I didn’t quite understand what you meant." }]
     },
     {
       "pt": "Agora percebo melhor a situação.",
       "ru": "Теперь я лучше понимаю ситуацию.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ɐˈɡɔɾɐ pɨɾˈsɛbu mɨˈʎɔɾ ɐ sitwɐˈsɐ̃w",
+      "translations": [{ "language_code": "en", "text": "Now I understand the situation better." }]
     },
     {
       "pt": "Pode explicar isso de outra forma?",
       "ru": "Можете объяснить это по-другому?",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈpɔdɨ ʃplɨˈkaɾ ˈisu dɨ ˈotɾɐ ˈfɔɾmɐ",
+      "translations": [{ "language_code": "en", "text": "Could you explain that in another way?" }]
     },
     {
       "pt": "Ainda não está totalmente claro para mim.",
       "ru": "Мне всё ещё не до конца понятно.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ɐˈĩdɐ nɐ̃w ʃˈta totɐɫˈmẽtɨ ˈklaɾu ˈpaɾɐ mĩ",
+      "translations": [{ "language_code": "en", "text": "It’s still not completely clear to me." }]
     },
     {
       "pt": "Acho que entendi a ideia geral.",
       "ru": "Думаю, я понял(а) общую идею.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈaʃu kɨ ẽtẽˈdi ɐ iˈdɛjɐ ʒɨˈɾaɫ",
+      "translations": [{ "language_code": "en", "text": "I think I understood the general idea." }]
     },
     {
       "pt": "Não tenho a certeza se compreendi bem.",
       "ru": "Я не уверен(а), что правильно понял(а).",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "nɐ̃w ˈtẽɲu ɐ sɨɾˈtezɐ sɨ kõpɾɨˈẽdi bẽ",
+      "translations": [{ "language_code": "en", "text": "I’m not sure if I understood correctly." }]
     },
     {
       "pt": "Isso ajuda-me a perceber melhor.",
       "ru": "Это помогает мне лучше понять.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈisu ɐˈʒudɐmɨ ɐ pɨɾˈsɛɾbɨɾ mɨˈʎɔɾ",
+      "translations": [{ "language_code": "en", "text": "That helps me understand better." }]
     },
     {
       "pt": "Continuo com algumas dúvidas sobre isso.",
       "ru": "У меня всё ещё есть некоторые сомнения по этому поводу.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "kõtĩˈnuu kõ ˈaɫɡumɐʃ ˈduβidɐʃ ˈsoβɾɨ ˈisu",
+      "translations": [{ "language_code": "en", "text": "I still have some doubts about this." }]
     },
     {
       "pt": "Pode dar-me um exemplo mais concreto?",
       "ru": "Можете привести более конкретный пример?",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈpɔdɨ ˈdaɾmɨ ˈũ ɨˈzẽplu ˈmajʃ kõˈkɾetu",
+      "translations": [{ "language_code": "en", "text": "Could you give me a more concrete example?" }]
     },
     {
       "pt": "Agora faz muito mais sentido para mim.",
       "ru": "Теперь для меня это имеет гораздо больше смысла.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ɐˈɡɔɾɐ faʃ ˈmũjtu ˈmajʃ sẽˈtĩdu ˈpaɾɐ mĩ",
+      "translations": [{ "language_code": "en", "text": "Now it makes much more sense to me." }]
     },
 
     {
       "pt": "Não estou a perceber bem esta parte.",
       "ru": "Я не очень понимаю эту часть.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "nɐ̃w ʃˈtow ɐ pɨɾsɨˈbeɾ bẽ ˈeʃtɐ ˈpaɾtɨ",
+      "translations": [{ "language_code": "en", "text": "I’m not really understanding this part." }]
     },
     {
       "pt": "Pode repetir essa parte outra vez?",
       "ru": "Можете повторить эту часть ещё раз?",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈpɔdɨ ʁɨpɨˈtiɾ ˈesɐ ˈpaɾtɨ ˈotɾɐ ˈveʃ",
+      "translations": [{ "language_code": "en", "text": "Could you repeat that part again?" }]
     },
     {
       "pt": "Percebo o que quer dizer, em parte.",
       "ru": "Я отчасти понимаю, что вы хотите сказать.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "pɨɾˈsɛbu u kɨ ˈkɛɾ dɨˈzeɾ ẽ ˈpaɾtɨ",
+      "translations": [{ "language_code": "en", "text": "I understand what you mean, in part." }]
     },
     {
       "pt": "Não consegui acompanhar tudo o que disse.",
       "ru": "Я не смог(ла) уловить всё, что вы сказали.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "nɐ̃w kõsɨˈɡi ɐkõpɐˈɲaɾ ˈtudu u kɨ ˈdisɨ",
+      "translations": [{ "language_code": "en", "text": "I couldn’t follow everything you said." }]
     },
     {
       "pt": "Pode falar um pouco mais devagar?",
       "ru": "Можете говорить немного медленнее?",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈpɔdɨ fɐˈlaɾ ˈũ ˈpoku ˈmajʃ dɨvɐˈɡaɾ",
+      "translations": [{ "language_code": "en", "text": "Could you speak a bit more slowly?" }]
     },
     {
       "pt": "Isso não ficou muito claro para mim.",
       "ru": "Для меня это было не очень понятно.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈisu nɐ̃w ˈfikʊ ˈmũjtu ˈklaɾu ˈpaɾɐ mĩ",
+      "translations": [{ "language_code": "en", "text": "That wasn’t very clear to me." }]
     },
     {
       "pt": "Agora percebo o que estava a dizer.",
       "ru": "Теперь я понимаю, что вы имели в виду.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ɐˈɡɔɾɐ pɨɾˈsɛbu u kɨ ɨʃˈtaβɐ ɐ dɨˈzeɾ",
+      "translations": [{ "language_code": "en", "text": "Now I understand what you were saying." }]
     },
     {
       "pt": "Ainda tenho dificuldade em perceber isso.",
       "ru": "Мне всё ещё трудно это понять.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ɐˈĩdɐ ˈtẽɲu difikulˈdadɨ ẽ pɨɾˈsɛɾbɨɾ ˈisu",
+      "translations": [{ "language_code": "en", "text": "I still have difficulty understanding this." }]
     },
     {
       "pt": "Pode explicar isso passo a passo?",
       "ru": "Можете объяснить это шаг за шагом?",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈpɔdɨ ʃplɨˈkaɾ ˈisu ˈpasu ɐ ˈpasu",
+      "translations": [{ "language_code": "en", "text": "Could you explain this step by step?" }]
     },
     {
       "pt": "Isso começa a fazer sentido agora.",
       "ru": "Теперь это начинает иметь смысл.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈisu kõˈmɛsɐ ɐ fɐˈzeɾ sẽˈtĩdu ɐˈɡɔɾɐ",
+      "translations": [{ "language_code": "en", "text": "This is starting to make sense now." }]
     },
 
     {
       "pt": "Não tenho a certeza se entendi corretamente.",
       "ru": "Я не уверен(а), что понял(а) правильно.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "nɐ̃w ˈtẽɲu ɐ sɨɾˈtezɐ sɨ ẽtẽˈdi kɔʁɨtɐˈmẽtɨ",
+      "translations": [{ "language_code": "en", "text": "I’m not sure if I understood correctly." }]
     },
     {
       "pt": "Pode clarificar um pouco melhor?",
       "ru": "Можете немного прояснить это?",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈpɔdɨ klɐɾifiˈkaɾ ˈũ ˈpoku mɨˈʎɔɾ",
+      "translations": [{ "language_code": "en", "text": "Could you clarify it a bit more?" }]
     },
     {
       "pt": "Perdi-me um pouco a meio da explicação.",
       "ru": "Я немного потерялся(лась) в середине объяснения.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "pɨɾˈdimɨ ˈũ ˈpoku ɐ ˈmeju dɐ ʃplɨkɐˈsɐ̃w",
+      "translations": [{ "language_code": "en", "text": "I got a bit lost halfway through the explanation." }]
     },
     {
       "pt": "Isso não corresponde ao que eu entendi.",
       "ru": "Это не соответствует тому, как я это понял(а).",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈisu nɐ̃w kõʁɨʃˈpõdɨ aw kɨ ew ẽtẽˈdi",
+      "translations": [{ "language_code": "en", "text": "That doesn’t correspond to how I understood it." }]
     },
     {
       "pt": "Agora está mais claro para mim.",
       "ru": "Теперь мне стало понятнее.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ɐˈɡɔɾɐ ʃˈta ˈmajʃ ˈklaɾu ˈpaɾɐ mĩ",
+      "translations": [{ "language_code": "en", "text": "Now it’s clearer to me." }]
     },
     {
       "pt": "Pode dizer isso de maneira mais simples?",
       "ru": "Можете сказать это более простыми словами?",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈpɔdɨ dɨˈzeɾ ˈisu dɨ mɐnɐjˈɾɐ ˈmajʃ ˈsĩplɨʃ",
+      "translations": [{ "language_code": "en", "text": "Could you say that in simpler terms?" }]
     },
     {
       "pt": "Não acompanhei bem essa parte.",
       "ru": "Я плохо уловил(а) эту часть.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "nɐ̃w ɐkõpɐˈɲaj bẽ ˈesɐ ˈpaɾtɨ",
+      "translations": [{ "language_code": "en", "text": "I didn’t follow that part very well." }]
     },
     {
       "pt": "Acho que agora estou a perceber.",
       "ru": "Думаю, теперь я начинаю понимать.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈaʃu kɨ ɐˈɡɔɾɐ ʃˈtow ɐ pɨɾsɨˈbeɾ",
+      "translations": [{ "language_code": "en", "text": "I think I’m starting to understand now." }]
     },
     {
       "pt": "Isso esclarece bastante as coisas.",
       "ru": "Это многое проясняет.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈisu ʃklɐɾɨˈsɛsɨ bɐʃˈtɐ̃tɨ ɐʃ ˈkojzɐʃ",
+      "translations": [{ "language_code": "en", "text": "That clears things up quite a bit." }]
     },
     {
       "pt": "Pode confirmar se entendi bem?",
       "ru": "Можете подтвердить, что я правильно понял(а)?",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈpɔdɨ kõfiɾˈmaɾ sɨ ẽtẽˈdi bẽ",
+      "translations": [{ "language_code": "en", "text": "Could you confirm if I understood correctly?" }]
     },
 
     {
       "pt": "Ainda preciso de algum tempo para entender.",
       "ru": "Мне всё ещё нужно немного времени, чтобы понять.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ɐˈĩdɐ pɾɨˈsizu dɨ ɐɫˈɡũ ˈtẽpu ˈpaɾɐ ẽtẽˈdeɾ",
+      "translations": [{ "language_code": "en", "text": "I still need some time to understand." }]
     },
     {
       "pt": "Não estou a conseguir perceber isto agora.",
       "ru": "Я сейчас не могу это понять.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "nɐ̃w ʃˈtow ɐ kõsɨˈɡiɾ pɨɾˈsɛɾbɨɾ ˈiʃtu ɐˈɡɔɾɐ",
+      "translations": [{ "language_code": "en", "text": "I’m not able to understand this right now." }]
     },
     {
       "pt": "Isso foi explicado de forma clara.",
       "ru": "Это было объяснено понятно.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈisu ˈfoj ʃplɨˈkadu dɨ ˈfɔɾmɐ ˈklaɾɐ",
+      "translations": [{ "language_code": "en", "text": "That was explained clearly." }]
     },
     {
       "pt": "Agora consigo ver a lógica disso.",
       "ru": "Теперь я вижу в этом логику.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ɐˈɡɔɾɐ kõˈsiɡu ˈveɾ ɐ ˈlɔʒikɐ ˈdisu",
+      "translations": [{ "language_code": "en", "text": "Now I can see the logic behind it." }]
     },
     {
       "pt": "Ainda tenho algumas perguntas sobre isso.",
       "ru": "У меня всё ещё есть несколько вопросов по этому поводу.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ɐˈĩdɐ ˈtẽɲu ˈaɫɡumɐʃ pɾɨˈɡũtɐʃ ˈsoβɾɨ ˈisu",
+      "translations": [{ "language_code": "en", "text": "I still have a few questions about this." }]
     },
     {
       "pt": "Pode voltar a explicar a última parte?",
       "ru": "Можете ещё раз объяснить последнюю часть?",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈpɔdɨ βuɫˈtaɾ ɐ ʃplɨˈkaɾ ɐ ˈuɫtimɐ ˈpaɾtɨ",
+      "translations": [{ "language_code": "en", "text": "Could you explain the last part again?" }]
     },
     {
       "pt": "Isso ajuda-me a entender melhor o contexto.",
       "ru": "Это помогает мне лучше понять контекст.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈisu ɐˈʒudɐmɨ ɐ ẽtẽˈdeɾ mɨˈʎɔɾ u kõˈtɛʃtu",
+      "translations": [{ "language_code": "en", "text": "That helps me understand the context better." }]
     },
     {
       "pt": "Acho que agora entendi corretamente.",
       "ru": "Думаю, теперь я понял(а) правильно.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈaʃu kɨ ɐˈɡɔɾɐ ẽtẽˈdi kɔʁɨtɐˈmẽtɨ",
+      "translations": [{ "language_code": "en", "text": "I think I understand correctly now." }]
     },
     {
       "pt": "Ainda não consegui perceber tudo.",
       "ru": "Мне пока не удалось понять всё.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ɐˈĩdɐ nɐ̃w kõsɨˈɡi pɨɾˈsɛɾbɨɾ ˈtudu",
+      "translations": [{ "language_code": "en", "text": "I still haven’t managed to understand everything." }]
     },
     {
       "pt": "Obrigado por explicar com tanta clareza.",
       "ru": "Спасибо, что так понятно объяснили.",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "uβɾiˈɡadu puɾ ʃplɨˈkaɾ kõ ˈtɐ̃tɐ klɐˈɾezɐ",
+      "translations": [{ "language_code": "en", "text": "Thank you for explaining so clearly." }]
     }
   ]
 }

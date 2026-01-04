@@ -8,244 +8,324 @@
       "pt": "A escola avisou-nos com antecedência.",
       "ru": "Школа предупредила нас заранее.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ɐ ʃˈkɔlɐ ɐviˈzou nuʃ kõ ɐ̃tɨsɨˈdẽsjɐ",
+      "translations": [{ "language_code": "en", "text": "The school informed us in advance." }]
     },
     {
       "pt": "A minha filha está muito cansada hoje.",
       "ru": "Моя дочь сегодня очень устала.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ɐ ˈmiɲɐ ˈfiʎɐ ʃˈta ˈmũjtu kɐ̃ˈsadɐ ˈoʒɨ",
+      "translations": [{ "language_code": "en", "text": "My daughter is very tired today." }]
     },
     {
       "pt": "Precisamos de falar com a professora.",
       "ru": "Нам нужно поговорить с учительницей.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "pɾɨsiˈzɐmuʃ dɨ fɐˈlaɾ kõ ɐ pɾufɨˈsoɾɐ",
+      "translations": [{ "language_code": "en", "text": "We need to talk to the teacher." }]
     },
     {
       "pt": "Ele esqueceu-se do trabalho de casa.",
       "ru": "Он забыл домашнее задание.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈelɨ ɨʃkɨˈsewsɨ du tɾɐˈbaʎu dɨ ˈkazɐ",
+      "translations": [{ "language_code": "en", "text": "He forgot his homework." }]
     },
     {
       "pt": "Hoje houve um problema na escola.",
       "ru": "Сегодня в школе была проблема.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈoʒɨ ˈoβɨ ˈũ pɾuˈblɛmɐ nɐ ʃˈkɔlɐ",
+      "translations": [{ "language_code": "en", "text": "There was a problem at school today." }]
     },
     {
       "pt": "A reunião é amanhã de manhã.",
       "ru": "Собрание завтра утром.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ɐ ʁɨũˈɐ̃w ɛ ɐmɐˈɲɐ̃ dɨ mɐˈɲɐ̃",
+      "translations": [{ "language_code": "en", "text": "The meeting is tomorrow morning." }]
     },
     {
       "pt": "Ela está a adaptar-se aos poucos.",
       "ru": "Она понемногу адаптируется.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈelɐ ʃˈta ɐ dɐptɐɾˈsɨ awʃ ˈpokus",
+      "translations": [{ "language_code": "en", "text": "She is slowly adapting." }]
     },
     {
       "pt": "Isso é normal para a idade dela.",
       "ru": "Это нормально для её возраста.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈisu ɛ noɾˈmaɫ ˈpaɾɐ ɐ iˈdadɨ ˈdelɐ",
+      "translations": [{ "language_code": "en", "text": "That’s normal for her age." }]
     },
     {
       "pt": "Temos de ajudar com os deveres de casa.",
       "ru": "Нам нужно помочь с домашними заданиями.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈtẽmuʃ dɨ ɐʒuˈdaɾ kõ uʃ dɨˈveɾɨʃ dɨ ˈkazɐ",
+      "translations": [{ "language_code": "en", "text": "We need to help with the homework." }]
     },
     {
       "pt": "A escola pediu uma autorização assinada.",
       "ru": "Школа попросила подписанное разрешение.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ɐ ʃˈkɔlɐ pɨˈdiu ˈumɐ ɐwtɔɾizɐˈsɐ̃w ɐsiˈnadɐ",
+      "translations": [{ "language_code": "en", "text": "The school asked for a signed permission slip." }]
     },
 
     {
       "pt": "Hoje ela chegou a casa mais cedo.",
       "ru": "Сегодня она пришла домой раньше.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈoʒɨ ˈelɐ ʃɨˈɡou ɐ ˈkazɐ ˈmajʃ ˈseɾu",
+      "translations": [{ "language_code": "en", "text": "Today she got home earlier." }]
     },
     {
       "pt": "Ele não se sentiu bem durante as aulas.",
       "ru": "Ему стало плохо во время уроков.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈelɨ nɐ̃w sɨ sẽˈtiu bẽ duˈɾɐ̃tɨ ɐʃ ˈawlɐʃ",
+      "translations": [{ "language_code": "en", "text": "He didn’t feel well during the classes." }]
     },
     {
       "pt": "A professora enviou uma mensagem.",
       "ru": "Учительница отправила сообщение.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ɐ pɾufɨˈsoɾɐ ẽviˈou ˈumɐ mẽˈsaʒẽj",
+      "translations": [{ "language_code": "en", "text": "The teacher sent a message." }]
     },
     {
       "pt": "Temos de preparar a mochila para amanhã.",
       "ru": "Нам нужно подготовить рюкзак на завтра.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈtẽmuʃ dɨ pɾɨpɐˈɾaɾ ɐ muˈʃilɐ ˈpaɾɐ ɐmɐˈɲɐ̃",
+      "translations": [{ "language_code": "en", "text": "We need to prepare the backpack for tomorrow." }]
     },
     {
       "pt": "Hoje houve uma atividade especial na escola.",
       "ru": "Сегодня в школе было специальное мероприятие.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈoʒɨ ˈoβɨ ˈumɐ ɐtiviˈdadɨ ʃpɨsˈjaɫ nɐ ʃˈkɔlɐ",
+      "translations": [{ "language_code": "en", "text": "There was a special activity at school today." }]
     },
     {
       "pt": "Ela está um pouco nervosa com o teste.",
       "ru": "Она немного нервничает из-за контрольной.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈelɐ ʃˈta ˈũ ˈpoku nɛɾˈvozɐ kõ u ˈtɛʃtɨ",
+      "translations": [{ "language_code": "en", "text": "She’s a bit nervous about the test." }]
     },
     {
       "pt": "O horário da escola mudou esta semana.",
       "ru": "Расписание школы изменилось на этой неделе.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "u oˈɾaɾju dɐ ʃˈkɔlɐ muˈdou ˈeʃtɐ sɨˈmɐnɐ",
+      "translations": [{ "language_code": "en", "text": "The school schedule changed this week." }]
     },
     {
       "pt": "Ele precisa de mais tempo para se concentrar.",
       "ru": "Ему нужно больше времени, чтобы сосредоточиться.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈelɨ pɾɨˈsizɐ dɨ ˈmajʃ ˈtẽpu ˈpaɾɐ sɨ kõsẽtɾɐɾ",
+      "translations": [{ "language_code": "en", "text": "He needs more time to concentrate." }]
     },
     {
       "pt": "A escola organizou uma reunião de pais.",
       "ru": "Школа организовала родительское собрание.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ɐ ʃˈkɔlɐ oɾɡɐniˈzou ˈumɐ ʁɨũˈɐ̃w dɨ ˈpajʃ",
+      "translations": [{ "language_code": "en", "text": "The school organised a parents’ meeting." }]
     },
     {
       "pt": "Ela gosta muito da nova professora.",
       "ru": "Ей очень нравится новая учительница.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈelɐ ˈɡɔʃtɐ ˈmũjtu dɐ ˈnɔβɐ pɾufɨˈsoɾɐ",
+      "translations": [{ "language_code": "en", "text": "She really likes the new teacher." }]
     },
 
     {
       "pt": "Hoje ele teve dificuldades na aula.",
       "ru": "Сегодня у него были трудности на уроке.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈoʒɨ ˈelɨ ˈtɛvɨ difikulˈdadɨʃ nɐ ˈawlɐ",
+      "translations": [{ "language_code": "en", "text": "He had difficulties in class today." }]
     },
     {
       "pt": "Temos de falar sobre isso com calma.",
       "ru": "Нам нужно спокойно об этом поговорить.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈtẽmuʃ dɨ fɐˈlaɾ ˈsoβɾɨ ˈisu kõ ˈkaɫmɐ",
+      "translations": [{ "language_code": "en", "text": "We need to talk about this calmly." }]
     },
     {
       "pt": "Ela esqueceu-se do lanche hoje.",
       "ru": "Сегодня она забыла перекус.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈelɐ ɨʃkɨˈsewsɨ du ˈlɐ̃ʃɨ ˈoʒɨ",
+      "translations": [{ "language_code": "en", "text": "She forgot her snack today." }]
     },
     {
       "pt": "O professor pediu mais atenção em aula.",
       "ru": "Учитель попросил быть внимательнее на уроке.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "u pɾufɨˈsoɾ pɨˈdiu ˈmajʃ ɐtẽˈsɐ̃w ẽ ˈawlɐ",
+      "translations": [{ "language_code": "en", "text": "The teacher asked for more attention in class." }]
     },
     {
       "pt": "Ele ficou contente com a nota.",
       "ru": "Он был доволен оценкой.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈelɨ fiˈkou kõˈtẽtɨ kõ ɐ ˈnɔtɐ",
+      "translations": [{ "language_code": "en", "text": "He was happy with the grade." }]
     },
     {
       "pt": "Hoje ela não quis ir à escola.",
       "ru": "Сегодня она не хотела идти в школу.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈoʒɨ ˈelɐ nɐ̃w ˈkiʃ iɾ a ʃˈkɔlɐ",
+      "translations": [{ "language_code": "en", "text": "Today she didn’t want to go to school." }]
     },
     {
       "pt": "A escola enviou um aviso importante.",
       "ru": "Школа прислала важное уведомление.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ɐ ʃˈkɔlɐ ẽviˈou ˈũ ɐˈvizu ĩpoɾˈtɐ̃tɨ",
+      "translations": [{ "language_code": "en", "text": "The school sent an important notice." }]
     },
     {
       "pt": "Ele precisa de descansar depois das aulas.",
       "ru": "Ему нужно отдохнуть после занятий.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈelɨ pɾɨˈsizɐ dɨ dɨʃkɐ̃ˈsaɾ dɨˈpojʃ dɐʃ ˈawlɐʃ",
+      "translations": [{ "language_code": "en", "text": "He needs to rest after classes." }]
     },
     {
       "pt": "Ela está a aprender a organizar-se melhor.",
       "ru": "Она учится лучше организовываться.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈelɐ ʃˈta ɐ ɐpɾẽˈdeɾ ɐ oɾɡɐniˈzaɾsɨ mɨˈʎɔɾ",
+      "translations": [{ "language_code": "en", "text": "She is learning to organise herself better." }]
     },
     {
       "pt": "Temos de verificar o calendário escolar.",
       "ru": "Нам нужно проверить школьный календарь.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈtẽmuʃ dɨ vɨɾifiˈkaɾ u kɐlẽˈdaɾju ʃkɔˈlaɾ",
+      "translations": [{ "language_code": "en", "text": "We need to check the school calendar." }]
     },
 
     {
       "pt": "Hoje ele trouxe trabalhos para terminar.",
       "ru": "Сегодня он принёс задания, которые нужно закончить.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈoʒɨ ˈelɨ ˈtɾoʃɨ tɾɐˈbaʎuʃ ˈpaɾɐ tɨɾmiˈnaɾ",
+      "translations": [{ "language_code": "en", "text": "Today he brought work to finish." }]
     },
     {
       "pt": "A escola recomendou falar com um especialista.",
       "ru": "Школа рекомендовала поговорить со специалистом.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ɐ ʃˈkɔlɐ ʁɨkõmẽˈdou fɐˈlaɾ kõ ˈũ ʃpɨsɨɐˈliʃtɐ",
+      "translations": [{ "language_code": "en", "text": "The school recommended speaking to a specialist." }]
     },
     {
       "pt": "Ela ficou chateada depois da aula.",
       "ru": "После урока она расстроилась.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈelɐ fiˈkou ʃɐˈteɐdɐ dɨˈpojʃ dɐ ˈawlɐ",
+      "translations": [{ "language_code": "en", "text": "She was upset after the class." }]
     },
     {
       "pt": "O professor explicou a situação com calma.",
       "ru": "Учитель спокойно объяснил ситуацию.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "u pɾufɨˈsoɾ ʃplɨˈkou ɐ sitwɐˈsɐ̃w kõ ˈkaɫmɐ",
+      "translations": [{ "language_code": "en", "text": "The teacher explained the situation calmly." }]
     },
     {
       "pt": "Temos de apoiar mais nesta fase.",
       "ru": "Нам нужно больше поддерживать на этом этапе.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈtẽmuʃ dɨ ɐpoˈjaɾ ˈmajʃ ˈneʃtɐ ˈfazɨ",
+      "translations": [{ "language_code": "en", "text": "We need to give more support at this stage." }]
     },
     {
       "pt": "Ela está a fazer progressos aos poucos.",
       "ru": "Она постепенно делает успехи.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈelɐ ʃˈta ɐ fɐˈzeɾ pɾoˈɡɾɛsuʃ awʃ ˈpokus",
+      "translations": [{ "language_code": "en", "text": "She is making progress little by little." }]
     },
     {
       "pt": "Hoje houve mudanças no plano escolar.",
       "ru": "Сегодня были изменения в школьном плане.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈoʒɨ ˈoβɨ muˈdɐ̃sɐʃ nu ˈplɐnu ʃkɔˈlaɾ",
+      "translations": [{ "language_code": "en", "text": "There were changes to the school plan today." }]
     },
     {
       "pt": "Ele precisa de ajuda com a leitura.",
       "ru": "Ему нужна помощь с чтением.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈelɨ pɾɨˈsizɐ dɨ ɐˈʒudɐ kõ ɐ lɐjˈtuɾɐ",
+      "translations": [{ "language_code": "en", "text": "He needs help with reading." }]
     },
     {
       "pt": "A escola pediu feedback aos pais.",
       "ru": "Школа попросила отзыв у родителей.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ɐ ʃˈkɔlɐ pɨˈdiu ˈfidbɛk awʃ ˈpajʃ",
+      "translations": [{ "language_code": "en", "text": "The school asked parents for feedback." }]
     },
     {
       "pt": "Vamos falar disso novamente com a escola.",
       "ru": "Давайте ещё раз обсудим это со школой.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈvɐmuʃ fɐˈlaɾ ˈdisu novɐˈmẽtɨ kõ ɐ ʃˈkɔlɐ",
+      "translations": [{ "language_code": "en", "text": "Let’s discuss this again with the school." }]
     }
   ]
 }

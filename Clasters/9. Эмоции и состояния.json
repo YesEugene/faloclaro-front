@@ -8,244 +8,324 @@
       "pt": "Hoje sinto-me bastante cansado.",
       "ru": "Сегодня я чувствую себя довольно уставшим(ей).",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈoʒɨ ˈsĩtu mɨ bɐʃˈtɐ̃tɨ kɐ̃ˈzadu",
+      "translations": [{ "language_code": "en", "text": "Today I feel quite tired." }]
     },
     {
       "pt": "Isto deixa-me um pouco ansioso.",
       "ru": "Это немного меня тревожит.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈiʃtu ˈdejʃɐmɨ ˈũ ˈpoku ɐ̃siˈozu",
+      "translations": [{ "language_code": "en", "text": "This makes me a bit anxious." }]
     },
     {
       "pt": "Não estou num bom dia hoje.",
       "ru": "Сегодня у меня не самый лучший день.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "nɐ̃w ʃˈtou nũ bõ ˈdiɐ ˈoʒɨ",
+      "translations": [{ "language_code": "en", "text": "I’m not having a good day today." }]
     },
     {
       "pt": "Sinto-me mais tranquilo agora.",
       "ru": "Сейчас я чувствую себя спокойнее.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈsĩtu mɨ ˈmajʃ tɾɐ̃ˈkilu ɐˈɡɔɾɐ",
+      "translations": [{ "language_code": "en", "text": "I feel calmer now." }]
     },
     {
       "pt": "Isso deixou-me um pouco desconfortável.",
       "ru": "Это заставило меня почувствовать дискомфорт.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈisu dɨˈjʃou mɨ ˈũ ˈpoku dɨʃkõfoɾˈtaβɛɫ",
+      "translations": [{ "language_code": "en", "text": "That made me feel a bit uncomfortable." }]
     },
     {
       "pt": "Estou a precisar de uma pausa.",
       "ru": "Мне нужна пауза.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ʃˈtou ɐ pɾɨsɐˈzaɾ dɨ ˈumɐ ˈpawzɐ",
+      "translations": [{ "language_code": "en", "text": "I need a break." }]
     },
     {
       "pt": "Isto está a stressar-me bastante.",
       "ru": "Это меня довольно сильно напрягает.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈiʃtu ʃˈta ɐ stɾɨˈsaɾmɨ bɐʃˈtɐ̃tɨ",
+      "translations": [{ "language_code": "en", "text": "This is stressing me out quite a lot." }]
     },
     {
       "pt": "Hoje estou de melhor humor.",
       "ru": "Сегодня я в лучшем настроении.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈoʒɨ ʃˈtou dɨ mɨˈʎɔɾ uˈmoɾ",
+      "translations": [{ "language_code": "en", "text": "Today I’m in a better mood." }]
     },
     {
       "pt": "Preciso de ficar sozinho um pouco.",
       "ru": "Мне нужно немного побыть одному(ой).",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "pɾɨˈsizu dɨ fiˈkaɾ soˈziɲu ˈũ ˈpoku",
+      "translations": [{ "language_code": "en", "text": "I need to be alone for a bit." }]
     },
     {
       "pt": "Isto é emocionalmente pesado para mim.",
       "ru": "Это для меня эмоционально тяжело.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈiʃtu ɛ imosjõnɐɫˈmẽtɨ pɨˈzadu ˈpaɾɐ ˈmĩ",
+      "translations": [{ "language_code": "en", "text": "This is emotionally heavy for me." }]
     },
 
     {
       "pt": "Sinto-me um pouco sobrecarregado hoje.",
       "ru": "Сегодня я чувствую себя немного перегруженным(ой).",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈsĩtu mɨ ˈũ ˈpoku soβɾɨkɐɾɨˈɡadu ˈoʒɨ",
+      "translations": [{ "language_code": "en", "text": "Today I feel a bit overwhelmed." }]
     },
     {
       "pt": "Estou bastante irritado com esta situação.",
       "ru": "Меня довольно сильно раздражает эта ситуация.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ʃˈtou bɐʃˈtɐ̃tɨ iʁiˈtadu kõ ˈeʃtɐ sitwɐˈsɐ̃w",
+      "translations": [{ "language_code": "en", "text": "I’m quite irritated by this situation." }]
     },
     {
       "pt": "Isto deixou-me de mau humor.",
       "ru": "Это испортило мне настроение.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈiʃtu dɨˈjʃou mɨ dɨ maw uˈmoɾ",
+      "translations": [{ "language_code": "en", "text": "This put me in a bad mood." }]
     },
     {
       "pt": "Sinto-me mais confiante agora.",
       "ru": "Сейчас я чувствую себя увереннее.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈsĩtu mɨ ˈmajʃ kõfjɐ̃ˈtɨ ɐˈɡɔɾɐ",
+      "translations": [{ "language_code": "en", "text": "I feel more confident now." }]
     },
     {
       "pt": "Hoje estou particularmente sensível.",
       "ru": "Сегодня я особенно чувствителен(на).",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈoʒɨ ʃˈtou pɐɾtikulɐɾˈmẽtɨ sẽˈsivɛɫ",
+      "translations": [{ "language_code": "en", "text": "Today I’m particularly sensitive." }]
     },
     {
       "pt": "Isto deixou-me bastante frustrado.",
       "ru": "Это меня довольно сильно расстроило.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈiʃtu dɨˈjʃou mɨ bɐʃˈtɐ̃tɨ fɾuʃˈtɾadu",
+      "translations": [{ "language_code": "en", "text": "This made me quite frustrated." }]
     },
     {
       "pt": "Estou a sentir muita pressão ultimamente.",
       "ru": "В последнее время я чувствую большое давление.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ʃˈtou ɐ sĩˈtiɾ ˈmujtɐ pɾɐˈsɐ̃w uɫtimɐˈmẽtɨ",
+      "translations": [{ "language_code": "en", "text": "Lately I’ve been feeling a lot of pressure." }]
     },
     {
       "pt": "Hoje sinto-me mais positivo.",
       "ru": "Сегодня я чувствую себя более позитивно.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈoʒɨ ˈsĩtu mɨ ˈmajʃ puziˈtivu",
+      "translations": [{ "language_code": "en", "text": "Today I feel more positive." }]
     },
     {
       "pt": "Preciso de acalmar um pouco.",
       "ru": "Мне нужно немного успокоиться.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "pɾɨˈsizu dɨ ɐkɐɫˈmaɾ ˈũ ˈpoku",
+      "translations": [{ "language_code": "en", "text": "I need to calm down a bit." }]
     },
     {
       "pt": "Isto deixou-me sem energia.",
       "ru": "Это лишило меня сил.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈiʃtu dɨˈjʃou mɨ sẽ ĩnɨɾˈʒiɐ",
+      "translations": [{ "language_code": "en", "text": "This drained my energy." }]
     },
 
     {
       "pt": "Sinto-me um pouco perdido com tudo isto.",
       "ru": "Я чувствую себя немного потерянным(ой) во всём этом.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈsĩtu mɨ ˈũ ˈpoku pɨɾˈdidu kõ ˈtudu ˈiʃtu",
+      "translations": [{ "language_code": "en", "text": "I feel a bit lost with all of this." }]
     },
     {
       "pt": "Hoje estou mais calmo do que ontem.",
       "ru": "Сегодня я спокойнее, чем вчера.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈoʒɨ ʃˈtou ˈmajʃ ˈkɐɫmu du kɨ õˈtẽj",
+      "translations": [{ "language_code": "en", "text": "Today I’m calmer than yesterday." }]
     },
     {
       "pt": "Isto afetou-me mais do que eu esperava.",
       "ru": "Это повлияло на меня сильнее, чем я ожидал(а).",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈiʃtu ɐfɨˈtou mɨ ˈmajʃ du kɨ ˈew ʃpɨɾɐˈvɐ",
+      "translations": [{ "language_code": "en", "text": "This affected me more than I expected." }]
     },
     {
       "pt": "Sinto-me um pouco desmotivado hoje.",
       "ru": "Сегодня я чувствую себя немного немотивированным(ой).",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈsĩtu mɨ ˈũ ˈpoku dɨʃmutiˈvadu ˈoʒɨ",
+      "translations": [{ "language_code": "en", "text": "Today I feel a bit unmotivated." }]
     },
     {
       "pt": "Estou satisfeito com o resultado.",
       "ru": "Я доволен(на) результатом.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ʃˈtou sɐtiʃˈfɛjtu kõ u ʁɨzuɫˈtadu",
+      "translations": [{ "language_code": "en", "text": "I’m satisfied with the result." }]
     },
     {
       "pt": "Isto deixou-me preocupado.",
       "ru": "Это меня обеспокоило.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈiʃtu dɨˈjʃou mɨ pɾɨukɐˈpadu",
+      "translations": [{ "language_code": "en", "text": "This made me worried." }]
     },
     {
       "pt": "Hoje sinto-me emocionalmente esgotado.",
       "ru": "Сегодня я чувствую себя эмоционально вымотанным(ой).",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈoʒɨ ˈsĩtu mɨ imosjõnɐɫˈmẽtɨ iʃɡuˈtadu",
+      "translations": [{ "language_code": "en", "text": "Today I feel emotionally drained." }]
     },
     {
       "pt": "Sinto-me aliviado depois disso.",
       "ru": "После этого мне стало легче.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈsĩtu mɨ ɐliˈvjado dɨˈpojʃ ˈdisu",
+      "translations": [{ "language_code": "en", "text": "I feel relieved after that." }]
     },
     {
       "pt": "Isto deixou-me mais confuso.",
       "ru": "Это сделало меня ещё более растерянным(ой).",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈiʃtu dɨˈjʃou mɨ ˈmajʃ kõˈfuzu",
+      "translations": [{ "language_code": "en", "text": "This made me even more confused." }]
     },
     {
       "pt": "Hoje estou com pouca paciência.",
       "ru": "Сегодня у меня мало терпения.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈoʒɨ ʃˈtou kõ ˈpokɐ pɐsjˈẽsjɐ",
+      "translations": [{ "language_code": "en", "text": "Today I have little patience." }]
     },
 
     {
       "pt": "Sinto-me um pouco inseguro em relação a isso.",
       "ru": "Я чувствую некоторую неуверенность по этому поводу.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈsĩtu mɨ ˈũ ˈpoku ĩsɨˈɡuɾu ẽ ʁɨlɐˈsɐ̃w ɐ ˈisu",
+      "translations": [{ "language_code": "en", "text": "I feel a bit insecure about this." }]
     },
     {
       "pt": "Isto deixou-me bastante satisfeito.",
       "ru": "Это меня очень порадовало.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈiʃtu dɨˈjʃou mɨ bɐʃˈtɐ̃tɨ sɐtiʃˈfɛjtu",
+      "translations": [{ "language_code": "en", "text": "This made me quite happy." }]
     },
     {
       "pt": "Hoje sinto-me mais equilibrado.",
       "ru": "Сегодня я чувствую себя более уравновешенно.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈoʒɨ ˈsĩtu mɨ ˈmajʃ iɡwiliˈbɾadu",
+      "translations": [{ "language_code": "en", "text": "Today I feel more balanced." }]
     },
     {
       "pt": "Estou um pouco tenso neste momento.",
       "ru": "Сейчас я немного напряжён(на).",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ʃˈtou ˈũ ˈpoku ˈtẽsu ˈneʃtɨ muˈmẽtu",
+      "translations": [{ "language_code": "en", "text": "I’m a bit tense right now." }]
     },
     {
       "pt": "Isto mexeu bastante comigo.",
       "ru": "Это сильно меня задело.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈiʃtu mɨˈʃew bɐʃˈtɐ̃tɨ koˈmiɡu",
+      "translations": [{ "language_code": "en", "text": "This really affected me." }]
     },
     {
       "pt": "Sinto-me mais tranquilo depois de falar.",
       "ru": "После разговора мне стало спокойнее.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈsĩtu mɨ ˈmajʃ tɾɐ̃ˈkilu dɨˈpojʃ dɨ fɐˈlaɾ",
+      "translations": [{ "language_code": "en", "text": "I feel calmer after talking." }]
     },
     {
       "pt": "Hoje estou a sentir-me melhor.",
       "ru": "Сегодня я чувствую себя лучше.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈoʒɨ ʃˈtou ɐ sĩˈtiɾmɨ mɨˈʎɔɾ",
+      "translations": [{ "language_code": "en", "text": "Today I’m feeling better." }]
     },
     {
       "pt": "Isto deixou-me emocionalmente cansado.",
       "ru": "Это меня эмоционально утомило.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈiʃtu dɨˈjʃou mɨ imosjõnɐɫˈmẽtɨ kɐ̃ˈzadu",
+      "translations": [{ "language_code": "en", "text": "This made me emotionally tired." }]
     },
     {
       "pt": "Sinto-me mais confiante com o tempo.",
       "ru": "Со временем я чувствую себя увереннее.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈsĩtu mɨ ˈmajʃ kõfjɐ̃ˈtɨ kõ u ˈtẽpu",
+      "translations": [{ "language_code": "en", "text": "Over time I feel more confident." }]
     },
     {
       "pt": "Hoje não me sinto muito bem.",
       "ru": "Сегодня я чувствую себя не очень хорошо.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈoʒɨ nɐ̃w mɨ ˈsĩtu ˈmũjtu bẽ",
+      "translations": [{ "language_code": "en", "text": "Today I don’t feel very well." }]
     }
   ]
 }

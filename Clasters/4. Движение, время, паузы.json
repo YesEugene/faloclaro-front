@@ -8,244 +8,324 @@
       "pt": "Chego aí dentro de dez minutos.",
       "ru": "Я буду там через десять минут.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈʃeɡu ɐˈi ˈdẽtɾu dɨ ˈdeʃ miˈnutuʃ",
+      "translations": [{ "language_code": "en", "text": "I’ll be there in ten minutes." }]
     },
     {
       "pt": "Agora não é um bom momento.",
       "ru": "Сейчас не самый подходящий момент.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ɐˈɡɔɾɐ nɐ̃w ɛ ˈũ bõ muˈmẽtu",
+      "translations": [{ "language_code": "en", "text": "Now is not a good moment." }]
     },
     {
       "pt": "Podemos falar disso mais tarde.",
       "ru": "Мы можем поговорить об этом позже.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "puˈdẽmuʃ fɐˈlaɾ ˈdisu ˈmajʃ ˈtaɾdɨ",
+      "translations": [{ "language_code": "en", "text": "We can talk about this later." }]
     },
     {
       "pt": "Já estou a caminho.",
       "ru": "Я уже в пути.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ʒa ʃˈtow ɐ kɐˈmiɲu",
+      "translations": [{ "language_code": "en", "text": "I’m already on my way." }]
     },
     {
       "pt": "Preciso de mais algum tempo.",
       "ru": "Мне нужно ещё немного времени.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "pɾɨˈsizu dɨ ˈmajʃ ɐɫˈɡũ ˈtẽpu",
+      "translations": [{ "language_code": "en", "text": "I need a bit more time." }]
     },
     {
       "pt": "Isso pode ficar para amanhã.",
       "ru": "Это можно отложить на завтра.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈisu ˈpɔdɨ fiˈkaɾ ˈpaɾɐ ɐmɐˈɲɐ̃",
+      "translations": [{ "language_code": "en", "text": "That can be left for tomorrow." }]
     },
     {
       "pt": "Ainda temos tempo para decidir.",
       "ru": "У нас ещё есть время, чтобы решить.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ɐˈĩdɐ ˈtẽmuʃ ˈtẽpu ˈpaɾɐ dɨsiˈdiɾ",
+      "translations": [{ "language_code": "en", "text": "We still have time to decide." }]
     },
     {
       "pt": "Vou tratar disso assim que puder.",
       "ru": "Я займусь этим, как только смогу.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "vo tɾɐˈtaɾ ˈdisu ɐˈsĩ kɨ puˈdeɾ",
+      "translations": [{ "language_code": "en", "text": "I’ll take care of that as soon as I can." }]
     },
     {
       "pt": "Prefiro fazer isso com calma.",
       "ru": "Я предпочитаю сделать это спокойно, без спешки.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "pɾɨˈfiɾu fɐˈzeɾ ˈisu kõ ˈkaɫmɐ",
+      "translations": [{ "language_code": "en", "text": "I prefer to do this calmly." }]
     },
     {
       "pt": "Já passou da hora combinada.",
       "ru": "Мы уже вышли за оговорённое время.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ʒa pɐˈsou dɐ ˈɔɾɐ kõbĩˈnadɐ",
+      "translations": [{ "language_code": "en", "text": "We’re already past the agreed time." }]
     },
 
     {
       "pt": "Agora não consigo falar sobre isso.",
       "ru": "Сейчас я не могу об этом говорить.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ɐˈɡɔɾɐ nɐ̃w kõˈsiɡu fɐˈlaɾ ˈsoβɾɨ ˈisu",
+      "translations": [{ "language_code": "en", "text": "I can’t talk about this right now." }]
     },
     {
       "pt": "Vou chegar um pouco mais tarde.",
       "ru": "Я приеду немного позже.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "vo ʃɨˈɡaɾ ˈũ ˈpoku ˈmajʃ ˈtaɾdɨ",
+      "translations": [{ "language_code": "en", "text": "I’ll arrive a bit later." }]
     },
     {
       "pt": "Temos de sair dentro de pouco tempo.",
       "ru": "Нам нужно скоро выходить.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈtẽmuʃ dɨ sɐˈiɾ ˈdẽtɾu dɨ ˈpoku ˈtẽpu",
+      "translations": [{ "language_code": "en", "text": "We need to leave shortly." }]
     },
     {
       "pt": "Já volto, é só um instante.",
       "ru": "Я сейчас вернусь, это буквально на минутку.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ʒa ˈβɔɫtu ɛ ˈsɔ ˈũ ĩʃˈtɐ̃tɨ",
+      "translations": [{ "language_code": "en", "text": "I’ll be right back, just a moment." }]
     },
     {
       "pt": "Ainda não estou pronto para isso.",
       "ru": "Я пока не готов(а) к этому.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ɐˈĩdɐ nɐ̃w ʃˈtow ˈpɾõtu ˈpaɾɐ ˈisu",
+      "translations": [{ "language_code": "en", "text": "I’m not ready for this yet." }]
     },
     {
       "pt": "Vamos com calma, não há pressa.",
       "ru": "Давайте спокойно, спешить некуда.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈvɐmuʃ kõ ˈkaɫmɐ nɐ̃w a ˈpɾɛsɐ",
+      "translations": [{ "language_code": "en", "text": "Let’s take it easy, there’s no rush." }]
     },
     {
       "pt": "Isso vai demorar um pouco mais.",
       "ru": "Это займёт ещё немного времени.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈisu vaj dɨmuˈɾaɾ ˈũ ˈpoku ˈmajʃ",
+      "translations": [{ "language_code": "en", "text": "This will take a bit longer." }]
     },
     {
       "pt": "Prefiro fazer isso mais tarde.",
       "ru": "Я предпочитаю сделать это позже.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "pɾɨˈfiɾu fɐˈzeɾ ˈisu ˈmajʃ ˈtaɾdɨ",
+      "translations": [{ "language_code": "en", "text": "I prefer to do this later." }]
     },
     {
       "pt": "Já é um pouco tarde para isso.",
       "ru": "Для этого уже немного поздновато.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ʒa ɛ ˈũ ˈpoku ˈtaɾdɨ ˈpaɾɐ ˈisu",
+      "translations": [{ "language_code": "en", "text": "It’s already a bit late for that." }]
     },
     {
       "pt": "Ainda estou à espera de uma resposta.",
       "ru": "Я всё ещё жду ответа.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ɐˈĩdɐ ʃˈtow a ʃpɨˈɾɛsɐ dɨ ˈumɐ ʁɨʃˈpɔʃtɐ",
+      "translations": [{ "language_code": "en", "text": "I’m still waiting for an answer." }]
     },
 
     {
       "pt": "Podemos adiar isso por enquanto.",
       "ru": "Мы можем пока отложить это.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "puˈdẽmuʃ ɐdjɐˈɾ ˈisu puɾ ĩkwɐ̃ˈtɐ̃w",
+      "translations": [{ "language_code": "en", "text": "We can postpone this for now." }]
     },
     {
       "pt": "Vou precisar de mais alguns minutos.",
       "ru": "Мне понадобится ещё несколько минут.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "vo pɾɨsiˈzaɾ dɨ ˈmajʃ ɐɫˈɡũʃ miˈnutuʃ",
+      "translations": [{ "language_code": "en", "text": "I’ll need a few more minutes." }]
     },
     {
       "pt": "Ainda é cedo para tomar essa decisão.",
       "ru": "Ещё рано принимать это решение.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ɐˈĩdɐ ɛ ˈseɾu ˈpaɾɐ tuˈmaɾ ˈesɐ dɨsɨˈzɐ̃w",
+      "translations": [{ "language_code": "en", "text": "It’s still too early to make that decision." }]
     },
     {
       "pt": "Já não tenho tempo para isso agora.",
       "ru": "У меня сейчас нет на это времени.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ʒa nɐ̃w ˈtẽɲu ˈtẽpu ˈpaɾɐ ˈisu ɐˈɡɔɾɐ",
+      "translations": [{ "language_code": "en", "text": "I don’t have time for that now." }]
     },
     {
       "pt": "Vou tratar disso antes de sair.",
       "ru": "Я займусь этим перед выходом.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "vo tɾɐˈtaɾ ˈdisu ˈɐ̃tɨʃ dɨ sɐˈiɾ",
+      "translations": [{ "language_code": "en", "text": "I’ll take care of that before leaving." }]
     },
     {
       "pt": "Cheguei um pouco mais cedo hoje.",
       "ru": "Сегодня я пришёл(ла) немного раньше.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ʃɨˈɡej ˈũ ˈpoku ˈmajʃ ˈseɾu ˈoʒɨ",
+      "translations": [{ "language_code": "en", "text": "I arrived a bit earlier today." }]
     },
     {
       "pt": "Estamos a ficar sem tempo.",
       "ru": "У нас заканчивается время.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ʃˈtɐmuʃ ɐ fiˈkaɾ sẽ ˈtẽpu",
+      "translations": [{ "language_code": "en", "text": "We’re running out of time." }]
     },
     {
       "pt": "Isso pode esperar mais um pouco.",
       "ru": "Это может подождать ещё немного.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈisu ˈpɔdɨ ʃpɨˈɾaɾ ˈmajʃ ˈũ ˈpoku",
+      "translations": [{ "language_code": "en", "text": "That can wait a bit longer." }]
     },
     {
       "pt": "Vou sair daqui a pouco.",
       "ru": "Я скоро выйду.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "vo sɐˈiɾ dɐˈki ɐ ˈpoku",
+      "translations": [{ "language_code": "en", "text": "I’ll leave in a little while." }]
     },
     {
       "pt": "Já não vale a pena agora.",
       "ru": "Сейчас это уже не имеет смысла.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ʒa nɐ̃w ˈvalɨ ɐ ˈpɛnɐ ɐˈɡɔɾɐ",
+      "translations": [{ "language_code": "en", "text": "It’s not worth it anymore now." }]
     },
 
     {
       "pt": "Temos de nos apressar um pouco.",
       "ru": "Нам нужно немного поторопиться.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈtẽmuʃ dɨ nuʃ ɐpɾɨˈsaɾ ˈũ ˈpoku",
+      "translations": [{ "language_code": "en", "text": "We need to hurry up a bit." }]
     },
     {
       "pt": "Ainda não chegou a hora certa.",
       "ru": "Подходящее время ещё не настало.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ɐˈĩdɐ nɐ̃w ʃɨˈɡou ɐ ˈɔɾɐ ˈsɛɾtɐ",
+      "translations": [{ "language_code": "en", "text": "The right time hasn’t come yet." }]
     },
     {
       "pt": "Vou fazer isso assim que chegar.",
       "ru": "Я сделаю это, как только приеду.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "vo fɐˈzeɾ ˈisu ɐˈsĩ kɨ ʃɨˈɡaɾ",
+      "translations": [{ "language_code": "en", "text": "I’ll do this as soon as I arrive." }]
     },
     {
       "pt": "Já estamos atrasados para isso.",
       "ru": "Мы уже опаздываем на это.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ʒa ʃˈtɐmuʃ ɐtɾɐˈzaduʃ ˈpaɾɐ ˈisu",
+      "translations": [{ "language_code": "en", "text": "We’re already late for this." }]
     },
     {
       "pt": "Prefiro não decidir isso agora.",
       "ru": "Я предпочитаю не решать это прямо сейчас.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "pɾɨˈfiɾu nɐ̃w dɨsɨˈdiɾ ˈisu ɐˈɡɔɾɐ",
+      "translations": [{ "language_code": "en", "text": "I prefer not to decide this right now." }]
     },
     {
       "pt": "Isso pode ser resolvido mais tarde.",
       "ru": "Это можно решить позже.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈisu ˈpɔdɨ seɾ ʁɨzuɫˈvidu ˈmajʃ ˈtaɾdɨ",
+      "translations": [{ "language_code": "en", "text": "This can be resolved later." }]
     },
     {
       "pt": "Vou ficar aqui mais um pouco.",
       "ru": "Я побуду здесь ещё немного.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "vo fiˈkaɾ ɐˈki ˈmajʃ ˈũ ˈpoku",
+      "translations": [{ "language_code": "en", "text": "I’ll stay here a bit longer." }]
     },
     {
       "pt": "Estamos quase a chegar.",
       "ru": "Мы почти приехали.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ʃˈtɐmuʃ ˈkwazɨ ɐ ʃɨˈɡaɾ",
+      "translations": [{ "language_code": "en", "text": "We’re almost there." }]
     },
     {
       "pt": "Isso aconteceu há pouco tempo.",
       "ru": "Это произошло совсем недавно.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈisu ɐkõtɨˈseu a ˈpoku ˈtẽpu",
+      "translations": [{ "language_code": "en", "text": "That happened not long ago." }]
     },
     {
       "pt": "Já passou muito tempo desde então.",
       "ru": "С тех пор прошло уже много времени.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ʒa pɐˈsou ˈmũjtu ˈtẽpu ˈdezɨ ẽˈtɐ̃w",
+      "translations": [{ "language_code": "en", "text": "A lot of time has passed since then." }]
     }
   ]
 }

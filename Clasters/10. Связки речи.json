@@ -8,244 +8,324 @@
       "pt": "Acho que isso depende da situação.",
       "ru": "Думаю, это зависит от ситуации.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈaʃu kɨ ˈisu dɨˈpẽdɨ dɐ sitwɐˈsɐ̃w",
+      "translations": [{ "language_code": "en", "text": "I think it depends on the situation." }]
     },
     {
       "pt": "Talvez seja melhor esperar um pouco.",
       "ru": "Возможно, лучше немного подождать.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "tɐɫˈvɛʃ ˈseʒɐ mɨˈʎɔɾ ʃpɨɾɐˈɾ ˈũ ˈpoku",
+      "translations": [{ "language_code": "en", "text": "Maybe it’s better to wait a bit." }]
     },
     {
       "pt": "Então, o que fazemos agora?",
       "ru": "Итак, что мы делаем теперь?",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ẽˈtɐ̃w u kɨ fɐˈzẽmuʃ ɐˈɡɔɾɐ",
+      "translations": [{ "language_code": "en", "text": "So, what do we do now?" }]
     },
     {
       "pt": "Na verdade, não pensei nisso.",
       "ru": "На самом деле я об этом не подумал(а).",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "nɐ vɨɾˈdadɨ nɐ̃w pẽˈsẽj ˈnisu",
+      "translations": [{ "language_code": "en", "text": "Actually, I didn’t think about that." }]
     },
     {
       "pt": "No fundo, é sempre a mesma coisa.",
       "ru": "По сути, это всегда одно и то же.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "nu ˈfũdu ɛ ˈsẽpɾɨ ɐ ˈmeʒmɐ ˈkɔjzɐ",
+      "translations": [{ "language_code": "en", "text": "Basically, it’s always the same thing." }]
     },
     {
       "pt": "De qualquer forma, temos de decidir.",
       "ru": "В любом случае, нам нужно принять решение.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "dɨ kwɐɫˈkɛɾ ˈfɔɾmɐ ˈtẽmuʃ dɨ dɨsiˈdiɾ",
+      "translations": [{ "language_code": "en", "text": "Either way, we have to decide." }]
     },
     {
       "pt": "Pelo menos tentámos resolver isso.",
       "ru": "По крайней мере, мы попытались это решить.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈpɛlu ˈmẽnuʃ tẽˈtamuʃ ʁɨzuɫˈvɛɾ ˈisu",
+      "translations": [{ "language_code": "en", "text": "At least we tried to solve it." }]
     },
     {
       "pt": "No entanto, não é tão simples assim.",
       "ru": "Однако всё не так просто.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "nu ẽˈtɐ̃tu nɐ̃w ɛ tɐ̃w ˈsĩplɨs ɐˈsĩ",
+      "translations": [{ "language_code": "en", "text": "However, it’s not that simple." }]
     },
     {
       "pt": "Por isso, prefiro não arriscar.",
       "ru": "Поэтому я предпочитаю не рисковать.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "puɾ ˈisu pɾɨˈfɨɾu nɐ̃w ɐʁiʃˈkaɾ",
+      "translations": [{ "language_code": "en", "text": "That’s why I prefer not to take risks." }]
     },
     {
       "pt": "Em geral, funciona dessa forma.",
       "ru": "В целом это работает так.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ẽ ʒɨˈɾaɫ fũˈsjɔnɐ ˈdɛsɐ ˈfɔɾmɐ",
+      "translations": [{ "language_code": "en", "text": "In general, it works that way." }]
     },
 
     {
       "pt": "De certa forma, concordo contigo.",
       "ru": "В некотором смысле я с тобой согласен(на).",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "dɨ ˈsɛɾtɐ ˈfɔɾmɐ kõˈkɔɾdu kõˈtiɡu",
+      "translations": [{ "language_code": "en", "text": "In a way, I agree with you." }]
     },
     {
       "pt": "Por outro lado, vejo alguns riscos.",
       "ru": "С другой стороны, я вижу некоторые риски.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "poɾ ˈotɾu ˈlaðu ˈveʒu ɐɫˈɡũʃ ˈʁiʃkuʃ",
+      "translations": [{ "language_code": "en", "text": "On the other hand, I see some risks." }]
     },
     {
       "pt": "Ainda assim, vale a pena tentar.",
       "ru": "Тем не менее, стоит попробовать.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ɐˈĩdɐ ɐˈsĩ ˈvalɨ ɐ ˈpenɐ tẽˈtaɾ",
+      "translations": [{ "language_code": "en", "text": "Still, it’s worth trying." }]
     },
     {
       "pt": "Antes de mais, precisamos de esclarecer isto.",
       "ru": "Прежде всего, нам нужно это прояснить.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈɐ̃tɨʃ dɨ ˈmajʃ pɾɨsɨˈzɐmuʃ dɨ ʃklɐɾɨˈseɾ ˈiʃtu",
+      "translations": [{ "language_code": "en", "text": "First of all, we need to clarify this." }]
     },
     {
       "pt": "Depois disso, podemos avançar.",
       "ru": "После этого мы можем двигаться дальше.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "dɨˈpojʃ ˈdisu ˈpodɨmuʃ ɐvɐ̃ˈsaɾ",
+      "translations": [{ "language_code": "en", "text": "After that, we can move forward." }]
     },
     {
       "pt": "De acordo com isso, faz sentido esperar.",
       "ru": "С учётом этого имеет смысл подождать.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "dɨ ɐˈkɔɾdu kõ ˈisu faʃ sĩˈtĩdu ʃpɨɾɐˈɾ",
+      "translations": [{ "language_code": "en", "text": "Given that, it makes sense to wait." }]
     },
     {
       "pt": "Em princípio, não vejo problema.",
       "ru": "В принципе, я не вижу проблемы.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ẽ pɾĩˈsipju nɐ̃w ˈveʒu pɾuˈblɛmɐ",
+      "translations": [{ "language_code": "en", "text": "In principle, I don’t see a problem." }]
     },
     {
       "pt": "Na prática, as coisas são diferentes.",
       "ru": "На практике всё обстоит иначе.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "nɐ ˈpɾatikɐ ɐʃ ˈkɔjzɐʃ sɐ̃w difɨˈɾẽtɨʃ",
+      "translations": [{ "language_code": "en", "text": "In practice, things are different." }]
     },
     {
       "pt": "No final, tudo depende do contexto.",
       "ru": "В итоге всё зависит от контекста.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "nu fiˈnaɫ ˈtudu dɨˈpẽdɨ du kõˈtɛʃtu",
+      "translations": [{ "language_code": "en", "text": "In the end, everything depends on the context." }]
     },
     {
       "pt": "De momento, não temos uma resposta.",
       "ru": "На данный момент у нас нет ответа.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "dɨ muˈmẽtu nɐ̃w ˈtẽmuʃ ˈumɐ ʁɨʃˈpɔʃtɐ",
+      "translations": [{ "language_code": "en", "text": "At the moment, we don’t have an answer." }]
     },
 
     {
       "pt": "Em primeiro lugar, temos de falar disso.",
       "ru": "В первую очередь нам нужно это обсудить.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ẽ pɾɨˈmɛjɾu ˈluɡaɾ ˈtẽmuʃ dɨ fɐˈlaɾ ˈdisu",
+      "translations": [{ "language_code": "en", "text": "First of all, we need to talk about this." }]
     },
     {
       "pt": "Além disso, há outros fatores a considerar.",
       "ru": "Кроме того, есть и другие факторы, которые нужно учесть.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ɐˈlẽ ˈdisu a ˈotɾuʃ ˈfatuɾɨʃ ɐ kõsɨdɨˈɾaɾ",
+      "translations": [{ "language_code": "en", "text": "Besides that, there are other factors to consider." }]
     },
     {
       "pt": "Por enquanto, vamos deixar assim.",
       "ru": "Пока давай оставим всё как есть.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "poɾ ẽˈkwɐ̃tu ˈvɐmuʃ dɨjˈʃaɾ ɐˈsĩ",
+      "translations": [{ "language_code": "en", "text": "For now, let’s leave it like this." }]
     },
     {
       "pt": "No mínimo, precisamos de tentar.",
       "ru": "Как минимум, нам нужно попробовать.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "nu ˈminimu pɾɨsɨˈzɐmuʃ dɨ tẽˈtaɾ",
+      "translations": [{ "language_code": "en", "text": "At the very least, we need to try." }]
     },
     {
       "pt": "Em todo o caso, temos de avançar.",
       "ru": "В любом случае, нам нужно двигаться вперёд.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ẽ ˈtodu u ˈkazu ˈtẽmuʃ dɨ ɐvɐ̃ˈsaɾ",
+      "translations": [{ "language_code": "en", "text": "In any case, we need to move forward." }]
     },
     {
       "pt": "Por agora, isso chega.",
       "ru": "На данный момент этого достаточно.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "poɾ ɐˈɡɔɾɐ ˈisu ˈʃeɡɐ",
+      "translations": [{ "language_code": "en", "text": "For now, that’s enough." }]
     },
     {
       "pt": "Com isso em mente, faz sentido continuar.",
       "ru": "Имея это в виду, имеет смысл продолжать.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "kõ ˈisu ẽ ˈmẽtɨ faʃ sĩˈtĩdu kõtĩˈnwaɾ",
+      "translations": [{ "language_code": "en", "text": "With that in mind, it makes sense to continue." }]
     },
     {
       "pt": "De certa maneira, isto é positivo.",
       "ru": "В некотором смысле это позитивно.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "dɨ ˈsɛɾtɐ mɐˈnɛjɾɐ ˈiʃtu ɛ puziˈtivu",
+      "translations": [{ "language_code": "en", "text": "In a way, this is positive." }]
     },
     {
       "pt": "Apesar disso, continuo com dúvidas.",
       "ru": "Несмотря на это, у меня всё ещё есть сомнения.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ɐpɐˈzaɾ ˈdisu kõtĩˈnu.u kõ ˈduvɐʃ",
+      "translations": [{ "language_code": "en", "text": "Despite that, I still have doubts." }]
     },
     {
       "pt": "No geral, estou de acordo.",
       "ru": "В целом я согласен(на).",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "nu ʒɨˈɾaɫ ʃˈtou dɨ ɐˈkɔɾdu",
+      "translations": [{ "language_code": "en", "text": "Overall, I agree." }]
     },
 
     {
       "pt": "Por esse motivo, precisamos de rever isto.",
       "ru": "По этой причине нам нужно это пересмотреть.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "poɾ ˈɛsɨ muˈtivu pɾɨsɨˈzɐmuʃ dɨ ʁɨˈveɾ ˈiʃtu",
+      "translations": [{ "language_code": "en", "text": "For that reason, we need to review this." }]
     },
     {
       "pt": "A partir daqui, tudo fica mais claro.",
       "ru": "С этого момента всё становится яснее.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ɐ pɐɾˈtiɾ dɐˈki ˈtudu ˈfikɐ ˈmajʃ ˈklaɾu",
+      "translations": [{ "language_code": "en", "text": "From this point on, everything becomes clearer." }]
     },
     {
       "pt": "Em resumo, temos duas opções.",
       "ru": "В итоге у нас есть два варианта.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ẽ ʁɨˈzumu ˈtẽmuʃ ˈduɐʃ oˈpsõjʃ",
+      "translations": [{ "language_code": "en", "text": "In summary, we have two options." }]
     },
     {
       "pt": "De resto, não há muito a acrescentar.",
       "ru": "В остальном добавить особо нечего.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "dɨ ˈʁɛʃtu nɐ̃w a ˈmũjtu ɐ ɐkɾɨsẽˈtaɾ",
+      "translations": [{ "language_code": "en", "text": "Apart from that, there’s not much to add." }]
     },
     {
       "pt": "Com o tempo, isso vai esclarecer-se.",
       "ru": "Со временем это прояснится.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "kõ u ˈtẽpu ˈisu ˈvaj ʃklɐɾɨsɨˈse",
+      "translations": [{ "language_code": "en", "text": "With time, this will become clearer." }]
     },
     {
       "pt": "Entretanto, vamos avançando.",
       "ru": "Тем временем будем двигаться дальше.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ẽtɾɐ̃ˈtɐ̃tu ˈvɐmuʃ ɐvɐ̃ˈsɐ̃du",
+      "translations": [{ "language_code": "en", "text": "Meanwhile, we’ll keep moving forward." }]
     },
     {
       "pt": "No fim das contas, tudo se resolve.",
       "ru": "В конечном счёте всё решается.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "nu ˈfĩ dɐʃ ˈkõtɐʃ ˈtudu sɨ ʁɨˈzɔɫvɨ",
+      "translations": [{ "language_code": "en", "text": "In the end, everything works out." }]
     },
     {
       "pt": "De um modo geral, concordo com isso.",
       "ru": "В общем и целом я с этим согласен(на).",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "dɨ ˈũ ˈmodu ʒɨˈɾaɫ kõˈkɔɾdu kõ ˈisu",
+      "translations": [{ "language_code": "en", "text": "Generally speaking, I agree with that." }]
     },
     {
       "pt": "Dito isto, precisamos de agir.",
       "ru": "С учётом сказанного, нам нужно действовать.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈditu ˈiʃtu pɾɨsɨˈzɐmuʃ dɨ ɐˈʒiɾ",
+      "translations": [{ "language_code": "en", "text": "That said, we need to act." }]
     },
     {
       "pt": "A partir daí, tudo mudou.",
       "ru": "С этого момента всё изменилось.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ɐ pɐɾˈtiɾ dɐˈi ˈtudu muˈdo",
+      "translations": [{ "language_code": "en", "text": "From that point on, everything changed." }]
     }
   ]
 }

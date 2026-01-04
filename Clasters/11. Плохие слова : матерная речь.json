@@ -9,238 +9,317 @@
       "pt": "Isto é uma grande merda.",
       "ru": "Это полная херня.",
       "register": "vulgar",
-      "explicit": true
+      "explicit": true,
+      "ipa_transcription": "ˈiʃtu ɛ ˈumɐ ˈɡɾɐ̃dɨ ˈmɛɾdɐ",
+      "translations": [{ "language_code": "en", "text": "This is complete bullshit." }]
     },
     {
       "pt": "Estou farto desta porcaria toda.",
       "ru": "Меня заебало всё это дерьмо.",
       "register": "vulgar",
-      "explicit": true
+      "explicit": true,
+      "ipa_transcription": "ʃˈtou ˈfaɾtu ˈdɛʃtɐ puɾkɐˈɾiɐ ˈtodɐ",
+      "translations": [{ "language_code": "en", "text": "I’m fed up with all this crap." }]
     },
     {
       "pt": "Isto correu mesmo mal, foda-se.",
       "ru": "Всё реально пошло по пизде, блядь.",
       "register": "vulgar",
-      "explicit": true
+      "explicit": true,
+      "ipa_transcription": "ˈiʃtu kuˈʁew ˈmẽmu ˈmaɫ fɔˈdasɨ",
+      "translations": [{ "language_code": "en", "text": "This went really fucking bad." }]
     },
     {
       "pt": "Não percebo esta merda nenhuma.",
       "ru": "Я ни хрена не понимаю в этом дерьме.",
       "register": "vulgar",
-      "explicit": true
+      "explicit": true,
+      "ipa_transcription": "nɐ̃w pɨɾˈsɛbu ˈɛʃtɐ ˈmɛɾdɐ nẽˈũmɐ",
+      "translations": [{ "language_code": "en", "text": "I don’t understand this shit at all." }]
     },
     {
       "pt": "Esta situação está a dar-me cabo dos nervos.",
       "ru": "Эта ситуация мне просто выносит мозг.",
       "register": "vulgar",
-      "explicit": true
+      "explicit": true,
+      "ipa_transcription": "ˈɛʃtɐ sitwɐˈsɐ̃w ʃˈta ɐ daɾmɨ ˈkabu duʃ ˈnɛɾvuʃ",
+      "translations": [{ "language_code": "en", "text": "This situation is driving me fucking crazy." }]
     },
     {
       "pt": "Isto é uma palhaçada do caralho.",
       "ru": "Это какая-то ебаная клоунада.",
       "register": "vulgar",
-      "explicit": true
+      "explicit": true,
+      "ipa_transcription": "ˈiʃtu ɛ ˈumɐ pɐʎɐˈsadɐ du kɐˈʎaɾu",
+      "translations": [{ "language_code": "en", "text": "This is a fucking joke." }]
     },
     {
       "pt": "Estou completamente lixado hoje.",
       "ru": "Я сегодня в полном пиздеце.",
       "register": "vulgar",
-      "explicit": true
+      "explicit": true,
+      "ipa_transcription": "ʃˈtou kõplɨtɐˈmẽtɨ liˈʃadu ˈoʒɨ",
+      "translations": [{ "language_code": "en", "text": "I’m completely fucked today." }]
     },
     {
       "pt": "Que se foda, já não quero saber.",
       "ru": "Да пошло оно всё нахуй, мне уже плевать.",
       "register": "vulgar",
-      "explicit": true
+      "explicit": true,
+      "ipa_transcription": "kɨ sɨ ˈfɔdɐ ʒa nɐ̃w ˈkɛɾu sɐˈbeɾ",
+      "translations": [{ "language_code": "en", "text": "Fuck it, I don’t care anymore." }]
     },
     {
       "pt": "Isto é mesmo para esquecer, foda-se.",
       "ru": "Это вообще пиздец, лучше забыть.",
       "register": "vulgar",
-      "explicit": true
+      "explicit": true,
+      "ipa_transcription": "ˈiʃtu ɛ ˈmẽmu pɐɾɐ ʃkɨˈseɾ fɔˈdasɨ",
+      "translations": [{ "language_code": "en", "text": "This is really something to forget, fuck." }]
     },
     {
       "pt": "Não tenho paciência para esta merda.",
       "ru": "У меня нет терпения на это дерьмо.",
       "register": "vulgar",
-      "explicit": true
+      "explicit": true,
+      "ipa_transcription": "nɐ̃w ˈtẽɲu pɐˈsjẽsjɐ pɐɾɐ ˈɛʃtɐ ˈmɛɾdɐ",
+      "translations": [{ "language_code": "en", "text": "I have no patience for this shit." }]
     },
 
     {
       "pt": "Estou cansado desta merda toda.",
       "ru": "Я устал от всего этого дерьма.",
       "register": "vulgar",
-      "explicit": true
+      "explicit": true,
+      "ipa_transcription": "ʃˈtou kɐ̃ˈsadu ˈdɛʃtɐ ˈmɛɾdɐ ˈtodɐ",
+      "translations": [{ "language_code": "en", "text": "I’m tired of all this shit." }]
     },
     {
       "pt": "Isto está a correr como o caralho.",
       "ru": "Всё идёт через жопу.",
       "register": "vulgar",
-      "explicit": true
+      "explicit": true,
+      "ipa_transcription": "ˈiʃtu ʃˈta ɐ kuˈʁeɾ ˈkɔmu u kɐˈʎaɾu",
+      "translations": [{ "language_code": "en", "text": "This is going to shit." }]
     },
     {
       "pt": "Que merda de dia, a sério.",
       "ru": "Ну и ебаный день, честно.",
       "register": "vulgar",
-      "explicit": true
+      "explicit": true,
+      "ipa_transcription": "kɨ ˈmɛɾdɐ dɨ ˈdiɐ ɐ ˈsɛɾju",
+      "translations": [{ "language_code": "en", "text": "What a shitty day, seriously." }]
     },
     {
       "pt": "Não acredito nesta merda.",
       "ru": "Я не могу поверить в это дерьмо.",
       "register": "vulgar",
-      "explicit": true
+      "explicit": true,
+      "ipa_transcription": "nɐ̃w ɐkɾɨˈditu ˈnɛʃtɐ ˈmɛɾdɐ",
+      "translations": [{ "language_code": "en", "text": "I can’t believe this shit." }]
     },
     {
       "pt": "Isto não faz sentido nenhum, foda-se.",
       "ru": "Это вообще ни хуя не имеет смысла.",
       "register": "vulgar",
-      "explicit": true
+      "explicit": true,
+      "ipa_transcription": "ˈiʃtu nɐ̃w faʃ sĩˈtĩdu nẽˈũ fɔˈdasɨ",
+      "translations": [{ "language_code": "en", "text": "This makes no fucking sense." }]
     },
+
     {
       "pt": "Estou a perder a paciência com isto.",
       "ru": "Я начинаю заёбываться от этого.",
       "register": "vulgar",
-      "explicit": true
+      "explicit": true,
+      "ipa_transcription": "ʃˈtou ɐ pɨɾˈdeɾ ɐ pɐˈsjẽsjɐ kõ ˈiʃtu",
+      "translations": [{ "language_code": "en", "text": "I’m losing my patience with this shit." }]
     },
     {
       "pt": "Esta situação é uma merda pegada.",
       "ru": "Эта ситуация — сплошное дерьмо.",
       "register": "vulgar",
-      "explicit": true
+      "explicit": true,
+      "ipa_transcription": "ˈɛʃtɐ sitwɐˈsɐ̃w ɛ ˈumɐ ˈmɛɾdɐ pɨˈɡadɐ",
+      "translations": [{ "language_code": "en", "text": "This situation is pure shit." }]
     },
     {
       "pt": "Não era suposto ser esta merda.",
       "ru": "Это вообще не должно было быть таким пиздецом.",
       "register": "vulgar",
-      "explicit": true
+      "explicit": true,
+      "ipa_transcription": "nɐ̃w ˈɛɾɐ suˈpɔʃtu seɾ ˈɛʃtɐ ˈmɛɾdɐ",
+      "translations": [{ "language_code": "en", "text": "This wasn’t supposed to be this shit." }]
     },
     {
       "pt": "Isto está a ir tudo pelo cano abaixo.",
       "ru": "Всё летит к хуям.",
       "register": "vulgar",
-      "explicit": true
+      "explicit": true,
+      "ipa_transcription": "ˈiʃtu ʃˈta ɐ iɾ ˈtudu ˈpelu ˈkɐnu ɐˈbajʃu",
+      "translations": [{ "language_code": "en", "text": "Everything is going down the drain." }]
     },
     {
       "pt": "Estou mesmo farto desta situação.",
       "ru": "Меня реально заебала эта ситуация.",
       "register": "vulgar",
-      "explicit": true
+      "explicit": true,
+      "ipa_transcription": "ʃˈtou ˈmẽmu ˈfaɾtu ˈdɛʃtɐ sitwɐˈsɐ̃w",
+      "translations": [{ "language_code": "en", "text": "I’m really fed up with this situation." }]
     },
 
     {
-      "pt": "Que puta de confusão, foda-se.",
-      "ru": "Какой ебаный бардак, блядь.",
-      "register": "vulgar",
-      "explicit": true
-    },
-    {
-      "pt": "Isto está uma verdadeira merda.",
-      "ru": "Это просто лютый пиздец.",
-      "register": "vulgar",
-      "explicit": true
-    },
-    {
-      "pt": "Não sei que caralho fazer agora.",
-      "ru": "Я не знаю, что, блядь, теперь делать.",
-      "register": "vulgar",
-      "explicit": true
-    },
-    {
-      "pt": "Estou sem paciência para isto hoje.",
-      "ru": "Сегодня у меня ноль терпения на это дерьмо.",
-      "register": "vulgar",
-      "explicit": true
-    },
-    {
-      "pt": "Isto deu completamente para o torto.",
-      "ru": "Всё пошло совсем по пизде.",
-      "register": "vulgar",
-      "explicit": true
-    },
-    {
-      "pt": "Que se lixe tudo, preciso de um tempo.",
-      "ru": "Да пошло всё нахуй, мне нужен перерыв.",
-      "register": "vulgar",
-      "explicit": true
-    },
-    {
-      "pt": "Esta merda está a repetir-se sempre.",
-      "ru": "Это дерьмо постоянно повторяется.",
-      "register": "vulgar",
-      "explicit": true
-    },
-    {
-      "pt": "Estou mesmo à beira de explodir.",
-      "ru": "Я реально на грани, сейчас взорвусь.",
-      "register": "vulgar",
-      "explicit": true
-    },
-    {
-      "pt": "Isto é stressante para caralho.",
-      "ru": "Это пиздец как стрессово.",
-      "register": "vulgar",
-      "explicit": true
-    },
-    {
-      "pt": "Já chega desta merda.",
-      "ru": "Хватит уже этого дерьма.",
-      "register": "vulgar",
-      "explicit": true
-    },
+    "pt": "Que puta de confusão, foda-se.",
+    "ru": "Какой ебаный бардак, блядь.",
+    "register": "vulgar",
+    "explicit": true,
+    "ipa_transcription": "kɨ ˈputɐ dɨ kõfuˈzɐ̃w fɔˈdasɨ",
+    "translations": [{ "language_code": "en", "text": "What a fucking mess." }]
+  },
+  {
+    "pt": "Isto está uma verdadeira merda.",
+    "ru": "Это просто лютый пиздец.",
+    "register": "vulgar",
+    "explicit": true,
+    "ipa_transcription": "ˈiʃtu ʃˈta ˈumɐ vɨɾdɐˈdɛjɾɐ ˈmɛɾdɐ",
+    "translations": [{ "language_code": "en", "text": "This is a real piece of shit." }]
+  },
+  {
+    "pt": "Não sei que caralho fazer agora.",
+    "ru": "Я не знаю, что, блядь, теперь делать.",
+    "register": "vulgar",
+    "explicit": true,
+    "ipa_transcription": "nɐ̃w ˈsɛj kɨ kɐˈʎaɾu fɐˈzeɾ ɐˈɡɔɾɐ",
+    "translations": [{ "language_code": "en", "text": "I don’t know what the fuck to do now." }]
+  },
+  {
+    "pt": "Estou sem paciência para isto hoje.",
+    "ru": "Сегодня у меня ноль терпения на это дерьмо.",
+    "register": "vulgar",
+    "explicit": true,
+    "ipa_transcription": "ʃˈtou sẽ pɐˈsjẽsjɐ pɐɾɐ ˈiʃtu ˈoʒɨ",
+    "translations": [{ "language_code": "en", "text": "I have zero patience for this today." }]
+  },
+  {
+    "pt": "Isto deu completamente para o torto.",
+    "ru": "Всё пошло совсем по пизде.",
+    "register": "vulgar",
+    "explicit": true,
+    "ipa_transcription": "ˈiʃtu ˈdew kõplɨtɐˈmẽtɨ pɐɾɐ u ˈtɔɾtu",
+    "translations": [{ "language_code": "en", "text": "This went completely wrong." }]
+  },
+  {
+    "pt": "Que se lixe tudo, preciso de um tempo.",
+    "ru": "Да пошло всё нахуй, мне нужен перерыв.",
+    "register": "vulgar",
+    "explicit": true,
+    "ipa_transcription": "kɨ sɨ ˈliʃɨ ˈtudu pɾɨˈsizu dɨ ˈũ ˈtẽpu",
+    "translations": [{ "language_code": "en", "text": "Fuck everything, I need some time." }]
+  },
+  {
+    "pt": "Esta merda está a repetir-se sempre.",
+    "ru": "Это дерьмо постоянно повторяется.",
+    "register": "vulgar",
+    "explicit": true,
+    "ipa_transcription": "ˈɛʃtɐ ˈmɛɾdɐ ʃˈta ɐ ʁɨpɨˈtiɾsɨ ˈsẽpɾɨ",
+    "translations": [{ "language_code": "en", "text": "This shit keeps repeating itself." }]
+  },
+  {
+    "pt": "Estou mesmo à beira de explodir.",
+    "ru": "Я реально на грани, сейчас взорвусь.",
+    "register": "vulgar",
+    "explicit": true,
+    "ipa_transcription": "ʃˈtou ˈmẽmu a ˈbɐjɾɐ dɨ ʃpluˈdiɾ",
+    "translations": [{ "language_code": "en", "text": "I’m really about to explode." }]
+  },
+  {
+    "pt": "Isto é stressante para caralho.",
+    "ru": "Это пиздец как стрессово.",
+    "register": "vulgar",
+    "explicit": true,
+    "ipa_transcription": "ˈiʃtu ɛ ʃtɾɨˈsɐ̃tɨ pɐɾɐ kɐˈʎaɾu",
+    "translations": [{ "language_code": "en", "text": "This is fucking stressful." }]
+  },
+  {
+    "pt": "Já chega desta merda.",
+    "ru": "Хватит уже этого дерьма.",
+    "register": "vulgar",
+    "explicit": true,
+    "ipa_transcription": "ʒa ˈʃeɡɐ ˈdɛʃtɐ ˈmɛɾdɐ",
+    "translations": [{ "language_code": "en", "text": "Enough of this shit." }]
+  },
 
-    {
-      "pt": "Não tenho energia para lidar com isto.",
-      "ru": "У меня нет сил разбираться с этим дерьмом.",
-      "register": "vulgar",
-      "explicit": true
-    },
-    {
-      "pt": "Isto está a sair completamente do controlo.",
-      "ru": "Это всё выходит из-под контроля к хуям.",
-      "register": "vulgar",
-      "explicit": true
-    },
-    {
-      "pt": "Estou cansado de levar com esta merda.",
-      "ru": "Я устал всё это дерьмо на себе тащить.",
-      "register": "vulgar",
-      "explicit": true
-    },
-    {
-      "pt": "Que merda foi esta agora?",
-      "ru": "Что это, блядь, сейчас было?",
-      "register": "vulgar",
-      "explicit": true
-    },
-    {
-      "pt": "Isto não pode ser sério, foda-se.",
-      "ru": "Это не может быть серьёзно, блядь.",
-      "register": "vulgar",
-      "explicit": true
-    },
-    {
-      "pt": "Estou mesmo saturado desta porcaria.",
-      "ru": "Я реально пресытился этим дерьмом.",
-      "register": "vulgar",
-      "explicit": true
-    },
-    {
-      "pt": "Tudo isto é uma perda de tempo do caralho.",
-      "ru": "Всё это — ебаная трата времени.",
-      "register": "vulgar",
-      "explicit": true
-    },
-    {
-      "pt": "Isto está a dar cabo de mim.",
-      "ru": "Это меня просто добивает.",
-      "register": "vulgar",
-      "explicit": true
-    },
-    {
-      "pt": "Não tenho cabeça para esta merda hoje.",
-      "ru": "Сегодня у меня нет головы на это дерьмо.",
-      "register": "vulgar",
-      "explicit": true
-    }
-  ]
+  {
+    "pt": "Não tenho energia para lidar com isto.",
+    "ru": "У меня нет сил разбираться с этим дерьмом.",
+    "register": "vulgar",
+    "explicit": true,
+    "ipa_transcription": "nɐ̃w ˈtẽɲu ɨnɨɾˈʒiɐ pɐɾɐ liˈdaɾ kõ ˈiʃtu",
+    "translations": [{ "language_code": "en", "text": "I don’t have the energy to deal with this shit." }]
+  },
+  {
+    "pt": "Isto está a sair completamente do controlo.",
+    "ru": "Это всё выходит из-под контроля к хуям.",
+    "register": "vulgar",
+    "explicit": true,
+    "ipa_transcription": "ˈiʃtu ʃˈta ɐ sɐˈiɾ kõplɨtɐˈmẽtɨ du kõˈtɾɔlu",
+    "translations": [{ "language_code": "en", "text": "This is completely getting out of control." }]
+  },
+  {
+    "pt": "Estou cansado de levar com esta merda.",
+    "ru": "Я устал всё это дерьмо на себе тащить.",
+    "register": "vulgar",
+    "explicit": true,
+    "ipa_transcription": "ʃˈtou kɐ̃ˈsadu dɨ lɨˈvaɾ kõ ˈɛʃtɐ ˈmɛɾdɐ",
+    "translations": [{ "language_code": "en", "text": "I’m tired of putting up with this shit." }]
+  },
+  {
+    "pt": "Que merda foi esta agora?",
+    "ru": "Что это, блядь, сейчас было?",
+    "register": "vulgar",
+    "explicit": true,
+    "ipa_transcription": "kɨ ˈmɛɾdɐ ˈfoj ˈɛʃtɐ ɐˈɡɔɾɐ",
+    "translations": [{ "language_code": "en", "text": "What the fuck was that just now?" }]
+  },
+  {
+    "pt": "Isto não pode ser sério, foda-se.",
+    "ru": "Это не может быть серьёзно, блядь.",
+    "register": "vulgar",
+    "explicit": true,
+    "ipa_transcription": "ˈiʃtu nɐ̃w ˈpɔdɨ seɾ ˈsɛɾju fɔˈdasɨ",
+    "translations": [{ "language_code": "en", "text": "This can’t be serious, fuck." }]
+  },
+  {
+    "pt": "Estou mesmo saturado desta porcaria.",
+    "ru": "Я реально пресытился этим дерьмом.",
+    "register": "vulgar",
+    "explicit": true,
+    "ipa_transcription": "ʃˈtou ˈmẽmu sɐtuˈɾadu ˈdɛʃtɐ puɾkɐˈɾiɐ",
+    "translations": [{ "language_code": "en", "text": "I’m really sick of this crap." }]
+  },
+  {
+    "pt": "Tudo isto é uma perda de tempo do caralho.",
+    "ru": "Всё это — ебаная трата времени.",
+    "register": "vulgar",
+    "explicit": true,
+    "ipa_transcription": "ˈtudu ˈiʃtu ɛ ˈumɐ ˈpɛɾdɐ dɨ ˈtẽpu du kɐˈʎaɾu",
+    "translations": [{ "language_code": "en", "text": "All of this is a fucking waste of time." }]
+  },
+  {
+    "pt": "Isto está a dar cabo de mim.",
+    "ru": "Это меня просто добивает.",
+    "register": "vulgar",
+    "explicit": true,
+    "ipa_transcription": "ˈiʃtu ʃˈta ɐ daɾ ˈkabu dɨ ˈmĩ",
+    "translations": [{ "language_code": "en", "text": "This is fucking destroying me." }]
+  },
+  {
+    "pt": "Não tenho cabeça para esta merda hoje.",
+    "ru": "Сегодня у меня нет головы на это дерьмо.",
+    "register": "vulgar",
+    "explicit": true,
+    "ipa_transcription": "nɐ̃w ˈtẽɲu kɐˈbesɐ pɐɾɐ ˈɛʃtɐ ˈmɛɾdɐ ˈoʒɨ",
+    "translations": [{ "language_code": "en", "text": "I don’t have the head for this shit today." }]
+  }
+]
 }

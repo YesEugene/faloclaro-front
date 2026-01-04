@@ -8,244 +8,324 @@
       "pt": "Gostava de pedir algo para comer.",
       "ru": "Я хотел(а) бы заказать что-нибудь поесть.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ɡuʃˈtaβɐ dɨ pɨˈdiɾ ˈaɫɡu ˈpaɾɐ kuˈmeɾ",
+      "translations": [{ "language_code": "en", "text": "I would like to order something to eat." }]
     },
     {
       "pt": "Pode recomendar algum prato típico?",
       "ru": "Можете порекомендовать какое-нибудь местное блюдо?",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈpɔdɨ ʁɨkõmẽˈdaɾ aɫˈɡũ ˈpɾatu ˈtipiku",
+      "translations": [{ "language_code": "en", "text": "Can you recommend a typical dish?" }]
     },
     {
       "pt": "A conta, por favor, quando puder.",
       "ru": "Счёт, пожалуйста, когда сможете.",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ɐ ˈkõtɐ puɾ fɐˈvoɾ ˈkwɐ̃du puˈdɛɾ",
+      "translations": [{ "language_code": "en", "text": "The bill, please, when you can." }]
     },
     {
       "pt": "Isto não foi exatamente o que eu pedi.",
       "ru": "Это не совсем то, что я заказывал(а).",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈiʃtu nɐ̃w ˈfoj ɨɡzɐtɐˈmẽtɨ u kɨ ˈew pɨˈdi",
+      "translations": [{ "language_code": "en", "text": "This is not exactly what I ordered." }]
     },
     {
       "pt": "Está tudo muito bom, obrigado.",
       "ru": "Всё очень вкусно, спасибо.",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ʃˈta ˈtudu ˈmũjtu ˈbõ uβɾiˈɡadu",
+      "translations": [{ "language_code": "en", "text": "Everything is very good, thank you." }]
     },
     {
       "pt": "Pode trazer mais um copo de água, por favor?",
       "ru": "Можете принести ещё один стакан воды, пожалуйста?",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈpɔdɨ tɾɐˈzeɾ ˈmajʃ ˈũ ˈkɔpu dɨ ˈaɡwɐ puɾ fɐˈvoɾ",
+      "translations": [{ "language_code": "en", "text": "Can you bring another glass of water, please?" }]
     },
     {
       "pt": "Preferia algo mais leve.",
       "ru": "Я бы предпочёл(ла) что-нибудь полегче.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "pɾɨfɨˈɾiɐ ˈaɫɡu ˈmajʃ ˈlɛvɨ",
+      "translations": [{ "language_code": "en", "text": "I would prefer something lighter." }]
     },
     {
       "pt": "Podemos sentar-nos ali fora?",
       "ru": "Мы можем сесть снаружи?",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "puˈdɛmuʃ sẽˈtaɾnuʃ ɐˈli ˈfɔɾɐ",
+      "translations": [{ "language_code": "en", "text": "Can we sit outside?" }]
     },
     {
       "pt": "Quanto tempo demora o pedido?",
       "ru": "Сколько времени займёт заказ?",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈkwɐ̃tu ˈtẽpu dɨˈmɔɾɐ u pɨˈdidu",
+      "translations": [{ "language_code": "en", "text": "How long does the order take?" }]
     },
     {
       "pt": "Podemos pagar separados?",
       "ru": "Мы можем заплатить раздельно?",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "puˈdɛmuʃ pɐˈɡaɾ sɨpɐˈɾaduʃ",
+      "translations": [{ "language_code": "en", "text": "Can we pay separately?" }]
     },
 
     {
       "pt": "Gostava de ver a ementa, por favor.",
       "ru": "Я хотел(а) бы посмотреть меню, пожалуйста.",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ɡuʃˈtaβɐ dɨ veɾ ɐ ɨˈmẽtɐ puɾ fɐˈvoɾ",
+      "translations": [{ "language_code": "en", "text": "I would like to see the menu, please." }]
     },
     {
       "pt": "Há alguma opção vegetariana hoje?",
       "ru": "Есть ли сегодня вегетарианские варианты?",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "a aɫˈɡumɐ ɔpˈsɐ̃w vɨʒɨtɐɾiˈanɐ ˈoʒɨ",
+      "translations": [{ "language_code": "en", "text": "Is there any vegetarian option today?" }]
     },
     {
       "pt": "Pode ser sem picante, por favor?",
       "ru": "Можно без острого, пожалуйста?",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈpɔdɨ sɛɾ sẽ piˈkɐ̃tɨ puɾ fɐˈvoɾ",
+      "translations": [{ "language_code": "en", "text": "Can it be without spicy food, please?" }]
     },
     {
       "pt": "Este prato vem com acompanhamento?",
       "ru": "Это блюдо подаётся с гарниром?",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈeʃtɨ ˈpɾatu vẽ kõ ɐkõpɐɲɐˈmẽtu",
+      "translations": [{ "language_code": "en", "text": "Does this dish come with a side?" }]
     },
     {
       "pt": "Gostava de pedir a sobremesa.",
       "ru": "Я хотел(а) бы заказать десерт.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ɡuʃˈtaβɐ dɨ pɨˈdiɾ ɐ sobɾɨˈmezɐ",
+      "translations": [{ "language_code": "en", "text": "I would like to order dessert." }]
     },
     {
       "pt": "Pode trazer o café depois, por favor?",
       "ru": "Можете принести кофе позже, пожалуйста?",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈpɔdɨ tɾɐˈzeɾ u kɐˈfɛ dɨˈpojʃ puɾ fɐˈvoɾ",
+      "translations": [{ "language_code": "en", "text": "Can you bring the coffee later, please?" }]
     },
     {
       "pt": "Isto está um pouco frio.",
       "ru": "Это немного холодное.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈiʃtu ʃˈta ˈũ ˈpoku ˈfɾiu",
+      "translations": [{ "language_code": "en", "text": "This is a bit cold." }]
     },
     {
       "pt": "Pode aquecer um pouco mais isto?",
       "ru": "Можете это немного подогреть?",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈpɔdɨ ɐkwɨˈseɾ ˈũ ˈpoku ˈmajʃ ˈiʃtu",
+      "translations": [{ "language_code": "en", "text": "Can you heat this up a bit more?" }]
     },
     {
       "pt": "Preferia carne bem passada.",
       "ru": "Я бы предпочёл(ла) хорошо прожаренное мясо.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "pɾɨfɨˈɾiɐ ˈkaɾnɨ bẽ pɐˈsadɐ",
+      "translations": [{ "language_code": "en", "text": "I would prefer the meat well done." }]
     },
     {
       "pt": "Pode ser só um café curto?",
       "ru": "Можно просто короткий кофе (эспрессо)?",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈpɔdɨ sɛɾ ˈsɔ ˈũ kɐˈfɛ ˈkuɾtu",
+      "translations": [{ "language_code": "en", "text": "Can it just be a short coffee?" }]
     },
 
     {
       "pt": "Estamos prontos para pedir agora.",
       "ru": "Мы готовы сделать заказ.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ʃˈtɐmuʃ ˈpɾõtuʃ ˈpaɾɐ pɨˈdiɾ ɐˈɡɔɾɐ",
+      "translations": [{ "language_code": "en", "text": "We are ready to order now." }]
     },
     {
       "pt": "Pode trazer um prato para partilhar?",
       "ru": "Можете принести блюдо на двоих?",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈpɔdɨ tɾɐˈzeɾ ˈũ ˈpɾatu ˈpaɾɐ pɐɾtiˈʎaɾ",
+      "translations": [{ "language_code": "en", "text": "Can you bring a dish to share?" }]
     },
     {
       "pt": "Há alguma sugestão do dia?",
       "ru": "Есть ли блюдо дня?",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "a aɫˈɡumɐ suʒɨʃˈtɐ̃w du ˈdiɐ",
+      "translations": [{ "language_code": "en", "text": "Is there a suggestion of the day?" }]
     },
     {
       "pt": "Gostava de algo sem lactose.",
       "ru": "Я хотел(а) бы что-нибудь без лактозы.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ɡuʃˈtaβɐ dɨ ˈaɫɡu sẽ lɐkˈtozɨ",
+      "translations": [{ "language_code": "en", "text": "I would like something without lactose." }]
     },
     {
       "pt": "Pode trazer mais pão, por favor?",
       "ru": "Можете принести ещё хлеба, пожалуйста?",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈpɔdɨ tɾɐˈzeɾ ˈmajʃ ˈpɐ̃w puɾ fɐˈvoɾ",
+      "translations": [{ "language_code": "en", "text": "Can you bring more bread, please?" }]
     },
     {
       "pt": "A comida ainda vai demorar?",
       "ru": "Еда ещё долго будет готовиться?",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ɐ kuˈmidɐ ɐˈĩdɐ ˈvaj dɨˈmɔɾɐɾ",
+      "translations": [{ "language_code": "en", "text": "Is the food still going to take long?" }]
     },
     {
       "pt": "Isto não está bem temperado.",
       "ru": "Это плохо приправлено.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈiʃtu nɐ̃w ʃˈta bẽ tẽpɨˈɾadu",
+      "translations": [{ "language_code": "en", "text": "This is not well seasoned." }]
     },
     {
       "pt": "Pode trazer a conta quando puder?",
       "ru": "Можете принести счёт, когда будет удобно?",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈpɔdɨ tɾɐˈzeɾ ɐ ˈkõtɐ ˈkwɐ̃du puˈdɛɾ",
+      "translations": [{ "language_code": "en", "text": "Can you bring the bill when you can?" }]
     },
     {
       "pt": "Gostava de pagar com cartão.",
       "ru": "Я хотел(а) бы расплатиться картой.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ɡuʃˈtaβɐ dɨ pɐˈɡaɾ kõ kaɾˈtɐ̃w",
+      "translations": [{ "language_code": "en", "text": "I would like to pay by card." }]
     },
     {
       "pt": "Aceitam cartões aqui?",
       "ru": "Здесь принимают карты?",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ɐˈsɐjtɐ̃w kaɾˈtõjʃ ɐˈki",
+      "translations": [{ "language_code": "en", "text": "Do you accept cards here?" }]
     },
 
     {
       "pt": "Podemos ficar mais um pouco?",
       "ru": "Мы можем посидеть ещё немного?",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "puˈdɛmuʃ fiˈkaɾ ˈmajʃ ˈũ ˈpoku",
+      "translations": [{ "language_code": "en", "text": "Can we stay a bit longer?" }]
     },
     {
       "pt": "Pode trazer a sobremesa para partilhar?",
       "ru": "Можете принести десерт на двоих?",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈpɔdɨ tɾɐˈzeɾ ɐ sobɾɨˈmezɐ ˈpaɾɐ pɐɾtiˈʎaɾ",
+      "translations": [{ "language_code": "en", "text": "Can you bring a dessert to share?" }]
     },
     {
       "pt": "Está tudo pronto, obrigado.",
       "ru": "Всё готово, спасибо.",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ʃˈta ˈtudu ˈpɾõtu uβɾiˈɡadu",
+      "translations": [{ "language_code": "en", "text": "Everything is ready, thank you." }]
     },
     {
       "pt": "Gostámos muito da refeição.",
       "ru": "Нам очень понравилась еда.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ɡuʃˈtamʊʃ ˈmũjtu dɐ ʁɨfɐjˈsɐ̃w",
+      "translations": [{ "language_code": "en", "text": "We really enjoyed the meal." }]
     },
     {
       "pt": "Pode recomendar um bom vinho?",
       "ru": "Можете порекомендовать хорошее вино?",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈpɔdɨ ʁɨkõmẽˈdaɾ ˈũ bõ ˈviɲu",
+      "translations": [{ "language_code": "en", "text": "Can you recommend a good wine?" }]
     },
     {
       "pt": "Preferimos algo sem álcool.",
       "ru": "Мы предпочитаем что-нибудь без алкоголя.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "pɾɨfɨˈɾimuʃ ˈaɫɡu sẽ ˈaɫkuɔɫ",
+      "translations": [{ "language_code": "en", "text": "We prefer something without alcohol." }]
     },
     {
       "pt": "A mesa está reservada?",
       "ru": "Этот столик зарезервирован?",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ɐ ˈmezɐ ʃˈta ʁɨzɛɾˈvadɐ",
+      "translations": [{ "language_code": "en", "text": "Is this table reserved?" }]
     },
     {
       "pt": "Temos uma reserva para duas pessoas.",
       "ru": "У нас бронь на двоих.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈtẽmuʃ ˈumɐ ʁɨˈzɛɾvɐ ˈpaɾɐ ˈduɐʃ pɨˈsoɐʃ",
+      "translations": [{ "language_code": "en", "text": "We have a reservation for two people." }]
     },
     {
       "pt": "Pode preparar isto para levar?",
       "ru": "Можете приготовить это с собой?",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈpɔdɨ pɾɨpɐˈɾaɾ ˈiʃtu ˈpaɾɐ lɨˈvaɾ",
+      "translations": [{ "language_code": "en", "text": "Can you prepare this to take away?" }]
     },
     {
       "pt": "Gostava de levar o resto, por favor.",
       "ru": "Я хотел(а) бы забрать остатки с собой, пожалуйста.",
       "register": "polite",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ɡuʃˈtaβɐ dɨ lɨˈvaɾ u ˈʁɛʃtu puɾ fɐˈvoɾ",
+      "translations": [{ "language_code": "en", "text": "I would like to take the rest with me, please." }]
     }
   ]
 }

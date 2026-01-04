@@ -46,6 +46,7 @@ const clusterNameMap = {
   'Эмоции и состояния': 'Emotions and States',
   'Связки речи': 'Speech Connectors',
   'Плохие слова : матерная речь': 'Profanity',
+  'Плохие слова / матерная речь': 'Profanity', // Alternative format with slash
   'Фразы из фильмов': 'Movie Quotes',
 };
 
@@ -102,13 +103,25 @@ async function importPhrases(clusterId, phrases, clusterName) {
 
       let phraseId;
 
+      // Support both formats: "ipa" or "ipa_transcription"
+      const ipaText = phrase.ipa || phrase.ipa_transcription || null;
+      
+      // Support both formats: direct "en" or "translations" array
+      let enText = phrase.en || null;
+      if (!enText && phrase.translations && Array.isArray(phrase.translations)) {
+        const enTranslation = phrase.translations.find(t => t.language_code === 'en');
+        if (enTranslation) {
+          enText = enTranslation.text || enTranslation.translation_text || null;
+        }
+      }
+
       if (existing) {
         // Update existing phrase
         const { data, error } = await supabase
           .from('phrases')
           .update({
             order_index: i + 1,
-            ipa_transcription: phrase.ipa || null,
+            ipa_transcription: ipaText,
             movie_title: phrase.movie?.title_pt || null,
             movie_character: phrase.movie?.character || null,
             movie_year: phrase.movie?.year || null,
@@ -127,7 +140,7 @@ async function importPhrases(clusterId, phrases, clusterName) {
           .insert({
             cluster_id: clusterId,
             portuguese_text: phrase.pt,
-            ipa_transcription: phrase.ipa || null,
+            ipa_transcription: ipaText,
             audio_url: null, // Will be generated later
             order_index: i + 1,
             movie_title: phrase.movie?.title_pt || null,
@@ -160,13 +173,13 @@ async function importPhrases(clusterId, phrases, clusterName) {
       }
 
       // Add/update English translation
-      if (phrase.en) {
+      if (enText) {
         const { error: transError } = await supabase
           .from('translations')
           .upsert({
             phrase_id: phraseId,
             language_code: 'en',
-            translation_text: phrase.en,
+            translation_text: enText,
           }, {
             onConflict: 'phrase_id,language_code',
           });

@@ -8,244 +8,324 @@
       "pt": "Acho que isso faz sentido para mim.",
       "ru": "Думаю, в этом есть смысл для меня.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈaʃu kɨ ˈisu faʃ sẽˈtĩdu ˈpaɾɐ mĩ",
+      "translations": [{ "language_code": "en", "text": "I think that makes sense to me." }]
     },
     {
       "pt": "Não tenho a certeza se concordo totalmente.",
       "ru": "Я не уверен(а), что полностью с этим согласен(на).",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "nɐ̃w ˈtẽɲu ɐ sɨɾˈtezɐ sɨ kõˈkɔɾɡu totɐɫˈmẽtɨ",
+      "translations": [{ "language_code": "en", "text": "I’m not sure I completely agree." }]
     },
     {
       "pt": "Isso não me parece uma boa ideia.",
       "ru": "Это не кажется мне хорошей идеей.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈisu nɐ̃w mɨ pɐˈɾesɨ ˈumɐ ˈboɐ iˈdɛjɐ",
+      "translations": [{ "language_code": "en", "text": "That doesn’t seem like a good idea to me." }]
     },
     {
       "pt": "Prefiro pensar nisso com mais calma.",
       "ru": "Я предпочитаю обдумать это спокойнее.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "pɾɨˈfiɾu pẽˈsaɾ ˈnisu kõ ˈmajʃ ˈkaɫmɐ",
+      "translations": [{ "language_code": "en", "text": "I prefer to think about it more calmly." }]
     },
     {
       "pt": "Isso depende muito da situação.",
       "ru": "Это сильно зависит от ситуации.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈisu dɨˈpẽdɨ ˈmũjtu dɐ sitwɐˈsɐ̃w",
+      "translations": [{ "language_code": "en", "text": "That depends a lot on the situation." }]
     },
     {
       "pt": "Não estava à espera dessa resposta.",
       "ru": "Я не ожидал(а) такого ответа.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "nɐ̃w ɨʃˈtaβɐ a ʃpɨˈɾɛsɐ ˈdesɐ ʁɨʃˈpɔʃtɐ",
+      "translations": [{ "language_code": "en", "text": "I wasn’t expecting that answer." }]
     },
     {
       "pt": "Isso faz mais sentido agora.",
       "ru": "Теперь это имеет больше смысла.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈisu faʃ ˈmajʃ sẽˈtĩdu ɐˈɡɔɾɐ",
+      "translations": [{ "language_code": "en", "text": "That makes more sense now." }]
     },
     {
       "pt": "Não me sinto confortável com isso.",
       "ru": "Мне с этим некомфортно.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "nɐ̃w mɨ ˈsĩtu kõfuɾˈtaβɛɫ kõ ˈisu",
+      "translations": [{ "language_code": "en", "text": "I don’t feel comfortable with that." }]
     },
     {
       "pt": "Talvez seja melhor deixar assim.",
       "ru": "Возможно, лучше оставить всё как есть.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "tɐɫˈveʃ ˈseʒɐ mɨˈʎɔɾ dɨjˈʃaɾ ɐˈsĩ",
+      "translations": [{ "language_code": "en", "text": "Maybe it’s better to leave it like this." }]
     },
     {
       "pt": "Preciso de pensar melhor nisso.",
       "ru": "Мне нужно лучше это обдумать.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "pɾɨˈsizu dɨ pẽˈsaɾ mɨˈʎɔɾ ˈnisu",
+      "translations": [{ "language_code": "en", "text": "I need to think about this better." }]
     },
 
     {
       "pt": "Para ser honesto, não esperava isso.",
       "ru": "Если честно, я этого не ожидал(а).",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈpaɾɐ seɾ uˈnɛʃtu nɐ̃w ʃpɨˈɾaβɐ ˈisu",
+      "translations": [{ "language_code": "en", "text": "To be honest, I wasn’t expecting that." }]
     },
     {
       "pt": "Vejo a situação de outra forma.",
       "ru": "Я вижу эту ситуацию по-другому.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈveʒu ɐ sitwɐˈsɐ̃w dɨ ˈotɾɐ ˈfɔɾmɐ",
+      "translations": [{ "language_code": "en", "text": "I see the situation differently." }]
     },
     {
       "pt": "Isso muda um pouco as coisas.",
       "ru": "Это немного меняет ситуацию.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈisu ˈmudɐ ˈũ ˈpoku ɐʃ ˈkojzɐʃ",
+      "translations": [{ "language_code": "en", "text": "That changes things a bit." }]
     },
     {
       "pt": "Não é exatamente o que eu pensei.",
       "ru": "Это не совсем то, что я думал(а).",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "nɐ̃w ɛ izɐtɐˈmẽtɨ u kɨ ew pẽˈsaj",
+      "translations": [{ "language_code": "en", "text": "That’s not exactly what I thought." }]
     },
     {
       "pt": "Faz sentido do teu ponto de vista.",
       "ru": "Это имеет смысл с твоей точки зрения.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "faʃ sẽˈtĩdu du ˈtew ˈpõtu dɨ ˈviʃtɐ",
+      "translations": [{ "language_code": "en", "text": "That makes sense from your point of view." }]
     },
     {
       "pt": "Não tenho uma resposta neste momento.",
       "ru": "У меня сейчас нет ответа.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "nɐ̃w ˈtẽɲu ˈumɐ ʁɨʃˈpɔʃtɐ ˈneʃtɨ muˈmẽtu",
+      "translations": [{ "language_code": "en", "text": "I don’t have an answer at the moment." }]
     },
     {
       "pt": "Talvez possamos falar disso depois.",
       "ru": "Возможно, мы сможем обсудить это позже.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "tɐɫˈveʃ puˈsɐmuʃ fɐˈlaɾ ˈdisu dɨˈpojʃ",
+      "translations": [{ "language_code": "en", "text": "Maybe we can talk about this later." }]
     },
     {
       "pt": "Isso não corresponde ao que eu esperava.",
       "ru": "Это не соответствует тому, чего я ожидал(а).",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈisu nɐ̃w kõʁɨʃˈpõdɨ aw kɨ ew ʃpɨˈɾaβɐ",
+      "translations": [{ "language_code": "en", "text": "That doesn’t match what I was expecting." }]
     },
     {
       "pt": "Para mim, isso não é assim tão simples.",
       "ru": "Для меня это не так уж просто.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈpaɾɐ mĩ ˈisu nɐ̃w ɛ ɐˈsĩ tɐ̃w ˈsĩplɨʃ",
+      "translations": [{ "language_code": "en", "text": "For me, it’s not that simple." }]
     },
     {
       "pt": "Nunca tinha pensado nisso dessa maneira.",
       "ru": "Я никогда не думал(а) об этом таким образом.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈnũkɐ ˈtiɲɐ pẽˈsadu ˈnisu ˈdesɐ mɐnɐjˈɾɐ",
+      "translations": [{ "language_code": "en", "text": "I had never thought about it that way." }]
     },
 
     {
       "pt": "Isso levanta algumas dúvidas para mim.",
       "ru": "Это вызывает у меня некоторые сомнения.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈisu lɨˈvɐ̃tɐ ˈaɫɡumɐʃ ˈduβidɐʃ ˈpaɾɐ mĩ",
+      "translations": [{ "language_code": "en", "text": "That raises some doubts for me." }]
     },
     {
       "pt": "Não me parece a melhor solução.",
       "ru": "Это не кажется мне лучшим решением.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "nɐ̃w mɨ pɐˈɾesɨ ɐ mɨˈʎɔɾ suɫuˈsɐ̃w",
+      "translations": [{ "language_code": "en", "text": "That doesn’t seem like the best solution." }]
     },
     {
       "pt": "Isso faz-me reconsiderar a ideia.",
       "ru": "Это заставляет меня пересмотреть идею.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈisu faʃmɨ ʁɨkõsidɨˈɾaɾ ɐ iˈdɛjɐ",
+      "translations": [{ "language_code": "en", "text": "That makes me reconsider the idea." }]
     },
     {
       "pt": "Preciso de mais informação para decidir.",
       "ru": "Мне нужно больше информации, чтобы решить.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "pɾɨˈsizu dɨ ˈmajʃ ĩfuɾmɐˈsɐ̃w ˈpaɾɐ dɨsiˈdiɾ",
+      "translations": [{ "language_code": "en", "text": "I need more information to decide." }]
     },
     {
       "pt": "Não vejo isso como um problema sério.",
       "ru": "Я не вижу в этом серьёзной проблемы.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "nɐ̃w ˈveʒu ˈisu ˈkomu ˈũ pɾuˈblɛmɐ ˈsɛɾju",
+      "translations": [{ "language_code": "en", "text": "I don’t see this as a serious problem." }]
     },
     {
       "pt": "Isso não era bem o que eu queria dizer.",
       "ru": "Это не совсем то, что я хотел(а) сказать.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈisu nɐ̃w ˈɛɾɐ bẽ u kɨ ew kɨˈɾiɐ dɨˈzeɾ",
+      "translations": [{ "language_code": "en", "text": "That’s not exactly what I meant to say." }]
     },
     {
       "pt": "Tenho sentimentos mistos em relação a isso.",
       "ru": "У меня смешанные чувства по этому поводу.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈtẽɲu sɨtĩˈmẽtuʃ ˈmiʃtuʃ ẽ ʁɨlɐˈsɐ̃w ɐ ˈisu",
+      "translations": [{ "language_code": "en", "text": "I have mixed feelings about this." }]
     },
     {
       "pt": "Não estou totalmente convencido disso.",
       "ru": "Я не до конца в этом убеждён(на).",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "nɐ̃w ʃˈtow totɐɫˈmẽtɨ kõvẽˈsidu ˈdisu",
+      "translations": [{ "language_code": "en", "text": "I’m not fully convinced about this." }]
     },
     {
       "pt": "Isso merece ser pensado com mais atenção.",
       "ru": "Это стоит обдумать более внимательно.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈisu mɨˈɾesɨ seɾ pẽˈsadu kõ ˈmajʃ ɐtẽˈsɐ̃w",
+      "translations": [{ "language_code": "en", "text": "This deserves more careful thought." }]
     },
     {
       "pt": "Não é assim tão claro para mim.",
       "ru": "Для меня это не так уж ясно.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "nɐ̃w ɛ ɐˈsĩ tɐ̃w ˈklaɾu ˈpaɾɐ mĩ",
+      "translations": [{ "language_code": "en", "text": "It’s not that clear to me." }]
     },
 
     {
       "pt": "Isso não me deixa totalmente tranquilo.",
       "ru": "Это не даёт мне полного спокойствия.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈisu nɐ̃w mɨ ˈdejʃɐ totɐɫˈmẽtɨ tɾɐ̃ˈkiɫu",
+      "translations": [{ "language_code": "en", "text": "That doesn’t make me feel completely at ease." }]
     },
     {
       "pt": "Tenho uma opinião um pouco diferente.",
       "ru": "У меня немного другое мнение.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈtẽɲu ˈumɐ opiniˈɐ̃w ˈũ ˈpoku difɨˈɾẽtɨ",
+      "translations": [{ "language_code": "en", "text": "I have a slightly different opinion." }]
     },
     {
       "pt": "Isso não estava nos meus planos.",
       "ru": "Это не входило в мои планы.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈisu nɐ̃w ɨʃˈtaβɐ nuʃ ˈmejʃ ˈplɐnuʃ",
+      "translations": [{ "language_code": "en", "text": "That wasn’t in my plans." }]
     },
     {
       "pt": "Não é algo que eu decidiria agora.",
       "ru": "Это не то, что я бы решил(а) сейчас.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "nɐ̃w ɛ ˈaɫɡu kɨ ew dɨsidiˈɾiɐ ɐˈɡɔɾɐ",
+      "translations": [{ "language_code": "en", "text": "It’s not something I would decide right now." }]
     },
     {
       "pt": "Isso pode ter várias interpretações.",
       "ru": "Это можно интерпретировать по-разному.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈisu ˈpɔdɨ teɾ ˈvaɾjɐʃ ĩtɨɾpɾɨtɐˈsɐ̃jʃ",
+      "translations": [{ "language_code": "en", "text": "This can have several interpretations." }]
     },
     {
       "pt": "Não tenho a mesma opinião sobre isso.",
       "ru": "У меня другое мнение по этому поводу.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "nɐ̃w ˈtẽɲu ɐ ˈmeʒmɐ opiniˈɐ̃w ˈsoβɾɨ ˈisu",
+      "translations": [{ "language_code": "en", "text": "I don’t share the same opinion about this." }]
     },
     {
       "pt": "Isso faz-me pensar duas vezes.",
       "ru": "Это заставляет меня подумать дважды.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈisu faʃmɨ pẽˈsaɾ ˈduɐʃ ˈvezɨʃ",
+      "translations": [{ "language_code": "en", "text": "That makes me think twice." }]
     },
     {
       "pt": "Não estou totalmente de acordo com isso.",
       "ru": "Я не полностью с этим согласен(на).",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "nɐ̃w ʃˈtow totɐɫˈmẽtɨ dɨ ɐˈkɔɾdu kõ ˈisu",
+      "translations": [{ "language_code": "en", "text": "I don’t completely agree with that." }]
     },
     {
       "pt": "Isso não é tão simples quanto parece.",
       "ru": "Это не так просто, как кажется.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "ˈisu nɐ̃w ɛ tɐ̃w ˈsĩplɨʃ ˈkwɐ̃tu pɐˈɾesɨ",
+      "translations": [{ "language_code": "en", "text": "It’s not as simple as it seems." }]
     },
     {
       "pt": "Preciso de refletir um pouco mais.",
       "ru": "Мне нужно ещё немного подумать.",
       "register": "neutral",
-      "explicit": false
+      "explicit": false,
+      "ipa_transcription": "pɾɨˈsizu dɨ ʁɨflɨˈtiɾ ˈũ ˈpoku ˈmajʃ",
+      "translations": [{ "language_code": "en", "text": "I need to reflect a bit more." }]
     }
   ]
 }
