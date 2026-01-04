@@ -76,6 +76,14 @@ function PlayerContent() {
     localStorage.setItem('playbackSpeed', playbackSpeed.toString());
   }, [playbackSpeed]);
 
+  // Apply playback speed when phrase changes (critical fix)
+  useEffect(() => {
+    if (audioRef.current && phrase?.audio_url) {
+      // Apply saved playback speed immediately when audio element is ready
+      audioRef.current.playbackRate = playbackSpeed;
+    }
+  }, [phrase?.id, phrase?.audio_url, playbackSpeed]);
+
   useEffect(() => {
     localStorage.setItem('pauseBetweenRepeats', pauseBetweenRepeats.toString());
   }, [pauseBetweenRepeats]);
@@ -160,6 +168,8 @@ function PlayerContent() {
   const startPlayback = () => {
     if (!audioRef.current || !phrase || !phrase.audio_url) return;
 
+    // Apply playback speed before playing (critical fix)
+    audioRef.current.playbackRate = playbackSpeed;
     audioRef.current.currentTime = 0;
     audioRef.current.play();
     setIsPlaying(true);
@@ -188,11 +198,13 @@ function PlayerContent() {
     if (pauseBetweenRepeats > 0) {
       repeatTimeoutRef.current = setTimeout(() => {
         if (audioRef.current) {
+          audioRef.current.playbackRate = playbackSpeed; // Apply speed
           audioRef.current.currentTime = 0;
           audioRef.current.play();
         }
       }, pauseBetweenRepeats * 1000);
     } else {
+      audioRef.current.playbackRate = playbackSpeed; // Apply speed
       audioRef.current.currentTime = 0;
       audioRef.current.play();
     }
@@ -410,7 +422,7 @@ function PlayerContent() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-md mx-auto px-4 pb-6 relative">
+      <div className="max-w-md mx-auto px-4 pb-24 relative">
         {/* Red Phrase Card with Swipe */}
         <div
           ref={cardRef}
@@ -529,14 +541,18 @@ function PlayerContent() {
             </svg>
           </button>
         </div>
+      </div>
 
-        {/* Settings Button */}
-        <button
-          onClick={() => setShowSettings(!showSettings)}
-          className="w-full px-4 py-3 rounded-[10px] bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors text-center"
-        >
-          {t.settings}
-        </button>
+      {/* Settings Button - Fixed at bottom */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-30">
+        <div className="max-w-md mx-auto px-4 py-4">
+          <button
+            onClick={() => setShowSettings(!showSettings)}
+            className="w-full px-4 py-3 rounded-[10px] bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors text-center"
+          >
+            {t.settings}
+          </button>
+        </div>
       </div>
 
       {/* Settings Panel (Slide-up) */}
