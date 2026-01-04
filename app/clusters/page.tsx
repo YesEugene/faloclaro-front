@@ -18,6 +18,10 @@ const clusterConfig: Record<string, {
     color: '#B474FF',
     icon: '👾',
   },
+  'Beginner': {
+    color: '#FFD700',
+    icon: '⭐',
+  },
   'Reactions and Responses': {
     color: '#429AD2',
     icon: '💬',

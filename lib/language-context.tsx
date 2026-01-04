@@ -44,6 +44,11 @@ export function useAppLanguage() {
 
 // Cluster name translations
 export const clusterTranslations: Record<string, Record<AppLanguage, string>> = {
+  'Beginner': {
+    en: 'Beginner',
+    pt: 'Iniciante',
+    ru: 'Новичок',
+  },
   'Reactions and Responses': {
     en: 'Reactions and Responses',
     pt: 'Reações e Respostas',

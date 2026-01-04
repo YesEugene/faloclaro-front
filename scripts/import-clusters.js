@@ -33,6 +33,7 @@ const CLUSTERS_DIR = path.join(__dirname, '../Clasters');
 
 // Map cluster names to English names (for database)
 const clusterNameMap = {
+  'Новичок : Beginner': 'Beginner',
   'Реакции и ответы': 'Reactions and Responses',
   'Вежливость и просьбы': 'Politeness and Requests',
   'Понимание : непонимание': 'Understanding / Not Understanding',
@@ -107,6 +108,7 @@ async function importPhrases(clusterId, phrases, clusterName) {
           .from('phrases')
           .update({
             order_index: i + 1,
+            ipa_transcription: phrase.ipa || null,
             movie_title: phrase.movie?.title_pt || null,
             movie_character: phrase.movie?.character || null,
             movie_year: phrase.movie?.year || null,
@@ -125,7 +127,7 @@ async function importPhrases(clusterId, phrases, clusterName) {
           .insert({
             cluster_id: clusterId,
             portuguese_text: phrase.pt,
-            ipa_transcription: null, // Will be generated later
+            ipa_transcription: phrase.ipa || null,
             audio_url: null, // Will be generated later
             order_index: i + 1,
             movie_title: phrase.movie?.title_pt || null,
@@ -140,7 +142,7 @@ async function importPhrases(clusterId, phrases, clusterName) {
         console.log(`   ✓ Added: "${phrase.pt.substring(0, 40)}..."`);
       }
 
-      // Add/update translation
+      // Add/update Russian translation
       if (phrase.ru) {
         const { error: transError } = await supabase
           .from('translations')
@@ -153,7 +155,24 @@ async function importPhrases(clusterId, phrases, clusterName) {
           });
 
         if (transError) {
-          console.error(`     ⚠ Translation error:`, transError.message);
+          console.error(`     ⚠ Translation error (ru):`, transError.message);
+        }
+      }
+
+      // Add/update English translation
+      if (phrase.en) {
+        const { error: transError } = await supabase
+          .from('translations')
+          .upsert({
+            phrase_id: phraseId,
+            language_code: 'en',
+            translation_text: phrase.en,
+          }, {
+            onConflict: 'phrase_id,language_code',
+          });
+
+        if (transError) {
+          console.error(`     ⚠ Translation error (en):`, transError.message);
         }
       }
 
