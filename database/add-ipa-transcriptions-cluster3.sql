@@ -1,0 +1,43 @@
+-- Add IPA transcriptions for Cluster 3: Понимание / непонимание
+-- Total: 40/40 phrases matched
+
+UPDATE phrases SET ipa_transcription = 'nɐ̃w pɨɾsɨˈbi bẽ u kɨ kiʃ dɨˈzeɾ' WHERE portuguese_text = 'Não percebi bem o que quis dizer.';
+UPDATE phrases SET ipa_transcription = 'ɐˈɡɔɾɐ pɨɾˈsɛbu mɨˈʎɔɾ ɐ sitwɐˈsɐ̃w' WHERE portuguese_text = 'Agora percebo melhor a situação.';
+UPDATE phrases SET ipa_transcription = 'ˈpɔdɨ ʃplɨˈkaɾ ˈisu dɨ ˈotɾɐ ˈfɔɾmɐ' WHERE portuguese_text = 'Pode explicar isso de outra forma?';
+UPDATE phrases SET ipa_transcription = 'ɐˈĩdɐ nɐ̃w ʃˈta totɐɫˈmẽtɨ ˈklaɾu ˈpaɾɐ mĩ' WHERE portuguese_text = 'Ainda não está totalmente claro para mim.';
+UPDATE phrases SET ipa_transcription = 'ˈaʃu kɨ ẽtẽˈdi ɐ iˈdɐjɐ ʒɨˈɾaɫ' WHERE portuguese_text = 'Acho que entendi a ideia geral.';
+UPDATE phrases SET ipa_transcription = 'nɐ̃w ˈtẽɲu ɐ sɨɾˈtezɐ sɨ kõpɾɨẽˈdi bẽ' WHERE portuguese_text = 'Não tenho a certeza se compreendi bem.';
+UPDATE phrases SET ipa_transcription = 'ˈisu ɐˈʒudɐmɨ ɐ pɨɾsɨˈbeɾ mɨˈʎɔɾ' WHERE portuguese_text = 'Isso ajuda-me a perceber melhor.';
+UPDATE phrases SET ipa_transcription = 'kõtiˈnũu kõ aɫˈɡũmɐʃ ˈduβidɐʃ ˈsobɾɨ ˈisu' WHERE portuguese_text = 'Continuo com algumas dúvidas sobre isso.';
+UPDATE phrases SET ipa_transcription = 'ˈpɔdɨ daɾmɨ ˈũ ẽˈzẽplu ˈmajʃ kõˈkɾetu' WHERE portuguese_text = 'Pode dar-me um exemplo mais concreto?';
+UPDATE phrases SET ipa_transcription = 'ɐˈɡɔɾɐ faʃ ˈmũjtu ˈmajʃ sẽˈtĩdu ˈpaɾɐ mĩ' WHERE portuguese_text = 'Agora faz muito mais sentido para mim.';
+UPDATE phrases SET ipa_transcription = 'nɐ̃w ʃˈtow ɐ pɨɾsɨˈbeɾ bẽ ˈeʃtɐ ˈpaɾtɨ' WHERE portuguese_text = 'Não estou a perceber bem esta parte.';
+UPDATE phrases SET ipa_transcription = 'ˈpɔdɨ ʁɨpɨˈtiɾ ˈesɐ ˈpaɾtɨ ˈotɾɐ ˈveʃ' WHERE portuguese_text = 'Pode repetir essa parte outra vez?';
+UPDATE phrases SET ipa_transcription = 'pɨɾˈsɛbu u kɨ kɛɾ dɨˈzeɾ ẽ ˈpaɾtɨ' WHERE portuguese_text = 'Percebo o que quer dizer, em parte.';
+UPDATE phrases SET ipa_transcription = 'nɐ̃w kõsɨˈɡi ɐkõpɐˈɲaɾ ˈtudu u kɨ ˈdisɨ' WHERE portuguese_text = 'Não consegui acompanhar tudo o que disse.';
+UPDATE phrases SET ipa_transcription = 'ˈpɔdɨ fɐˈlaɾ ˈũ ˈpoku ˈmajʃ dɨvɐˈɡaɾ' WHERE portuguese_text = 'Pode falar um pouco mais devagar?';
+UPDATE phrases SET ipa_transcription = 'ˈisu nɐ̃w fiˈko ˈmũjtu ˈklaɾu ˈpaɾɐ mĩ' WHERE portuguese_text = 'Isso não ficou muito claro para mim.';
+UPDATE phrases SET ipa_transcription = 'ɐˈɡɔɾɐ pɨɾˈsɛbu u kɨ ɨʃˈtaβɐ ɐ dɨˈzeɾ' WHERE portuguese_text = 'Agora percebo o que estava a dizer.';
+UPDATE phrases SET ipa_transcription = 'ɐˈĩdɐ ˈtẽɲu difiˈkuɫdadɨ ẽ pɨɾsɨˈbeɾ ˈisu' WHERE portuguese_text = 'Ainda tenho dificuldade em perceber isso.';
+UPDATE phrases SET ipa_transcription = 'ˈpɔdɨ ʃplɨˈkaɾ ˈisu ˈpasu ɐ ˈpasu' WHERE portuguese_text = 'Pode explicar isso passo a passo?';
+UPDATE phrases SET ipa_transcription = 'ˈisu kuˈmɛsɐ ɐ fɐˈzeɾ sẽˈtĩdu ɐˈɡɔɾɐ' WHERE portuguese_text = 'Isso começa a fazer sentido agora.';
+UPDATE phrases SET ipa_transcription = 'nɐ̃w ˈtẽɲu ɐ sɨɾˈtezɐ sɨ ẽtẽˈdi kuʁɨtɐˈmẽtɨ' WHERE portuguese_text = 'Não tenho a certeza se entendi corretamente.';
+UPDATE phrases SET ipa_transcription = 'ˈpɔdɨ klɐɾifiˈkaɾ ˈũ ˈpoku mɨˈʎɔɾ' WHERE portuguese_text = 'Pode clarificar um pouco melhor?';
+UPDATE phrases SET ipa_transcription = 'ˈpeɾdimɨ ˈũ ˈpoku ɐ ˈmeju dɐ ʃplɨkɐˈsɐ̃w' WHERE portuguese_text = 'Perdi-me um pouco a meio da explicação.';
+UPDATE phrases SET ipa_transcription = 'ˈisu nɐ̃w koʁɨʃˈpõdɨ aw kɨ ew ẽtẽˈdi' WHERE portuguese_text = 'Isso não corresponde ao que eu entendi.';
+UPDATE phrases SET ipa_transcription = 'ɐˈɡɔɾɐ ʃˈta ˈmajʃ ˈklaɾu ˈpaɾɐ mĩ' WHERE portuguese_text = 'Agora está mais claro para mim.';
+UPDATE phrases SET ipa_transcription = 'ˈpɔdɨ dɨˈzeɾ ˈisu dɨ mɐnɐjˈɾɐ ˈmajʃ ˈsĩplɨʃ' WHERE portuguese_text = 'Pode dizer isso de maneira mais simples?';
+UPDATE phrases SET ipa_transcription = 'nɐ̃w ɐkõpɐˈɲaj bẽ ˈesɐ ˈpaɾtɨ' WHERE portuguese_text = 'Não acompanhei bem essa parte.';
+UPDATE phrases SET ipa_transcription = 'ˈaʃu kɨ ɐˈɡɔɾɐ ʃˈtow ɐ pɨɾsɨˈbeɾ' WHERE portuguese_text = 'Acho que agora estou a perceber.';
+UPDATE phrases SET ipa_transcription = 'ˈisu ʃklɐɾɨˈsɛsɨ bɐʃˈtɐ̃tɨ ɐʃ ˈkojzɐʃ' WHERE portuguese_text = 'Isso esclarece bastante as coisas.';
+UPDATE phrases SET ipa_transcription = 'ˈpɔdɨ kõfiɾˈmaɾ sɨ ẽtẽˈdi bẽ' WHERE portuguese_text = 'Pode confirmar se entendi bem?';
+UPDATE phrases SET ipa_transcription = 'ɐˈĩdɐ pɾɨˈsizu dɨ ɐɫˈɡũ ˈtẽpu ˈpaɾɐ ẽtẽˈdeɾ' WHERE portuguese_text = 'Ainda preciso de algum tempo para entender.';
+UPDATE phrases SET ipa_transcription = 'nɐ̃w ʃˈtow ɐ kõsɨˈɡiɾ pɨɾsɨˈbeɾ ˈiʃtu ɐˈɡɔɾɐ' WHERE portuguese_text = 'Não estou a conseguir perceber isto agora.';
+UPDATE phrases SET ipa_transcription = 'ˈisu foj ʃplɨˈkadu dɨ ˈfɔɾmɐ ˈklaɾɐ' WHERE portuguese_text = 'Isso foi explicado de forma clara.';
+UPDATE phrases SET ipa_transcription = 'ɐˈɡɔɾɐ kõˈsiɡu ˈveɾ ɐ ˈlɔʒikɐ ˈdisu' WHERE portuguese_text = 'Agora consigo ver a lógica disso.';
+UPDATE phrases SET ipa_transcription = 'ɐˈĩdɐ ˈtẽɲu aɫˈɡũmɐʃ pɾɨˈɡũtɐʃ ˈsobɾɨ ˈisu' WHERE portuguese_text = 'Ainda tenho algumas perguntas sobre isso.';
+UPDATE phrases SET ipa_transcription = 'ˈpɔdɨ βuɫˈtaɾ ɐ ʃplɨˈkaɾ ɐ ˈuɫtimɐ ˈpaɾtɨ' WHERE portuguese_text = 'Pode voltar a explicar a última parte?';
+UPDATE phrases SET ipa_transcription = 'ˈisu ɐˈʒudɐmɨ ɐ ẽtẽˈdeɾ mɨˈʎɔɾ u kõˈtɛʃtu' WHERE portuguese_text = 'Isso ajuda-me a entender melhor o contexto.';
+UPDATE phrases SET ipa_transcription = 'ˈaʃu kɨ ɐˈɡɔɾɐ ẽtẽˈdi kuʁɨtɐˈmẽtɨ' WHERE portuguese_text = 'Acho que agora entendi corretamente.';
+UPDATE phrases SET ipa_transcription = 'ɐˈĩdɐ nɐ̃w kõsɨˈɡi pɨɾsɨˈbeɾ ˈtudu' WHERE portuguese_text = 'Ainda não consegui perceber tudo.';
+UPDATE phrases SET ipa_transcription = 'uβɾiˈɡadu puɾ ʃplɨˈkaɾ kõ ˈtɐ̃tɐ klɐˈɾezɐ' WHERE portuguese_text = 'Obrigado por explicar com tanta clareza.';

@@ -36,6 +36,7 @@ const clusterNameMap = {
   'Реакции и ответы': 'Reactions and Responses',
   'Вежливость и просьбы': 'Politeness and Requests',
   'Понимание : непонимание': 'Understanding / Not Understanding',
+  'Понимание / непонимание': 'Understanding / Not Understanding', // Alternative format
   'Движение, время, паузы': 'Movement, Time, Pauses',
   'Дом и быт': 'Home and Daily Life',
   'Дети и школа': 'Children and School',

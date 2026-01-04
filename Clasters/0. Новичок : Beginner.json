@@ -1,0 +1,60 @@
+[
+  { "PT": "Sim", "IPA": "sĩ", "RU": "Да", "EN": "Yes" },
+  { "PT": "Não", "IPA": "nɐ̃w", "RU": "Нет", "EN": "No" },
+  { "PT": "Ok", "IPA": "ɔˈkɛj", "RU": "Окей", "EN": "OK" },
+  { "PT": "Está bem", "IPA": "ʃˈta bẽ", "RU": "Хорошо", "EN": "Alright" },
+  { "PT": "Tudo bem", "IPA": "ˈtudu bẽ", "RU": "Всё хорошо", "EN": "All good" },
+  { "PT": "Claro", "IPA": "ˈklaɾu", "RU": "Конечно", "EN": "Of course" },
+  { "PT": "Talvez", "IPA": "tɐɫˈveʃ", "RU": "Возможно", "EN": "Maybe" },
+  { "PT": "Certo", "IPA": "ˈsɛɾtu", "RU": "Верно", "EN": "Right" },
+  { "PT": "Exato", "IPA": "iˈzatu", "RU": "Именно", "EN": "Exactly" },
+  { "PT": "Pode ser", "IPA": "ˈpɔdɨ seɾ", "RU": "Может быть", "EN": "Could be" },
+
+  { "PT": "Acho que sim", "IPA": "ˈaʃu kɨ sĩ", "RU": "Думаю, да", "EN": "I think so" },
+  { "PT": "Acho que não", "IPA": "ˈaʃu kɨ nɐ̃w", "RU": "Думаю, нет", "EN": "I don’t think so" },
+  { "PT": "Com certeza", "IPA": "kõ sɛɾˈtezɐ", "RU": "Точно", "EN": "For sure" },
+  { "PT": "Depende", "IPA": "dɨˈpẽdɨ", "RU": "Зависит", "EN": "It depends" },
+  { "PT": "Mais ou menos", "IPA": "ˈmajʃ u ˈmenʊʃ", "RU": "Более-менее", "EN": "More or less" },
+
+  { "PT": "Obrigado", "IPA": "uβɾiˈɡadu", "RU": "Спасибо (м)", "EN": "Thank you" },
+  { "PT": "Obrigada", "IPA": "uβɾiˈɡadɐ", "RU": "Спасибо (ж)", "EN": "Thank you" },
+  { "PT": "Por favor", "IPA": "puɾ fɐˈvoɾ", "RU": "Пожалуйста", "EN": "Please" },
+  { "PT": "Desculpa", "IPA": "dɨʃˈkulpɐ", "RU": "Извини", "EN": "Sorry" },
+  { "PT": "Com licença", "IPA": "kõ liˈsẽsɐ", "RU": "Извините / можно пройти", "EN": "Excuse me" },
+
+  { "PT": "De nada", "IPA": "dɨ ˈnadɐ", "RU": "Пожалуйста (в ответ)", "EN": "You’re welcome" },
+  { "PT": "Sem problema", "IPA": "sẽ pɾuˈblɛmɐ", "RU": "Без проблем", "EN": "No problem" },
+  { "PT": "Não sei", "IPA": "nɐ̃w ˈsaj", "RU": "Не знаю", "EN": "I don’t know" },
+  { "PT": "Entendi", "IPA": "ẽtẽˈdi", "RU": "Понял(а)", "EN": "I understood" },
+  { "PT": "Não percebo", "IPA": "nɐ̃w pɨɾˈsɛbu", "RU": "Я не понимаю", "EN": "I don’t understand" },
+
+  { "PT": "Percebo", "IPA": "pɨɾˈsɛbu", "RU": "Понимаю", "EN": "I understand" },
+  { "PT": "Outra vez", "IPA": "ˈotɾɐ ˈveʃ", "RU": "Ещё раз", "EN": "Again" },
+  { "PT": "Mais devagar", "IPA": "ˈmajʃ dɨvɐˈɡaɾ", "RU": "Медленнее", "EN": "Slower" },
+  { "PT": "Um momento", "IPA": "ˈũ muˈmẽtu", "RU": "Минуточку", "EN": "One moment" },
+  { "PT": "Espera", "IPA": "ʃˈpɛɾɐ", "RU": "Подожди", "EN": "Wait" },
+
+  { "PT": "Agora", "IPA": "ɐˈɡɔɾɐ", "RU": "Сейчас", "EN": "Now" },
+  { "PT": "Hoje", "IPA": "ˈoʒɨ", "RU": "Сегодня", "EN": "Today" },
+  { "PT": "Amanhã", "IPA": "ɐmɐˈɲɐ̃", "RU": "Завтра", "EN": "Tomorrow" },
+  { "PT": "Aqui", "IPA": "ɐˈki", "RU": "Здесь", "EN": "Here" },
+  { "PT": "Ali", "IPA": "ɐˈli", "RU": "Там", "EN": "There" },
+
+  { "PT": "Depois", "IPA": "dɨˈpojʃ", "RU": "Потом", "EN": "Later" },
+  { "PT": "Agora não", "IPA": "ɐˈɡɔɾɐ nɐ̃w", "RU": "Сейчас нет", "EN": "Not now" },
+  { "PT": "Agora sim", "IPA": "ɐˈɡɔɾɐ sĩ", "RU": "Сейчас да", "EN": "Now yes" },
+  { "PT": "Vamos", "IPA": "ˈvɐmuʃ", "RU": "Пойдём", "EN": "Let’s go" },
+  { "PT": "Bora", "IPA": "ˈbɔɾɐ", "RU": "Погнали", "EN": "Let’s go" },
+
+  { "PT": "Calma", "IPA": "ˈkaɫmɐ", "RU": "Спокойно", "EN": "Calm down" },
+  { "PT": "Rápido", "IPA": "ˈʁapidu", "RU": "Быстро", "EN": "Fast" },
+  { "PT": "Devagar", "IPA": "dɨvɐˈɡaɾ", "RU": "Медленно", "EN": "Slowly" },
+  { "PT": "Fácil", "IPA": "ˈfasil", "RU": "Легко", "EN": "Easy" },
+  { "PT": "Difícil", "IPA": "dɨˈfisil", "RU": "Сложно", "EN": "Difficult" },
+
+  { "PT": "Melhor", "IPA": "mɨˈʎɔɾ", "RU": "Лучше", "EN": "Better" },
+  { "PT": "Pior", "IPA": "ˈpjoɾ", "RU": "Хуже", "EN": "Worse" },
+  { "PT": "Igual", "IPA": "iˈɡwaɫ", "RU": "Одинаково", "EN": "Same" },
+  { "PT": "Diferente", "IPA": "difɨˈɾẽtɨ", "RU": "По-другому", "EN": "Different" },
+  { "PT": "Tudo claro", "IPA": "ˈtudu ˈklaɾu", "RU": "Всё ясно", "EN": "All clear" }
+]

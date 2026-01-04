@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef, Suspense } from 'react';
+import { useEffect, useState, useRef, Suspense, useCallback } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
@@ -16,6 +16,7 @@ function PlayerContent() {
   const phraseId = searchParams.get('phraseId') || '';
   const currentIndex = parseInt(searchParams.get('index') || '0');
   const clusterIds = searchParams.get('clusters') || '';
+  const autoPlay = searchParams.get('autoPlay') === 'true';
 
   const [phrase, setPhrase] = useState<Phrase | null>(null);
   const [phrases, setPhrases] = useState<Phrase[]>([]);
@@ -184,10 +185,10 @@ function PlayerContent() {
 
     if (newRepeat >= maxRepeats) {
       setIsPlaying(false);
-      // Auto-advance to next phrase
+      // Auto-advance to next phrase with auto-play
       if (repeatCount !== 'infinite' && currentIndex < phrases.length - 1) {
         setTimeout(() => {
-          navigateToPhrase(currentIndex + 1);
+          navigateToPhrase(currentIndex + 1, true); // Pass true to auto-play
         }, 500);
       }
       return;
@@ -210,10 +211,11 @@ function PlayerContent() {
     }
   };
 
-  const navigateToPhrase = (index: number) => {
+  const navigateToPhrase = (index: number, shouldAutoPlay: boolean = false) => {
     if (index < 0 || index >= phrases.length) return;
     const newPhrase = phrases[index];
-    router.push(`/player?phraseId=${newPhrase.id}&index=${index}&clusters=${clusterIds}`);
+    const autoPlayParam = shouldAutoPlay ? '&autoPlay=true' : '';
+    router.push(`/player?phraseId=${newPhrase.id}&index=${index}&clusters=${clusterIds}${autoPlayParam}`);
   };
 
   const handlePrevious = () => {
