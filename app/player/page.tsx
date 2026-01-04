@@ -85,6 +85,34 @@ function PlayerContent() {
     }
   }, [phrase?.id, phrase?.audio_url, playbackSpeed]);
 
+  // Define startPlayback function (must be before useEffect that uses it)
+  const startPlayback = useCallback(() => {
+    if (!audioRef.current || !phrase || !phrase.audio_url) return;
+
+    // Apply playback speed before playing (critical fix)
+    audioRef.current.playbackRate = playbackSpeed;
+    audioRef.current.currentTime = 0;
+    audioRef.current.play();
+    setIsPlaying(true);
+    setCurrentRepeat(0);
+  }, [phrase, phrase?.audio_url, playbackSpeed]);
+
+  // Auto-play when phrase changes via auto-advance
+  useEffect(() => {
+    if (autoPlay && phrase && phrase.audio_url && !loading) {
+      // Small delay to ensure audio element is ready
+      const timer = setTimeout(() => {
+        // startPlayback checks audioRef.current internally
+        startPlayback();
+        // Remove autoPlay parameter from URL after starting playback
+        const newUrl = new URL(window.location.href);
+        newUrl.searchParams.delete('autoPlay');
+        router.replace(newUrl.pathname + newUrl.search, { scroll: false });
+      }, 150);
+      return () => clearTimeout(timer);
+    }
+  }, [autoPlay, phrase?.id, phrase?.audio_url, loading, startPlayback, router]);
+
   useEffect(() => {
     localStorage.setItem('pauseBetweenRepeats', pauseBetweenRepeats.toString());
   }, [pauseBetweenRepeats]);
@@ -164,17 +192,6 @@ function PlayerContent() {
     } else {
       startPlayback();
     }
-  };
-
-  const startPlayback = () => {
-    if (!audioRef.current || !phrase || !phrase.audio_url) return;
-
-    // Apply playback speed before playing (critical fix)
-    audioRef.current.playbackRate = playbackSpeed;
-    audioRef.current.currentTime = 0;
-    audioRef.current.play();
-    setIsPlaying(true);
-    setCurrentRepeat(0);
   };
 
   const handleAudioEnded = () => {
