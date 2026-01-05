@@ -64,7 +64,7 @@ const clusterConfig: Record<string, {
   },
   'Profanity': {
     color: '#ADA0FF',
-    icon: '😠',
+    icon: '🤬',
   },
   'Movie Quotes': {
     color: '#B474FF',
@@ -225,7 +225,7 @@ export default function ClustersPage() {
             }}
           >
             {/* Icon - top left */}
-            <div className="absolute top-2 left-[20px]" style={{ fontSize: '43px' }}>{clusterConfig['All Clusters'].icon}</div>
+            <div className="absolute top-2 left-[20px]" style={{ fontSize: '53px' }}>{clusterConfig['All Clusters'].icon}</div>
             
             {/* Title - bottom left */}
             <div className="absolute bottom-[20px] left-[20px] right-4">
@@ -243,7 +243,7 @@ export default function ClustersPage() {
                 ) : (
                   <>
                     All<br />
-                    Clusters
+                    Themes
                   </>
                 )}
               </span>
@@ -289,7 +289,11 @@ export default function ClustersPage() {
                     {cluster.name === 'Profanity' && language === 'ru' ? (
                       <>
                         Плохие<br />
-                        слова
+                        слова (16+)
+                      </>
+                    ) : cluster.name === 'Profanity' ? (
+                      <>
+                        {displayName} (16+)
                       </>
                     ) : (
                       displayName
@@ -324,7 +328,7 @@ export default function ClustersPage() {
               {/* Background Image - stretched to fill */}
               <div className="absolute inset-0">
                 <Image
-                  src="/Img/Movie cluster.svg"
+                  src="/Img/Movie cluster 3.jpg"
                   alt="Movie"
                   fill
                   className="object-cover"
@@ -337,7 +341,7 @@ export default function ClustersPage() {
               
               {/* Content - bottom left with 20px padding */}
               <div className="relative h-full flex items-end">
-                <div className="text-white font-semibold drop-shadow-lg mb-[20px] ml-[20px] text-left leading-tight" style={{ fontSize: '22px' }}>
+                <div className="text-white font-semibold drop-shadow-lg mb-[20px] ml-[20px] text-left leading-tight" style={{ fontSize: '27px' }}>
                   {language === 'ru' ? (
                     <>
                       Фразы<br />
