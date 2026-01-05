@@ -26,6 +26,13 @@ function PlayerContent() {
   const [phrases, setPhrases] = useState<Phrase[]>([]);
   const [translation, setTranslation] = useState<string>('');
   const [wordTranslation, setWordTranslation] = useState<string>(''); // Translation for word type
+  const [wordTranslations, setWordTranslations] = useState<{
+    ptSentence?: string;
+    ruSentence?: string;
+    enSentence?: string;
+    ru?: string;
+    en?: string;
+  }>({});
   const [clusterName, setClusterName] = useState<string>(''); // Cluster name for navigation
   const [loading, setLoading] = useState(true);
 
@@ -107,12 +114,13 @@ function PlayerContent() {
 
   useEffect(() => {
     if (phrase) {
-      loadTranslation(phrase.id, appLanguage);
-      // Load word translation if phrase type is 'word'
       if (phrase.phrase_type === 'word') {
-        loadWordTranslation(phrase.portuguese_text, appLanguage);
+        // Load all translations for word type
+        loadWordTranslations(phrase.id);
       } else {
-        setWordTranslation('');
+        // Load regular translation for sentences
+        loadTranslation(phrase.id, appLanguage);
+        setWordTranslations({});
       }
       // Reset repeat counter when phrase changes
       setCurrentRepeat(0);
@@ -306,16 +314,41 @@ function PlayerContent() {
     }
   };
 
-  const loadWordTranslation = async (word: string, langCode: string) => {
+  const loadWordTranslations = async (phraseId: string) => {
     try {
-      // For word type, we need to find a phrase that contains this word
-      // and get its word-level translation. For now, we'll use the phrase translation
-      // as a fallback. In the future, this could be a separate word_translations table.
-      // For MVP, we'll extract the word from the sentence translation or use the phrase translation
-      setWordTranslation(''); // Will be implemented based on actual data structure
+      const { data, error } = await supabase
+        .from('translations')
+        .select('language_code, translation_text')
+        .eq('phrase_id', phraseId);
+
+      if (error) throw error;
+
+      const translations: {
+        ptSentence?: string;
+        ruSentence?: string;
+        enSentence?: string;
+        ru?: string;
+        en?: string;
+      } = {};
+
+      data?.forEach((t) => {
+        if (t.language_code === 'pt-sentence') {
+          translations.ptSentence = t.translation_text;
+        } else if (t.language_code === 'ru-sentence') {
+          translations.ruSentence = t.translation_text;
+        } else if (t.language_code === 'en-sentence') {
+          translations.enSentence = t.translation_text;
+        } else if (t.language_code === 'ru') {
+          translations.ru = t.translation_text;
+        } else if (t.language_code === 'en') {
+          translations.en = t.translation_text;
+        }
+      });
+
+      setWordTranslations(translations);
     } catch (error) {
-      console.error('Error loading word translation:', error);
-      setWordTranslation('');
+      console.error('Error loading word translations:', error);
+      setWordTranslations({});
     }
   };
 
@@ -758,25 +791,48 @@ function PlayerContent() {
               </div>
               
               {/* IPA Transcription */}
-              <div className="text-lg text-center mb-4 font-mono text-black">
+              <div className="text-lg text-center mb-3 font-mono text-black">
                 {phrase.ipa_transcription ? `/${phrase.ipa_transcription}/` : ''}
               </div>
 
-              {/* For word type, translation contains the sentence with the word */}
-              {/* We'll use translation as sentence for now - can be improved later */}
+              {/* PT sentence (example usage) */}
+              {wordTranslations.ptSentence && (
+                <div className="text-base text-center mb-2 text-black">
+                  <span className="font-semibold">PT sentence: </span>
+                  {wordTranslations.ptSentence}
+                </div>
+              )}
+
+              {/* RU sentence (translation of example) */}
+              {wordTranslations.ruSentence && (
+                <div className="text-base text-center mb-2 text-black">
+                  <span className="font-semibold">RU sentence: </span>
+                  {wordTranslations.ruSentence}
+                </div>
+              )}
+
+              {/* EN sentence (translation of example) */}
+              {wordTranslations.enSentence && (
+                <div className="text-base text-center mb-4 text-black">
+                  <span className="font-semibold">EN sentence: </span>
+                  {wordTranslations.enSentence}
+                </div>
+              )}
+
+              {/* Word translations in white card */}
               <div className="mt-auto mx-[10px] mb-3">
-                {translation ? (
+                {(wordTranslations.ru || wordTranslations.en) ? (
                   <div className="bg-white rounded-[20px] p-4 text-center">
-                    <div className="text-sm text-gray-600 mb-2 italic">
-                      {appLanguage === 'ru' ? 'Предложение:' : appLanguage === 'pt' ? 'Frase:' : 'Sentence:'}
-                    </div>
-                    <div className="text-lg text-gray-900 font-medium mb-3">
-                      {translation}
-                    </div>
-                    {/* Word translation - for now using the word itself, can be improved */}
-                    <div className="text-base text-gray-700 font-semibold border-t pt-3">
-                      {phrase.portuguese_text}
-                    </div>
+                    {wordTranslations.ru && (
+                      <div className="text-xl text-gray-900 font-semibold mb-2">
+                        {wordTranslations.ru}
+                      </div>
+                    )}
+                    {wordTranslations.en && (
+                      <div className="text-xl text-gray-900 font-semibold">
+                        {wordTranslations.en}
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div className="bg-white rounded-[20px] p-4 text-center">
