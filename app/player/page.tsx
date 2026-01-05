@@ -294,20 +294,31 @@ function PlayerContent() {
           // Record start time for watchdog
           playStartTimeRef.current = Date.now();
           
+          // Set up handler to reset flag only when playback actually starts
+          // This prevents double playback by ensuring flag is reset only after actual playback begins
+          const handlePlaying = () => {
+            if (audioRef.current) {
+              isRepeatingRef.current = false;
+              audioRef.current.removeEventListener('playing', handlePlaying);
+            }
+          };
+          audioRef.current.addEventListener('playing', handlePlaying, { once: true });
+          
           // Start playback
           audioRef.current.play()
             .then(() => {
               setIsPlaying(true);
               // Set up watchdog to check if playback gets stuck
               setupPlaybackWatchdog();
-              // Reset flag AFTER playback successfully started
-              // This allows the next ended event to be processed when this playback ends
-              isRepeatingRef.current = false;
+              // Flag will be reset by 'playing' event handler above
             })
             .catch((error) => {
               console.error('Error playing next repeat:', error);
               setIsPlaying(false);
               isRepeatingRef.current = false;
+              if (audioRef.current) {
+                audioRef.current.removeEventListener('playing', handlePlaying);
+              }
             });
         };
         
@@ -353,18 +364,29 @@ function PlayerContent() {
           setTimeout(() => {
             if (audioRef.current && phrase) {
               playStartTimeRef.current = Date.now();
+              
+              // Set up handler to reset flag only when playback actually starts
+              const handlePlaying = () => {
+                if (audioRef.current) {
+                  isRepeatingRef.current = false;
+                  audioRef.current.removeEventListener('playing', handlePlaying);
+                }
+              };
+              audioRef.current.addEventListener('playing', handlePlaying, { once: true });
+              
               audioRef.current.play()
                 .then(() => {
                   setIsPlaying(true);
                   setupPlaybackWatchdog();
-                  // Reset flag AFTER playback successfully restarted
-                  // This allows the next ended event to be processed when this playback ends
-                  isRepeatingRef.current = false;
+                  // Flag will be reset by 'playing' event handler above
                 })
                 .catch((error) => {
                   console.error('Error restarting playback:', error);
                   setIsPlaying(false);
                   isRepeatingRef.current = false;
+                  if (audioRef.current) {
+                    audioRef.current.removeEventListener('playing', handlePlaying);
+                  }
                 });
             }
           }, 100);
