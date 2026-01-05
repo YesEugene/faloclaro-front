@@ -134,7 +134,20 @@ function PlayerContent() {
         playbackWatchdogRef.current = null;
       }
     }
-  }, [phrase?.id, phrase?.phrase_type, appLanguage]);
+  }, [phrase?.id, phrase?.phrase_type]);
+
+  // Reload translations when language changes
+  useEffect(() => {
+    if (phrase) {
+      if (phrase.phrase_type === 'word') {
+        // Reload all translations for word type when language changes
+        loadWordTranslations(phrase.id);
+      } else {
+        // Reload regular translation for sentences
+        loadTranslation(phrase.id, appLanguage);
+      }
+    }
+  }, [appLanguage, phrase?.id]);
 
   useEffect(() => {
     if (audioRef.current) {
