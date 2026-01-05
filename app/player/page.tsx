@@ -286,12 +286,83 @@ function PlayerContent() {
           audioRef.current.playbackRate = playbackSpeed;
           audioRef.current.currentTime = 0;
           
+          // Function to restart playback if it gets stuck
+          const restartPlayback = () => {
+            if (!audioRef.current || !phrase) return;
+            
+            console.log('Restarting playback...');
+            audioRef.current.pause();
+            audioRef.current.currentTime = 0;
+            audioRef.current.playbackRate = playbackSpeed;
+            
+            setTimeout(() => {
+              if (audioRef.current && phrase) {
+                audioRef.current.play()
+                  .then(() => {
+                    playStartTimeRef.current = Date.now();
+                    setIsPlaying(true);
+                  })
+                  .catch((error) => {
+                    console.error('Error restarting playback:', error);
+                    setIsPlaying(false);
+                    isRepeatingRef.current = false;
+                  });
+              }
+            }, 100);
+          };
+          
           // Set up event listener to detect when playback actually starts
           const handlePlayStart = () => {
+            // Clear any existing watchdog timer
+            if (playbackWatchdogRef.current) {
+              clearTimeout(playbackWatchdogRef.current);
+              playbackWatchdogRef.current = null;
+            }
+            
+            // Record playback start time
+            playStartTimeRef.current = Date.now();
+            
             // Playback actually started - now update counter
             setCurrentRepeat(newRepeat);
             setIsPlaying(true);
             isRepeatingRef.current = false;
+            
+            // Set up watchdog to detect stuck playback
+            playbackWatchdogRef.current = setTimeout(() => {
+              if (audioRef.current && phrase) {
+                // Check if audio is actually playing
+                if (audioRef.current.paused || audioRef.current.ended) {
+                  console.warn('Playback appears stuck (paused/ended), attempting restart');
+                  restartPlayback();
+                } else {
+                  // Check if playback time is advancing
+                  const currentTime = audioRef.current.currentTime;
+                  const startTime = playStartTimeRef.current || Date.now();
+                  const elapsed = (Date.now() - startTime) / 1000;
+                  const expectedTime = elapsed * playbackSpeed;
+                  
+                  // If time hasn't advanced significantly, playback might be stuck
+                  if (Math.abs(currentTime - expectedTime) > 0.5 && currentTime < 0.1 && elapsed > 1) {
+                    console.warn('Playback time not advancing, attempting restart');
+                    restartPlayback();
+                  } else {
+                    // Playback is progressing, check again after audio duration
+                    const duration = audioRef.current.duration || 0;
+                    if (duration > 0) {
+                      playbackWatchdogRef.current = setTimeout(() => {
+                        if (audioRef.current && phrase) {
+                          if (audioRef.current.currentTime < 0.1 && !audioRef.current.paused && !audioRef.current.ended) {
+                            console.warn('Playback stuck during playback, restarting');
+                            restartPlayback();
+                          }
+                        }
+                      }, duration * 1000 + 1000);
+                    }
+                  }
+                }
+              }
+            }, 2000); // Check after 2 seconds if playback started
+            
             // Remove event listener
             if (audioRef.current) {
               audioRef.current.removeEventListener('play', handlePlayStart);
@@ -305,6 +376,7 @@ function PlayerContent() {
           const playTimeout = setTimeout(() => {
             if (audioRef.current && !audioRef.current.paused) {
               // Audio is actually playing
+              playStartTimeRef.current = Date.now();
               setCurrentRepeat(newRepeat);
               setIsPlaying(true);
               isRepeatingRef.current = false;
@@ -312,8 +384,10 @@ function PlayerContent() {
                 audioRef.current.removeEventListener('play', handlePlayStart);
               }
             } else {
-              console.warn('Play event did not fire, but checking if audio is playing');
-              // Check again after a short delay
+              console.warn('Play event did not fire, attempting restart');
+              // Try to restart playback
+              restartPlayback();
+              // Update counter after restart attempt
               setTimeout(() => {
                 if (audioRef.current && !audioRef.current.paused) {
                   setCurrentRepeat(newRepeat);
@@ -323,9 +397,9 @@ function PlayerContent() {
                 if (audioRef.current) {
                   audioRef.current.removeEventListener('play', handlePlayStart);
                 }
-              }, 100);
+              }, 200);
             }
-          }, 500);
+          }, 1000); // Increased timeout to 1 second
           
           // Start playback
           audioRef.current.play()
