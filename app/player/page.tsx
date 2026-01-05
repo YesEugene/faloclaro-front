@@ -811,7 +811,6 @@ function PlayerContent() {
               {/* PT sentence (example usage) - always shown */}
               {wordTranslations.ptSentence && (
                 <div className="text-base text-center mb-2 text-black">
-                  <span className="font-semibold">PT sentence: </span>
                   {wordTranslations.ptSentence}
                 </div>
               )}
@@ -819,14 +818,17 @@ function PlayerContent() {
               {/* Sentence translation - based on interface language */}
               {appLanguage === 'ru' && wordTranslations.ruSentence && (
                 <div className="text-base text-center mb-2 text-black">
-                  <span className="font-semibold">RU sentence: </span>
                   {wordTranslations.ruSentence}
                 </div>
               )}
               {appLanguage === 'en' && wordTranslations.enSentence && (
-                <div className="text-base text-center mb-2 text-black">
-                  <span className="font-semibold">EN sentence: </span>
+                <div className="text-base text-center mb-4 text-black">
                   {wordTranslations.enSentence}
+                </div>
+              )}
+              {appLanguage === 'pt' && wordTranslations.ruSentence && (
+                <div className="text-base text-center mb-4 text-black">
+                  {wordTranslations.ruSentence}
                 </div>
               )}
 
