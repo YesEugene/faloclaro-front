@@ -59,20 +59,23 @@ export default function ClustersPage() {
   };
 
   const handleContinue = () => {
-    // If only one cluster is selected, go to subcategories page
+    // Always go to subcategories page
     if (!allSelected && selectedClusters.size === 1) {
+      // Single cluster selected
       const clusterId = Array.from(selectedClusters)[0];
       const cluster = clusters.find(c => c.id === clusterId);
       if (cluster) {
         window.location.href = `/subcategories?cluster=${clusterId}&name=${encodeURIComponent(cluster.name)}`;
         return;
       }
+    } else if (allSelected || selectedClusters.size > 1) {
+      // Multiple clusters or "All Clusters" selected
+      const clusterIds = allSelected 
+        ? 'all' 
+        : Array.from(selectedClusters).join(',');
+      window.location.href = `/subcategories?clusters=${clusterIds}`;
+      return;
     }
-    // Otherwise, go to old phrases page (for backward compatibility)
-    const clusterIds = allSelected 
-      ? 'all' 
-      : Array.from(selectedClusters).join(',');
-    window.location.href = `/phrases?clusters=${clusterIds}`;
   };
 
   const titles = {

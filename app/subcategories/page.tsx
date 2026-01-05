@@ -79,16 +79,21 @@ function SubcategoriesContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const clusterId = searchParams.get('cluster') || '';
+  const clusterIds = searchParams.get('clusters') || ''; // Multiple clusters or 'all'
   const clusterName = searchParams.get('name') || '';
   const { language } = useAppLanguage();
   const [cluster, setCluster] = useState<Cluster | null>(null);
+  const [clusters, setClusters] = useState<Cluster[]>([]);
   const [loading, setLoading] = useState(true);
+  const isMultipleClusters = !!clusterIds && !clusterId;
 
   useEffect(() => {
     if (clusterId) {
       loadCluster();
+    } else if (clusterIds) {
+      loadClusters();
     }
-  }, [clusterId]);
+  }, [clusterId, clusterIds]);
 
   const loadCluster = async () => {
     try {
@@ -107,17 +112,52 @@ function SubcategoriesContent() {
     }
   };
 
+  const loadClusters = async () => {
+    try {
+      let query = supabase
+        .from('clusters')
+        .select('*')
+        .neq('name', 'Beginner'); // Exclude Beginner
+
+      if (clusterIds !== 'all') {
+        const ids = clusterIds.split(',');
+        query = query.in('id', ids);
+      }
+
+      const { data, error } = await query.order('order_index', { ascending: true });
+
+      if (error) throw error;
+      setClusters(data || []);
+    } catch (error) {
+      console.error('Error loading clusters:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSubcategoryClick = (type: string) => {
-    if (type === 'all') {
-      // Navigate to player with all phrase types
-      router.push(`/player?cluster=${clusterId}&phraseType=all`);
-    } else {
-      // Navigate to player with specific phrase type
-      router.push(`/player?cluster=${clusterId}&phraseType=${type}`);
+    if (clusterId) {
+      // Single cluster
+      if (type === 'all') {
+        router.push(`/player?cluster=${clusterId}&phraseType=all`);
+      } else {
+        router.push(`/player?cluster=${clusterId}&phraseType=${type}`);
+      }
+    } else if (clusterIds) {
+      // Multiple clusters
+      if (type === 'all') {
+        router.push(`/player?clusters=${clusterIds}&phraseType=all`);
+      } else {
+        router.push(`/player?clusters=${clusterIds}&phraseType=${type}`);
+      }
     }
   };
 
   const getClusterColor = () => {
+    if (isMultipleClusters) {
+      // Use "All Clusters" color for multiple clusters
+      return clusterConfig['All Clusters']?.color || '#94B7F2';
+    }
     if (!cluster) return '#EEEEEE';
     return clusterConfig[cluster.name]?.color || '#EEEEEE';
   };
@@ -126,13 +166,23 @@ function SubcategoriesContent() {
     const subcat = subcategoryTypes.find(s => s.key === key);
     if (!subcat) return '';
     
-    if (key === 'all' && cluster) {
-      const clusterDisplayName = getClusterName(cluster.name, language);
-      return language === 'ru' 
-        ? `Выбрать все ${clusterDisplayName}`
-        : language === 'pt'
-        ? `Selecionar todos ${clusterDisplayName}`
-        : `Select all ${clusterDisplayName}`;
+    if (key === 'all') {
+      if (isMultipleClusters) {
+        // Multiple clusters selected
+        return language === 'ru' 
+          ? `Выбрать все тематики`
+          : language === 'pt'
+          ? `Selecionar todos os temas`
+          : `Select all themes`;
+      } else if (cluster) {
+        // Single cluster
+        const clusterDisplayName = getClusterName(cluster.name, language);
+        return language === 'ru' 
+          ? `Выбрать все ${clusterDisplayName}`
+          : language === 'pt'
+          ? `Selecionar todos ${clusterDisplayName}`
+          : `Select all ${clusterDisplayName}`;
+      }
     }
     
     return subcat[language] || subcat.en;
@@ -146,7 +196,7 @@ function SubcategoriesContent() {
     );
   }
 
-  if (!cluster) {
+  if (!cluster && !isMultipleClusters) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="text-lg">Cluster not found</div>
@@ -155,7 +205,11 @@ function SubcategoriesContent() {
   }
 
   const clusterColor = getClusterColor();
-  const clusterDisplayName = getClusterName(cluster.name, language);
+  const clusterDisplayName = isMultipleClusters 
+    ? (language === 'ru' ? 'Все тематики' : language === 'pt' ? 'Todos os temas' : 'All themes')
+    : cluster 
+    ? getClusterName(cluster.name, language)
+    : '';
 
   return (
     <div className="min-h-screen bg-white">
