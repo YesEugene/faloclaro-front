@@ -18,8 +18,8 @@ export default function DonationBlock({ className = '' }: DonationBlockProps) {
 
   const translations = {
     en: {
-      title: 'Leave a tip',
-      description: 'Support FaloClaro development',
+      title: 'Support FaloClaro',
+      description: 'Help me keep FaloClaro growing and improving.',
       amounts: ['€1', '€10', '€100'],
       customAmount: 'Custom amount',
       email: 'Email (optional)',
@@ -29,8 +29,8 @@ export default function DonationBlock({ className = '' }: DonationBlockProps) {
       processing: 'Processing...',
     },
     ru: {
-      title: 'Оставьте чаевые',
-      description: 'Поддержать развитие FaloClaro',
+      title: 'Support FaloClaro',
+      description: 'Help me keep FaloClaro growing and improving.',
       amounts: ['€1', '€10', '€100'],
       customAmount: 'Своя сумма',
       email: 'Email (необязательно)',
@@ -40,8 +40,8 @@ export default function DonationBlock({ className = '' }: DonationBlockProps) {
       processing: 'Обработка...',
     },
     pt: {
-      title: 'Deixe uma gorjeta',
-      description: 'Apoiar o desenvolvimento do FaloClaro',
+      title: 'Support FaloClaro',
+      description: 'Help me keep FaloClaro growing and improving.',
       amounts: ['€1', '€10', '€100'],
       customAmount: 'Valor personalizado',
       email: 'Email (opcional)',
@@ -120,20 +120,30 @@ export default function DonationBlock({ className = '' }: DonationBlockProps) {
   return (
     <div className={`fixed bottom-0 left-0 right-0 z-50 ${className}`}>
       <div
-        className={`bg-white border-t-2 border-gray-200 shadow-lg transition-all duration-300 ${
-          isExpanded ? 'max-h-[90vh] overflow-y-auto' : 'max-h-20'
+        className={`border-t-2 border-gray-200 shadow-lg transition-all duration-300 ${
+          isExpanded ? 'bg-white max-h-[90vh] overflow-y-auto' : 'bg-[#FFF644] h-[100px]'
         }`}
       >
         {/* Header - Always visible */}
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="w-full px-4 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
+          className={`w-full px-4 flex items-center justify-between transition-colors ${
+            isExpanded ? 'py-4 hover:bg-gray-50' : 'h-[100px]'
+          }`}
         >
-          <div className="flex items-center gap-3">
-            <span className="text-lg font-semibold text-gray-900">
+          <div className="flex flex-col items-start gap-1">
+            <span
+              className={`font-semibold text-gray-900 ${
+                isExpanded ? 'text-lg' : 'text-[23px]'
+              }`}
+            >
               {t.title}
             </span>
-            <span className="text-sm text-gray-500 hidden sm:inline">
+            <span
+              className={`text-gray-700 ${
+                isExpanded ? 'text-sm text-gray-500 hidden sm:inline' : 'text-[14px]'
+              }`}
+            >
               {t.description}
             </span>
           </div>
