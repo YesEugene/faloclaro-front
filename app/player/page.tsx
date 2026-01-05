@@ -795,7 +795,7 @@ function PlayerContent() {
                 {phrase.ipa_transcription ? `/${phrase.ipa_transcription}/` : ''}
               </div>
 
-              {/* PT sentence (example usage) */}
+              {/* PT sentence (example usage) - always shown */}
               {wordTranslations.ptSentence && (
                 <div className="text-base text-center mb-2 text-black">
                   <span className="font-semibold">PT sentence: </span>
@@ -803,34 +803,37 @@ function PlayerContent() {
                 </div>
               )}
 
-              {/* RU sentence (translation of example) */}
-              {wordTranslations.ruSentence && (
+              {/* Sentence translation - based on interface language */}
+              {appLanguage === 'ru' && wordTranslations.ruSentence && (
                 <div className="text-base text-center mb-2 text-black">
                   <span className="font-semibold">RU sentence: </span>
                   {wordTranslations.ruSentence}
                 </div>
               )}
-
-              {/* EN sentence (translation of example) */}
-              {wordTranslations.enSentence && (
-                <div className="text-base text-center mb-4 text-black">
+              {appLanguage === 'en' && wordTranslations.enSentence && (
+                <div className="text-base text-center mb-2 text-black">
                   <span className="font-semibold">EN sentence: </span>
                   {wordTranslations.enSentence}
                 </div>
               )}
 
-              {/* Word translations in white card */}
+              {/* Word translation in white card - based on interface language */}
               <div className="mt-auto mx-[10px] mb-3">
-                {(wordTranslations.ru || wordTranslations.en) ? (
+                {(appLanguage === 'ru' && wordTranslations.ru) || (appLanguage === 'en' && wordTranslations.en) || (appLanguage === 'pt' && (wordTranslations.ru || wordTranslations.en)) ? (
                   <div className="bg-white rounded-[20px] p-4 text-center">
-                    {wordTranslations.ru && (
-                      <div className="text-xl text-gray-900 font-semibold mb-2">
+                    {appLanguage === 'ru' && wordTranslations.ru && (
+                      <div className="text-xl text-gray-900 font-semibold">
                         {wordTranslations.ru}
                       </div>
                     )}
-                    {wordTranslations.en && (
+                    {appLanguage === 'en' && wordTranslations.en && (
                       <div className="text-xl text-gray-900 font-semibold">
                         {wordTranslations.en}
+                      </div>
+                    )}
+                    {appLanguage === 'pt' && (wordTranslations.ru || wordTranslations.en) && (
+                      <div className="text-xl text-gray-900 font-semibold">
+                        {wordTranslations.ru || wordTranslations.en}
                       </div>
                     )}
                   </div>
