@@ -322,10 +322,27 @@ function PlayerContent() {
             // Record playback start time
             playStartTimeRef.current = Date.now();
             
-            // Playback actually started - now update counter
-            setCurrentRepeat(newRepeat);
+            // Playback actually started - update playing state but DON'T update counter yet
+            // Counter will be updated only after playback fully completes (onEnded event)
             setIsPlaying(true);
-            isRepeatingRef.current = false;
+            // Keep isRepeatingRef = true until playback ends
+            
+            // Set up event listener for when playback ends
+            const handlePlayEnd = () => {
+              // Playback fully completed - now update counter
+              setCurrentRepeat(newRepeat);
+              isRepeatingRef.current = false;
+              
+              // Remove event listener
+              if (audioRef.current) {
+                audioRef.current.removeEventListener('ended', handlePlayEnd);
+              }
+            };
+            
+            // Listen for playback end
+            if (audioRef.current) {
+              audioRef.current.addEventListener('ended', handlePlayEnd, { once: true });
+            }
             
             // Set up watchdog to detect stuck playback
             playbackWatchdogRef.current = setTimeout(() => {
@@ -377,9 +394,27 @@ function PlayerContent() {
             if (audioRef.current && !audioRef.current.paused) {
               // Audio is actually playing
               playStartTimeRef.current = Date.now();
-              setCurrentRepeat(newRepeat);
               setIsPlaying(true);
-              isRepeatingRef.current = false;
+              // Don't update counter yet - wait for ended event
+              // Don't reset isRepeatingRef yet - wait for ended event
+              
+              // Set up event listener for when playback ends
+              const handlePlayEnd = () => {
+                // Playback fully completed - now update counter
+                setCurrentRepeat(newRepeat);
+                isRepeatingRef.current = false;
+                
+                // Remove event listener
+                if (audioRef.current) {
+                  audioRef.current.removeEventListener('ended', handlePlayEnd);
+                }
+              };
+              
+              // Listen for playback end
+              if (audioRef.current) {
+                audioRef.current.addEventListener('ended', handlePlayEnd, { once: true });
+              }
+              
               if (audioRef.current) {
                 audioRef.current.removeEventListener('play', handlePlayStart);
               }
@@ -387,17 +422,10 @@ function PlayerContent() {
               console.warn('Play event did not fire, attempting restart');
               // Try to restart playback
               restartPlayback();
-              // Update counter after restart attempt
-              setTimeout(() => {
-                if (audioRef.current && !audioRef.current.paused) {
-                  setCurrentRepeat(newRepeat);
-                  setIsPlaying(true);
-                }
-                isRepeatingRef.current = false;
-                if (audioRef.current) {
-                  audioRef.current.removeEventListener('play', handlePlayStart);
-                }
-              }, 200);
+              // Don't update counter or reset flag yet - wait for actual playback to complete
+              if (audioRef.current) {
+                audioRef.current.removeEventListener('play', handlePlayStart);
+              }
             }
           }, 1000); // Increased timeout to 1 second
           
