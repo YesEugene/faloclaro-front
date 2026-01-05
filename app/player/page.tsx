@@ -14,7 +14,8 @@ function PlayerContent() {
   const router = useRouter();
   const { language: appLanguage } = useAppLanguage();
   const phraseId = searchParams.get('phraseId') || '';
-  const currentIndex = parseInt(searchParams.get('index') || '0');
+  const urlIndex = parseInt(searchParams.get('index') || '0');
+  const [currentIndex, setCurrentIndex] = useState(urlIndex);
   const clusterIds = searchParams.get('clusters') || '';
   const clusterId = searchParams.get('cluster') || ''; // Single cluster ID
   const phraseType = searchParams.get('phraseType') || ''; // word, short_sentence, long_sentence, all
@@ -45,7 +46,7 @@ function PlayerContent() {
   const repeatTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const cardRef = useRef<HTMLDivElement | null>(null);
   const swipeOffsetRef = useRef(0);
-  const currentIndexRef = useRef(currentIndex);
+  const currentIndexRef = useRef(urlIndex);
   const isRepeatingRef = useRef(false); // Prevent multiple handleAudioEnded calls
   const playStartTimeRef = useRef<number | null>(null); // Track when playback started
   const playbackWatchdogRef = useRef<NodeJS.Timeout | null>(null); // Watchdog timer for stuck playback
@@ -69,9 +70,39 @@ function PlayerContent() {
     if (savedRandom) setIsRandomMode(savedRandom === 'true');
   }, []);
 
+  // Load phrases only when clusterId or phraseType changes, not on every phraseId change
   useEffect(() => {
-    loadData();
-  }, [phraseId, clusterId, phraseType]);
+    if (clusterId || clusterIds) {
+      loadPhrases();
+    }
+  }, [clusterId, clusterIds, phraseType]);
+
+  // Load current phrase when phraseId changes or when phrases array is ready
+  useEffect(() => {
+    if (phraseId && phrases.length > 0) {
+      // Find phrase in already loaded phrases array
+      const foundPhrase = phrases.find(p => p.id === phraseId);
+      if (foundPhrase) {
+        setPhrase(foundPhrase);
+        // Update currentIndex based on found phrase position
+        const foundIndex = phrases.findIndex(p => p.id === phraseId);
+        if (foundIndex !== -1 && foundIndex !== currentIndex) {
+          setCurrentIndex(foundIndex);
+          currentIndexRef.current = foundIndex;
+        }
+        setLoading(false);
+      } else {
+        // If not found, load it separately (fallback)
+        loadSinglePhrase(phraseId);
+      }
+    } else if (phrases.length > 0 && !phraseId) {
+      // If no phraseId, load first phrase
+      setPhrase(phrases[0]);
+      setCurrentIndex(0);
+      currentIndexRef.current = 0;
+      setLoading(false);
+    }
+  }, [phraseId, phrases]);
 
   useEffect(() => {
     if (phrase) {
@@ -170,22 +201,33 @@ function PlayerContent() {
     };
   }, []);
 
-  const loadData = async () => {
+  // Load cluster name once
+  useEffect(() => {
+    if (clusterId && !clusterName) {
+      loadClusterName();
+    }
+  }, [clusterId]);
+
+  const loadClusterName = async () => {
+    try {
+      const { data: clusterData, error: clusterError } = await supabase
+        .from('clusters')
+        .select('name')
+        .eq('id', clusterId)
+        .single();
+      
+      if (!clusterError && clusterData) {
+        setClusterName(clusterData.name);
+      }
+    } catch (error) {
+      console.error('Error loading cluster name:', error);
+    }
+  };
+
+  // Load all phrases (only once when filters change)
+  const loadPhrases = async () => {
     try {
       setLoading(true);
-      
-      // Load cluster name if clusterId is provided
-      if (clusterId) {
-        const { data: clusterData, error: clusterError } = await supabase
-          .from('clusters')
-          .select('name')
-          .eq('id', clusterId)
-          .single();
-        
-        if (!clusterError && clusterData) {
-          setClusterName(clusterData.name);
-        }
-      }
       
       // Load all phrases for navigation
       let phrasesQuery = supabase
@@ -211,23 +253,37 @@ function PlayerContent() {
       if (phrasesError) throw phrasesError;
       setPhrases(phrasesData || []);
 
-      // Load current phrase
-      if (phraseId) {
-        const { data: phraseData, error: phraseError } = await supabase
-          .from('phrases')
-          .select('*')
-          .eq('id', phraseId)
-          .single();
-
-        if (phraseError) throw phraseError;
-        setPhrase(phraseData);
+      // If we have phraseId, find it in the loaded phrases
+      if (phraseId && phrasesData) {
+        const foundPhrase = phrasesData.find(p => p.id === phraseId);
+        if (foundPhrase) {
+          setPhrase(foundPhrase);
+        }
       } else if (phrasesData && phrasesData.length > 0) {
         // If no phraseId, load first phrase
         setPhrase(phrasesData[0]);
       }
     } catch (error) {
-      console.error('Error loading data:', error);
+      console.error('Error loading phrases:', error);
     } finally {
+      setLoading(false);
+    }
+  };
+
+  // Load single phrase (fallback if not found in array)
+  const loadSinglePhrase = async (id: string) => {
+    try {
+      const { data: phraseData, error: phraseError } = await supabase
+        .from('phrases')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (phraseError) throw phraseError;
+      setPhrase(phraseData);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error loading phrase:', error);
       setLoading(false);
     }
   };
@@ -369,9 +425,13 @@ function PlayerContent() {
   const navigateToPhrase = (index: number, shouldAutoPlay: boolean = false) => {
     if (index < 0 || index >= phrases.length) return;
     const newPhrase = phrases[index];
-    const autoPlayParam = shouldAutoPlay ? '&autoPlay=true' : '';
     
-    // Build URL with appropriate parameters
+    // Update state immediately for instant UI update
+    setPhrase(newPhrase);
+    setCurrentIndex(index);
+    currentIndexRef.current = index;
+    
+    // Update URL without page reload (shallow routing)
     const params = new URLSearchParams();
     params.set('phraseId', newPhrase.id);
     params.set('index', index.toString());
@@ -387,7 +447,8 @@ function PlayerContent() {
       params.set('autoPlay', 'true');
     }
     
-    router.push(`/player?${params.toString()}`);
+    // Use replace instead of push to avoid adding to history, and scroll: false to prevent scroll
+    router.replace(`/player?${params.toString()}`, { scroll: false });
   };
 
   const handlePrevious = () => {
