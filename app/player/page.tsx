@@ -236,14 +236,12 @@ function PlayerContent() {
   const handleAudioEnded = () => {
     if (!audioRef.current || !phrase) return;
     
-    // Prevent multiple simultaneous calls
+    // Prevent multiple simultaneous calls - simple guard
     if (isRepeatingRef.current) {
       return;
     }
     
-    // Reset flag at the START of processing this ended event
-    // This ensures that the flag is ready for the next ended event
-    // The flag will be set to true again when we start processing
+    // Block further calls immediately
     isRepeatingRef.current = true;
 
     // Use functional update to ensure we have the latest currentRepeat value
@@ -266,153 +264,41 @@ function PlayerContent() {
             }
           }, 500);
         }
-        return newRepeat; // Update counter to show final count
+        return newRepeat;
       }
 
-      // Simple logic: update counter immediately, then start next playback
-      // Calculate minimum delay: user setting or 300ms minimum
-      const minDelay = Math.max(pauseBetweenRepeats * 1000, 300);
+      // Calculate pause delay: user setting (in seconds, convert to ms)
+      const pauseDelay = pauseBetweenRepeats * 1000;
       
-      // Schedule next playback with minimum delay
+      // Schedule next playback after pause
       repeatTimeoutRef.current = setTimeout(() => {
         if (!audioRef.current || !phrase) {
           isRepeatingRef.current = false;
           return;
         }
         
-        // Simple function to play next repeat
-        const playNext = () => {
-          if (!audioRef.current || !phrase) {
+        // Reset audio and set playback speed
+        audioRef.current.playbackRate = playbackSpeed;
+        audioRef.current.currentTime = 0;
+        
+        // Start playback
+        audioRef.current.play()
+          .then(() => {
+            setIsPlaying(true);
+            // Reset flag after playback successfully started
+            // Use a delay to ensure playback actually began and prevent double triggers
+            setTimeout(() => {
+              isRepeatingRef.current = false;
+            }, 300);
+          })
+          .catch((error) => {
+            console.error('Error playing next repeat:', error);
+            setIsPlaying(false);
             isRepeatingRef.current = false;
-            return;
-          }
-          
-          // Reset audio and set playback speed
-          audioRef.current.playbackRate = playbackSpeed;
-          audioRef.current.currentTime = 0;
-          
-          // Record start time for watchdog
-          playStartTimeRef.current = Date.now();
-          
-          // Set up handler to reset flag only when playback actually starts
-          // This prevents double playback by ensuring flag is reset only after actual playback begins
-          const handlePlaying = () => {
-            if (audioRef.current) {
-              isRepeatingRef.current = false;
-              audioRef.current.removeEventListener('playing', handlePlaying);
-            }
-          };
-          audioRef.current.addEventListener('playing', handlePlaying, { once: true });
-          
-          // Start playback
-          audioRef.current.play()
-            .then(() => {
-              setIsPlaying(true);
-              // Set up watchdog to check if playback gets stuck
-              setupPlaybackWatchdog();
-              // Flag will be reset by 'playing' event handler above
-            })
-            .catch((error) => {
-              console.error('Error playing next repeat:', error);
-              setIsPlaying(false);
-              isRepeatingRef.current = false;
-              if (audioRef.current) {
-                audioRef.current.removeEventListener('playing', handlePlaying);
-              }
-            });
-        };
-        
-        // Function to setup watchdog for stuck playback
-        const setupPlaybackWatchdog = () => {
-          // Clear any existing watchdog
-          if (playbackWatchdogRef.current) {
-            clearTimeout(playbackWatchdogRef.current);
-          }
-          
-          // Check after 2 seconds if playback started
-          playbackWatchdogRef.current = setTimeout(() => {
-            if (!audioRef.current || !phrase) return;
-            
-            // Check if playback is actually playing
-            if (audioRef.current.paused || audioRef.current.ended) {
-              console.warn('Playback appears stuck (paused/ended), restarting...');
-              restartPlayback();
-            } else {
-              // Check if playback time is advancing
-              const currentTime = audioRef.current.currentTime;
-              const startTime = playStartTimeRef.current || Date.now();
-              const elapsed = (Date.now() - startTime) / 1000;
-              
-              // If time hasn't advanced at all after 2 seconds, restart
-              if (currentTime < 0.1 && elapsed > 2) {
-                console.warn('Playback time not advancing, restarting...');
-                restartPlayback();
-              }
-            }
-          }, 2000);
-        };
-        
-        // Function to restart playback if stuck
-        const restartPlayback = () => {
-          if (!audioRef.current || !phrase) return;
-          
-          console.log('Restarting playback...');
-          audioRef.current.pause();
-          audioRef.current.currentTime = 0;
-          audioRef.current.playbackRate = playbackSpeed;
-          
-          setTimeout(() => {
-            if (audioRef.current && phrase) {
-              playStartTimeRef.current = Date.now();
-              
-              // Set up handler to reset flag only when playback actually starts
-              const handlePlaying = () => {
-                if (audioRef.current) {
-                  isRepeatingRef.current = false;
-                  audioRef.current.removeEventListener('playing', handlePlaying);
-                }
-              };
-              audioRef.current.addEventListener('playing', handlePlaying, { once: true });
-              
-              audioRef.current.play()
-                .then(() => {
-                  setIsPlaying(true);
-                  setupPlaybackWatchdog();
-                  // Flag will be reset by 'playing' event handler above
-                })
-                .catch((error) => {
-                  console.error('Error restarting playback:', error);
-                  setIsPlaying(false);
-                  isRepeatingRef.current = false;
-                  if (audioRef.current) {
-                    audioRef.current.removeEventListener('playing', handlePlaying);
-                  }
-                });
-            }
-          }, 100);
-        };
-        
-        // Check if audio is ready
-        if (audioRef.current.readyState >= 2) {
-          // Audio is ready, play immediately
-          playNext();
-        } else {
-          // Wait for audio to be ready
-          audioRef.current.addEventListener('canplay', playNext, { once: true });
-          // Fallback timeout in case canplay never fires
-          setTimeout(() => {
-            if (audioRef.current && audioRef.current.readyState >= 2) {
-              playNext();
-            } else {
-              console.warn('Audio not ready after timeout');
-              isRepeatingRef.current = false;
-            }
-          }, 1000);
-        }
-      }, minDelay);
+          });
+      }, pauseDelay);
 
-      // Update counter immediately when playback ends
-      // This ensures UI shows correct count (e.g., 2/5) while next playback is starting
+      // Update counter immediately
       return newRepeat;
     });
   };
