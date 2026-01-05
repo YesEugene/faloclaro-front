@@ -121,35 +121,35 @@ export default function DonationBlock({ className = '' }: DonationBlockProps) {
     <div className={`fixed bottom-0 left-0 right-0 z-50 ${className}`}>
       <div
         className={`border-t-2 border-gray-200 shadow-lg transition-all duration-300 ${
-          isExpanded ? 'bg-white max-h-[90vh] overflow-y-auto' : 'bg-[#FFF644] h-[100px]'
+          isExpanded ? 'bg-white max-h-[90vh] overflow-y-auto' : 'bg-[#1ABD15] h-[90px]'
         }`}
       >
         {/* Header - Always visible */}
         <button
           onClick={() => setIsExpanded(!isExpanded)}
           className={`w-full px-4 flex items-center justify-between transition-colors ${
-            isExpanded ? 'py-4 hover:bg-gray-50' : 'h-[100px]'
+            isExpanded ? 'py-4 hover:bg-gray-50' : 'h-[90px]'
           }`}
         >
           <div className="flex flex-col items-start gap-1">
             <span
-              className={`font-semibold text-gray-900 ${
-                isExpanded ? 'text-lg' : 'text-[23px]'
+              className={`font-semibold ${
+                isExpanded ? 'text-lg text-gray-900' : 'text-[23px] text-white'
               }`}
             >
               {t.title}
             </span>
             <span
-              className={`text-gray-700 ${
-                isExpanded ? 'text-sm text-gray-500 hidden sm:inline' : 'text-[14px]'
+              className={`${
+                isExpanded ? 'text-sm text-gray-500 hidden sm:inline' : 'text-[14px] text-white'
               }`}
             >
               {t.description}
             </span>
           </div>
           <svg
-            className={`w-5 h-5 text-gray-600 transition-transform ${
-              isExpanded ? 'rotate-180' : ''
+            className={`w-5 h-5 transition-transform ${
+              isExpanded ? 'text-gray-600 rotate-180' : 'text-white'
             }`}
             fill="none"
             stroke="currentColor"
