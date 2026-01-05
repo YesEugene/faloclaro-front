@@ -186,10 +186,34 @@ function PhrasesContent() {
       <div className="space-y-3">
         {phrases.map((phrase, index) => {
           const translation = translations[phrase.id];
+          
+          // Build URL with all necessary parameters
+          const buildPlayerUrl = () => {
+            const params = new URLSearchParams();
+            params.set('phraseId', phrase.id);
+            params.set('index', index.toString());
+            
+            // Preserve cluster/clusterId and phraseType from current page
+            if (clusterId) {
+              params.set('cluster', clusterId);
+              if (phraseType) params.set('phraseType', phraseType);
+            } else if (clusterIds) {
+              params.set('clusters', clusterIds);
+            }
+            
+            // Preserve return parameters for navigation back
+            if (returnPhraseId) {
+              params.set('returnPhraseId', returnPhraseId);
+              if (returnIndex) params.set('returnIndex', returnIndex);
+            }
+            
+            return `/player?${params.toString()}`;
+          };
+          
           return (
             <Link
               key={phrase.id}
-              href={`/player?phraseId=${phrase.id}&index=${index}&clusters=${clusterIds}`}
+              href={buildPlayerUrl()}
               className="block p-4 rounded-[10px] border-2 border-gray-300 hover:border-blue-500 transition-colors bg-white"
             >
               <div className="flex items-center justify-between">
