@@ -353,7 +353,7 @@ export default function MethodologyPage() {
       </Suspense>
 
       {/* Main Content */}
-      <div className="max-w-md mx-auto px-4 pb-6">
+      <div className="max-w-md mx-auto px-4 pb-[106px]">
         <h1 className="text-4xl font-bold mb-8 mt-4">{t.title}</h1>
 
         {/* Section 1 */}
