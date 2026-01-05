@@ -225,7 +225,7 @@ function SubcategoriesContent() {
             className="relative rounded-[10px] transition-all aspect-square p-4 bg-[#EEEEEE] hover:bg-[#DDDDDD]"
           >
             <div className="absolute bottom-4 left-4 right-4">
-              <span className="font-medium text-black text-left block leading-tight" style={{ fontSize: '16px' }}>
+              <span className="font-medium text-black text-left block leading-tight" style={{ fontSize: '20px' }}>
                 {getSubcategoryLabel('word')}
               </span>
             </div>
@@ -237,7 +237,7 @@ function SubcategoriesContent() {
             className="relative rounded-[10px] transition-all aspect-square p-4 bg-[#EEEEEE] hover:bg-[#DDDDDD]"
           >
             <div className="absolute bottom-4 left-4 right-4">
-              <span className="font-medium text-black text-left block leading-tight" style={{ fontSize: '16px' }}>
+              <span className="font-medium text-black text-left block leading-tight" style={{ fontSize: '20px' }}>
                 {getSubcategoryLabel('short_sentence')}
               </span>
             </div>
@@ -249,7 +249,7 @@ function SubcategoriesContent() {
             className="relative rounded-[10px] transition-all aspect-square p-4 bg-[#EEEEEE] hover:bg-[#DDDDDD]"
           >
             <div className="absolute bottom-4 left-4 right-4">
-              <span className="font-medium text-black text-left block leading-tight" style={{ fontSize: '16px' }}>
+              <span className="font-medium text-black text-left block leading-tight" style={{ fontSize: '20px' }}>
                 {getSubcategoryLabel('long_sentence')}
               </span>
             </div>
