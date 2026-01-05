@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { Phrase, Translation } from '@/types';
 import Link from 'next/link';
@@ -11,9 +11,12 @@ import Image from 'next/image';
 
 function PhrasesContent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const clusterIds = searchParams.get('clusters') || '';
   const clusterId = searchParams.get('cluster') || '';
   const phraseType = searchParams.get('phraseType') || '';
+  const returnPhraseId = searchParams.get('returnPhraseId') || '';
+  const returnIndex = searchParams.get('returnIndex') || '';
   const { language } = useAppLanguage();
   const [phrases, setPhrases] = useState<Phrase[]>([]);
   const [translations, setTranslations] = useState<Record<string, string>>({});
@@ -94,19 +97,22 @@ function PhrasesContent() {
   const uiTranslations = {
     en: {
       loading: 'Loading...',
-      backToClusters: '← Назад к темам',
+      backToClusters: '← Back to Topics',
+      back: 'Back',
       noPhrases: 'No phrases found. Please select clusters first.',
       phrases: 'Phrases',
     },
     pt: {
       loading: 'A carregar...',
-      backToClusters: '← Назад к темам',
+      backToClusters: '← Voltar aos Temas',
+      back: 'Voltar',
       noPhrases: 'Nenhuma frase encontrada. Por favor, selecione clusters primeiro.',
       phrases: 'Frases',
     },
     ru: {
       loading: 'Загрузка...',
       backToClusters: '← Назад к темам',
+      back: 'Назад',
       noPhrases: 'Фразы не найдены. Пожалуйста, сначала выберите кластеры.',
       phrases: 'Фразы',
     },
@@ -147,12 +153,31 @@ function PhrasesContent() {
 
         {/* Back Button */}
         <div className="max-w-md mx-auto px-4">
-          <Link 
-            href="/clusters" 
-            className="block w-full px-4 py-2 rounded-[10px] bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors text-center"
+          <button
+            onClick={() => {
+              if (returnPhraseId) {
+                // Return to player page with saved phrase
+                const params = new URLSearchParams();
+                params.set('phraseId', returnPhraseId);
+                params.set('index', returnIndex || '0');
+                if (clusterId) {
+                  params.set('cluster', clusterId);
+                  if (phraseType) params.set('phraseType', phraseType);
+                } else if (clusterIds) {
+                  params.set('clusters', clusterIds);
+                }
+                router.push(`/player?${params.toString()}`);
+              } else {
+                router.push('/clusters');
+              }
+            }}
+            className="block w-full px-4 py-2 rounded-[10px] transition-colors text-center"
+            style={{ 
+              backgroundColor: '#EDF3FF',
+            }}
           >
-            {t.backToClusters}
-          </Link>
+            <span className="text-gray-700">← {t.back}</span>
+          </button>
         </div>
       </div>
 

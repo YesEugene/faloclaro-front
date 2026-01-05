@@ -528,8 +528,8 @@ function PlayerContent() {
     en: {
       loading: 'Loading...',
       backToPhrases: '← Back to Phrases',
-      back: 'Назад',
-      dictionaryList: 'Словарь списком',
+      back: 'Back',
+      dictionaryList: 'Dictionary List',
       translationNotAvailable: 'Translation not available',
       playbackSpeed: 'Playback Speed',
       pauseBetweenRepeats: 'Pause Between Repeats',
@@ -548,7 +548,7 @@ function PlayerContent() {
       loading: 'A carregar...',
       backToPhrases: '← Voltar às Frases',
       back: 'Voltar',
-      dictionaryList: 'Dicionário completo',
+      dictionaryList: 'Dicionário Lista',
       translationNotAvailable: 'Tradução não disponível',
       playbackSpeed: 'Velocidade de Reprodução',
       pauseBetweenRepeats: 'Pausa Entre Repetições',
@@ -633,7 +633,7 @@ function PlayerContent() {
               width: 'calc(50% - 5px)',
             }}
           >
-            <span className="text-gray-700">{t.back}</span>
+            <span className="text-gray-700">← {t.back}</span>
           </button>
           <button
             onClick={() => {
@@ -644,11 +644,18 @@ function PlayerContent() {
               } else if (clusterIds) {
                 params.set('clusters', clusterIds);
               }
+              // Save current phraseId to return to it later
+              if (phraseId) {
+                params.set('returnPhraseId', phraseId);
+                params.set('returnIndex', currentIndex.toString());
+              }
               router.push(`/phrases?${params.toString()}`);
             }}
-            className="px-4 py-2 rounded-[10px] bg-white border-2 border-black text-black hover:bg-gray-50 transition-colors text-center"
+            className="px-4 py-2 rounded-[10px] bg-white border-2 border-gray-300 text-black hover:bg-gray-50 transition-colors text-center font-medium"
             style={{ 
               width: 'calc(50% - 5px)',
+              transform: 'translateY(1px)',
+              fontWeight: 500,
             }}
           >
             {t.dictionaryList}
