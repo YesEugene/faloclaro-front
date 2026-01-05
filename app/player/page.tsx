@@ -43,6 +43,8 @@ function PlayerContent() {
   const swipeOffsetRef = useRef(0);
   const currentIndexRef = useRef(currentIndex);
   const isRepeatingRef = useRef(false); // Prevent multiple handleAudioEnded calls
+  const playStartTimeRef = useRef<number | null>(null); // Track when playback started
+  const playbackWatchdogRef = useRef<NodeJS.Timeout | null>(null); // Watchdog timer for stuck playback
 
   // Load settings from localStorage on mount
   useEffect(() => {
@@ -73,8 +75,13 @@ function PlayerContent() {
       // Reset repeat counter when phrase changes
       setCurrentRepeat(0);
       isRepeatingRef.current = false; // Reset repeat flag
+      playStartTimeRef.current = null;
       if (repeatTimeoutRef.current) {
         clearTimeout(repeatTimeoutRef.current);
+      }
+      if (playbackWatchdogRef.current) {
+        clearTimeout(playbackWatchdogRef.current);
+        playbackWatchdogRef.current = null;
       }
     }
   }, [phrase?.id, appLanguage]);
@@ -147,6 +154,9 @@ function PlayerContent() {
       if (repeatTimeoutRef.current) {
         clearTimeout(repeatTimeoutRef.current);
       }
+      if (playbackWatchdogRef.current) {
+        clearTimeout(playbackWatchdogRef.current);
+      }
     };
   }, []);
 
@@ -210,9 +220,15 @@ function PlayerContent() {
       if (repeatTimeoutRef.current) {
         clearTimeout(repeatTimeoutRef.current);
       }
+      if (playbackWatchdogRef.current) {
+        clearTimeout(playbackWatchdogRef.current);
+        playbackWatchdogRef.current = null;
+      }
+      playStartTimeRef.current = null;
       isRepeatingRef.current = false; // Reset repeat flag
     } else {
       isRepeatingRef.current = false; // Reset repeat flag
+      playStartTimeRef.current = null;
       startPlayback();
     }
   };
@@ -250,8 +266,8 @@ function PlayerContent() {
         return newRepeat; // Update counter to show final count
       }
 
-      // Calculate minimum delay: user setting or 400ms minimum (increased for reliability)
-      const minDelay = Math.max(pauseBetweenRepeats * 1000, 400);
+      // Calculate minimum delay: user setting or 800ms minimum (increased for reliability)
+      const minDelay = Math.max(pauseBetweenRepeats * 1000, 800);
       
       // Schedule next playback with minimum delay
       repeatTimeoutRef.current = setTimeout(() => {
