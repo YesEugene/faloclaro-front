@@ -212,7 +212,7 @@ function SubcategoriesContent() {
                 <div className="font-semibold text-black mb-1" style={{ fontSize: '16px' }}>
                   {language === 'ru' ? 'Выбрать все' : language === 'pt' ? 'Selecionar todos' : 'Select all'}
                 </div>
-                <div className="font-semibold text-black leading-tight" style={{ fontSize: '30px' }}>
+                <div className="font-semibold text-black leading-tight" style={{ fontSize: '26px' }}>
                   {clusterDisplayName}
                 </div>
               </div>
@@ -225,7 +225,7 @@ function SubcategoriesContent() {
             className="relative rounded-[10px] transition-all aspect-square p-4 bg-[#EEEEEE] hover:bg-[#DDDDDD]"
           >
             <div className="absolute bottom-4 left-4 right-4">
-              <span className="font-medium text-black text-left block leading-tight text-sm">
+              <span className="font-medium text-black text-left block leading-tight" style={{ fontSize: '16px' }}>
                 {getSubcategoryLabel('word')}
               </span>
             </div>
@@ -237,7 +237,7 @@ function SubcategoriesContent() {
             className="relative rounded-[10px] transition-all aspect-square p-4 bg-[#EEEEEE] hover:bg-[#DDDDDD]"
           >
             <div className="absolute bottom-4 left-4 right-4">
-              <span className="font-medium text-black text-left block leading-tight text-sm">
+              <span className="font-medium text-black text-left block leading-tight" style={{ fontSize: '16px' }}>
                 {getSubcategoryLabel('short_sentence')}
               </span>
             </div>
@@ -249,7 +249,7 @@ function SubcategoriesContent() {
             className="relative rounded-[10px] transition-all aspect-square p-4 bg-[#EEEEEE] hover:bg-[#DDDDDD]"
           >
             <div className="absolute bottom-4 left-4 right-4">
-              <span className="font-medium text-black text-left block leading-tight text-sm">
+              <span className="font-medium text-black text-left block leading-tight" style={{ fontSize: '16px' }}>
                 {getSubcategoryLabel('long_sentence')}
               </span>
             </div>
