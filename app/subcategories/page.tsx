@@ -184,19 +184,23 @@ function SubcategoriesContent() {
         <div className="max-w-md mx-auto px-4">
           <button
             onClick={() => router.push('/clusters')}
-            className="block w-full px-4 py-2 rounded-[10px] bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors text-center"
+            className="block px-4 py-2 rounded-[10px] transition-colors text-center"
+            style={{ 
+              backgroundColor: '#EDF3FF',
+              width: 'calc(50% - 5px)', // Width of one card minus half gap
+            }}
           >
-            {language === 'ru' ? '← Назад к темам' : language === 'pt' ? '← Voltar aos temas' : '← Back to topics'}
+            <span className="text-gray-700">
+              {language === 'ru' ? '← Назад к темам' : language === 'pt' ? '← Voltar aos temas' : '← Back to topics'}
+            </span>
           </button>
         </div>
       </div>
 
       {/* Main Content */}
       <div className="max-w-md mx-auto px-4 pb-24">
-        <h1 className="text-2xl font-bold mb-6 mt-4">{clusterDisplayName}</h1>
-
         {/* Subcategories Grid */}
-        <div className="grid grid-cols-2 gap-[10px]">
+        <div className="grid grid-cols-2 gap-[10px] mt-4">
           {/* Select All Button */}
           <button
             onClick={() => handleSubcategoryClick('all')}
@@ -204,9 +208,14 @@ function SubcategoriesContent() {
             style={{ backgroundColor: clusterColor }}
           >
             <div className="absolute bottom-4 left-4 right-4">
-              <span className="font-semibold text-white drop-shadow-md text-left block leading-tight text-sm">
-                {getSubcategoryLabel('all')}
-              </span>
+              <div className="text-left">
+                <div className="font-semibold text-black mb-1" style={{ fontSize: '16px' }}>
+                  {language === 'ru' ? 'Выбрать все' : language === 'pt' ? 'Selecionar todos' : 'Select all'}
+                </div>
+                <div className="font-semibold text-black leading-tight" style={{ fontSize: '30px' }}>
+                  {clusterDisplayName}
+                </div>
+              </div>
             </div>
           </button>
 
