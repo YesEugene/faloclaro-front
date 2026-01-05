@@ -8,6 +8,7 @@ import { Phrase, Translation } from '@/types';
 import { useAppLanguage } from '@/lib/language-context';
 import { LanguageSelector } from '@/components/LanguageSelector';
 import Image from 'next/image';
+import { getClusterColor } from '@/lib/cluster-config';
 
 function PlayerContent() {
   const searchParams = useSearchParams();
@@ -726,11 +727,12 @@ function PlayerContent() {
 
       {/* Main Content */}
       <div className="max-w-md mx-auto px-4 pb-24 relative">
-        {/* Red Phrase Card with Swipe */}
+        {/* Phrase Card with Swipe - Color based on cluster */}
         <div
           ref={cardRef}
-          className="bg-[#F03F3F] rounded-[30px] p-4 mb-6 relative touch-none select-none aspect-square shadow-lg flex flex-col"
+          className="rounded-[30px] p-4 mb-6 relative touch-none select-none aspect-square shadow-lg flex flex-col"
           style={{
+            backgroundColor: clusterName ? getClusterColor(clusterName) : '#F03F3F', // Fallback to red if no cluster
             transform: `translateX(${swipeOffset}px) rotate(${swipeOffset * 0.1}deg)`,
             transition: isDragging ? 'none' : 'transform 0.3s ease-out',
             cursor: isDragging ? 'grabbing' : 'grab',
@@ -743,7 +745,7 @@ function PlayerContent() {
           onMouseDown={handleMouseDown}
         >
           {/* Progress Indicator - Top Center */}
-          <div className="text-white text-center mt-5 mb-5">
+          <div className="text-black text-center mt-5 mb-5 font-medium">
             {currentIndex + 1} / {phrases.length}
           </div>
 
@@ -751,12 +753,12 @@ function PlayerContent() {
           {phrase.phrase_type === 'word' ? (
             <>
               {/* Word (large) */}
-              <div className="text-5xl font-bold mb-4 text-center" style={{ color: '#ECF700' }}>
+              <div className="text-5xl font-bold mb-4 text-center text-black">
                 {phrase.portuguese_text}
               </div>
               
               {/* IPA Transcription */}
-              <div className="text-lg text-center mb-4 font-mono" style={{ color: '#FFCDCD' }}>
+              <div className="text-lg text-center mb-4 font-mono text-black">
                 {phrase.ipa_transcription ? `/${phrase.ipa_transcription}/` : ''}
               </div>
 
@@ -788,12 +790,12 @@ function PlayerContent() {
           ) : (
             <>
               {/* Portuguese Text */}
-              <div className="text-4xl font-bold mb-5 text-center" style={{ color: '#ECF700' }}>
+              <div className="text-4xl font-bold mb-5 text-center text-black">
                 {phrase.portuguese_text}
               </div>
               
               {/* IPA Transcription */}
-              <div className="text-base text-center mb-5 font-mono" style={{ color: '#FFCDCD' }}>
+              <div className="text-base text-center mb-5 font-mono text-black">
                 {phrase.ipa_transcription ? `/${phrase.ipa_transcription}/` : 'Тут должна быть транскрипция фразы'}
               </div>
 
@@ -818,8 +820,8 @@ function PlayerContent() {
 
           {/* Movie Information (for movie quotes) */}
           {phrase.movie_title && (
-            <div className="mt-2 mb-2 border-t border-white/30 pt-2">
-              <div className="text-sm text-white text-center">
+            <div className="mt-2 mb-2 border-t border-black/30 pt-2">
+              <div className="text-sm text-black text-center">
                 <div className="font-semibold text-base mb-1">
                   {phrase.movie_title}
                   {phrase.movie_year && ` (${phrase.movie_year})`}
@@ -861,7 +863,10 @@ function PlayerContent() {
           <button
             onClick={handlePlayPause}
             disabled={!phrase.audio_url}
-            className="p-4 rounded-full bg-[#F03F3F] text-white disabled:opacity-50 disabled:cursor-not-allowed shadow-lg flex items-center justify-center"
+            className="p-4 rounded-full text-white disabled:opacity-50 disabled:cursor-not-allowed shadow-lg flex items-center justify-center"
+            style={{ 
+              backgroundColor: clusterName ? getClusterColor(clusterName) : '#F03F3F' // Use cluster color or fallback to red
+            }}
             aria-label={isPlaying ? t.pause : t.play}
           >
             {isPlaying ? (
