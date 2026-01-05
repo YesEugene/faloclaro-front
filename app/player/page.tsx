@@ -300,8 +300,9 @@ function PlayerContent() {
               setIsPlaying(true);
               // Set up watchdog to check if playback gets stuck
               setupPlaybackWatchdog();
-              // DO NOT reset isRepeatingRef here - it will be reset at the start of the next handleAudioEnded
-              // This ensures that each ended event is processed only once
+              // Reset flag AFTER playback successfully started
+              // This allows the next ended event to be processed when this playback ends
+              isRepeatingRef.current = false;
             })
             .catch((error) => {
               console.error('Error playing next repeat:', error);
@@ -356,7 +357,9 @@ function PlayerContent() {
                 .then(() => {
                   setIsPlaying(true);
                   setupPlaybackWatchdog();
-                  // DO NOT reset isRepeatingRef here - it will be reset at the start of the next handleAudioEnded
+                  // Reset flag AFTER playback successfully restarted
+                  // This allows the next ended event to be processed when this playback ends
+                  isRepeatingRef.current = false;
                 })
                 .catch((error) => {
                   console.error('Error restarting playback:', error);
