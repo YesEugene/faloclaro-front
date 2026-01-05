@@ -221,39 +221,68 @@ function PlayerContent() {
 
       // If we've reached the max repeats, stop playing
       if (newRepeat >= maxRepeats) {
-        setIsPlaying(false);
-        // Auto-advance to next phrase with auto-play
-        if (repeatCount !== 'infinite') {
-          setTimeout(() => {
-            if (isRandomMode) {
-              const randomIndex = getRandomPhraseIndex();
-              navigateToPhrase(randomIndex, true); // Pass true to auto-play
-            } else if (currentIndex < phrases.length - 1) {
-              navigateToPhrase(currentIndex + 1, true); // Pass true to auto-play
-            }
-          }, 500);
-        }
-        return prevRepeat; // Don't update counter, we're done
+        // Update counter first to show final count
+        // Then stop playing and advance to next phrase
+        setTimeout(() => {
+          setIsPlaying(false);
+          // Auto-advance to next phrase with auto-play
+          if (repeatCount !== 'infinite') {
+            setTimeout(() => {
+              if (isRandomMode) {
+                const randomIndex = getRandomPhraseIndex();
+                navigateToPhrase(randomIndex, true); // Pass true to auto-play
+              } else if (currentIndex < phrases.length - 1) {
+                navigateToPhrase(currentIndex + 1, true); // Pass true to auto-play
+              }
+            }, 500);
+          }
+        }, 0);
+        return newRepeat; // Update counter to show final count
       }
 
       // Continue to next repeat - schedule the next playback
+      // Use a small delay to ensure state update completes and UI reflects the new count
+      const playNext = () => {
+        if (!audioRef.current || !phrase) return;
+        
+        // Ensure audio element is ready
+        if (audioRef.current.readyState < 2) {
+          // Audio not loaded yet, wait for it
+          audioRef.current.addEventListener('canplay', () => {
+            if (audioRef.current && phrase) {
+              audioRef.current.playbackRate = playbackSpeed;
+              audioRef.current.currentTime = 0;
+              audioRef.current.play()
+                .then(() => {
+                  setIsPlaying(true);
+                })
+                .catch((error) => {
+                  console.error('Error playing next repeat:', error);
+                  setIsPlaying(false);
+                });
+            }
+          }, { once: true });
+          return;
+        }
+
+        // Audio is ready, play immediately
+        audioRef.current.playbackRate = playbackSpeed;
+        audioRef.current.currentTime = 0;
+        audioRef.current.play()
+          .then(() => {
+            setIsPlaying(true);
+          })
+          .catch((error) => {
+            console.error('Error playing next repeat:', error);
+            setIsPlaying(false);
+          });
+      };
+
       if (pauseBetweenRepeats > 0) {
-        repeatTimeoutRef.current = setTimeout(() => {
-          if (audioRef.current) {
-            audioRef.current.playbackRate = playbackSpeed; // Apply speed
-            audioRef.current.currentTime = 0;
-            audioRef.current.play();
-          }
-        }, pauseBetweenRepeats * 1000);
+        repeatTimeoutRef.current = setTimeout(playNext, pauseBetweenRepeats * 1000);
       } else {
-        // Use setTimeout with 0ms to ensure state update completes before playing
-        setTimeout(() => {
-          if (audioRef.current) {
-            audioRef.current.playbackRate = playbackSpeed; // Apply speed
-            audioRef.current.currentTime = 0;
-            audioRef.current.play();
-          }
-        }, 0);
+        // Small delay to ensure state update completes and DOM updates
+        repeatTimeoutRef.current = setTimeout(playNext, 100);
       }
 
       return newRepeat; // Update counter
