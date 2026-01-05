@@ -298,6 +298,9 @@ function PlayerContent() {
               setIsPlaying(true);
               // Set up watchdog to check if playback gets stuck
               setupPlaybackWatchdog();
+              // Reset flag AFTER playback successfully started
+              // This allows the next ended event to be processed when this playback ends
+              isRepeatingRef.current = false;
             })
             .catch((error) => {
               console.error('Error playing next repeat:', error);
@@ -351,9 +354,9 @@ function PlayerContent() {
               audioRef.current.play()
                 .then(() => {
                   setIsPlaying(true);
-                  // Reset flag so next ended event can be processed
-                  isRepeatingRef.current = false;
                   setupPlaybackWatchdog();
+                  // Reset flag AFTER playback successfully restarted
+                  isRepeatingRef.current = false;
                 })
                 .catch((error) => {
                   console.error('Error restarting playback:', error);
@@ -712,20 +715,7 @@ function PlayerContent() {
             <audio
               ref={audioRef}
               src={phrase.audio_url}
-              onEnded={(e) => {
-                // Only handle if not already processing a repeat
-                // When repeating, we handle ended events via addEventListener in playNext
-                // This onEnded is only for the first play or when not repeating
-                if (!isRepeatingRef.current && repeatCount === 'infinite') {
-                  // For infinite repeats, handle normally
-                  handleAudioEnded();
-                } else if (!isRepeatingRef.current) {
-                  // For finite repeats, only handle if we're not in the middle of a repeat cycle
-                  // The repeat cycle handles its own ended events
-                  handleAudioEnded();
-                }
-                // If isRepeatingRef.current is true, ignore this event - it's handled by the repeat cycle
-              }}
+              onEnded={handleAudioEnded}
               onLoadedData={handleAudioLoaded}
               preload="auto"
             />
