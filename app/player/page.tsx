@@ -69,8 +69,10 @@ function PlayerContent() {
   useEffect(() => {
     if (phrase) {
       loadTranslation(phrase.id, appLanguage);
+      // Reset repeat counter when phrase changes
+      setCurrentRepeat(0);
     }
-  }, [phrase, appLanguage]);
+  }, [phrase?.id, appLanguage]);
 
   useEffect(() => {
     if (audioRef.current) {
@@ -211,40 +213,51 @@ function PlayerContent() {
   const handleAudioEnded = () => {
     if (!audioRef.current || !phrase) return;
 
-    const newRepeat = currentRepeat + 1;
-    const maxRepeats = repeatCount === 'infinite' ? Infinity : repeatCount;
+    // Use functional update to ensure we have the latest currentRepeat value
+    // This prevents race conditions when multiple onEnded events fire quickly
+    setCurrentRepeat((prevRepeat) => {
+      const newRepeat = prevRepeat + 1;
+      const maxRepeats = repeatCount === 'infinite' ? Infinity : repeatCount;
 
-    if (newRepeat >= maxRepeats) {
-      setIsPlaying(false);
-      // Auto-advance to next phrase with auto-play
-      if (repeatCount !== 'infinite') {
-        setTimeout(() => {
-          if (isRandomMode) {
-            const randomIndex = getRandomPhraseIndex();
-            navigateToPhrase(randomIndex, true); // Pass true to auto-play
-          } else if (currentIndex < phrases.length - 1) {
-            navigateToPhrase(currentIndex + 1, true); // Pass true to auto-play
-          }
-        }, 500);
-      }
-      return;
-    }
-
-    setCurrentRepeat(newRepeat);
-
-    if (pauseBetweenRepeats > 0) {
-      repeatTimeoutRef.current = setTimeout(() => {
-        if (audioRef.current) {
-          audioRef.current.playbackRate = playbackSpeed; // Apply speed
-          audioRef.current.currentTime = 0;
-          audioRef.current.play();
+      // If we've reached the max repeats, stop playing
+      if (newRepeat >= maxRepeats) {
+        setIsPlaying(false);
+        // Auto-advance to next phrase with auto-play
+        if (repeatCount !== 'infinite') {
+          setTimeout(() => {
+            if (isRandomMode) {
+              const randomIndex = getRandomPhraseIndex();
+              navigateToPhrase(randomIndex, true); // Pass true to auto-play
+            } else if (currentIndex < phrases.length - 1) {
+              navigateToPhrase(currentIndex + 1, true); // Pass true to auto-play
+            }
+          }, 500);
         }
-      }, pauseBetweenRepeats * 1000);
-    } else {
-      audioRef.current.playbackRate = playbackSpeed; // Apply speed
-      audioRef.current.currentTime = 0;
-      audioRef.current.play();
-    }
+        return prevRepeat; // Don't update counter, we're done
+      }
+
+      // Continue to next repeat - schedule the next playback
+      if (pauseBetweenRepeats > 0) {
+        repeatTimeoutRef.current = setTimeout(() => {
+          if (audioRef.current) {
+            audioRef.current.playbackRate = playbackSpeed; // Apply speed
+            audioRef.current.currentTime = 0;
+            audioRef.current.play();
+          }
+        }, pauseBetweenRepeats * 1000);
+      } else {
+        // Use setTimeout with 0ms to ensure state update completes before playing
+        setTimeout(() => {
+          if (audioRef.current) {
+            audioRef.current.playbackRate = playbackSpeed; // Apply speed
+            audioRef.current.currentTime = 0;
+            audioRef.current.play();
+          }
+        }, 0);
+      }
+
+      return newRepeat; // Update counter
+    });
   };
 
   const getRandomPhraseIndex = (): number => {
@@ -700,7 +713,7 @@ function PlayerContent() {
               >
                 {t.infinite}
               </button>
-              {[1, 2, 3, 5, 10, 20].map((count) => (
+              {[1, 3, 5, 10, 20].map((count) => (
                 <button
                   key={count}
                   onClick={() => setRepeatCount(count)}
