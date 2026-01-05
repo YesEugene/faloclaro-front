@@ -36,26 +36,23 @@ function extractValue(line, prefix) {
 // Parse words CSV file
 function parseWordsCSV(filePath) {
   const content = fs.readFileSync(filePath, 'utf-8');
-  const lines = content.split('\n');
+  const lines = content.split('\n').map(line => line.trim()).filter(Boolean); // Filter out empty lines
   
   const words = [];
   let currentWord = null;
   
   for (let i = 0; i < lines.length; i++) {
-    const line = lines[i].trim();
+    const line = lines[i];
     
-    if (!line) {
-      // Empty line - save current word if exists
+    // New word starts with "PT: " (without "sentence")
+    if (line.startsWith('PT: ') && !line.includes('sentence')) {
+      // Save previous word if exists
       if (currentWord && currentWord.portuguese) {
         words.push(currentWord);
-        currentWord = null;
       }
-      continue;
-    }
-    
-    if (!currentWord) {
+      // Start new word
       currentWord = {
-        portuguese: '',
+        portuguese: extractValue(line, 'PT'),
         ipa: '',
         sentence: '',
         ru: '',
@@ -63,32 +60,39 @@ function parseWordsCSV(filePath) {
         ruSentence: '',
         enSentence: '',
       };
-    }
-    
-    const pt = extractValue(line, 'PT');
-    if (pt && !pt.includes('sentence')) {
-      currentWord.portuguese = pt;
-    } else if (pt && pt.includes('sentence')) {
-      currentWord.sentence = extractValue(line, 'PT sentence') || '';
-    }
-    
-    const ipa = extractValue(line, 'IPA');
-    if (ipa) {
-      currentWord.ipa = ipa;
-    }
-    
-    const ru = extractValue(line, 'RU');
-    if (ru && !ru.includes('sentence')) {
-      currentWord.ru = ru;
-    } else if (ru && ru.includes('sentence')) {
-      currentWord.ruSentence = extractValue(line, 'RU sentence') || '';
-    }
-    
-    const en = extractValue(line, 'EN');
-    if (en && !en.includes('sentence')) {
-      currentWord.en = en;
-    } else if (en && en.includes('sentence')) {
-      currentWord.enSentence = extractValue(line, 'EN sentence') || '';
+    } else if (currentWord) {
+      // Continue parsing current word
+      const ipa = extractValue(line, 'IPA');
+      if (ipa) {
+        currentWord.ipa = ipa;
+      }
+      
+      const ptSentence = extractValue(line, 'PT sentence');
+      if (ptSentence) {
+        currentWord.sentence = ptSentence;
+      }
+      
+      const ruSentence = extractValue(line, 'RU sentence');
+      if (ruSentence) {
+        currentWord.ruSentence = ruSentence;
+      }
+      
+      const enSentence = extractValue(line, 'EN sentence');
+      if (enSentence) {
+        currentWord.enSentence = enSentence;
+      }
+      
+      // RU word (not sentence)
+      const ruWord = extractValue(line, 'RU');
+      if (ruWord && !line.includes('sentence')) {
+        currentWord.ru = ruWord;
+      }
+      
+      // EN word (not sentence)
+      const enWord = extractValue(line, 'EN');
+      if (enWord && !line.includes('sentence')) {
+        currentWord.en = enWord;
+      }
     }
   }
   
