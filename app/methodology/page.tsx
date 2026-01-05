@@ -1,10 +1,89 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAppLanguage } from '@/lib/language-context';
 import { LanguageSelector } from '@/components/LanguageSelector';
 import Image from 'next/image';
+import DonationBlock from '@/components/DonationBlock';
+import { useEffect, useState, Suspense } from 'react';
+
+function PaymentStatusHandler() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [paymentStatus, setPaymentStatus] = useState<string | null>(null);
+
+  useEffect(() => {
+    const payment = searchParams.get('payment');
+    if (payment === 'success') {
+      setPaymentStatus('success');
+      router.replace('/methodology', { scroll: false });
+      setTimeout(() => setPaymentStatus(null), 5000);
+    } else if (payment === 'cancelled') {
+      setPaymentStatus('cancelled');
+      router.replace('/methodology', { scroll: false });
+      setTimeout(() => setPaymentStatus(null), 5000);
+    }
+  }, [searchParams, router]);
+
+  const { language } = useAppLanguage();
+  const paymentMessages = {
+    en: {
+      success: 'Thank you for your donation! Your support means a lot to us.',
+      cancelled: 'Payment was cancelled. You can try again anytime.',
+    },
+    ru: {
+      success: 'Спасибо за ваше пожертвование! Ваша поддержка очень важна для нас.',
+      cancelled: 'Оплата была отменена. Вы можете попробовать снова в любое время.',
+    },
+    pt: {
+      success: 'Obrigado pela sua doação! Seu apoio significa muito para nós.',
+      cancelled: 'O pagamento foi cancelado. Você pode tentar novamente a qualquer momento.',
+    },
+  };
+
+  const paymentT = paymentMessages[language] || paymentMessages.en;
+
+  if (!paymentStatus) return null;
+
+  return (
+    <div
+      className={`fixed top-20 left-1/2 transform -translate-x-1/2 z-50 max-w-md w-full mx-4 ${
+        paymentStatus === 'success'
+          ? 'bg-green-50 border-2 border-green-500'
+          : 'bg-yellow-50 border-2 border-yellow-500'
+      } rounded-lg p-4 shadow-lg`}
+    >
+      <div className="flex items-center justify-between">
+        <p
+          className={`text-sm font-medium ${
+            paymentStatus === 'success' ? 'text-green-800' : 'text-yellow-800'
+          }`}
+        >
+          {paymentStatus === 'success' ? paymentT.success : paymentT.cancelled}
+        </p>
+        <button
+          onClick={() => setPaymentStatus(null)}
+          className="ml-4 text-gray-500 hover:text-gray-700"
+        >
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+  );
+}
 
 export default function MethodologyPage() {
   const router = useRouter();
@@ -268,6 +347,11 @@ export default function MethodologyPage() {
         </div>
       </div>
 
+      {/* Payment Status Message */}
+      <Suspense fallback={null}>
+        <PaymentStatusHandler />
+      </Suspense>
+
       {/* Main Content */}
       <div className="max-w-md mx-auto px-4 pb-6">
         <h1 className="text-4xl font-bold mb-8 mt-4">{t.title}</h1>
@@ -349,6 +433,9 @@ export default function MethodologyPage() {
           <p className="mb-4 text-gray-900 leading-relaxed font-medium">{t.section5.p4}</p>
         </section>
       </div>
+
+      {/* Donation Block - Fixed at bottom */}
+      <DonationBlock className="pb-0" />
     </div>
   );
 }
