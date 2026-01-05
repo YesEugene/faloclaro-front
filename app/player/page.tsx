@@ -24,6 +24,7 @@ function PlayerContent() {
   const [phrases, setPhrases] = useState<Phrase[]>([]);
   const [translation, setTranslation] = useState<string>('');
   const [wordTranslation, setWordTranslation] = useState<string>(''); // Translation for word type
+  const [clusterName, setClusterName] = useState<string>(''); // Cluster name for navigation
   const [loading, setLoading] = useState(true);
 
   // Audio controls
@@ -172,6 +173,20 @@ function PlayerContent() {
   const loadData = async () => {
     try {
       setLoading(true);
+      
+      // Load cluster name if clusterId is provided
+      if (clusterId) {
+        const { data: clusterData, error: clusterError } = await supabase
+          .from('clusters')
+          .select('name')
+          .eq('id', clusterId)
+          .single();
+        
+        if (!clusterError && clusterData) {
+          setClusterName(clusterData.name);
+        }
+      }
+      
       // Load all phrases for navigation
       let phrasesQuery = supabase
         .from('phrases')
@@ -513,6 +528,8 @@ function PlayerContent() {
     en: {
       loading: 'Loading...',
       backToPhrases: '← Back to Phrases',
+      back: 'Назад',
+      dictionaryList: 'Словарь списком',
       translationNotAvailable: 'Translation not available',
       playbackSpeed: 'Playback Speed',
       pauseBetweenRepeats: 'Pause Between Repeats',
@@ -530,6 +547,8 @@ function PlayerContent() {
     pt: {
       loading: 'A carregar...',
       backToPhrases: '← Voltar às Frases',
+      back: 'Voltar',
+      dictionaryList: 'Dicionário completo',
       translationNotAvailable: 'Tradução não disponível',
       playbackSpeed: 'Velocidade de Reprodução',
       pauseBetweenRepeats: 'Pausa Entre Repetições',
@@ -547,6 +566,8 @@ function PlayerContent() {
     ru: {
       loading: 'Загрузка...',
       backToPhrases: '← Назад к тематикам',
+      back: 'Назад',
+      dictionaryList: 'Словарь списком',
       translationNotAvailable: 'Перевод недоступен',
       playbackSpeed: 'Скорость воспроизведения',
       pauseBetweenRepeats: 'Пауза между повторениями',
@@ -596,13 +617,41 @@ function PlayerContent() {
           </div>
         </div>
 
-        {/* Back Button */}
-        <div className="max-w-md mx-auto px-4 mb-[10px]">
+        {/* Back and Dictionary Buttons */}
+        <div className="max-w-md mx-auto px-4 mb-[10px] flex gap-[10px]">
           <button
-            onClick={() => router.push(`/phrases?clusters=${clusterIds}`)}
-            className="block w-full px-4 py-2 rounded-[10px] bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors text-center"
+            onClick={() => {
+              if (clusterId && clusterName) {
+                router.push(`/subcategories?cluster=${clusterId}&name=${encodeURIComponent(clusterName)}`);
+              } else {
+                router.push('/clusters');
+              }
+            }}
+            className="px-4 py-2 rounded-[10px] transition-colors text-center"
+            style={{ 
+              backgroundColor: '#EDF3FF',
+              width: 'calc(50% - 5px)',
+            }}
           >
-            {t.backToPhrases}
+            <span className="text-gray-700">{t.back}</span>
+          </button>
+          <button
+            onClick={() => {
+              const params = new URLSearchParams();
+              if (clusterId) {
+                params.set('cluster', clusterId);
+                if (phraseType) params.set('phraseType', phraseType);
+              } else if (clusterIds) {
+                params.set('clusters', clusterIds);
+              }
+              router.push(`/phrases?${params.toString()}`);
+            }}
+            className="px-4 py-2 rounded-[10px] bg-white border-2 border-black text-black hover:bg-gray-50 transition-colors text-center"
+            style={{ 
+              width: 'calc(50% - 5px)',
+            }}
+          >
+            {t.dictionaryList}
           </button>
         </div>
       </div>
@@ -771,24 +820,6 @@ function PlayerContent() {
           </button>
         </div>
 
-        {/* Dictionary Button */}
-        <div className="flex justify-center mb-4">
-          <button
-            onClick={() => {
-              const params = new URLSearchParams();
-              if (clusterId) {
-                params.set('cluster', clusterId);
-                if (phraseType) params.set('phraseType', phraseType);
-              } else if (clusterIds) {
-                params.set('clusters', clusterIds);
-              }
-              router.push(`/phrases?${params.toString()}`);
-            }}
-            className="px-6 py-2 rounded-[10px] bg-white border-2 border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors text-center font-medium"
-          >
-            {appLanguage === 'ru' ? 'Словарь целиком' : appLanguage === 'pt' ? 'Dicionário completo' : 'Full Dictionary'}
-          </button>
-        </div>
       </div>
 
       {/* Settings Button - Fixed at bottom */}
