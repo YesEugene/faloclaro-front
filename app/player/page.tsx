@@ -250,8 +250,8 @@ function PlayerContent() {
         return newRepeat; // Update counter to show final count
       }
 
-      // Calculate minimum delay: user setting or 200ms minimum
-      const minDelay = Math.max(pauseBetweenRepeats * 1000, 200);
+      // Calculate minimum delay: user setting or 400ms minimum (increased for reliability)
+      const minDelay = Math.max(pauseBetweenRepeats * 1000, 400);
       
       // Schedule next playback with minimum delay
       repeatTimeoutRef.current = setTimeout(() => {
@@ -270,18 +270,61 @@ function PlayerContent() {
           audioRef.current.playbackRate = playbackSpeed;
           audioRef.current.currentTime = 0;
           
-          // Only update counter AFTER successful playback starts
-          audioRef.current.play()
-            .then(() => {
-              // Successfully started playing - now update counter
+          // Set up event listener to detect when playback actually starts
+          const handlePlayStart = () => {
+            // Playback actually started - now update counter
+            setCurrentRepeat(newRepeat);
+            setIsPlaying(true);
+            isRepeatingRef.current = false;
+            // Remove event listener
+            if (audioRef.current) {
+              audioRef.current.removeEventListener('play', handlePlayStart);
+            }
+          };
+          
+          // Listen for actual playback start
+          audioRef.current.addEventListener('play', handlePlayStart, { once: true });
+          
+          // Also set a timeout in case play event doesn't fire
+          const playTimeout = setTimeout(() => {
+            if (audioRef.current && !audioRef.current.paused) {
+              // Audio is actually playing
               setCurrentRepeat(newRepeat);
               setIsPlaying(true);
               isRepeatingRef.current = false;
+              if (audioRef.current) {
+                audioRef.current.removeEventListener('play', handlePlayStart);
+              }
+            } else {
+              console.warn('Play event did not fire, but checking if audio is playing');
+              // Check again after a short delay
+              setTimeout(() => {
+                if (audioRef.current && !audioRef.current.paused) {
+                  setCurrentRepeat(newRepeat);
+                  setIsPlaying(true);
+                }
+                isRepeatingRef.current = false;
+                if (audioRef.current) {
+                  audioRef.current.removeEventListener('play', handlePlayStart);
+                }
+              }, 100);
+            }
+          }, 500);
+          
+          // Start playback
+          audioRef.current.play()
+            .then(() => {
+              // Promise resolved, but wait for actual play event
+              // The play event will handle counter update
             })
             .catch((error) => {
               console.error('Error playing next repeat:', error);
               setIsPlaying(false);
               isRepeatingRef.current = false;
+              clearTimeout(playTimeout);
+              if (audioRef.current) {
+                audioRef.current.removeEventListener('play', handlePlayStart);
+              }
             });
         };
         
