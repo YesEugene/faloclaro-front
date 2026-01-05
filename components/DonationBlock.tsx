@@ -30,8 +30,8 @@ export default function DonationBlock({ className = '' }: DonationBlockProps) {
       processing: 'Processing...',
     },
     ru: {
-      title: 'Support FaloClaro',
-      description: 'Help me keep FaloClaro growing and improving.',
+      title: 'Поддержать FaloClaro',
+      description: 'Помогите мне развивать и улучшать FaloClaro.',
       amounts: ['€1', '€10', '€100'],
       customAmount: 'Своя сумма',
       email: 'Email (необязательно)',
@@ -42,8 +42,8 @@ export default function DonationBlock({ className = '' }: DonationBlockProps) {
       processing: 'Обработка...',
     },
     pt: {
-      title: 'Support FaloClaro',
-      description: 'Help me keep FaloClaro growing and improving.',
+      title: 'Apoiar FaloClaro',
+      description: 'Ajude-me a manter o FaloClaro crescendo e melhorando.',
       amounts: ['€1', '€10', '€100'],
       customAmount: 'Valor personalizado',
       email: 'Email (opcional)',
