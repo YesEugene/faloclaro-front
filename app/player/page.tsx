@@ -237,10 +237,12 @@ function PlayerContent() {
     if (!audioRef.current || !phrase) return;
     
     // Prevent multiple simultaneous calls
+    // Also check if we're already processing a repeat
     if (isRepeatingRef.current) {
       return;
     }
     
+    // Mark that we're processing this ended event
     isRepeatingRef.current = true;
 
     // Use functional update to ensure we have the latest currentRepeat value
@@ -328,19 +330,26 @@ function PlayerContent() {
             // Keep isRepeatingRef = true until playback ends
             
             // Set up event listener for when playback ends
+            // Use a flag to prevent double execution
+            let endedHandled = false;
             const handlePlayEnd = () => {
+              if (endedHandled) return; // Prevent double execution
+              endedHandled = true;
+              
               // Playback fully completed - now update counter
               setCurrentRepeat(newRepeat);
               isRepeatingRef.current = false;
               
-              // Remove event listener
+              // Remove event listener (though once: true should handle this)
               if (audioRef.current) {
                 audioRef.current.removeEventListener('ended', handlePlayEnd);
               }
             };
             
-            // Listen for playback end
+            // Listen for playback end - use once: true to ensure it only fires once
             if (audioRef.current) {
+              // Remove any existing ended listeners first to prevent duplicates
+              audioRef.current.removeEventListener('ended', handlePlayEnd);
               audioRef.current.addEventListener('ended', handlePlayEnd, { once: true });
             }
             
@@ -399,19 +408,26 @@ function PlayerContent() {
               // Don't reset isRepeatingRef yet - wait for ended event
               
               // Set up event listener for when playback ends
+              // Use a flag to prevent double execution
+              let endedHandled = false;
               const handlePlayEnd = () => {
+                if (endedHandled) return; // Prevent double execution
+                endedHandled = true;
+                
                 // Playback fully completed - now update counter
                 setCurrentRepeat(newRepeat);
                 isRepeatingRef.current = false;
                 
-                // Remove event listener
+                // Remove event listener (though once: true should handle this)
                 if (audioRef.current) {
                   audioRef.current.removeEventListener('ended', handlePlayEnd);
                 }
               };
               
-              // Listen for playback end
+              // Listen for playback end - use once: true to ensure it only fires once
               if (audioRef.current) {
+                // Remove any existing ended listeners first to prevent duplicates
+                audioRef.current.removeEventListener('ended', handlePlayEnd);
                 audioRef.current.addEventListener('ended', handlePlayEnd, { once: true });
               }
               
@@ -793,7 +809,20 @@ function PlayerContent() {
             <audio
               ref={audioRef}
               src={phrase.audio_url}
-              onEnded={handleAudioEnded}
+              onEnded={(e) => {
+                // Only handle if not already processing a repeat
+                // When repeating, we handle ended events via addEventListener in playNext
+                // This onEnded is only for the first play or when not repeating
+                if (!isRepeatingRef.current && repeatCount === 'infinite') {
+                  // For infinite repeats, handle normally
+                  handleAudioEnded();
+                } else if (!isRepeatingRef.current) {
+                  // For finite repeats, only handle if we're not in the middle of a repeat cycle
+                  // The repeat cycle handles its own ended events
+                  handleAudioEnded();
+                }
+                // If isRepeatingRef.current is true, ignore this event - it's handled by the repeat cycle
+              }}
               onLoadedData={handleAudioLoaded}
               preload="auto"
             />
