@@ -24,6 +24,7 @@ export default function DonationBlock({ className = '' }: DonationBlockProps) {
       customAmount: 'Custom amount',
       email: 'Email (optional)',
       comment: 'Comment (optional)',
+      commentPlaceholder: 'I would be happy to receive any feedback or suggestions on how FaloClaro can be improved.',
       payButton: 'Pay',
       cancelButton: 'Cancel',
       processing: 'Processing...',
@@ -35,6 +36,7 @@ export default function DonationBlock({ className = '' }: DonationBlockProps) {
       customAmount: 'Своя сумма',
       email: 'Email (необязательно)',
       comment: 'Комментарий (необязательно)',
+      commentPlaceholder: 'Я буду рад любому вашему отзыву или предложениям, как FaloClaro можно сделать лучше.',
       payButton: 'Оплатить',
       cancelButton: 'Отмена',
       processing: 'Обработка...',
@@ -46,6 +48,7 @@ export default function DonationBlock({ className = '' }: DonationBlockProps) {
       customAmount: 'Valor personalizado',
       email: 'Email (opcional)',
       comment: 'Comentário (opcional)',
+      commentPlaceholder: 'Ficaria feliz em receber qualquer feedback ou sugestões sobre como o FaloClaro pode ser melhorado.',
       payButton: 'Pagar',
       cancelButton: 'Cancelar',
       processing: 'Processando...',
@@ -167,6 +170,11 @@ export default function DonationBlock({ className = '' }: DonationBlockProps) {
         {/* Expanded Content */}
         {isExpanded && (
           <div className="px-4 pb-6 pt-2 border-t border-gray-100">
+            {/* Subtitle in expanded state */}
+            <p className="text-sm text-gray-600 mb-4">
+              {t.description}
+            </p>
+            
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Amount Selection */}
               <div>
@@ -227,7 +235,7 @@ export default function DonationBlock({ className = '' }: DonationBlockProps) {
                 <textarea
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
-                  placeholder="Your message..."
+                  placeholder={t.commentPlaceholder}
                   rows={3}
                   className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:outline-none resize-none"
                 />
