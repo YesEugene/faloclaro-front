@@ -12,16 +12,18 @@ import Image from 'next/image';
 function PhrasesContent() {
   const searchParams = useSearchParams();
   const clusterIds = searchParams.get('clusters') || '';
+  const clusterId = searchParams.get('cluster') || '';
+  const phraseType = searchParams.get('phraseType') || '';
   const { language } = useAppLanguage();
   const [phrases, setPhrases] = useState<Phrase[]>([]);
   const [translations, setTranslations] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (clusterIds) {
+    if (clusterIds || clusterId) {
       loadPhrases();
     }
-  }, [clusterIds, language]); // Add language dependency
+  }, [clusterIds, clusterId, phraseType, language]);
 
   const loadPhrases = async () => {
     try {
@@ -30,9 +32,17 @@ function PhrasesContent() {
         .from('phrases')
         .select('*');
 
-      if (clusterIds !== 'all') {
+      // Support both old (clusters) and new (cluster) parameters
+      if (clusterId) {
+        query = query.eq('cluster_id', clusterId);
+      } else if (clusterIds && clusterIds !== 'all') {
         const ids = clusterIds.split(',');
         query = query.in('cluster_id', ids);
+      }
+
+      // Filter by phrase type if specified
+      if (phraseType && phraseType !== 'all') {
+        query = query.eq('phrase_type', phraseType);
       }
 
       const { data: phrasesData, error: phrasesError } = await query.order('order_index', { ascending: true });

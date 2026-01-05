@@ -81,3 +81,4 @@
 2. Сохраните файлы в формате JSON (валидный JSON)
 3. Запустите импорт: `node scripts/import-clusters.js`
 
+

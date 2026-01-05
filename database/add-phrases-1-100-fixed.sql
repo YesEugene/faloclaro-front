@@ -305,3 +305,4 @@ SELECT id, 'Fora de horas.', 24 FROM clusters WHERE name = 'Movement, Time, Paus
 INSERT INTO phrases (cluster_id, portuguese_text, order_index) 
 SELECT id, 'Está perto.', 25 FROM clusters WHERE name = 'Movement, Time, Pauses' LIMIT 1;
 
+

@@ -10,3 +10,4 @@ ADD COLUMN IF NOT EXISTS movie_year INTEGER;
 -- Add index for movie queries
 CREATE INDEX IF NOT EXISTS idx_phrases_movie_title ON phrases(movie_title);
 
+

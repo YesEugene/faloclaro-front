@@ -25,3 +25,4 @@ CREATE POLICY "Allow insert for clusters" ON clusters
 CREATE POLICY "Allow update for clusters" ON clusters
   FOR UPDATE USING (true) WITH CHECK (true);
 
+

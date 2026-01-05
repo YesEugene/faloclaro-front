@@ -60,3 +60,4 @@ UPDATE phrases SET ipa_transcription = 'nɐ̃w ˈtẽɲu ɐ sɨɾˈtezɐ sɨ kõ
 - Нет ошибок в консоли браузера
 - Все фразы имеют транскрипции
 
+

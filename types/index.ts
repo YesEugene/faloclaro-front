@@ -15,6 +15,7 @@ export interface Phrase {
   movie_title: string | null;
   movie_character: string | null;
   movie_year: number | null;
+  phrase_type?: 'word' | 'short_sentence' | 'long_sentence';
 }
 
 export interface Translation {

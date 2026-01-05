@@ -13,3 +13,4 @@ INSERT INTO clusters (name, description, order_index) VALUES
 ('Emotions and States', 'Expressing emotions and states of being', 9),
 ('Speech Connectors', 'Common connectors like "acho que", "talvez", "então"', 10);
 
+

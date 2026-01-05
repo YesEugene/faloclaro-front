@@ -1,0 +1,265 @@
+'use client';
+
+import { useEffect, useState, Suspense } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabase';
+import { Cluster } from '@/types';
+import Link from 'next/link';
+import { useAppLanguage, getClusterName } from '@/lib/language-context';
+import { LanguageSelector } from '@/components/LanguageSelector';
+import Image from 'next/image';
+
+// Cluster configuration with colors
+const clusterConfig: Record<string, { 
+  color: string;
+  icon: string;
+}> = {
+  'All Clusters': {
+    color: '#94B7F2',
+    icon: '👾',
+  },
+  'Reactions and Responses': {
+    color: '#FBDDC3',
+    icon: '💬',
+  },
+  'Politeness and Requests': {
+    color: '#FAF7BF',
+    icon: '👌',
+  },
+  'Understanding / Not Understanding': {
+    color: '#FBC3C8',
+    icon: '🙃',
+  },
+  'Movement, Time, Pauses': {
+    color: '#84E9F3',
+    icon: '⏳',
+  },
+  'Home and Daily Life': {
+    color: '#E9B0E4',
+    icon: '🏠',
+  },
+  'Children and School': {
+    color: '#90F5D9',
+    icon: '👶',
+  },
+  'Shops and Services': {
+    color: '#B2FDB0',
+    icon: '🛒',
+  },
+  'Cafes and Restaurants': {
+    color: '#91B7FF',
+    icon: '☕',
+  },
+  'Emotions and States': {
+    color: '#84D4F2',
+    icon: '🤡',
+  },
+  'Speech Connectors': {
+    color: '#FA9A9D',
+    icon: '💭',
+  },
+  'Profanity': {
+    color: '#ADA0FF',
+    icon: '🤬',
+  },
+  'Movie Quotes': {
+    color: '#B474FF',
+    icon: '🎬',
+  },
+};
+
+const subcategoryTypes = [
+  { key: 'all', en: 'Select all', ru: 'Выбрать все', pt: 'Selecionar todos' },
+  { key: 'word', en: 'Words', ru: 'Слова', pt: 'Palavras' },
+  { key: 'short_sentence', en: 'Short sentences', ru: 'Короткие предложения', pt: 'Frases curtas' },
+  { key: 'long_sentence', en: 'Long sentences', ru: 'Длинные предложения', pt: 'Frases longas' },
+];
+
+function SubcategoriesContent() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const clusterId = searchParams.get('cluster') || '';
+  const clusterName = searchParams.get('name') || '';
+  const { language } = useAppLanguage();
+  const [cluster, setCluster] = useState<Cluster | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (clusterId) {
+      loadCluster();
+    }
+  }, [clusterId]);
+
+  const loadCluster = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('clusters')
+        .select('*')
+        .eq('id', clusterId)
+        .single();
+
+      if (error) throw error;
+      setCluster(data);
+    } catch (error) {
+      console.error('Error loading cluster:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubcategoryClick = (type: string) => {
+    if (type === 'all') {
+      // Navigate to player with all phrase types
+      router.push(`/player?cluster=${clusterId}&phraseType=all`);
+    } else {
+      // Navigate to player with specific phrase type
+      router.push(`/player?cluster=${clusterId}&phraseType=${type}`);
+    }
+  };
+
+  const getClusterColor = () => {
+    if (!cluster) return '#EEEEEE';
+    return clusterConfig[cluster.name]?.color || '#EEEEEE';
+  };
+
+  const getSubcategoryLabel = (key: string) => {
+    const subcat = subcategoryTypes.find(s => s.key === key);
+    if (!subcat) return '';
+    
+    if (key === 'all' && cluster) {
+      const clusterDisplayName = getClusterName(cluster.name, language);
+      return language === 'ru' 
+        ? `Выбрать все ${clusterDisplayName}`
+        : language === 'pt'
+        ? `Selecionar todos ${clusterDisplayName}`
+        : `Select all ${clusterDisplayName}`;
+    }
+    
+    return subcat[language] || subcat.en;
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="text-lg">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!cluster) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="text-lg">Cluster not found</div>
+      </div>
+    );
+  }
+
+  const clusterColor = getClusterColor();
+  const clusterDisplayName = getClusterName(cluster.name, language);
+
+  return (
+    <div className="min-h-screen bg-white">
+      {/* Header */}
+      <div className="sticky top-0 bg-white z-10 pb-[10px]">
+        <div className="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
+          {/* Logo */}
+          <Link href="/clusters" className="flex items-center cursor-pointer">
+            <Image
+              src="/Img/Logo FaloClaro.svg"
+              alt="FaloClaro"
+              width={120}
+              height={40}
+              className="h-10 w-auto"
+              style={{ width: 'auto', height: '40px' }}
+            />
+          </Link>
+          
+          {/* Language Selector */}
+          <div className="flex items-center">
+            <LanguageSelector />
+          </div>
+        </div>
+
+        {/* Back Button */}
+        <div className="max-w-md mx-auto px-4">
+          <button
+            onClick={() => router.push('/clusters')}
+            className="block w-full px-4 py-2 rounded-[10px] bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors text-center"
+          >
+            {language === 'ru' ? '← Назад к темам' : language === 'pt' ? '← Voltar aos temas' : '← Back to topics'}
+          </button>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="max-w-md mx-auto px-4 pb-24">
+        <h1 className="text-2xl font-bold mb-6 mt-4">{clusterDisplayName}</h1>
+
+        {/* Subcategories Grid */}
+        <div className="grid grid-cols-2 gap-[10px]">
+          {/* Select All Button */}
+          <button
+            onClick={() => handleSubcategoryClick('all')}
+            className="relative rounded-[10px] transition-all aspect-square p-4"
+            style={{ backgroundColor: clusterColor }}
+          >
+            <div className="absolute bottom-4 left-4 right-4">
+              <span className="font-semibold text-white drop-shadow-md text-left block leading-tight text-sm">
+                {getSubcategoryLabel('all')}
+              </span>
+            </div>
+          </button>
+
+          {/* Words Button */}
+          <button
+            onClick={() => handleSubcategoryClick('word')}
+            className="relative rounded-[10px] transition-all aspect-square p-4 bg-[#EEEEEE] hover:bg-[#DDDDDD]"
+          >
+            <div className="absolute bottom-4 left-4 right-4">
+              <span className="font-medium text-black text-left block leading-tight text-sm">
+                {getSubcategoryLabel('word')}
+              </span>
+            </div>
+          </button>
+
+          {/* Short Sentences Button */}
+          <button
+            onClick={() => handleSubcategoryClick('short_sentence')}
+            className="relative rounded-[10px] transition-all aspect-square p-4 bg-[#EEEEEE] hover:bg-[#DDDDDD]"
+          >
+            <div className="absolute bottom-4 left-4 right-4">
+              <span className="font-medium text-black text-left block leading-tight text-sm">
+                {getSubcategoryLabel('short_sentence')}
+              </span>
+            </div>
+          </button>
+
+          {/* Long Sentences Button */}
+          <button
+            onClick={() => handleSubcategoryClick('long_sentence')}
+            className="relative rounded-[10px] transition-all aspect-square p-4 bg-[#EEEEEE] hover:bg-[#DDDDDD]"
+          >
+            <div className="absolute bottom-4 left-4 right-4">
+              <span className="font-medium text-black text-left block leading-tight text-sm">
+                {getSubcategoryLabel('long_sentence')}
+              </span>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function SubcategoriesPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="text-lg">Loading...</div>
+      </div>
+    }>
+      <SubcategoriesContent />
+    </Suspense>
+  );
+}
+

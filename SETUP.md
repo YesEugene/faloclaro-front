@@ -180,3 +180,4 @@ npm run dev
 - Add translations in multiple languages
 - Customize the donation link in `app/methodology/page.tsx`
 
+

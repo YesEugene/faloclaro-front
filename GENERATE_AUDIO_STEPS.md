@@ -114,3 +114,4 @@ node scripts/update-audio-urls.js > update-audio-urls.sql
 
 Используйте **Вариант 1 (Google Cloud TTS)** - это даст лучшее качество и можно автоматизировать все 100 фраз за один запуск скрипта.
 
+

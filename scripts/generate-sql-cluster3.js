@@ -45,3 +45,4 @@ fs.writeFileSync(outputFile, sqlContent, 'utf8');
 console.log(`✅ SQL файл создан: ${outputFile}`);
 console.log(`📊 Совпадений: ${matched}/${jsonData.phrases.length}`);
 
+

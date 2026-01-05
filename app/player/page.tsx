@@ -16,11 +16,14 @@ function PlayerContent() {
   const phraseId = searchParams.get('phraseId') || '';
   const currentIndex = parseInt(searchParams.get('index') || '0');
   const clusterIds = searchParams.get('clusters') || '';
+  const clusterId = searchParams.get('cluster') || ''; // Single cluster ID
+  const phraseType = searchParams.get('phraseType') || ''; // word, short_sentence, long_sentence, all
   const autoPlay = searchParams.get('autoPlay') === 'true';
 
   const [phrase, setPhrase] = useState<Phrase | null>(null);
   const [phrases, setPhrases] = useState<Phrase[]>([]);
   const [translation, setTranslation] = useState<string>('');
+  const [wordTranslation, setWordTranslation] = useState<string>(''); // Translation for word type
   const [loading, setLoading] = useState(true);
 
   // Audio controls
@@ -67,11 +70,17 @@ function PlayerContent() {
 
   useEffect(() => {
     loadData();
-  }, [phraseId]);
+  }, [phraseId, clusterId, phraseType]);
 
   useEffect(() => {
     if (phrase) {
       loadTranslation(phrase.id, appLanguage);
+      // Load word translation if phrase type is 'word'
+      if (phrase.phrase_type === 'word') {
+        loadWordTranslation(phrase.portuguese_text, appLanguage);
+      } else {
+        setWordTranslation('');
+      }
       // Reset repeat counter when phrase changes
       setCurrentRepeat(0);
       isRepeatingRef.current = false; // Reset repeat flag
@@ -84,7 +93,7 @@ function PlayerContent() {
         playbackWatchdogRef.current = null;
       }
     }
-  }, [phrase?.id, appLanguage]);
+  }, [phrase?.id, phrase?.phrase_type, appLanguage]);
 
   useEffect(() => {
     if (audioRef.current) {
@@ -162,14 +171,23 @@ function PlayerContent() {
 
   const loadData = async () => {
     try {
+      setLoading(true);
       // Load all phrases for navigation
       let phrasesQuery = supabase
         .from('phrases')
         .select('*');
 
-      if (clusterIds !== 'all') {
+      // Support both old (clusters) and new (cluster) parameters
+      if (clusterId) {
+        phrasesQuery = phrasesQuery.eq('cluster_id', clusterId);
+      } else if (clusterIds && clusterIds !== 'all') {
         const ids = clusterIds.split(',');
         phrasesQuery = phrasesQuery.in('cluster_id', ids);
+      }
+
+      // Filter by phrase type if specified
+      if (phraseType && phraseType !== 'all') {
+        phrasesQuery = phrasesQuery.eq('phrase_type', phraseType);
       }
 
       const { data: phrasesData, error: phrasesError } = await phrasesQuery
@@ -179,14 +197,19 @@ function PlayerContent() {
       setPhrases(phrasesData || []);
 
       // Load current phrase
-      const { data: phraseData, error: phraseError } = await supabase
-        .from('phrases')
-        .select('*')
-        .eq('id', phraseId)
-        .single();
+      if (phraseId) {
+        const { data: phraseData, error: phraseError } = await supabase
+          .from('phrases')
+          .select('*')
+          .eq('id', phraseId)
+          .single();
 
-      if (phraseError) throw phraseError;
-      setPhrase(phraseData);
+        if (phraseError) throw phraseError;
+        setPhrase(phraseData);
+      } else if (phrasesData && phrasesData.length > 0) {
+        // If no phraseId, load first phrase
+        setPhrase(phrasesData[0]);
+      }
     } catch (error) {
       console.error('Error loading data:', error);
     } finally {
@@ -208,6 +231,19 @@ function PlayerContent() {
     } catch (error) {
       console.error('Error loading translation:', error);
       setTranslation('');
+    }
+  };
+
+  const loadWordTranslation = async (word: string, langCode: string) => {
+    try {
+      // For word type, we need to find a phrase that contains this word
+      // and get its word-level translation. For now, we'll use the phrase translation
+      // as a fallback. In the future, this could be a separate word_translations table.
+      // For MVP, we'll extract the word from the sentence translation or use the phrase translation
+      setWordTranslation(''); // Will be implemented based on actual data structure
+    } catch (error) {
+      console.error('Error loading word translation:', error);
+      setWordTranslation('');
     }
   };
 
@@ -319,7 +355,24 @@ function PlayerContent() {
     if (index < 0 || index >= phrases.length) return;
     const newPhrase = phrases[index];
     const autoPlayParam = shouldAutoPlay ? '&autoPlay=true' : '';
-    router.push(`/player?phraseId=${newPhrase.id}&index=${index}&clusters=${clusterIds}${autoPlayParam}`);
+    
+    // Build URL with appropriate parameters
+    const params = new URLSearchParams();
+    params.set('phraseId', newPhrase.id);
+    params.set('index', index.toString());
+    
+    if (clusterId) {
+      params.set('cluster', clusterId);
+      if (phraseType) params.set('phraseType', phraseType);
+    } else if (clusterIds) {
+      params.set('clusters', clusterIds);
+    }
+    
+    if (shouldAutoPlay) {
+      params.set('autoPlay', 'true');
+    }
+    
+    router.push(`/player?${params.toString()}`);
   };
 
   const handlePrevious = () => {
@@ -577,32 +630,74 @@ function PlayerContent() {
             {currentIndex + 1} / {phrases.length}
           </div>
 
-          {/* Portuguese Text */}
-          <div className="text-4xl font-bold mb-5 text-center" style={{ color: '#ECF700' }}>
-            {phrase.portuguese_text}
-          </div>
-          
-          {/* IPA Transcription */}
-          <div className="text-base text-center mb-5 font-mono" style={{ color: '#FFCDCD' }}>
-            {phrase.ipa_transcription ? `/${phrase.ipa_transcription}/` : 'Тут должна быть транскрипция фразы'}
-          </div>
+          {/* Different card structure for word type */}
+          {phrase.phrase_type === 'word' ? (
+            <>
+              {/* Word (large) */}
+              <div className="text-5xl font-bold mb-4 text-center" style={{ color: '#ECF700' }}>
+                {phrase.portuguese_text}
+              </div>
+              
+              {/* IPA Transcription */}
+              <div className="text-lg text-center mb-4 font-mono" style={{ color: '#FFCDCD' }}>
+                {phrase.ipa_transcription ? `/${phrase.ipa_transcription}/` : ''}
+              </div>
 
-          {/* Translation on White Card */}
-          <div className="mt-auto mx-[10px] mb-[10px]">
-            {translation ? (
-              <div className="bg-white rounded-[20px] p-4 text-center">
-                <div className="text-xl text-gray-900 font-medium">
-                  {translation}
-                </div>
+              {/* For word type, translation contains the sentence with the word */}
+              {/* We'll use translation as sentence for now - can be improved later */}
+              <div className="mt-auto mx-[10px] mb-3">
+                {translation ? (
+                  <div className="bg-white rounded-[20px] p-4 text-center">
+                    <div className="text-sm text-gray-600 mb-2 italic">
+                      {appLanguage === 'ru' ? 'Предложение:' : appLanguage === 'pt' ? 'Frase:' : 'Sentence:'}
+                    </div>
+                    <div className="text-lg text-gray-900 font-medium mb-3">
+                      {translation}
+                    </div>
+                    {/* Word translation - for now using the word itself, can be improved */}
+                    <div className="text-base text-gray-700 font-semibold border-t pt-3">
+                      {phrase.portuguese_text}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="bg-white rounded-[20px] p-4 text-center">
+                    <div className="text-sm text-gray-500 italic">
+                      {t.translationNotAvailable}
+                    </div>
+                  </div>
+                )}
               </div>
-            ) : (
-              <div className="bg-white rounded-[20px] p-4 text-center">
-                <div className="text-sm text-gray-500 italic">
-                  {t.translationNotAvailable}
-                </div>
+            </>
+          ) : (
+            <>
+              {/* Portuguese Text */}
+              <div className="text-4xl font-bold mb-5 text-center" style={{ color: '#ECF700' }}>
+                {phrase.portuguese_text}
               </div>
-            )}
-          </div>
+              
+              {/* IPA Transcription */}
+              <div className="text-base text-center mb-5 font-mono" style={{ color: '#FFCDCD' }}>
+                {phrase.ipa_transcription ? `/${phrase.ipa_transcription}/` : 'Тут должна быть транскрипция фразы'}
+              </div>
+
+              {/* Translation on White Card */}
+              <div className="mt-auto mx-[10px] mb-[10px]">
+                {translation ? (
+                  <div className="bg-white rounded-[20px] p-4 text-center">
+                    <div className="text-xl text-gray-900 font-medium">
+                      {translation}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="bg-white rounded-[20px] p-4 text-center">
+                    <div className="text-sm text-gray-500 italic">
+                      {t.translationNotAvailable}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
 
           {/* Movie Information (for movie quotes) */}
           {phrase.movie_title && (
@@ -673,6 +768,25 @@ function PlayerContent() {
             <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
               <path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0011 6v2.798l-5.445-3.63z" />
             </svg>
+          </button>
+        </div>
+
+        {/* Dictionary Button */}
+        <div className="flex justify-center mb-4">
+          <button
+            onClick={() => {
+              const params = new URLSearchParams();
+              if (clusterId) {
+                params.set('cluster', clusterId);
+                if (phraseType) params.set('phraseType', phraseType);
+              } else if (clusterIds) {
+                params.set('clusters', clusterIds);
+              }
+              router.push(`/phrases?${params.toString()}`);
+            }}
+            className="px-6 py-2 rounded-[10px] bg-white border-2 border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors text-center font-medium"
+          >
+            {appLanguage === 'ru' ? 'Словарь целиком' : appLanguage === 'pt' ? 'Dicionário completo' : 'Full Dictionary'}
           </button>
         </div>
       </div>

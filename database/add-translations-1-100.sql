@@ -67,3 +67,4 @@ UNION ALL SELECT id, 'ru', 'Готово / договорились.' FROM phras
 -- Continue with Cluster 2, 3, 4 translations...
 -- (I'll create a complete version, but for brevity showing the pattern)
 
+

@@ -122,3 +122,4 @@ node scripts/generate-audio-simple.js
    - Убедитесь, что `google-credentials.json` в корне проекта
    - Проверьте, что переменная окружения установлена правильно
 
+

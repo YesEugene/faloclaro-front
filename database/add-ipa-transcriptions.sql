@@ -109,3 +109,4 @@ UPDATE phrases SET ipa_transcription = 'a ˈtẽpu' WHERE portuguese_text = 'A t
 UPDATE phrases SET ipa_transcription = 'ˈfoɾɐ dɨ ˈoɾɐʃ' WHERE portuguese_text = 'Fora de horas.';
 UPDATE phrases SET ipa_transcription = 'ɨʃˈta ˈpɛɾtu' WHERE portuguese_text = 'Está perto.';
 
+

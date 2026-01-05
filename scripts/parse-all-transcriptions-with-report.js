@@ -204,3 +204,4 @@ console.log(`\n✅ Готово!`);
 console.log(`📄 SQL файл: ${sqlFile}`);
 console.log(`📄 Отчет: ${reportFile}`);
 
+

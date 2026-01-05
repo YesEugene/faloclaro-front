@@ -127,3 +127,4 @@ FROM phrases WHERE portuguese_text = 'Boa tarde!' LIMIT 1;
 - URL должны быть публичными (bucket должен быть public)
 - Формат URL: `https://youvkbqaruadfpqxxbwi.supabase.co/storage/v1/object/public/audio/filename.mp3`
 
+

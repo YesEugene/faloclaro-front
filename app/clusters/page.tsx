@@ -18,10 +18,6 @@ const clusterConfig: Record<string, {
     color: '#94B7F2',
     icon: '👾',
   },
-  'Beginner': {
-    color: '#FDFFA4',
-    icon: '⭐',
-  },
   'Reactions and Responses': {
     color: '#FBDDC3',
     icon: '💬',
@@ -89,6 +85,7 @@ export default function ClustersPage() {
       const { data, error } = await supabase
         .from('clusters')
         .select('*')
+        .neq('name', 'Beginner') // Exclude Beginner cluster
         .order('order_index', { ascending: true });
 
       if (error) throw error;
@@ -122,6 +119,16 @@ export default function ClustersPage() {
   };
 
   const handleContinue = () => {
+    // If only one cluster is selected, go to subcategories page
+    if (!allSelected && selectedClusters.size === 1) {
+      const clusterId = Array.from(selectedClusters)[0];
+      const cluster = clusters.find(c => c.id === clusterId);
+      if (cluster) {
+        window.location.href = `/subcategories?cluster=${clusterId}&name=${encodeURIComponent(cluster.name)}`;
+        return;
+      }
+    }
+    // Otherwise, go to old phrases page (for backward compatibility)
     const clusterIds = allSelected 
       ? 'all' 
       : Array.from(selectedClusters).join(',');
