@@ -85,6 +85,17 @@ function SubcategoriesContent() {
   const [cluster, setCluster] = useState<Cluster | null>(null);
   const [clusters, setClusters] = useState<Cluster[]>([]);
   const [loading, setLoading] = useState(true);
+  const [phraseCounts, setPhraseCounts] = useState<{
+    word: number;
+    short_sentence: number;
+    long_sentence: number;
+    all: number;
+  }>({
+    word: 0,
+    short_sentence: 0,
+    long_sentence: 0,
+    all: 0,
+  });
   const isMultipleClusters = !!clusterIds && !clusterId;
 
   useEffect(() => {
@@ -94,6 +105,15 @@ function SubcategoriesContent() {
       loadClusters();
     }
   }, [clusterId, clusterIds]);
+
+  // Load phrase counts after cluster(s) are loaded
+  useEffect(() => {
+    // For single cluster: wait for cluster to load
+    // For multiple clusters: can load immediately (don't need to wait for clusters list)
+    if (!loading && (cluster || isMultipleClusters)) {
+      loadPhraseCounts();
+    }
+  }, [cluster, isMultipleClusters, loading]);
 
   const loadCluster = async () => {
     try {
@@ -132,6 +152,66 @@ function SubcategoriesContent() {
       console.error('Error loading clusters:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadPhraseCounts = async () => {
+    try {
+      // Determine cluster IDs to filter by
+      let targetClusterIds: string[] = [];
+      
+      if (clusterId) {
+        targetClusterIds = [clusterId];
+      } else if (clusterIds) {
+        if (clusterIds === 'all') {
+          // Get all cluster IDs except Beginner
+          const { data: allClusters } = await supabase
+            .from('clusters')
+            .select('id')
+            .neq('name', 'Beginner');
+          
+          if (allClusters && allClusters.length > 0) {
+            targetClusterIds = allClusters.map(c => c.id);
+          }
+        } else {
+          targetClusterIds = clusterIds.split(',');
+        }
+      }
+
+      if (targetClusterIds.length === 0) {
+        return;
+      }
+
+      // Create base query builder function
+      const createCountQuery = (phraseType?: string) => {
+        let query = supabase
+          .from('phrases')
+          .select('*', { count: 'exact', head: true })
+          .in('cluster_id', targetClusterIds);
+        
+        if (phraseType) {
+          query = query.eq('phrase_type', phraseType);
+        }
+        
+        return query;
+      };
+
+      // Get counts for each phrase type
+      const [wordResult, shortResult, longResult, allResult] = await Promise.all([
+        createCountQuery('word'),
+        createCountQuery('short_sentence'),
+        createCountQuery('long_sentence'),
+        createCountQuery(),
+      ]);
+
+      setPhraseCounts({
+        word: wordResult.count || 0,
+        short_sentence: shortResult.count || 0,
+        long_sentence: longResult.count || 0,
+        all: allResult.count || 0,
+      });
+    } catch (error) {
+      console.error('Error loading phrase counts:', error);
     }
   };
 
@@ -265,6 +345,7 @@ function SubcategoriesContent() {
               <div className="text-left">
                 <div className="font-semibold text-black mb-1" style={{ fontSize: '16px' }}>
                   {language === 'ru' ? 'Выбрать все' : language === 'pt' ? 'Selecionar todos' : 'Select all'}
+                  {phraseCounts.all > 0 && ` (${phraseCounts.all})`}
                 </div>
                 <div className="font-semibold text-black leading-tight" style={{ fontSize: '26px' }}>
                   {clusterDisplayName}
@@ -280,7 +361,7 @@ function SubcategoriesContent() {
           >
             <div className="absolute bottom-4 left-4 right-4">
               <span className="font-medium text-black text-left block leading-tight" style={{ fontSize: '20px' }}>
-                {getSubcategoryLabel('word')}
+                {getSubcategoryLabel('word')} {phraseCounts.word > 0 && `(${phraseCounts.word})`}
               </span>
             </div>
           </button>
@@ -292,7 +373,7 @@ function SubcategoriesContent() {
           >
             <div className="absolute bottom-4 left-4 right-4">
               <span className="font-medium text-black text-left block leading-tight" style={{ fontSize: '20px' }}>
-                {getSubcategoryLabel('short_sentence')}
+                {getSubcategoryLabel('short_sentence')} {phraseCounts.short_sentence > 0 && `(${phraseCounts.short_sentence})`}
               </span>
             </div>
           </button>
@@ -304,7 +385,7 @@ function SubcategoriesContent() {
           >
             <div className="absolute bottom-4 left-4 right-4">
               <span className="font-medium text-black text-left block leading-tight" style={{ fontSize: '20px' }}>
-                {getSubcategoryLabel('long_sentence')}
+                {getSubcategoryLabel('long_sentence')} {phraseCounts.long_sentence > 0 && `(${phraseCounts.long_sentence})`}
               </span>
             </div>
           </button>
