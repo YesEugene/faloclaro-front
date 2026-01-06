@@ -729,7 +729,10 @@ function PlayerContent() {
         <div className="max-w-md mx-auto px-4 mb-[10px] flex gap-[10px]">
           <button
             onClick={() => {
-              if (clusterId && clusterName) {
+              // For "Cult Phrases", go back to main clusters page (no subcategories)
+              if (clusterName === 'Cult Phrases') {
+                router.push('/clusters');
+              } else if (clusterId && clusterName) {
                 router.push(`/subcategories?cluster=${clusterId}&name=${encodeURIComponent(clusterName)}`);
               } else {
                 router.push('/clusters');
