@@ -38,6 +38,14 @@ export default function ClustersPage() {
   };
 
   const toggleCluster = (clusterId: string) => {
+    const cluster = clusters.find(c => c.id === clusterId);
+    
+    // If clicking on "Cult Phrases", go directly to player page
+    if (cluster && cluster.name === 'Cult Phrases') {
+      window.location.href = `/player?cluster=${clusterId}&phraseType=all`;
+      return;
+    }
+    
     const newSelected = new Set(selectedClusters);
     if (newSelected.has(clusterId)) {
       newSelected.delete(clusterId);
