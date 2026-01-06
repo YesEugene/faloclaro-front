@@ -53,7 +53,7 @@ export const clusterConfig: Record<string, {
     icon: '🤬',
   },
   'Cult Phrases': {
-    color: '#B474FF',
+    color: '#E1D0FF',
     icon: '🎬',
     isLarge: true,
   },

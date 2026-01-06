@@ -236,18 +236,7 @@ export default function ClustersPage() {
                 <div className="absolute bottom-[20px] left-[20px] right-4">
                   {/* All cluster titles are black and same size (except "All Clusters" and "Movie Quotes") */}
                   <div className="font-medium text-black drop-shadow-sm text-left leading-tight text-[13px]">
-                    {cluster.name === 'Conflict and Discontent' && language === 'ru' ? (
-                      <>
-                        Конфликт,<br />
-                        недовольство (16+)
-                      </>
-                    ) : cluster.name === 'Conflict and Discontent' ? (
-                      <>
-                        {displayName} (16+)
-                      </>
-                    ) : (
-                      displayName
-                    )}
+                    {displayName}
                   </div>
                 </div>
                 
