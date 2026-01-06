@@ -59,12 +59,17 @@ export default function ClustersPage() {
   };
 
   const handleContinue = () => {
-    // Always go to subcategories page
     if (!allSelected && selectedClusters.size === 1) {
       // Single cluster selected
       const clusterId = Array.from(selectedClusters)[0];
       const cluster = clusters.find(c => c.id === clusterId);
       if (cluster) {
+        // If "Cult Phrases" is selected, go directly to player page
+        if (cluster.name === 'Cult Phrases') {
+          window.location.href = `/player?cluster=${clusterId}&phraseType=all`;
+          return;
+        }
+        // Otherwise go to subcategories page
         window.location.href = `/subcategories?cluster=${clusterId}&name=${encodeURIComponent(cluster.name)}`;
         return;
       }
