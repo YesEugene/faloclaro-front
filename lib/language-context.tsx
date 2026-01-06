@@ -99,15 +99,15 @@ export const clusterTranslations: Record<string, Record<AppLanguage, string>> = 
     pt: 'Conectores de Fala',
     ru: 'Связки речи',
   },
-  'Profanity': {
-    en: 'Profanity',
-    pt: 'Palavrões',
-    ru: 'Плохие слова / матерная речь',
+  'Conflict and Discontent': {
+    en: 'Conflict and Discontent',
+    pt: 'Conflito e Descontentamento',
+    ru: 'Конфликт, недовольство',
   },
-  'Movie Quotes': {
-    en: 'Movie Quotes',
-    pt: 'Citações de Filmes',
-    ru: 'Известные фразы из фильмов',
+  'Cult Phrases': {
+    en: 'Cult Phrases',
+    pt: 'Frases Cult',
+    ru: 'Культовые фразы',
   },
 };
 

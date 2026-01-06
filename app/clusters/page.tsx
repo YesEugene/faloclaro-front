@@ -115,9 +115,9 @@ export default function ClustersPage() {
     );
   }
 
-  // Separate regular clusters and movie quotes
-  const regularClusters = clusters.filter(c => c.name !== 'Movie Quotes');
-  const movieCluster = clusters.find(c => c.name === 'Movie Quotes');
+  // Separate regular clusters and cult phrases
+  const regularClusters = clusters.filter(c => c.name !== 'Cult Phrases');
+  const movieCluster = clusters.find(c => c.name === 'Cult Phrases');
 
   return (
     <div className="min-h-screen bg-white">
@@ -236,12 +236,12 @@ export default function ClustersPage() {
                 <div className="absolute bottom-[20px] left-[20px] right-4">
                   {/* All cluster titles are black and same size (except "All Clusters" and "Movie Quotes") */}
                   <div className="font-medium text-black drop-shadow-sm text-left leading-tight text-[13px]">
-                    {cluster.name === 'Profanity' && language === 'ru' ? (
+                    {cluster.name === 'Conflict and Discontent' && language === 'ru' ? (
                       <>
-                        Плохие<br />
-                        слова (16+)
+                        Конфликт,<br />
+                        недовольство (16+)
                       </>
-                    ) : cluster.name === 'Profanity' ? (
+                    ) : cluster.name === 'Conflict and Discontent' ? (
                       <>
                         {displayName} (16+)
                       </>
@@ -294,18 +294,18 @@ export default function ClustersPage() {
                 <div className="text-white font-semibold drop-shadow-lg mb-[20px] ml-[20px] text-left leading-tight" style={{ fontSize: '27px' }}>
                   {language === 'ru' ? (
                     <>
-                      Фразы<br />
-                      из фильмов
+                      Культовые<br />
+                      фразы
                     </>
                   ) : language === 'pt' ? (
                     <>
-                      Citações de<br />
-                      Filmes
+                      Frases<br />
+                      Cult
                     </>
                   ) : (
                     <>
-                      Movie<br />
-                      Quotes
+                      Cult<br />
+                      Phrases
                     </>
                   )}
                 </div>

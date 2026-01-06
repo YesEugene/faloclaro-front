@@ -58,11 +58,11 @@ const clusterConfig: Record<string, {
     color: '#FA9A9D',
     icon: '💭',
   },
-  'Profanity': {
+  'Conflict and Discontent': {
     color: '#ADA0FF',
     icon: '🤬',
   },
-  'Movie Quotes': {
+  'Cult Phrases': {
     color: '#B474FF',
     icon: '🎬',
   },

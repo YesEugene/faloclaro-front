@@ -45,9 +45,9 @@ const clusterNameMap = {
   'Кафе и рестораны': 'Cafes and Restaurants',
   'Эмоции и состояния': 'Emotions and States',
   'Связки речи': 'Speech Connectors',
-  'Плохие слова : матерная речь': 'Profanity',
-  'Плохие слова / матерная речь': 'Profanity', // Alternative format with slash
-  'Фразы из фильмов': 'Movie Quotes',
+  'Плохие слова : матерная речь': 'Conflict and Discontent',
+  'Плохие слова / матерная речь': 'Conflict and Discontent', // Alternative format with slash
+  'Фразы из фильмов': 'Cult Phrases',
 };
 
 async function getOrCreateCluster(clusterNameRu, clusterId) {
