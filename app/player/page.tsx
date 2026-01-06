@@ -272,17 +272,23 @@ function PlayerContent() {
   // Apply playback speed when phrase changes (critical fix)
   useEffect(() => {
     if (audioRef.current && phrase?.audio_url) {
-      // Get or create cached audio
-      const cachedAudio = getCachedAudio(phrase.audio_url);
+      // Update audioRef src if needed (use phrase.audio_url directly)
+      const currentSrc = audioRef.current.src;
+      const newSrc = phrase.audio_url;
       
-      // Update audioRef src if needed
-      if (audioRef.current.src !== cachedAudio.src) {
-        audioRef.current.src = cachedAudio.src;
+      // Check if src needs to be updated (handle both full URL and relative path)
+      const needsUpdate = !currentSrc.includes(newSrc) && !currentSrc.endsWith(newSrc);
+      
+      if (needsUpdate) {
+        audioRef.current.src = newSrc;
         audioRef.current.load();
       }
       
       // Apply saved playback speed immediately when audio element is ready
       audioRef.current.playbackRate = playbackSpeed;
+      
+      // Preload in cache for future use
+      getCachedAudio(newSrc);
     }
   }, [phrase?.id, phrase?.audio_url, playbackSpeed, getCachedAudio]);
 
@@ -724,59 +730,79 @@ function PlayerContent() {
     
     // Wait for audio element to be ready with new source
     if (newPhrase.audio_url && audioRef.current) {
-      // Get or create cached audio
-      const cachedAudio = getCachedAudio(newPhrase.audio_url);
-      
-      // Update audioRef to use cached audio if different
-      if (audioRef.current.src !== cachedAudio.src) {
-        // Wait for new audio to load
-        await new Promise<void>((resolve, reject) => {
-          const timeout = setTimeout(() => {
-            reject(new Error('Audio load timeout'));
-          }, 10000);
-          
-          const checkReady = () => {
-            if (cachedAudio.readyState >= 2) { // HAVE_CURRENT_DATA
-              clearTimeout(timeout);
-              cachedAudio.removeEventListener('canplay', checkReady);
-              cachedAudio.removeEventListener('error', handleError);
-              resolve();
-            }
-          };
-          
-          const handleError = () => {
-            clearTimeout(timeout);
-            cachedAudio.removeEventListener('canplay', checkReady);
-            cachedAudio.removeEventListener('error', handleError);
-            reject(new Error('Audio load error'));
-          };
-          
-          cachedAudio.addEventListener('canplay', checkReady);
-          cachedAudio.addEventListener('error', handleError);
-          
-          // Force load if not already loading
-          if (cachedAudio.readyState === 0) {
-            cachedAudio.load();
-          } else if (cachedAudio.readyState >= 2) {
-            clearTimeout(timeout);
-            cachedAudio.removeEventListener('canplay', checkReady);
-            cachedAudio.removeEventListener('error', handleError);
-            resolve();
-          }
-        });
+      // Stop current playback if any
+      if (!audioRef.current.paused) {
+        audioRef.current.pause();
       }
       
-      // Now safely start playback
-      const success = await playAudioSafely(cachedAudio);
-      if (success) {
-        setIsPlaying(true);
-        setCurrentRepeat(0);
+      // Update audioRef src to new audio URL
+      const newAudioUrl = newPhrase.audio_url;
+      if (audioRef.current.src !== newAudioUrl) {
+        audioRef.current.src = newAudioUrl;
+        audioRef.current.load(); // Force reload
+      }
+      
+      // Wait for audioRef to be ready (not cachedAudio)
+      await new Promise<void>((resolve, reject) => {
+        if (!audioRef.current) {
+          reject(new Error('Audio ref is null'));
+          return;
+        }
+        
+        const audio = audioRef.current;
+        
+        // If already ready, resolve immediately
+        if (audio.readyState >= 2) { // HAVE_CURRENT_DATA
+          resolve();
+          return;
+        }
+        
+        const timeout = setTimeout(() => {
+          audio.removeEventListener('canplay', checkReady);
+          audio.removeEventListener('error', handleError);
+          reject(new Error('Audio load timeout'));
+        }, 10000);
+        
+        const checkReady = () => {
+          if (audio.readyState >= 2) { // HAVE_CURRENT_DATA
+            clearTimeout(timeout);
+            audio.removeEventListener('canplay', checkReady);
+            audio.removeEventListener('error', handleError);
+            resolve();
+          }
+        };
+        
+        const handleError = () => {
+          clearTimeout(timeout);
+          audio.removeEventListener('canplay', checkReady);
+          audio.removeEventListener('error', handleError);
+          reject(new Error('Audio load error'));
+        };
+        
+        audio.addEventListener('canplay', checkReady);
+        audio.addEventListener('error', handleError);
+        
+        // Ensure audio is loading
+        if (audio.readyState === 0) {
+          audio.load();
+        }
+      });
+      
+      // Now safely start playback using audioRef.current
+      if (audioRef.current) {
+        const success = await playAudioSafely(audioRef.current);
+        if (success) {
+          setIsPlaying(true);
+          setCurrentRepeat(0);
+        } else {
+          setIsPlaying(false);
+        }
       }
     }
     
     // Preload next audio after navigation
     setTimeout(() => preloadNextAudio(), 100);
-  }, [phrases, clusterId, clusterIds, phraseType, router, getCachedAudio, playAudioSafely, preloadNextAudio]);
+  }, [phrases, clusterId, clusterIds, phraseType, router, playAudioSafely, preloadNextAudio]);
 
   // Update ref when navigateToPhraseWithAutoPlay changes
   useEffect(() => {
