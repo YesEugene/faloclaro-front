@@ -58,6 +58,12 @@ function PlayerContent() {
   const isRepeatingRef = useRef(false); // Prevent multiple handleAudioEnded calls
   const playStartTimeRef = useRef<number | null>(null); // Track when playback started
   const playbackWatchdogRef = useRef<NodeJS.Timeout | null>(null); // Watchdog timer for stuck playback
+  
+  // Audio cache for preloading and performance
+  const audioCacheRef = useRef<Map<string, HTMLAudioElement>>(new Map());
+  const preloadAudioRef = useRef<HTMLAudioElement | null>(null);
+  const retryCountRef = useRef<number>(0);
+  const maxRetries = 3;
 
   // Load settings from localStorage on mount
   useEffect(() => {
@@ -157,48 +163,246 @@ function PlayerContent() {
     localStorage.setItem('playbackSpeed', playbackSpeed.toString());
   }, [playbackSpeed]);
 
+  // Get or create cached audio element (must be defined before useEffects that use it)
+  const getCachedAudio = useCallback((url: string): HTMLAudioElement => {
+    if (audioCacheRef.current.has(url)) {
+      return audioCacheRef.current.get(url)!;
+    }
+    const audio = new Audio(url);
+    audio.preload = 'auto';
+    audioCacheRef.current.set(url, audio);
+    return audio;
+  }, []);
+
+  // Safe audio playback with readiness check and retry (must be defined before useEffects that use it)
+  const playAudioSafely = useCallback(async (audio: HTMLAudioElement, retryCount = 0): Promise<boolean> => {
+    try {
+      // Check if audio is ready
+      if (audio.readyState < 2) { // HAVE_CURRENT_DATA
+        // Wait for audio to be ready
+        await new Promise<void>((resolve, reject) => {
+          const timeout = setTimeout(() => {
+            reject(new Error('Audio load timeout'));
+          }, 5000);
+          
+          const checkReady = () => {
+            if (audio.readyState >= 2) {
+              clearTimeout(timeout);
+              audio.removeEventListener('canplay', checkReady);
+              audio.removeEventListener('error', handleError);
+              resolve();
+            }
+          };
+          
+          const handleError = () => {
+            clearTimeout(timeout);
+            audio.removeEventListener('canplay', checkReady);
+            audio.removeEventListener('error', handleError);
+            reject(new Error('Audio load error'));
+          };
+          
+          audio.addEventListener('canplay', checkReady);
+          audio.addEventListener('error', handleError);
+          
+          // Force load if not already loading
+          if (audio.readyState === 0) {
+            audio.load();
+          }
+        });
+      }
+      
+      // Apply playback speed
+      audio.playbackRate = playbackSpeed;
+      audio.currentTime = 0;
+      
+      // Attempt to play
+      await audio.play();
+      retryCountRef.current = 0;
+      return true;
+    } catch (error) {
+      console.error(`Play attempt ${retryCount + 1} failed:`, error);
+      
+      // Retry logic
+      if (retryCount < maxRetries) {
+        // Wait before retry
+        await new Promise(resolve => setTimeout(resolve, 500 * (retryCount + 1)));
+        // Reload audio and retry
+        audio.load();
+        return playAudioSafely(audio, retryCount + 1);
+      }
+      
+      retryCountRef.current = retryCount + 1;
+      return false;
+    }
+  }, [playbackSpeed, maxRetries]);
+
+  // Get random phrase index (must be defined before functions that use it)
+  const getRandomPhraseIndex = useCallback((): number => {
+    if (phrases.length === 0) return 0;
+    if (phrases.length === 1) return 0;
+    
+    let randomIndex;
+    do {
+      randomIndex = Math.floor(Math.random() * phrases.length);
+    } while (randomIndex === currentIndex && phrases.length > 1);
+    
+    return randomIndex;
+  }, [phrases.length, currentIndex]);
+
+  // Preload next audio for seamless playback (must be defined before useEffects that use it)
+  const preloadNextAudio = useCallback(() => {
+    if (phrases.length === 0) return;
+    
+    // Clear previous preload
+    if (preloadAudioRef.current) {
+      preloadAudioRef.current = null;
+    }
+    
+    const nextIndex = isRandomMode ? getRandomPhraseIndex() : currentIndex + 1;
+    if (nextIndex >= 0 && nextIndex < phrases.length) {
+      const nextPhrase = phrases[nextIndex];
+      if (nextPhrase?.audio_url) {
+        const preloadAudio = getCachedAudio(nextPhrase.audio_url);
+        preloadAudio.load();
+        preloadAudioRef.current = preloadAudio;
+      }
+    }
+  }, [phrases, currentIndex, isRandomMode, getCachedAudio, getRandomPhraseIndex]);
+
   // Apply playback speed when phrase changes (critical fix)
   useEffect(() => {
     if (audioRef.current && phrase?.audio_url) {
+      // Get or create cached audio
+      const cachedAudio = getCachedAudio(phrase.audio_url);
+      
+      // Update audioRef src if needed
+      if (audioRef.current.src !== cachedAudio.src) {
+        audioRef.current.src = cachedAudio.src;
+        audioRef.current.load();
+      }
+      
       // Apply saved playback speed immediately when audio element is ready
       audioRef.current.playbackRate = playbackSpeed;
     }
+  }, [phrase?.id, phrase?.audio_url, playbackSpeed, getCachedAudio]);
+
+  // Unified audio event handlers for reliable state synchronization
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const handlePlaying = () => {
+      setIsPlaying(true);
+      playStartTimeRef.current = Date.now();
+    };
+
+    const handlePause = () => {
+      setIsPlaying(false);
+      playStartTimeRef.current = null;
+    };
+
+    const handleEnded = () => {
+      // Only call handleAudioEnded if not in repeat cycle
+      if (!isRepeatingRef.current && handleAudioEndedRef.current) {
+        handleAudioEndedRef.current();
+      }
+    };
+
+    const handleError = (e: Event) => {
+      console.error('Audio error:', e);
+      setIsPlaying(false);
+      // Retry logic
+      if (retryCountRef.current < maxRetries && phrase?.audio_url) {
+        retryCountRef.current += 1;
+        setTimeout(() => {
+          if (audioRef.current) {
+            audioRef.current.load();
+          }
+        }, 1000 * retryCountRef.current);
+      } else {
+        retryCountRef.current = 0;
+      }
+    };
+
+    const handleCanPlay = () => {
+      // Audio is ready, can start playback
+      if (audio.readyState >= 2) {
+        audio.playbackRate = playbackSpeed;
+      }
+    };
+
+    const handleLoadedData = () => {
+      if (handleAudioLoadedRef.current) {
+        handleAudioLoadedRef.current();
+      }
+    };
+
+    // Add all event listeners
+    audio.addEventListener('playing', handlePlaying);
+    audio.addEventListener('pause', handlePause);
+    audio.addEventListener('ended', handleEnded);
+    audio.addEventListener('error', handleError);
+    audio.addEventListener('canplay', handleCanPlay);
+    audio.addEventListener('loadeddata', handleLoadedData);
+
+    return () => {
+      // Cleanup: remove all event listeners
+      audio.removeEventListener('playing', handlePlaying);
+      audio.removeEventListener('pause', handlePause);
+      audio.removeEventListener('ended', handleEnded);
+      audio.removeEventListener('error', handleError);
+      audio.removeEventListener('canplay', handleCanPlay);
+      audio.removeEventListener('loadeddata', handleLoadedData);
+    };
   }, [phrase?.id, phrase?.audio_url, playbackSpeed]);
 
-  // Define startPlayback function (must be before useEffect that uses it)
-  const startPlayback = useCallback(() => {
+  // Preload next audio when phrases or current index changes
+  useEffect(() => {
+    if (phrases.length > 0 && phrase) {
+      preloadNextAudio();
+    }
+  }, [phrases, currentIndex, isRandomMode, phrase?.id, preloadNextAudio]);
+
+  // Define startPlayback function with safety checks
+  const startPlayback = useCallback(async () => {
     if (!audioRef.current || !phrase || !phrase.audio_url) return;
 
-    // Apply playback speed before playing (critical fix)
-    audioRef.current.playbackRate = playbackSpeed;
-    audioRef.current.currentTime = 0;
-    audioRef.current.play();
-    setIsPlaying(true);
-    setCurrentRepeat(0);
-  }, [phrase, phrase?.audio_url, playbackSpeed]);
+    const audio = audioRef.current;
+    const success = await playAudioSafely(audio);
+    
+    if (success) {
+      setIsPlaying(true);
+      setCurrentRepeat(0);
+      retryCountRef.current = 0;
+    } else {
+      setIsPlaying(false);
+      console.error('Failed to start playback after retries');
+    }
+  }, [phrase, phrase?.audio_url, playAudioSafely]);
 
-  // Handle auto-play when audio is loaded
-  const handleAudioLoaded = useCallback(() => {
+  // Handle auto-play when audio is loaded (with safety checks)
+  const handleAudioLoaded = useCallback(async () => {
     if (autoPlay && audioRef.current && phrase && phrase.audio_url) {
       // Remove autoPlay parameter from URL
       const newUrl = new URL(window.location.href);
       newUrl.searchParams.delete('autoPlay');
       router.replace(newUrl.pathname + newUrl.search, { scroll: false });
       
-      // Start playback
-      audioRef.current.playbackRate = playbackSpeed;
-      audioRef.current.currentTime = 0;
-      audioRef.current.play()
-        .then(() => {
-          setIsPlaying(true);
-          setCurrentRepeat(0);
-        })
-        .catch((error) => {
-          console.error('Auto-play failed:', error);
-          setIsPlaying(false);
-        });
+      // Start playback safely
+      const success = await playAudioSafely(audioRef.current);
+      if (success) {
+        setIsPlaying(true);
+        setCurrentRepeat(0);
+      } else {
+        setIsPlaying(false);
+      }
     }
-  }, [autoPlay, phrase, phrase?.audio_url, playbackSpeed, router]);
+  }, [autoPlay, phrase, phrase?.audio_url, playAudioSafely, router]);
+
+  // Update refs when callbacks change
+  useEffect(() => {
+    handleAudioLoadedRef.current = handleAudioLoaded;
+  }, [handleAudioLoaded]);
 
   useEffect(() => {
     localStorage.setItem('pauseBetweenRepeats', pauseBetweenRepeats.toString());
@@ -387,7 +591,12 @@ function PlayerContent() {
     }
   };
 
-  const handleAudioEnded = () => {
+  // Navigate to phrase and wait for audio to load before auto-playing (must be defined before handleAudioEnded)
+  const navigateToPhraseWithAutoPlayRef = useRef<((index: number) => Promise<void>) | null>(null);
+  const handleAudioEndedRef = useRef<(() => Promise<void>) | null>(null);
+  const handleAudioLoadedRef = useRef<(() => Promise<void>) | null>(null);
+
+  const handleAudioEnded = useCallback(async () => {
     if (!audioRef.current || !phrase) return;
     
     // Prevent multiple simultaneous calls - simple guard
@@ -407,14 +616,15 @@ function PlayerContent() {
       if (newRepeat >= maxRepeats) {
         setIsPlaying(false);
         isRepeatingRef.current = false;
-        // Auto-advance to next phrase with auto-play
-        if (repeatCount !== 'infinite') {
-          setTimeout(() => {
+        // Auto-advance to next phrase with auto-play (only after audio is loaded)
+        if (repeatCount !== 'infinite' && navigateToPhraseWithAutoPlayRef.current) {
+          // Use navigateToPhraseWithAutoPlay which waits for audio to load
+          setTimeout(async () => {
             if (isRandomMode) {
               const randomIndex = getRandomPhraseIndex();
-              navigateToPhrase(randomIndex, true);
+              await navigateToPhraseWithAutoPlayRef.current!(randomIndex);
             } else if (currentIndex < phrases.length - 1) {
-              navigateToPhrase(currentIndex + 1, true);
+              await navigateToPhraseWithAutoPlayRef.current!(currentIndex + 1);
             }
           }, 500);
         }
@@ -425,49 +635,35 @@ function PlayerContent() {
       const pauseDelay = pauseBetweenRepeats * 1000;
       
       // Schedule next playback after pause
-      repeatTimeoutRef.current = setTimeout(() => {
+      repeatTimeoutRef.current = setTimeout(async () => {
         if (!audioRef.current || !phrase) {
           isRepeatingRef.current = false;
           return;
         }
         
-        // Reset audio and set playback speed
-        audioRef.current.playbackRate = playbackSpeed;
-        audioRef.current.currentTime = 0;
-        
-        // Start playback
-        audioRef.current.play()
-          .then(() => {
-            setIsPlaying(true);
-            // Reset flag after playback successfully started
-            // Use a delay to ensure playback actually began and prevent double triggers
-            setTimeout(() => {
-              isRepeatingRef.current = false;
-            }, 300);
-          })
-          .catch((error) => {
-            console.error('Error playing next repeat:', error);
-            setIsPlaying(false);
+        // Use safe playback with retry
+        const success = await playAudioSafely(audioRef.current);
+        if (success) {
+          setIsPlaying(true);
+          // Reset flag after playback successfully started
+          setTimeout(() => {
             isRepeatingRef.current = false;
-          });
+          }, 300);
+        } else {
+          setIsPlaying(false);
+          isRepeatingRef.current = false;
+        }
       }, pauseDelay);
 
       // Update counter immediately
       return newRepeat;
     });
-  };
+  }, [phrase, repeatCount, pauseBetweenRepeats, playbackSpeed, isRandomMode, currentIndex, phrases.length, playAudioSafely, getRandomPhraseIndex, navigateToPhraseWithAutoPlayRef]);
 
-  const getRandomPhraseIndex = (): number => {
-    if (phrases.length === 0) return 0;
-    if (phrases.length === 1) return 0;
-    
-    let randomIndex;
-    do {
-      randomIndex = Math.floor(Math.random() * phrases.length);
-    } while (randomIndex === currentIndex && phrases.length > 1);
-    
-    return randomIndex;
-  };
+  // Update ref when handleAudioEnded changes
+  useEffect(() => {
+    handleAudioEndedRef.current = handleAudioEnded;
+  }, [handleAudioEnded]);
 
   const navigateToPhrase = (index: number, shouldAutoPlay: boolean = false) => {
     if (index < 0 || index >= phrases.length) return;
@@ -496,7 +692,96 @@ function PlayerContent() {
     
     // Use replace instead of push to avoid adding to history, and scroll: false to prevent scroll
     router.replace(`/player?${params.toString()}`, { scroll: false });
+    
+    // Preload next audio after navigation
+    setTimeout(() => preloadNextAudio(), 100);
   };
+
+  // Navigate to phrase and wait for audio to load before auto-playing
+  const navigateToPhraseWithAutoPlay = useCallback(async (index: number) => {
+    if (index < 0 || index >= phrases.length) return;
+    const newPhrase = phrases[index];
+    
+    // Update state immediately for instant UI update
+    setPhrase(newPhrase);
+    setCurrentIndex(index);
+    currentIndexRef.current = index;
+    
+    // Update URL without page reload (shallow routing)
+    const params = new URLSearchParams();
+    params.set('phraseId', newPhrase.id);
+    params.set('index', index.toString());
+    
+    if (clusterId) {
+      params.set('cluster', clusterId);
+      if (phraseType) params.set('phraseType', phraseType);
+    } else if (clusterIds) {
+      params.set('clusters', clusterIds);
+    }
+    
+    params.set('autoPlay', 'true');
+    router.replace(`/player?${params.toString()}`, { scroll: false });
+    
+    // Wait for audio element to be ready with new source
+    if (newPhrase.audio_url && audioRef.current) {
+      // Get or create cached audio
+      const cachedAudio = getCachedAudio(newPhrase.audio_url);
+      
+      // Update audioRef to use cached audio if different
+      if (audioRef.current.src !== cachedAudio.src) {
+        // Wait for new audio to load
+        await new Promise<void>((resolve, reject) => {
+          const timeout = setTimeout(() => {
+            reject(new Error('Audio load timeout'));
+          }, 10000);
+          
+          const checkReady = () => {
+            if (cachedAudio.readyState >= 2) { // HAVE_CURRENT_DATA
+              clearTimeout(timeout);
+              cachedAudio.removeEventListener('canplay', checkReady);
+              cachedAudio.removeEventListener('error', handleError);
+              resolve();
+            }
+          };
+          
+          const handleError = () => {
+            clearTimeout(timeout);
+            cachedAudio.removeEventListener('canplay', checkReady);
+            cachedAudio.removeEventListener('error', handleError);
+            reject(new Error('Audio load error'));
+          };
+          
+          cachedAudio.addEventListener('canplay', checkReady);
+          cachedAudio.addEventListener('error', handleError);
+          
+          // Force load if not already loading
+          if (cachedAudio.readyState === 0) {
+            cachedAudio.load();
+          } else if (cachedAudio.readyState >= 2) {
+            clearTimeout(timeout);
+            cachedAudio.removeEventListener('canplay', checkReady);
+            cachedAudio.removeEventListener('error', handleError);
+            resolve();
+          }
+        });
+      }
+      
+      // Now safely start playback
+      const success = await playAudioSafely(cachedAudio);
+      if (success) {
+        setIsPlaying(true);
+        setCurrentRepeat(0);
+      }
+    }
+    
+    // Preload next audio after navigation
+    setTimeout(() => preloadNextAudio(), 100);
+  }, [phrases, clusterId, clusterIds, phraseType, router, getCachedAudio, playAudioSafely, preloadNextAudio]);
+
+  // Update ref when navigateToPhraseWithAutoPlay changes
+  useEffect(() => {
+    navigateToPhraseWithAutoPlayRef.current = navigateToPhraseWithAutoPlay;
+  }, [navigateToPhraseWithAutoPlay]);
 
   const handlePrevious = () => {
     if (isRandomMode) {
@@ -912,13 +1197,11 @@ function PlayerContent() {
             </div>
           )}
 
-          {/* Audio Element */}
+          {/* Audio Element - events handled by unified useEffect */}
           {phrase.audio_url && (
             <audio
               ref={audioRef}
               src={phrase.audio_url}
-              onEnded={handleAudioEnded}
-              onLoadedData={handleAudioLoaded}
               preload="auto"
             />
           )}
