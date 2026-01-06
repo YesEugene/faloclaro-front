@@ -78,12 +78,12 @@ async function addMovieQuote() {
 
   // New quote data
   const quoteData = {
-    portuguese: 'Ou estás comigo, ou contra mim.',
-    ipa: 'oˈu ʃˈtaʃ kɔˈmiɡu | oˈu ˈkõtɾɐ ˈmĩ',
-    ru: 'Ты либо со мной, либо против меня.',
-    en: 'You\'re either with me or against me.',
-    movie: 'Scarface (A Força do Poder)',
-    character: 'Tony Montana',
+    portuguese: 'Estás a falar comigo?',
+    ipa: 'ɨʃˈtaʃ ɐ fɐˈlaɾ kuˈmiɡu',
+    ru: 'Ты со мной разговариваешь?',
+    en: 'You talkin\' to me?',
+    movie: 'Taxi Driver (Таксист) (1976)',
+    character: 'Travis Bickle',
   };
 
   const movieTitle = cleanMovieTitle(quoteData.movie);
