@@ -342,8 +342,8 @@ function SubcategoriesContent() {
             style={{ backgroundColor: clusterColor }}
           >
             {phraseCounts.all > 0 && (
-              <div className="absolute top-4 left-4">
-                <div className="bg-white rounded-full px-2 py-1">
+              <div className="absolute top-2 left-2">
+                <div className="bg-white rounded-full flex items-center justify-center min-w-[24px] h-6 px-2">
                   <span className="text-black" style={{ fontSize: '10px' }}>
                     {phraseCounts.all}
                   </span>
@@ -368,8 +368,8 @@ function SubcategoriesContent() {
             className="relative rounded-[10px] transition-all aspect-square p-4 bg-[#EEEEEE] hover:bg-[#DDDDDD]"
           >
             {phraseCounts.word > 0 && (
-              <div className="absolute top-4 left-4">
-                <div className="bg-white rounded-full px-2 py-1">
+              <div className="absolute top-2 left-2">
+                <div className="bg-white rounded-full flex items-center justify-center min-w-[24px] h-6 px-2">
                   <span className="text-black" style={{ fontSize: '10px' }}>
                     {phraseCounts.word}
                   </span>
@@ -389,8 +389,8 @@ function SubcategoriesContent() {
             className="relative rounded-[10px] transition-all aspect-square p-4 bg-[#EEEEEE] hover:bg-[#DDDDDD]"
           >
             {phraseCounts.short_sentence > 0 && (
-              <div className="absolute top-4 left-4">
-                <div className="bg-white rounded-full px-2 py-1">
+              <div className="absolute top-2 left-2">
+                <div className="bg-white rounded-full flex items-center justify-center min-w-[24px] h-6 px-2">
                   <span className="text-black" style={{ fontSize: '10px' }}>
                     {phraseCounts.short_sentence}
                   </span>
@@ -410,8 +410,8 @@ function SubcategoriesContent() {
             className="relative rounded-[10px] transition-all aspect-square p-4 bg-[#EEEEEE] hover:bg-[#DDDDDD]"
           >
             {phraseCounts.long_sentence > 0 && (
-              <div className="absolute top-4 left-4">
-                <div className="bg-white rounded-full px-2 py-1">
+              <div className="absolute top-2 left-2">
+                <div className="bg-white rounded-full flex items-center justify-center min-w-[24px] h-6 px-2">
                   <span className="text-black" style={{ fontSize: '10px' }}>
                     {phraseCounts.long_sentence}
                   </span>
