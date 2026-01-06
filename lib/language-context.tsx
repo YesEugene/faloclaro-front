@@ -49,9 +49,9 @@ export const clusterTranslations: Record<string, Record<AppLanguage, string>> = 
     pt: 'Iniciante',
     ru: 'Новичок',
   },
-  'Reactions and Responses': {
-    en: 'Reactions and Responses',
-    pt: 'Reações e Respostas',
+  'My take': {
+    en: 'My take',
+    pt: 'Minha opinião',
     ru: 'Реакции и ответы',
   },
   'Politeness and Requests': {
@@ -59,15 +59,15 @@ export const clusterTranslations: Record<string, Record<AppLanguage, string>> = 
     pt: 'Polidez e Pedidos',
     ru: 'Вежливость и просьбы',
   },
-  'Understanding / Not Understanding': {
-    en: 'Understanding / Not Understanding',
-    pt: 'Compreensão / Não Compreensão',
-    ru: 'Понимание / непонимание',
+  'Making sense': {
+    en: 'Making sense',
+    pt: 'Faz sentido',
+    ru: 'Понял / Не понял',
   },
-  'Movement, Time, Pauses': {
-    en: 'Movement, Time, Pauses',
-    pt: 'Movimento, Tempo, Pausas',
-    ru: 'Движение, время, паузы',
+  'Time and Path': {
+    en: 'Time and Path',
+    pt: 'Tempo e caminho',
+    ru: 'Время и путь',
   },
   'Home and Daily Life': {
     en: 'Home and Daily Life',

@@ -34,11 +34,11 @@ const CLUSTERS_DIR = path.join(__dirname, '../Clasters');
 // Map cluster names to English names (for database)
 const clusterNameMap = {
   'Новичок : Beginner': 'Beginner',
-  'Реакции и ответы': 'Reactions and Responses',
+  'Реакции и ответы': 'My take',
   'Вежливость и просьбы': 'Politeness and Requests',
-  'Понимание : непонимание': 'Understanding / Not Understanding',
-  'Понимание / непонимание': 'Understanding / Not Understanding', // Alternative format
-  'Движение, время, паузы': 'Movement, Time, Pauses',
+  'Понимание : непонимание': 'Making sense',
+  'Понимание / непонимание': 'Making sense', // Alternative format
+  'Движение, время, паузы': 'Time and Path',
   'Дом и быт': 'Home and Daily Life',
   'Дети и школа': 'Children and School',
   'Магазины и сервисы': 'Shops and Services',

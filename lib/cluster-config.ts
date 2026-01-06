@@ -8,7 +8,7 @@ export const clusterConfig: Record<string, {
     color: '#94B7F2',
     icon: '👾',
   },
-  'Reactions and Responses': {
+  'My take': {
     color: '#FBDDC3',
     icon: '💬',
   },
@@ -16,11 +16,11 @@ export const clusterConfig: Record<string, {
     color: '#FAF7BF',
     icon: '👌',
   },
-  'Understanding / Not Understanding': {
+  'Making sense': {
     color: '#FBC3C8',
     icon: '🙃',
   },
-  'Movement, Time, Pauses': {
+  'Time and Path': {
     color: '#84E9F3',
     icon: '⏳',
   },

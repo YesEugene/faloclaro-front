@@ -18,7 +18,7 @@ const clusterConfig: Record<string, {
     color: '#94B7F2',
     icon: '👾',
   },
-  'Reactions and Responses': {
+  'My take': {
     color: '#FBDDC3',
     icon: '💬',
   },
@@ -26,11 +26,11 @@ const clusterConfig: Record<string, {
     color: '#FAF7BF',
     icon: '👌',
   },
-  'Understanding / Not Understanding': {
+  'Making sense': {
     color: '#FBC3C8',
     icon: '🙃',
   },
-  'Movement, Time, Pauses': {
+  'Time and Path': {
     color: '#84E9F3',
     icon: '⏳',
   },
@@ -341,11 +341,19 @@ function SubcategoriesContent() {
             className="relative rounded-[10px] transition-all aspect-square p-4"
             style={{ backgroundColor: clusterColor }}
           >
+            {phraseCounts.all > 0 && (
+              <div className="absolute top-4 left-4">
+                <div className="bg-white rounded-full px-2 py-1">
+                  <span className="text-black" style={{ fontSize: '10px' }}>
+                    {phraseCounts.all}
+                  </span>
+                </div>
+              </div>
+            )}
             <div className="absolute bottom-4 left-4 right-4">
               <div className="text-left">
                 <div className="font-semibold text-black mb-1" style={{ fontSize: '16px' }}>
                   {language === 'ru' ? 'Выбрать все' : language === 'pt' ? 'Selecionar todos' : 'Select all'}
-                  {phraseCounts.all > 0 && ` (${phraseCounts.all})`}
                 </div>
                 <div className="font-semibold text-black leading-tight" style={{ fontSize: '26px' }}>
                   {clusterDisplayName}
@@ -359,9 +367,18 @@ function SubcategoriesContent() {
             onClick={() => handleSubcategoryClick('word')}
             className="relative rounded-[10px] transition-all aspect-square p-4 bg-[#EEEEEE] hover:bg-[#DDDDDD]"
           >
+            {phraseCounts.word > 0 && (
+              <div className="absolute top-4 left-4">
+                <div className="bg-white rounded-full px-2 py-1">
+                  <span className="text-black" style={{ fontSize: '10px' }}>
+                    {phraseCounts.word}
+                  </span>
+                </div>
+              </div>
+            )}
             <div className="absolute bottom-4 left-4 right-4">
               <span className="font-medium text-black text-left block leading-tight" style={{ fontSize: '20px' }}>
-                {getSubcategoryLabel('word')} {phraseCounts.word > 0 && `(${phraseCounts.word})`}
+                {getSubcategoryLabel('word')}
               </span>
             </div>
           </button>
@@ -371,9 +388,18 @@ function SubcategoriesContent() {
             onClick={() => handleSubcategoryClick('short_sentence')}
             className="relative rounded-[10px] transition-all aspect-square p-4 bg-[#EEEEEE] hover:bg-[#DDDDDD]"
           >
+            {phraseCounts.short_sentence > 0 && (
+              <div className="absolute top-4 left-4">
+                <div className="bg-white rounded-full px-2 py-1">
+                  <span className="text-black" style={{ fontSize: '10px' }}>
+                    {phraseCounts.short_sentence}
+                  </span>
+                </div>
+              </div>
+            )}
             <div className="absolute bottom-4 left-4 right-4">
               <span className="font-medium text-black text-left block leading-tight" style={{ fontSize: '20px' }}>
-                {getSubcategoryLabel('short_sentence')} {phraseCounts.short_sentence > 0 && `(${phraseCounts.short_sentence})`}
+                {getSubcategoryLabel('short_sentence')}
               </span>
             </div>
           </button>
@@ -383,9 +409,18 @@ function SubcategoriesContent() {
             onClick={() => handleSubcategoryClick('long_sentence')}
             className="relative rounded-[10px] transition-all aspect-square p-4 bg-[#EEEEEE] hover:bg-[#DDDDDD]"
           >
+            {phraseCounts.long_sentence > 0 && (
+              <div className="absolute top-4 left-4">
+                <div className="bg-white rounded-full px-2 py-1">
+                  <span className="text-black" style={{ fontSize: '10px' }}>
+                    {phraseCounts.long_sentence}
+                  </span>
+                </div>
+              </div>
+            )}
             <div className="absolute bottom-4 left-4 right-4">
               <span className="font-medium text-black text-left block leading-tight" style={{ fontSize: '20px' }}>
-                {getSubcategoryLabel('long_sentence')} {phraseCounts.long_sentence > 0 && `(${phraseCounts.long_sentence})`}
+                {getSubcategoryLabel('long_sentence')}
               </span>
             </div>
           </button>
