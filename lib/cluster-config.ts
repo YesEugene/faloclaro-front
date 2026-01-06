@@ -48,7 +48,7 @@ export const clusterConfig: Record<string, {
     color: '#FA9A9D',
     icon: '💭',
   },
-  'Conflict and Discontent': {
+  'Conflict and Stress': {
     color: '#ADA0FF',
     icon: '🤬',
   },

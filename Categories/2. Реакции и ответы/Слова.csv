@@ -1,0 +1,256 @@
+PT: sim
+IPA: sĩ
+PT sentence: Sim, concordo contigo.
+RU sentence: Да, я с тобой согласен(на).
+EN sentence: Yes, I agree with you.
+RU: да
+EN: yes
+
+PT: não
+IPA: nɐ̃w
+PT sentence: Não, isso não é verdade.
+RU sentence: Нет, это неправда.
+EN sentence: No, that's not true.
+RU: нет
+EN: no
+
+PT: bem
+IPA: bɐ̃j̃
+PT sentence: Está bem, podemos fazer assim.
+RU sentence: Хорошо, можем сделать так.
+EN sentence: Okay, we can do it this way.
+RU: хорошо
+EN: well / okay
+
+PT: está bem
+IPA: ʃˈta bɐ̃j̃
+PT sentence: Está bem, eu aceito.
+RU sentence: Ладно, я согласен(на).
+EN sentence: Alright, I accept.
+RU: ладно
+EN: alright
+
+PT: entendido
+IPA: ẽtẽnˈdidu
+PT sentence: Entendido, obrigado pela explicação.
+RU sentence: Понятно, спасибо за объяснение.
+EN sentence: Understood, thanks for the explanation.
+RU: понятно
+EN: understood
+
+PT: claro
+IPA: ˈklaɾu
+PT sentence: Claro, agora percebo.
+RU sentence: Ясно, теперь понимаю.
+EN sentence: Clear, now I understand.
+RU: ясно
+EN: clear
+
+PT: claro que sim
+IPA: ˈklaɾu kɨ sĩ
+PT sentence: Claro que sim, sem problema.
+RU sentence: Конечно, без проблем.
+EN sentence: Of course, no problem.
+RU: конечно
+EN: of course
+
+PT: exatamente
+IPA: ezɐktɐˈmẽtɨ
+PT sentence: Exatamente, foi isso que eu quis dizer.
+RU sentence: Точно, именно это я и имел(а) в виду.
+EN sentence: Exactly, that's what I meant.
+RU: точно
+EN: exactly
+
+PT: correto
+IPA: kuˈʁɛtu
+PT sentence: Isso está correto.
+RU sentence: Это верно.
+EN sentence: That is correct.
+RU: верно
+EN: correct
+
+PT: certo
+IPA: ˈsɛɾtu
+PT sentence: Certo, fizeste tudo bem.
+RU sentence: Правильно, ты всё сделал(а) верно.
+EN sentence: Right, you did everything well.
+RU: правильно
+EN: right
+
+PT: incorreto
+IPA: ĩkuˈʁɛtu
+PT sentence: Isso está incorreto.
+RU sentence: Это неверно.
+EN sentence: That is incorrect.
+RU: неверно
+EN: incorrect
+
+PT: talvez
+IPA: tɐlˈvɛʃ
+PT sentence: Talvez seja melhor esperar.
+RU sentence: Возможно, лучше подождать.
+EN sentence: Maybe it's better to wait.
+RU: возможно
+EN: maybe
+
+PT: provavelmente
+IPA: pɾuvɐvɛlˈmẽtɨ
+PT sentence: Provavelmente vai chover.
+RU sentence: Наверное, пойдёт дождь.
+EN sentence: It will probably rain.
+RU: наверное
+EN: probably
+
+PT: concordo
+IPA: kõˈkoɾdu
+PT sentence: Concordo contigo.
+RU sentence: Я согласен.
+EN sentence: I agree.
+RU: согласен
+EN: agree
+
+PT: concordo
+IPA: kõˈkoɾdu
+PT sentence: Concordo plenamente.
+RU sentence: Я согласна.
+EN sentence: I agree completely.
+RU: согласна
+EN: agree
+
+PT: não concordo
+IPA: nɐ̃w kõˈkoɾdu
+PT sentence: Não concordo com isso.
+RU sentence: Я не согласен.
+EN sentence: I don't agree.
+RU: не согласен
+EN: disagree
+
+PT: não concordo
+IPA: nɐ̃w kõˈkoɾdu
+PT sentence: Não concordo de todo.
+RU sentence: Я не согласна.
+EN sentence: I don't agree at all.
+RU: не согласна
+EN: disagree
+
+PT: ótimo
+IPA: ˈɔtimu
+PT sentence: Ótimo, vamos em frente.
+RU sentence: Отлично, идём дальше.
+EN sentence: Great, let's move on.
+RU: отлично
+EN: great
+
+PT: excelente
+IPA: ɨʃɨˈlẽtɨ
+PT sentence: Excelente ideia.
+RU sentence: Прекрасная идея.
+EN sentence: Excellent idea.
+RU: прекрасно
+EN: excellent
+
+PT: maravilhoso
+IPA: mɐɾɐviˈʎozu
+PT sentence: Isso é maravilhoso.
+RU sentence: Это замечательно.
+EN sentence: That's wonderful.
+RU: замечательно
+EN: wonderful
+
+PT: mau
+IPA: maw
+PT sentence: Isso é mau para todos.
+RU sentence: Это плохо для всех.
+EN sentence: That's bad for everyone.
+RU: плохо
+EN: bad
+
+PT: estranho
+IPA: ɨʃˈtɾɐ̃ɲu
+PT sentence: Isso é estranho.
+RU sentence: Это странно.
+EN sentence: That's strange.
+RU: странно
+EN: strange
+
+PT: interessante
+IPA: ĩtɨɾɨˈsɐ̃tɨ
+PT sentence: Isso é interessante.
+RU sentence: Это интересно.
+EN sentence: That's interesting.
+RU: интересно
+EN: interesting
+
+PT: não entendi
+IPA: nɐ̃w ẽtẽnˈdi
+PT sentence: Desculpa, não entendi.
+RU sentence: Извини, непонятно.
+EN sentence: Sorry, I didn't understand.
+RU: непонятно
+EN: unclear
+
+PT: lógico
+IPA: ˈlɔʒiku
+PT sentence: Isso é lógico.
+RU sentence: Это логично.
+EN sentence: That's logical.
+RU: логично
+EN: logical
+
+PT: ilógico
+IPA: iˈlɔʒiku
+PT sentence: Isso parece ilógico.
+RU sentence: Это нелогично.
+EN sentence: That seems illogical.
+RU: нелогично
+EN: illogical
+
+PT: duvido
+IPA: duˈvidu
+PT sentence: Duvido que funcione.
+RU sentence: Сомневаюсь, что это сработает.
+EN sentence: I doubt it will work.
+RU: сомневаюсь
+EN: I doubt
+
+PT: tenho a certeza
+IPA: ˈtẽɲu ɐ sɛɾˈtezɐ
+PT sentence: Tenho a certeza disso.
+RU sentence: Я уверен(а) в этом.
+EN sentence: I'm sure about that.
+RU: уверен / уверена
+EN: sure
+
+PT: não tenho a certeza
+IPA: nɐ̃w ˈtẽɲu ɐ sɛɾˈtezɐ
+PT sentence: Não tenho a certeza ainda.
+RU sentence: Я не уверен(а) пока.
+EN sentence: I'm not sure yet.
+RU: не уверен / не уверена
+EN: not sure
+
+PT: mesmo
+IPA: ˈmeʒmu
+PT sentence: É mesmo isso.
+RU sentence: Именно так.
+EN sentence: Exactly that.
+RU: именно
+EN: exactly
+
+PT: mais ou menos
+IPA: majʃ u ˈmenux
+PT sentence: Mais ou menos, depende.
+RU sentence: Примерно, зависит.
+EN sentence: More or less, it depends.
+RU: примерно
+EN: approximately
+
+PT: parece
+IPA: pɐˈɾesɨ
+PT sentence: Parece uma boa ideia.
+RU sentence: Вроде хорошая идея.
+EN sentence: It seems like a good idea.
+RU: вроде / кажется
+EN: seems
+

@@ -1,9 +1,9 @@
 /**
- * Generate audio for all words in "Conflict and Discontent" cluster
+ * Generate audio for all words in "Cafes and Restaurants" cluster
  * that don't have audio_url yet
  * 
  * Usage:
- * node scripts/generate-audio-profanity-words.js
+ * node scripts/generate-audio-cafes-restaurants-words.js
  */
 
 const fs = require('fs');
@@ -43,11 +43,11 @@ async function getCluster() {
   const { data: cluster, error } = await supabase
     .from('clusters')
     .select('id, name')
-    .eq('name', 'Conflict and Stress')
+    .eq('name', 'Cafes and Restaurants')
     .single();
 
   if (error || !cluster) {
-    console.error('❌ Cluster "Conflict and Stress" not found:', error);
+    console.error('❌ Cluster "Cafes and Restaurants" not found:', error);
     process.exit(1);
   }
 
@@ -101,7 +101,7 @@ async function uploadAudioToSupabase(audioBuffer, filename) {
 }
 
 async function main() {
-  console.log('🚀 Starting audio generation for "Conflict and Stress" cluster...\n');
+  console.log('🚀 Starting audio generation for "Cafes and Restaurants" cluster...\n');
 
   const cluster = await getCluster();
   console.log(`✅ Found cluster: ${cluster.name} (ID: ${cluster.id})\n`);

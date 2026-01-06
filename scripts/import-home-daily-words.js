@@ -1,9 +1,9 @@
 /**
- * Import words from CSV file for "Conflict and Discontent" cluster
+ * Import words from CSV file for "Home and Daily Life" cluster
  * File: Слова.csv
  * 
  * Usage:
- * node scripts/import-profanity-words.js
+ * node scripts/import-home-daily-words.js
  */
 
 const fs = require('fs');
@@ -21,7 +21,7 @@ if (!supabaseUrl || !supabaseKey) {
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-const CATEGORIES_DIR = path.join(__dirname, '../Categories/11. Грубая речь - сленг');
+const CATEGORIES_DIR = path.join(__dirname, '../Categories/6. Дом и повседневная жизнь');
 
 // Extract value from line (e.g., "PT: text" -> "text")
 function extractValue(line, prefix) {
@@ -109,11 +109,11 @@ async function getCluster() {
   const { data: cluster, error } = await supabase
     .from('clusters')
     .select('id, name')
-    .eq('name', 'Conflict and Stress')
+    .eq('name', 'Home and Daily Life')
     .single();
 
   if (error || !cluster) {
-    console.error('❌ Cluster "Conflict and Stress" not found:', error);
+    console.error('❌ Cluster "Home and Daily Life" not found:', error);
     process.exit(1);
   }
 
@@ -249,10 +249,10 @@ async function importPhrases(clusterId, phrases) {
 
 // Main function
 async function main() {
-  console.log('🚀 Starting import for "Conflict and Stress" cluster...\n');
+  console.log('🚀 Starting import for "Home and Daily Life" cluster...\n');
 
   // Get cluster
-  console.log('🔍 Finding "Conflict and Stress" cluster...');
+  console.log('🔍 Finding "Home and Daily Life" cluster...');
   const cluster = await getCluster();
   console.log(`✅ Found cluster: ${cluster.name} (ID: ${cluster.id})\n`);
 

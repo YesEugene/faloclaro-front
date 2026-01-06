@@ -1,9 +1,9 @@
 /**
- * Generate audio for all words in "Conflict and Discontent" cluster
+ * Generate audio for all short sentences in "Speech Connectors" cluster
  * that don't have audio_url yet
  * 
  * Usage:
- * node scripts/generate-audio-profanity-words.js
+ * node scripts/generate-audio-speech-connectors-short-sentences.js
  */
 
 const fs = require('fs');
@@ -43,11 +43,11 @@ async function getCluster() {
   const { data: cluster, error } = await supabase
     .from('clusters')
     .select('id, name')
-    .eq('name', 'Conflict and Stress')
+    .eq('name', 'Speech Connectors')
     .single();
 
   if (error || !cluster) {
-    console.error('❌ Cluster "Conflict and Stress" not found:', error);
+    console.error('❌ Cluster "Speech Connectors" not found:', error);
     process.exit(1);
   }
 
@@ -101,17 +101,17 @@ async function uploadAudioToSupabase(audioBuffer, filename) {
 }
 
 async function main() {
-  console.log('🚀 Starting audio generation for "Conflict and Stress" cluster...\n');
+  console.log('🚀 Starting audio generation for "Speech Connectors" cluster (short sentences)...\n');
 
   const cluster = await getCluster();
   console.log(`✅ Found cluster: ${cluster.name} (ID: ${cluster.id})\n`);
 
-  // Get all words without audio
+  // Get all short sentences without audio
   const { data: phrases, error: phrasesError } = await supabase
     .from('phrases')
     .select('id, portuguese_text, audio_url')
     .eq('cluster_id', cluster.id)
-    .eq('phrase_type', 'word')
+    .eq('phrase_type', 'short_sentence')
     .is('audio_url', null);
 
   if (phrasesError) {

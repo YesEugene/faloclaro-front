@@ -1,9 +1,9 @@
 /**
- * Import short sentences from CSV file for "Conflict and Discontent" cluster
+ * Import short sentences from CSV file for "Emotions and States" cluster
  * File: Короткие предложения.csv
  * 
  * Usage:
- * node scripts/import-profanity-short-sentences.js
+ * node scripts/import-emotions-short-sentences.js
  */
 
 const fs = require('fs');
@@ -21,7 +21,7 @@ if (!supabaseUrl || !supabaseKey) {
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-const CATEGORIES_DIR = path.join(__dirname, '../Categories/11. Грубая речь - сленг');
+const CATEGORIES_DIR = path.join(__dirname, '../Categories/9. Эмоции и состояния');
 
 // Extract value from line (e.g., "PT: text" -> "text")
 function extractValue(line, prefix) {
@@ -96,11 +96,11 @@ async function getCluster() {
   const { data: cluster, error } = await supabase
     .from('clusters')
     .select('id, name')
-    .eq('name', 'Conflict and Stress')
+    .eq('name', 'Emotions and States')
     .single();
 
   if (error || !cluster) {
-    console.error('❌ Cluster "Conflict and Stress" not found:', error);
+    console.error('❌ Cluster "Emotions and States" not found:', error);
     process.exit(1);
   }
 
@@ -207,10 +207,10 @@ async function importPhrases(clusterId, sentences) {
 
 // Main function
 async function main() {
-  console.log('🚀 Starting import for "Conflict and Stress" cluster (short sentences)...\n');
+  console.log('🚀 Starting import for "Emotions and States" cluster (short sentences)...\n');
 
   // Get cluster
-  console.log('🔍 Finding "Conflict and Stress" cluster...');
+  console.log('🔍 Finding "Emotions and States" cluster...');
   const cluster = await getCluster();
   console.log(`✅ Found cluster: ${cluster.name} (ID: ${cluster.id})\n`);
 
