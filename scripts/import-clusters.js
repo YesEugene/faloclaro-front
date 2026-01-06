@@ -45,8 +45,8 @@ const clusterNameMap = {
   'Кафе и рестораны': 'Cafes and Restaurants',
   'Эмоции и состояния': 'Emotions and States',
   'Связки речи': 'Speech Connectors',
-  'Плохие слова : матерная речь': 'Conflict and Stress',
-  'Плохие слова / матерная речь': 'Conflict and Stress', // Alternative format with slash
+  'Плохие слова : матерная речь': 'Conflict and Tension',
+  'Плохие слова / матерная речь': 'Conflict and Tension', // Alternative format with slash
   'Фразы из фильмов': 'Cult Phrases',
 };
 

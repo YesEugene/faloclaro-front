@@ -99,7 +99,7 @@ export const clusterTranslations: Record<string, Record<AppLanguage, string>> = 
     pt: 'Conectores de Fala',
     ru: 'Связки речи',
   },
-  'Conflict and Stress': {
+  'Conflict and Tension': {
     en: 'Conflict and Tension',
     pt: 'Conflito e Atrito',
     ru: 'Конфликт и стресс',

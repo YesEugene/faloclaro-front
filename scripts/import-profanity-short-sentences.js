@@ -96,11 +96,11 @@ async function getCluster() {
   const { data: cluster, error } = await supabase
     .from('clusters')
     .select('id, name')
-    .eq('name', 'Conflict and Stress')
+    .eq('name', 'Conflict and Tension')
     .single();
 
   if (error || !cluster) {
-    console.error('❌ Cluster "Conflict and Stress" not found:', error);
+    console.error('❌ Cluster "Conflict and Tension" not found:', error);
     process.exit(1);
   }
 
@@ -207,10 +207,10 @@ async function importPhrases(clusterId, sentences) {
 
 // Main function
 async function main() {
-  console.log('🚀 Starting import for "Conflict and Stress" cluster (short sentences)...\n');
+  console.log('🚀 Starting import for "Conflict and Tension" cluster (short sentences)...\n');
 
   // Get cluster
-  console.log('🔍 Finding "Conflict and Stress" cluster...');
+  console.log('🔍 Finding "Conflict and Tension" cluster...');
   const cluster = await getCluster();
   console.log(`✅ Found cluster: ${cluster.name} (ID: ${cluster.id})\n`);
 

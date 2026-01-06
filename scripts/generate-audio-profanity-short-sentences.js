@@ -43,7 +43,7 @@ async function getCluster() {
   const { data: cluster, error } = await supabase
     .from('clusters')
     .select('id, name')
-    .eq('name', 'Conflict and Stress')
+    .eq('name', 'Conflict and Tension')
     .single();
 
   if (error || !cluster) {
@@ -101,7 +101,7 @@ async function uploadAudioToSupabase(audioBuffer, filename) {
 }
 
 async function main() {
-  console.log('🚀 Starting audio generation for "Conflict and Stress" cluster (short sentences)...\n');
+  console.log('🚀 Starting audio generation for "Conflict and Tension" cluster (short sentences)...\n');
 
   const cluster = await getCluster();
   console.log(`✅ Found cluster: ${cluster.name} (ID: ${cluster.id})\n`);
