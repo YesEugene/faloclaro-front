@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import VocabularyTask from './tasks/VocabularyTask';
+import VocabularyTaskPlayer from './tasks/VocabularyTaskPlayer';
 import RulesTask from './tasks/RulesTask';
 import ListeningTask from './tasks/ListeningTask';
 import AttentionTask from './tasks/AttentionTask';
@@ -59,11 +60,12 @@ export default function TaskCard({
     switch (task.type) {
       case 'vocabulary':
         return (
-          <VocabularyTask
+          <VocabularyTaskPlayer
             task={task}
             language={language}
             onComplete={handleComplete}
             isCompleted={isCompleted}
+            clusterColor="#94B7F2" // Default color for subscription course
           />
         );
       case 'rules':
@@ -126,6 +128,29 @@ export default function TaskCard({
   };
 
   const t = translations[language as keyof typeof translations] || translations.en;
+
+  // For vocabulary task, render directly without wrapper (it has its own UI)
+  if (task.type === 'vocabulary' && isUnlocked) {
+    return (
+      <div className="space-y-4">
+        {/* Task Header */}
+        <div className="bg-white rounded-lg border-2 border-gray-200 p-6 mb-4">
+          <h2 className="text-xl font-bold text-black mb-2">{task.title}</h2>
+          {task.subtitle && (
+            <p className="text-gray-600 text-sm">{task.subtitle}</p>
+          )}
+          {task.recommended_time && (
+            <p className="text-gray-500 text-xs mt-1">
+              {language === 'ru' ? 'Рекомендуемое время:' : language === 'en' ? 'Recommended time:' : 'Tempo recomendado:'} {task.recommended_time}
+            </p>
+          )}
+        </div>
+
+        {/* Task Content - VocabularyTaskPlayer has its own full UI */}
+        {renderTask()}
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">

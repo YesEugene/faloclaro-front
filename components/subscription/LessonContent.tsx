@@ -4,6 +4,9 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { useAppLanguage } from '@/lib/language-context';
+import { LanguageSelector } from '@/components/LanguageSelector';
+import Link from 'next/link';
+import Image from 'next/image';
 import TaskCard from './TaskCard';
 import ProgressBar from './ProgressBar';
 
@@ -153,25 +156,51 @@ export default function LessonContent({ lesson, userProgress, token, onProgressU
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
-      <div className="sticky top-0 bg-white z-10 border-b border-gray-200">
-        <div className="max-w-md mx-auto px-4 py-4">
-          <div className="flex items-center justify-between mb-2">
-            <button
-              onClick={() => router.push('/pt')}
-              className="text-gray-700 hover:text-gray-900"
-            >
-              ← {t.back}
-            </button>
-            <div className="text-sm text-gray-600">
-              {t.day} {lesson.day_number} / 60
-            </div>
+      {/* Header with Logo and Language Selector */}
+      <div className="sticky top-0 bg-white z-10">
+        <div className="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
+          {/* Logo */}
+          <Link href="/pt" className="flex items-center cursor-pointer">
+            <Image
+              src="/Img/Logo FaloClaro.svg"
+              alt="FaloClaro"
+              width={120}
+              height={40}
+              className="h-10 w-auto"
+              style={{ width: 'auto', height: '40px' }}
+            />
+          </Link>
+          
+          {/* Language Selector */}
+          <div className="flex items-center">
+            <LanguageSelector />
           </div>
-          <h1 className="text-2xl font-bold text-black">
+        </div>
+
+        {/* Back Button */}
+        <div className="max-w-md mx-auto px-4 mb-[10px]">
+          <button
+            onClick={() => router.push('/pt')}
+            className="px-4 py-2 rounded-[10px] transition-colors text-center"
+            style={{ 
+              backgroundColor: '#EDF3FF',
+              width: '100%',
+            }}
+          >
+            <span className="text-gray-700">← {t.back}</span>
+          </button>
+        </div>
+
+        {/* Day Info */}
+        <div className="max-w-md mx-auto px-4 pb-4">
+          <div className="text-sm text-gray-600 mb-2 text-center">
+            {t.day} {lesson.day_number} / 60
+          </div>
+          <h1 className="text-2xl font-bold text-black text-center">
             {appLanguage === 'ru' ? dayInfo.title : appLanguage === 'en' ? dayInfo.title_en : dayInfo.title_pt}
           </h1>
           {dayInfo.subtitle && (
-            <p className="text-gray-600 mt-1">
+            <p className="text-gray-600 mt-1 text-center">
               {appLanguage === 'ru' ? dayInfo.subtitle : appLanguage === 'en' ? dayInfo.subtitle_en : dayInfo.subtitle_pt}
             </p>
           )}
