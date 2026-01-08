@@ -138,21 +138,34 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Send email with lesson link (async, don't wait)
-    // Call function directly instead of HTTP fetch to avoid connection issues
-    sendLessonEmail(user.id, lesson.id, 1)
-      .then(result => {
-        if (result.success) {
-          console.log('Email sent successfully:', result);
-        } else {
-          console.error('Email sending failed:', result.error);
-        }
-      })
-      .catch(err => {
-        console.error('Error sending email (non-blocking):', err);
+    // Send email with lesson link
+    // IMPORTANT: In Vercel Serverless Functions, we need to await the email
+    // Otherwise the function may terminate before email is sent
+    console.log('About to send email:', {
+      userId: user.id,
+      lessonId: lesson.id,
+      dayNumber: 1,
+    });
+    
+    try {
+      const emailResult = await sendLessonEmail(user.id, lesson.id, 1);
+      
+      console.log('Email send completed:', {
+        success: emailResult.success,
+        emailId: emailResult.emailId,
+        error: emailResult.error,
       });
+      
+      if (!emailResult.success) {
+        console.error('Email sending failed:', emailResult.error);
+        // Don't fail registration if email fails, but log it
+      }
+    } catch (emailError) {
+      console.error('Exception during email send:', emailError);
+      // Don't fail registration if email fails
+    }
 
-    // Log email sent
+    // Log email attempt (even if it failed)
     await supabase
       .from('email_logs')
       .insert({

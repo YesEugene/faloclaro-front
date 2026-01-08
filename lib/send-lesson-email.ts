@@ -7,6 +7,13 @@ import { supabase } from './supabase';
 import crypto from 'crypto';
 
 export async function sendLessonEmail(userId: string, lessonId: string, dayNumber: number) {
+  console.log('=== sendLessonEmail CALLED ===', {
+    userId,
+    lessonId,
+    dayNumber,
+    timestamp: new Date().toISOString(),
+  });
+
   try {
     // Get user
     const { data: user, error: userError } = await supabase
