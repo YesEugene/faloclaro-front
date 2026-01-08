@@ -670,7 +670,7 @@ export default function VocabularyTaskPlayer({
   }, [currentCardIndex, currentCard, audioUrls, cards.length]);
 
   return (
-    <div className="space-y-4 pb-24" style={{ height: '753px' }}>
+    <div className="space-y-4 pb-24">
       {/* Card - Using existing player design */}
       <div
         className="rounded-[30px] p-4 mb-6 relative touch-none select-none aspect-square shadow-lg flex flex-col"

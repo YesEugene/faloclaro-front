@@ -339,7 +339,7 @@ export default function LessonContent({ lesson, userProgress, token, onProgressU
 
       {/* Current Task */}
       {currentTask && (
-        <div className="max-w-md mx-auto px-4 pb-8" style={{ height: '823px' }}>
+        <div className="max-w-md mx-auto px-4 pb-8">
           {!isUnlocked && (
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
               <p className="text-yellow-800 text-sm text-center">
