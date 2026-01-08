@@ -1,0 +1,236 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabase';
+import { useAppLanguage } from '@/lib/language-context';
+import TaskCard from './TaskCard';
+import ProgressBar from './ProgressBar';
+
+interface LessonContentProps {
+  lesson: any;
+  userProgress: any;
+  token: string;
+  onProgressUpdate: () => void;
+}
+
+export default function LessonContent({ lesson, userProgress, token, onProgressUpdate }: LessonContentProps) {
+  const router = useRouter();
+  const { language: appLanguage } = useAppLanguage();
+  const [tasks, setTasks] = useState<any[]>([]);
+  const [currentTaskIndex, setCurrentTaskIndex] = useState(0);
+
+  useEffect(() => {
+    if (lesson?.yaml_content?.tasks) {
+      setTasks(lesson.yaml_content.tasks);
+      
+      // Find first incomplete task
+      const incompleteIndex = lesson.yaml_content.tasks.findIndex((task: any, index: number) => {
+        const taskProgress = userProgress.task_progress?.find((tp: any) => tp.task_id === task.task_id);
+        return !taskProgress || taskProgress.status !== 'completed';
+      });
+      
+      if (incompleteIndex !== -1) {
+        setCurrentTaskIndex(incompleteIndex);
+      }
+    }
+  }, [lesson, userProgress]);
+
+  const handleTaskComplete = async (taskId: number, completionData?: any) => {
+    try {
+      // Update task progress
+      const taskProgress = userProgress.task_progress?.find((tp: any) => tp.task_id === taskId);
+      
+      if (taskProgress) {
+        // Update existing
+        await supabase
+          .from('task_progress')
+          .update({
+            status: 'completed',
+            completion_data: completionData,
+            completed_at: new Date().toISOString(),
+          })
+          .eq('id', taskProgress.id);
+      } else {
+        // Create new
+        const task = tasks.find(t => t.task_id === taskId);
+        await supabase
+          .from('task_progress')
+          .insert({
+            user_progress_id: userProgress.id,
+            task_id: taskId,
+            task_type: task?.type || 'unknown',
+            status: 'completed',
+            completion_data: completionData,
+            completed_at: new Date().toISOString(),
+          });
+      }
+
+      // Update user progress
+      const completedTasks = (userProgress.task_progress || []).filter(
+        (tp: any) => tp.status === 'completed'
+      ).length + 1;
+
+      const allCompleted = completedTasks >= (lesson.yaml_content?.tasks?.length || 5);
+
+      await supabase
+        .from('user_progress')
+        .update({
+          tasks_completed: completedTasks,
+          status: allCompleted ? 'completed' : 'in_progress',
+          completed_at: allCompleted ? new Date().toISOString() : null,
+          started_at: userProgress.started_at || new Date().toISOString(),
+        })
+        .eq('id', userProgress.id);
+
+      // Reload progress
+      onProgressUpdate();
+    } catch (error) {
+      console.error('Error updating progress:', error);
+    }
+  };
+
+  const handleNextTask = () => {
+    if (currentTaskIndex < tasks.length - 1) {
+      setCurrentTaskIndex(currentTaskIndex + 1);
+    }
+  };
+
+  const handlePreviousTask = () => {
+    if (currentTaskIndex > 0) {
+      setCurrentTaskIndex(currentTaskIndex - 1);
+    }
+  };
+
+  const getTaskProgress = (taskId: number) => {
+    return userProgress.task_progress?.find((tp: any) => tp.task_id === taskId);
+  };
+
+  const isTaskUnlocked = (taskIndex: number) => {
+    if (taskIndex === 0) return true;
+    const previousTask = tasks[taskIndex - 1];
+    const previousProgress = getTaskProgress(previousTask?.task_id);
+    return previousProgress?.status === 'completed';
+  };
+
+  const yamlContent = lesson.yaml_content || {};
+  const dayInfo = yamlContent.day || {};
+  const progressInfo = yamlContent.progress || {};
+
+  const translations = {
+    ru: {
+      day: 'День',
+      back: 'Назад',
+      nextTask: 'Следующее задание',
+      previousTask: 'Предыдущее задание',
+      allCompleted: 'Все задания выполнены!',
+      completionMessage: progressInfo.completion_message || 'День завершён. Отличное начало.',
+    },
+    en: {
+      day: 'Day',
+      back: 'Back',
+      nextTask: 'Next task',
+      previousTask: 'Previous task',
+      allCompleted: 'All tasks completed!',
+      completionMessage: progressInfo.completion_message || 'Day completed. Great start.',
+    },
+    pt: {
+      day: 'Dia',
+      back: 'Voltar',
+      nextTask: 'Próxima tarefa',
+      previousTask: 'Tarefa anterior',
+      allCompleted: 'Todas as tarefas concluídas!',
+      completionMessage: progressInfo.completion_message || 'Dia concluído. Excelente começo.',
+    },
+  };
+
+  const t = translations[appLanguage] || translations.ru;
+
+  const allTasksCompleted = userProgress.tasks_completed >= userProgress.total_tasks;
+  const currentTask = tasks[currentTaskIndex];
+  const currentTaskProgress = currentTask ? getTaskProgress(currentTask.task_id) : null;
+  const isUnlocked = isTaskUnlocked(currentTaskIndex);
+
+  return (
+    <div className="min-h-screen bg-white">
+      {/* Header */}
+      <div className="sticky top-0 bg-white z-10 border-b border-gray-200">
+        <div className="max-w-md mx-auto px-4 py-4">
+          <div className="flex items-center justify-between mb-2">
+            <button
+              onClick={() => router.push('/pt')}
+              className="text-gray-700 hover:text-gray-900"
+            >
+              ← {t.back}
+            </button>
+            <div className="text-sm text-gray-600">
+              {t.day} {lesson.day_number} / 60
+            </div>
+          </div>
+          <h1 className="text-2xl font-bold text-black">
+            {appLanguage === 'ru' ? dayInfo.title : appLanguage === 'en' ? dayInfo.title_en : dayInfo.title_pt}
+          </h1>
+          {dayInfo.subtitle && (
+            <p className="text-gray-600 mt-1">
+              {appLanguage === 'ru' ? dayInfo.subtitle : appLanguage === 'en' ? dayInfo.subtitle_en : dayInfo.subtitle_pt}
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* Progress Bar */}
+      <div className="max-w-md mx-auto px-4 py-4">
+        <ProgressBar
+          completed={userProgress.tasks_completed}
+          total={userProgress.total_tasks}
+          tasks={tasks}
+          getTaskProgress={getTaskProgress}
+        />
+      </div>
+
+      {/* Tasks List (Collapsed View) */}
+      {allTasksCompleted && (
+        <div className="max-w-md mx-auto px-4 mb-4">
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+            <p className="text-green-800 font-semibold text-center">
+              {t.allCompleted}
+            </p>
+            <p className="text-green-700 text-sm text-center mt-2">
+              {t.completionMessage}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Current Task */}
+      {currentTask && (
+        <div className="max-w-md mx-auto px-4 pb-8">
+          {!isUnlocked && (
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+              <p className="text-yellow-800 text-sm text-center">
+                {appLanguage === 'ru' 
+                  ? 'Сначала выполните предыдущее задание'
+                  : appLanguage === 'en'
+                  ? 'Complete the previous task first'
+                  : 'Complete a tarefa anterior primeiro'}
+              </p>
+            </div>
+          )}
+          
+          <TaskCard
+            task={currentTask}
+            taskProgress={currentTaskProgress}
+            isUnlocked={isUnlocked}
+            language={appLanguage}
+            onComplete={(completionData) => handleTaskComplete(currentTask.task_id, completionData)}
+            onNext={handleNextTask}
+            onPrevious={handlePreviousTask}
+            canGoNext={currentTaskIndex < tasks.length - 1}
+            canGoPrevious={currentTaskIndex > 0}
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+

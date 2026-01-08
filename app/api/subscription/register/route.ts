@@ -51,6 +51,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (!user) {
+      return NextResponse.json(
+        { error: 'User not found' },
+        { status: 500 }
+      );
+    }
+
     // Check or create subscription
     let { data: subscription, error: subError } = await supabase
       .from('subscriptions')
