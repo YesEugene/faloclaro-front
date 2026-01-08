@@ -496,16 +496,9 @@ export default function RulesTask({ task, language, onComplete, isCompleted }: R
     }
   };
 
-  if (isCompleted) {
-    return (
-      <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
-        <p className="text-green-800 font-semibold">
-          {task.completion_message || (appLanguage === 'ru' ? 'Задание выполнено' : appLanguage === 'en' ? 'Task completed' : 'Tarefa concluída')}
-        </p>
-      </div>
-    );
-  }
-
+  // Don't hide task when completed - show it so user can replay
+  // The completion block with stars will be shown at the bottom
+  
   if (!currentBlock) {
     return (
       <div className="text-center text-gray-500">
