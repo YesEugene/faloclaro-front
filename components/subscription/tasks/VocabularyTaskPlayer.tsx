@@ -199,6 +199,11 @@ export default function VocabularyTaskPlayer({
             const sanitizeForUrl = (text: string) => {
               return text
                 .toLowerCase()
+                .trim()
+                // Remove punctuation and special characters but keep hyphens and spaces
+                // Keep: letters, numbers, spaces, hyphens, accented chars
+                .replace(/[^\w\s\-àáâãäåèéêëìíîïòóôõöùúûüçñ]/g, '')
+                // Normalize accented characters
                 .replace(/[àáâãäå]/g, 'a')
                 .replace(/[èéêë]/g, 'e')
                 .replace(/[ìíîï]/g, 'i')
@@ -206,9 +211,11 @@ export default function VocabularyTaskPlayer({
                 .replace(/[ùúûü]/g, 'u')
                 .replace(/[ç]/g, 'c')
                 .replace(/[ñ]/g, 'n')
-                .replace(/[^a-z0-9\s]/g, '-')
+                // Replace spaces with dashes (but keep existing hyphens)
                 .replace(/\s+/g, '-')
+                // Remove multiple consecutive dashes
                 .replace(/-+/g, '-')
+                // Remove leading/trailing dashes
                 .replace(/^-|-$/g, '')
                 .substring(0, 100);
             };
