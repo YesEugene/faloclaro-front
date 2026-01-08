@@ -295,25 +295,58 @@ export default function VocabularyTaskPlayer({
   // Audio playback logic (from existing player)
   const playAudioSafely = useCallback(async (audio: HTMLAudioElement): Promise<boolean> => {
     try {
+      // Set crossOrigin to handle CORS issues
+      if (!audio.crossOrigin) {
+        audio.crossOrigin = 'anonymous';
+      }
+      
+      // Preload audio if not ready
       if (audio.readyState < 2) {
         await new Promise<void>((resolve, reject) => {
-          const timeout = setTimeout(() => reject(new Error('Timeout')), 5000);
+          const timeout = setTimeout(() => {
+            audio.removeEventListener('canplay', checkReady);
+            audio.removeEventListener('error', handleError);
+            reject(new Error('Audio load timeout'));
+          }, 10000); // Increased timeout to 10 seconds
+          
           const checkReady = () => {
             if (audio.readyState >= 2) {
               clearTimeout(timeout);
               audio.removeEventListener('canplay', checkReady);
+              audio.removeEventListener('error', handleError);
               resolve();
             }
           };
+          
+          const handleError = (e: Event) => {
+            clearTimeout(timeout);
+            audio.removeEventListener('canplay', checkReady);
+            audio.removeEventListener('error', handleError);
+            console.error('Audio load error:', e);
+            reject(new Error('Audio load failed'));
+          };
+          
           audio.addEventListener('canplay', checkReady);
+          audio.addEventListener('error', handleError);
           audio.load();
         });
       }
+      
+      // Play audio
       await audio.play();
       return true;
     } catch (error) {
       console.error('Playback error:', error);
-      return false;
+      // Try to reload and play again
+      try {
+        audio.load();
+        await new Promise(resolve => setTimeout(resolve, 500));
+        await audio.play();
+        return true;
+      } catch (retryError) {
+        console.error('Retry playback error:', retryError);
+        return false;
+      }
     }
   }, []);
 
@@ -601,6 +634,10 @@ export default function VocabularyTaskPlayer({
     if (audioRef.current && currentCard?.word) {
       const audioUrl = audioUrls[currentCard.word];
       if (audioUrl) {
+        // Set crossOrigin before setting src to avoid CORS issues
+        if (!audioRef.current.crossOrigin) {
+          audioRef.current.crossOrigin = 'anonymous';
+        }
         audioRef.current.src = audioUrl;
         audioRef.current.load();
         console.log(`🎵 Updated audio source for word "${currentCard.word}" (card ${currentCardIndex + 1}/${cards.length}):`, audioUrl);
@@ -700,6 +737,11 @@ export default function VocabularyTaskPlayer({
             ref={audioRef}
             src={currentAudioUrl}
             preload="auto"
+            crossOrigin="anonymous"
+            onError={(e) => {
+              console.error('Audio element error:', e);
+              setIsPlaying(false);
+            }}
           />
         )}
       </div>
