@@ -449,9 +449,9 @@ export default function RulesTask({ task, language, onComplete, isCompleted }: R
   }
 
   return (
-    <div className="space-y-6">
-      {/* Block Content */}
-      <div className="bg-white rounded-lg border-2 border-gray-200 p-6">
+    <div className="space-y-6 w-full">
+      {/* Block Content - Full width */}
+      <div className="bg-white rounded-lg border-2 border-gray-200 p-6 w-full">
         {renderBlock()}
       </div>
 

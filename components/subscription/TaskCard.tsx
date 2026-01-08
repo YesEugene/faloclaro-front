@@ -164,23 +164,28 @@ export default function TaskCard({
 
   return (
     <div className="space-y-4">
-      {/* Task Header */}
-      <div className="bg-white rounded-lg border-2 border-gray-200 p-6">
-        <div className="mb-4">
-          <h2 className="text-xl font-bold text-black mb-2">{task.title}</h2>
-          {task.subtitle && (
-            <p className="text-gray-600 text-sm">{task.subtitle}</p>
-          )}
-          {task.recommended_time && (
-            <p className="text-gray-500 text-xs mt-1">
-              {language === 'ru' ? 'Рекомендуемое время:' : language === 'en' ? 'Recommended time:' : 'Tempo recomendado:'} {task.recommended_time}
-            </p>
-          )}
-        </div>
+      {/* Task Header - Hide for rules task */}
+      {task.type !== 'rules' && (
+        <div className="bg-white rounded-lg border-2 border-gray-200 p-6">
+          <div className="mb-4">
+            <h2 className="text-xl font-bold text-black mb-2">{task.title}</h2>
+            {task.subtitle && (
+              <p className="text-gray-600 text-sm">{task.subtitle}</p>
+            )}
+            {task.recommended_time && (
+              <p className="text-gray-500 text-xs mt-1">
+                {language === 'ru' ? 'Рекомендуемое время:' : language === 'en' ? 'Recommended time:' : 'Tempo recomendado:'} {task.recommended_time}
+              </p>
+            )}
+          </div>
 
-        {/* Task Content */}
-        {renderTask()}
-      </div>
+          {/* Task Content */}
+          {renderTask()}
+        </div>
+      )}
+
+      {/* Task Content for rules - without header wrapper */}
+      {task.type === 'rules' && renderTask()}
 
       {/* Navigation */}
       {isCompleted && (
