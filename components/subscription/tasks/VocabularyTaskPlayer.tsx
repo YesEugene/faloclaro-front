@@ -224,16 +224,39 @@ export default function VocabularyTaskPlayer({
             const filename = `lesson-1-word-${wordSanitized}.mp3`;
             const storagePath = `lesson-1/${filename}`;
             
+            console.log(`🔍 Trying to get Storage URL for word: "${card.word}"`);
+            console.log(`   Sanitized: "${wordSanitized}"`);
+            console.log(`   Storage path: "${storagePath}"`);
+            
             // Get public URL from Supabase Storage
-            const { data: urlData } = supabase.storage
+            const { data: urlData, error: urlError } = supabase.storage
               .from('audio')
               .getPublicUrl(storagePath);
             
+            if (urlError) {
+              console.error(`❌ Error getting Storage URL for "${card.word}":`, urlError);
+            }
+            
             if (urlData?.publicUrl) {
               urls[card.word] = urlData.publicUrl;
-              console.log(`✅ Generated Storage URL for word: "${card.word}" - ${urlData.publicUrl}`);
+              console.log(`✅ Generated Storage URL for word: "${card.word}"`);
+              console.log(`   URL: ${urlData.publicUrl}`);
+              
+              // Test if file is accessible
+              fetch(urlData.publicUrl, { method: 'HEAD' })
+                .then(response => {
+                  if (response.ok) {
+                    console.log(`✅ File is accessible: ${urlData.publicUrl}`);
+                  } else {
+                    console.warn(`⚠️  File returned status ${response.status}: ${urlData.publicUrl}`);
+                  }
+                })
+                .catch(error => {
+                  console.error(`❌ Error checking file accessibility:`, error);
+                });
             } else {
               console.warn(`⚠️  No audio URL found for word: "${card.word}"`);
+              console.warn(`   Expected path: ${storagePath}`);
             }
           }
 

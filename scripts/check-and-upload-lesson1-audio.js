@@ -1,6 +1,5 @@
 /**
- * Upload audio files for Day 1 lesson to Supabase Storage
- * and update audio_url in phrases table
+ * Check and upload missing audio files for Day 1 lesson
  */
 
 const fs = require('fs');
@@ -27,7 +26,6 @@ function sanitizeFilename(text) {
     .toLowerCase()
     .trim()
     // Remove punctuation and special characters but keep hyphens and spaces
-    // Keep: letters, numbers, spaces, hyphens, accented chars
     .replace(/[^\w\s\-àáâãäåèéêëìíîïòóôõöùúûüçñ]/g, '')
     // Normalize accented characters
     .replace(/[àáâãäå]/g, 'a')
@@ -37,13 +35,33 @@ function sanitizeFilename(text) {
     .replace(/[ùúûü]/g, 'u')
     .replace(/[ç]/g, 'c')
     .replace(/[ñ]/g, 'n')
-    // Replace spaces with dashes (but keep existing hyphens)
+    // Replace spaces with dashes
     .replace(/\s+/g, '-')
     // Remove multiple consecutive dashes
     .replace(/-+/g, '-')
     // Remove leading/trailing dashes
     .replace(/^-|-$/g, '')
     .substring(0, 100);
+}
+
+async function checkFileInStorage(storagePath) {
+  try {
+    const { data, error } = await supabase.storage
+      .from(STORAGE_BUCKET)
+      .list('lesson-1', {
+        search: path.basename(storagePath)
+      });
+    
+    if (error) {
+      console.error(`❌ Error checking storage:`, error);
+      return false;
+    }
+    
+    return data && data.length > 0;
+  } catch (error) {
+    console.error(`❌ Exception checking storage:`, error);
+    return false;
+  }
 }
 
 async function uploadAudioFile(localPath, storagePath) {
@@ -73,36 +91,8 @@ async function uploadAudioFile(localPath, storagePath) {
   }
 }
 
-async function updatePhraseAudioUrl(text, audioUrl) {
-  // Check if phrase exists
-  const { data: phrase, error: findError } = await supabase
-    .from('phrases')
-    .select('id')
-    .eq('portuguese_text', text)
-    .single();
-
-  if (findError || !phrase) {
-    // Phrase doesn't exist, skip
-    console.log(`ℹ️  Phrase not found in database: "${text}"`);
-    return false;
-  }
-
-  // Update audio_url
-  const { error: updateError } = await supabase
-    .from('phrases')
-    .update({ audio_url: audioUrl })
-    .eq('id', phrase.id);
-
-  if (updateError) {
-    console.error(`❌ Error updating phrase "${text}":`, updateError.message);
-    return false;
-  }
-
-  return true;
-}
-
 async function main() {
-  console.log('🚀 Uploading audio files for Day 1 lesson...\n');
+  console.log('🔍 Checking and uploading Day 1 lesson audio files...\n');
 
   // Read YAML file
   const yamlPath = path.join(__dirname, '../Subsription/1 Day/day_01.yaml');
@@ -122,8 +112,9 @@ async function main() {
   const cards = vocabularyTask.content.cards;
   console.log(`📝 Found ${cards.length} cards\n`);
 
+  let checked = 0;
   let uploaded = 0;
-  let updated = 0;
+  let alreadyExists = 0;
   let errors = 0;
 
   for (const card of cards) {
@@ -131,45 +122,51 @@ async function main() {
       continue;
     }
 
-    // Generate filename for word (not example sentence)
-    const filename = `lesson-1-word-${sanitizeFilename(card.word)}.mp3`;
+    const wordSanitized = sanitizeFilename(card.word);
+    const filename = `lesson-1-word-${wordSanitized}.mp3`;
     const localPath = path.join(AUDIO_OUTPUT_DIR, filename);
     const storagePath = `lesson-1/${filename}`;
 
+    console.log(`\n📋 Checking: "${card.word}"`);
+    console.log(`   Local file: ${filename}`);
+    console.log(`   Storage path: ${storagePath}`);
+
+    // Check if local file exists
     if (!fs.existsSync(localPath)) {
-      console.log(`⏭️  Skipped (file not found): ${filename}`);
-      continue;
-    }
-
-    // Upload to storage
-    console.log(`📤 Uploading: ${filename}...`);
-    const audioUrl = await uploadAudioFile(localPath, storagePath);
-
-    if (!audioUrl) {
+      console.log(`   ⚠️  Local file not found: ${filename}`);
       errors++;
       continue;
     }
 
-    uploaded++;
-    console.log(`✅ Uploaded: ${storagePath}`);
-    console.log(`   URL: ${audioUrl}`);
-
-    // Update phrase audio_url (search by word, not example sentence)
-    const updatedPhrase = await updatePhraseAudioUrl(card.word, audioUrl);
-    if (updatedPhrase) {
-      updated++;
-      console.log(`✅ Updated phrase: "${card.word}"\n`);
+    // Check if file exists in storage
+    const existsInStorage = await checkFileInStorage(storagePath);
+    
+    if (existsInStorage) {
+      console.log(`   ✅ Already exists in Storage`);
+      alreadyExists++;
     } else {
-      console.log(`ℹ️  Phrase not found or already updated: "${card.word}"\n`);
+      console.log(`   📤 Uploading to Storage...`);
+      const audioUrl = await uploadAudioFile(localPath, storagePath);
+      
+      if (audioUrl) {
+        console.log(`   ✅ Uploaded successfully`);
+        console.log(`   URL: ${audioUrl}`);
+        uploaded++;
+      } else {
+        console.log(`   ❌ Upload failed`);
+        errors++;
+      }
     }
 
+    checked++;
     // Small delay
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise(resolve => setTimeout(resolve, 200));
   }
 
-  console.log(`\n✅ Upload complete!`);
+  console.log(`\n\n✅ Check complete!`);
+  console.log(`   Checked: ${checked}`);
   console.log(`   Uploaded: ${uploaded}`);
-  console.log(`   Updated phrases: ${updated}`);
+  console.log(`   Already exists: ${alreadyExists}`);
   console.log(`   Errors: ${errors}`);
 }
 
