@@ -22,6 +22,7 @@ interface TaskCardProps {
   onDictionaryList?: () => void;
   dayNumber?: number;
   token?: string;
+  onTimerUpdate?: (time: { elapsed: number; required: number }) => void;
 }
 
 export default function TaskCard({
@@ -38,6 +39,7 @@ export default function TaskCard({
   onDictionaryList,
   dayNumber,
   token,
+  onTimerUpdate,
 }: TaskCardProps) {
   const [isCompleted, setIsCompleted] = useState(taskProgress?.status === 'completed');
 
@@ -86,6 +88,7 @@ export default function TaskCard({
             dayNumber={dayNumber}
             token={token}
             initialCardIndex={initialCardIndex}
+            onTimerUpdate={task.type === 'vocabulary' ? onTimerUpdate : undefined}
           />
         );
       case 'rules':

@@ -18,6 +18,7 @@ interface VocabularyTaskPlayerProps {
   dayNumber?: number;
   token?: string;
   initialCardIndex?: number; // For navigation from dictionary
+  onTimerUpdate?: (time: { elapsed: number; required: number }) => void; // For passing timer to parent
 }
 
 export default function VocabularyTaskPlayer({ 
@@ -31,7 +32,8 @@ export default function VocabularyTaskPlayer({
   onDictionaryList,
   dayNumber,
   token,
-  initialCardIndex
+  initialCardIndex,
+  onTimerUpdate
 }: VocabularyTaskPlayerProps) {
   const router = useRouter();
   const { language: appLanguage } = useAppLanguage();
@@ -104,6 +106,11 @@ export default function VocabularyTaskPlayer({
         const elapsed = Date.now() - startTime;
         setElapsedTime(elapsed);
         
+        // Update parent component with timer data
+        if (onTimerUpdate) {
+          onTimerUpdate({ elapsed, required: requiredTime });
+        }
+        
         if (elapsed >= requiredTime && requiredTime > 0) {
           setIsTimerCompleted(true);
           if (intervalRef.current) {
@@ -120,7 +127,7 @@ export default function VocabularyTaskPlayer({
         }
       };
     }
-  }, [startTime, requiredTime, isCompleted, isTimerCompleted]);
+  }, [startTime, requiredTime, isCompleted, isTimerCompleted, onTimerUpdate]);
 
   useEffect(() => {
     // Set initial card index if provided (from dictionary navigation)
@@ -133,9 +140,14 @@ export default function VocabularyTaskPlayer({
   useEffect(() => {
     // Start timer when task is first viewed
     if (!isCompleted && !startTime && cards.length > 0) {
-      setStartTime(Date.now());
+      const now = Date.now();
+      setStartTime(now);
+      // Initialize timer display in parent
+      if (onTimerUpdate && requiredTime > 0) {
+        onTimerUpdate({ elapsed: 0, required: requiredTime });
+      }
     }
-  }, []);
+  }, [isCompleted, startTime, cards.length, requiredTime, onTimerUpdate]);
 
   useEffect(() => {
     // Load audio URLs and translations for cards
@@ -433,15 +445,6 @@ export default function VocabularyTaskPlayer({
           border: '2px solid white',
         }}
       >
-        {/* Timer - Small white rounded badge in top right */}
-        {task.ui?.show_timer && requiredTime > 0 && (
-          <div className="absolute top-4 right-4 bg-white rounded-full px-3 py-1.5 shadow-sm z-10">
-            <span className="text-sm font-medium text-gray-700 whitespace-nowrap">
-              {formatTime(displayTime)} / {formatTime(requiredTime)}
-            </span>
-          </div>
-        )}
-
         {/* Progress Indicator */}
         <div className="text-black text-center mt-5 mb-5 font-medium">
           {currentCardIndex + 1} / {cards.length}
@@ -558,7 +561,7 @@ export default function VocabularyTaskPlayer({
 
       {/* Settings Button - Fixed at bottom */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-30">
-        <div className="max-w-md mx-auto px-4 py-4">
+        <div className="max-w-md mx-auto px-4">
           <button
             onClick={() => setShowSettings(!showSettings)}
             className="w-full px-4 py-3 rounded-[10px] bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors text-center"
@@ -575,7 +578,7 @@ export default function VocabularyTaskPlayer({
         }`}
         style={{ maxHeight: '80vh', overflowY: 'auto' }}
       >
-        <div className="max-w-md mx-auto px-4 py-6">
+        <div className="max-w-md mx-auto px-4 pt-6 pb-4">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-bold">{t.settings}</h2>
             <button

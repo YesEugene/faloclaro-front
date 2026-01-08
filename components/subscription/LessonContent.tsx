@@ -22,6 +22,7 @@ export default function LessonContent({ lesson, userProgress, token, onProgressU
   const { language: appLanguage } = useAppLanguage();
   const [tasks, setTasks] = useState<any[]>([]);
   const [currentTaskIndex, setCurrentTaskIndex] = useState(0);
+  const [timerData, setTimerData] = useState<{ elapsed: number; required: number } | null>(null);
 
   useEffect(() => {
     if (lesson?.yaml_content?.tasks) {
@@ -129,6 +130,16 @@ export default function LessonContent({ lesson, userProgress, token, onProgressU
     return previousProgress?.status === 'completed';
   };
 
+  const formatTime = (ms: number) => {
+    const minutes = Math.floor(ms / 60000);
+    const seconds = Math.floor((ms % 60000) / 1000);
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  const handleTimerUpdate = (time: { elapsed: number; required: number }) => {
+    setTimerData(time);
+  };
+
   const yamlContent = lesson.yaml_content || {};
   const dayInfo = yamlContent.day || {};
   const progressInfo = yamlContent.progress || {};
@@ -228,13 +239,22 @@ export default function LessonContent({ lesson, userProgress, token, onProgressU
         )}
 
         {/* Progress Bar - After buttons for vocabulary task, or standalone for other tasks */}
-        <div className="max-w-md mx-auto px-4 pb-4">
+        <div className="max-w-md mx-auto px-4 pb-4 relative">
           <ProgressBar
             completed={userProgress.tasks_completed}
             total={userProgress.total_tasks}
             tasks={tasks}
             getTaskProgress={getTaskProgress}
           />
+          
+          {/* Timer - Below progress bar for vocabulary task */}
+          {currentTask?.type === 'vocabulary' && currentTask?.ui?.show_timer && timerData && (
+            <div className="absolute top-0 right-4 bg-white rounded-full px-3 py-1.5 shadow-sm z-10">
+              <span className="text-sm font-medium text-gray-700 whitespace-nowrap">
+                {formatTime(timerData.elapsed)} / {formatTime(timerData.required)}
+              </span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -285,6 +305,7 @@ export default function LessonContent({ lesson, userProgress, token, onProgressU
             }}
             dayNumber={lesson.day_number}
             token={token}
+            onTimerUpdate={currentTask?.type === 'vocabulary' ? handleTimerUpdate : undefined}
           />
         </div>
       )}
