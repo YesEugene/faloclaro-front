@@ -873,7 +873,16 @@ export default function VocabularyTaskPlayer({
             </div>
             
             {/* Level */}
-            <p className="text-black font-bold text-lg mb-4">{t.level}</p>
+            <p 
+              className="text-black font-bold mb-4"
+              style={{ 
+                fontSize: '30px', 
+                lineHeight: '45px', 
+                height: '33px' 
+              }}
+            >
+              {t.level}
+            </p>
             
             {/* Next Task Button */}
             {onNextTask && (
