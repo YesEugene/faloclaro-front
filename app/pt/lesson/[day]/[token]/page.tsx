@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, Suspense } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { useAppLanguage } from '@/lib/language-context';
 import LessonContent from '@/components/subscription/LessonContent';
@@ -9,9 +9,11 @@ import LessonContent from '@/components/subscription/LessonContent';
 function LessonPageContent() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { language: appLanguage } = useAppLanguage();
   const day = parseInt(params.day as string);
   const token = params.token as string;
+  const taskId = searchParams.get('task');
 
   const [lesson, setLesson] = useState<any>(null);
   const [userProgress, setUserProgress] = useState<any>(null);
@@ -25,8 +27,14 @@ function LessonPageContent() {
       return;
     }
 
+    // If no task specified, redirect to overview
+    if (!taskId) {
+      router.replace(`/pt/lesson/${day}/${token}/overview`);
+      return;
+    }
+
     loadLesson();
-  }, [day, token]);
+  }, [day, token, taskId, router]);
 
   const loadLesson = async () => {
     try {

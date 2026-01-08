@@ -27,7 +27,20 @@ export default function LessonContent({ lesson, userProgress, token, onProgressU
     if (lesson?.yaml_content?.tasks) {
       setTasks(lesson.yaml_content.tasks);
       
-      // Find first incomplete task
+      // Check if taskId is in URL params
+      const urlParams = new URLSearchParams(window.location.search);
+      const taskIdParam = urlParams.get('task');
+      
+      if (taskIdParam) {
+        // Find task by task_id
+        const taskIndex = lesson.yaml_content.tasks.findIndex((task: any) => task.task_id === parseInt(taskIdParam));
+        if (taskIndex !== -1) {
+          setCurrentTaskIndex(taskIndex);
+          return;
+        }
+      }
+      
+      // Otherwise, find first incomplete task
       const incompleteIndex = lesson.yaml_content.tasks.findIndex((task: any, index: number) => {
         const taskProgress = userProgress.task_progress?.find((tp: any) => tp.task_id === task.task_id);
         return !taskProgress || taskProgress.status !== 'completed';
@@ -180,7 +193,7 @@ export default function LessonContent({ lesson, userProgress, token, onProgressU
         {/* Back Button */}
         <div className="max-w-md mx-auto px-4 mb-[10px]">
           <button
-            onClick={() => router.push('/pt')}
+            onClick={() => router.push(`/pt/lesson/${lesson.day_number}/${token}/overview`)}
             className="px-4 py-2 rounded-[10px] transition-colors text-center"
             style={{ 
               backgroundColor: '#EDF3FF',

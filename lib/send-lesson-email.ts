@@ -75,7 +75,8 @@ export async function sendLessonEmail(userId: string, lessonId: string, dayNumbe
       return { success: false, error: 'Failed to create access token' };
     }
 
-    const lessonUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://www.faloclaro.com'}/pt/lesson/${dayNumber}/${tokenData.token}`;
+    // Link to overview page, not directly to lesson
+    const lessonUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://www.faloclaro.com'}/pt/lesson/${dayNumber}/${tokenData.token}/overview`;
 
     // Send email via Resend
     if (!process.env.RESEND_API_KEY) {
