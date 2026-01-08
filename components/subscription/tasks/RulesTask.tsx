@@ -285,7 +285,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted }: R
                   backgroundColor: 'rgba(199, 199, 199, 0)'
                 }}
               >
-                <p className="text-sm font-semibold mb-2" style={{ color: 'transparent', backgroundClip: 'text', WebkitBackgroundClip: 'text' }}>
+                <p className="text-sm font-semibold mb-2" style={{ color: 'rgba(0, 0, 0, 1)' }}>
                   {appLanguage === 'ru' ? 'Подсказка:' : appLanguage === 'en' ? 'Hint:' : 'Dica:'}
                 </p>
                 <ul className="list-disc list-inside space-y-1">
@@ -506,7 +506,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted }: R
   return (
     <div className="space-y-6 w-full">
       {/* Block Content - Full width */}
-      <div className="rounded-lg border-2 border-gray-200 p-6 w-full" style={{ backgroundColor: 'rgba(244, 245, 248, 1)' }}>
+      <div className="rounded-lg border-2 border-gray-200 p-6 w-full" style={{ backgroundColor: '#F4F5F8' }}>
         {renderBlock()}
       </div>
 
