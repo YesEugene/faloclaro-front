@@ -817,7 +817,7 @@ export default function VocabularyTaskPlayer({
 
       {/* Settings Button - Fixed at bottom */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-30" style={{ marginBottom: 0 }}>
-        <div className="max-w-md mx-auto px-4 pt-[10px] pb-2">
+        <div className="max-w-md mx-auto px-4 pt-[10px] pb-3" style={{ height: '70px' }}>
           <button
             onClick={() => setShowSettings(!showSettings)}
             className="w-full px-4 py-3 rounded-[10px] bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors text-center"
