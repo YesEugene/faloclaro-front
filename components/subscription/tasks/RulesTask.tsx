@@ -384,7 +384,8 @@ export default function RulesTask({ task, language, onComplete, isCompleted }: R
                     <button
                       onClick={() => playAudio(currentBlock.task_1.audio)}
                       disabled={isPlayingAudio[currentBlock.task_1.audio]}
-                      className="p-4 rounded-full bg-blue-100 hover:bg-blue-200 transition-colors"
+                      className="p-4 rounded-full transition-colors"
+                      style={{ backgroundColor: '#F4F5F8' }}
                     >
                       {isPlayingAudio[currentBlock.task_1.audio] ? (
                         <svg className="w-8 h-8 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
@@ -420,8 +421,9 @@ export default function RulesTask({ task, language, onComplete, isCompleted }: R
                               : isSelected && !isCorrect
                               ? 'bg-red-100 border-red-500'
                               : 'bg-gray-100 border-gray-300'
-                            : 'bg-white border-gray-300 hover:border-blue-500'
+                            : 'border-gray-300 hover:border-blue-500'
                         }`}
+                        style={!showResult ? { backgroundColor: '#F4F5F8' } : undefined}
                       >
                         {option.text}
                       </button>
@@ -455,8 +457,9 @@ export default function RulesTask({ task, language, onComplete, isCompleted }: R
                               : isSelected && !isCorrect
                       ? 'bg-red-100 border-red-500'
                       : 'bg-gray-100 border-gray-300'
-                    : 'bg-white border-gray-300 hover:border-blue-500'
+                    : 'border-gray-300 hover:border-blue-500'
                 }`}
+                style={!showResult ? { backgroundColor: '#F4F5F8' } : undefined}
               >
                 {option.text}
               </button>
