@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import crypto from 'crypto';
+import { sendLessonEmail } from '@/lib/send-lesson-email';
 
 export async function POST(request: NextRequest) {
   try {
@@ -138,16 +139,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Send email with lesson link (async, don't wait)
-    // This will be handled by the send-lesson-email endpoint when Resend is configured
-    fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/subscription/send-lesson-email`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        userId: user.id,
-        lessonId: lesson.id,
-        dayNumber: 1,
-      }),
-    }).catch(err => {
+    // Call function directly instead of HTTP fetch to avoid connection issues
+    sendLessonEmail(user.id, lesson.id, 1).catch(err => {
       console.error('Error sending email (non-blocking):', err);
     });
 
