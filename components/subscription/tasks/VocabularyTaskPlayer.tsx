@@ -156,19 +156,20 @@ export default function VocabularyTaskPlayer({
       const translations: { [key: string]: any } = {};
       
       for (const card of cards) {
-        if (card.example_sentence) {
-          // Try to find phrase in database first
-          const { data: phrase } = await supabase
+        if (card.word) {
+          // Try to find phrase in database first (by word, not example sentence)
+          const { data: phrase, error: phraseError } = await supabase
             .from('phrases')
             .select('audio_url, id')
-            .eq('portuguese_text', card.example_sentence)
+            .eq('portuguese_text', card.word)
             .single();
           
           if (phrase?.audio_url) {
-            urls[card.example_sentence] = phrase.audio_url;
+            urls[card.word] = phrase.audio_url;
+            console.log(`✅ Found audio in DB for word: "${card.word}" - ${phrase.audio_url}`);
           } else {
             // If not in database, construct URL from Storage path for lesson cards
-            // Format: lesson-1/card-{word}-{sentence}.mp3
+            // Format: lesson-1/word-{word}.mp3
             const sanitizeForUrl = (text: string) => {
               return text
                 .toLowerCase()
@@ -187,8 +188,7 @@ export default function VocabularyTaskPlayer({
             };
             
             const wordSanitized = sanitizeForUrl(card.word || '');
-            const sentenceSanitized = sanitizeForUrl(card.example_sentence);
-            const filename = `lesson-1-card-${wordSanitized}-${sentenceSanitized}.mp3`;
+            const filename = `lesson-1-word-${wordSanitized}.mp3`;
             const storagePath = `lesson-1/${filename}`;
             
             // Get public URL from Supabase Storage
@@ -197,7 +197,10 @@ export default function VocabularyTaskPlayer({
               .getPublicUrl(storagePath);
             
             if (urlData?.publicUrl) {
-              urls[card.example_sentence] = urlData.publicUrl;
+              urls[card.word] = urlData.publicUrl;
+              console.log(`✅ Generated Storage URL for word: "${card.word}" - ${urlData.publicUrl}`);
+            } else {
+              console.warn(`⚠️  No audio URL found for word: "${card.word}"`);
             }
           }
 
@@ -474,8 +477,9 @@ export default function VocabularyTaskPlayer({
     return <div>No cards available</div>;
   }
 
-  const currentAudioUrl = currentCard.example_sentence ? audioUrls[currentCard.example_sentence] : null;
-  const currentTranslations = currentCard.example_sentence ? wordTranslations[currentCard.example_sentence] : null;
+  // Use word as key for audio URL (not example_sentence)
+  const currentAudioUrl = currentCard.word ? audioUrls[currentCard.word] : null;
+  const currentTranslations = currentCard.word ? wordTranslations[currentCard.word] : null;
   
   // Show final time when timer completed
   const displayTime = isTimerCompleted ? requiredTime : elapsedTime;
