@@ -324,35 +324,48 @@ export default function VocabularyTaskPlayer({
           }
           setCurrentRepeat(0);
           
-          // Calculate next index (with wrap-around for infinite loop)
-          let nextIndex: number;
-          if (isRandomMode) {
-            nextIndex = Math.floor(Math.random() * cards.length);
-          } else {
-            nextIndex = currentCardIndex + 1;
-            if (nextIndex >= cards.length) {
-              // Wrap around to first card for infinite loop
-              nextIndex = 0;
-            }
-          }
-          
-          setCurrentCardIndex(nextIndex);
-          currentIndexRef.current = nextIndex;
-          
-          // Auto-play next card after switching
-          setTimeout(async () => {
-            const nextCard = cards[nextIndex];
-            if (audioRef.current && nextCard?.word && audioUrls[nextCard.word]) {
-              audioRef.current.src = audioUrls[nextCard.word];
-              audioRef.current.load();
-              const success = await playAudioSafely(audioRef.current);
-              if (success) {
-                setIsPlaying(true);
-              }
+          // Use functional update to get the latest currentCardIndex
+          setCurrentCardIndex((prevIndex) => {
+            // Calculate next index (with wrap-around for infinite loop)
+            let nextIndex: number;
+            if (isRandomMode) {
+              nextIndex = Math.floor(Math.random() * cards.length);
             } else {
-              console.warn(`⚠️  Cannot auto-play next card: word="${nextCard?.word}", url="${audioUrls[nextCard?.word]}"`);
+              nextIndex = prevIndex + 1;
+              if (nextIndex >= cards.length) {
+                // Wrap around to first card for infinite loop
+                nextIndex = 0;
+              }
             }
-          }, 100);
+            
+            currentIndexRef.current = nextIndex;
+            
+            // Auto-play next card after switching
+            setTimeout(async () => {
+              const nextCard = cards[nextIndex];
+              if (audioRef.current && nextCard?.word) {
+                const audioUrl = audioUrls[nextCard.word];
+                if (audioUrl) {
+                  audioRef.current.src = audioUrl;
+                  audioRef.current.load();
+                  const success = await playAudioSafely(audioRef.current);
+                  if (success) {
+                    setIsPlaying(true);
+                    console.log(`✅ Auto-playing next card ${nextIndex + 1}/${cards.length}: "${nextCard.word}"`);
+                  } else {
+                    console.warn(`⚠️  Failed to auto-play next card: "${nextCard.word}"`);
+                  }
+                } else {
+                  console.warn(`⚠️  Cannot auto-play next card ${nextIndex + 1}/${cards.length}: word="${nextCard.word}", url is MISSING`);
+                  console.warn(`   Available URLs:`, Object.keys(audioUrls).join(', '));
+                }
+              } else {
+                console.warn(`⚠️  Cannot auto-play next card ${nextIndex + 1}/${cards.length}: card="${nextCard?.word}"`);
+              }
+            }, 100);
+            
+            return nextIndex;
+          });
         }, 500);
         
         return newRepeat;
