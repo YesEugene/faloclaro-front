@@ -270,19 +270,23 @@ export default function RulesTask({ task, language, onComplete, isCompleted }: R
 
             {currentBlock.hint && currentBlock.hint.length > 0 && (
               <div 
-                className="bg-blue-50 rounded-lg p-4 mt-4"
+                className="rounded-lg p-4 mt-4"
                 style={{ 
-                  color: 'rgba(0, 0, 0, 1)',
-                  backgroundClip: 'unset',
-                  WebkitBackgroundClip: 'unset'
+                  color: 'transparent',
+                  backgroundClip: 'text',
+                  WebkitBackgroundClip: 'text',
+                  borderWidth: '1px',
+                  borderColor: 'rgba(194, 194, 194, 1)',
+                  borderStyle: 'solid',
+                  backgroundColor: 'rgba(199, 199, 199, 0)'
                 }}
               >
-                <p className="text-sm font-semibold mb-2" style={{ color: 'rgba(0, 0, 0, 1)' }}>
+                <p className="text-sm font-semibold mb-2" style={{ color: 'transparent', backgroundClip: 'text', WebkitBackgroundClip: 'text' }}>
                   {appLanguage === 'ru' ? 'Подсказка:' : appLanguage === 'en' ? 'Hint:' : 'Dica:'}
                 </p>
                 <ul className="list-disc list-inside space-y-1">
                   {currentBlock.hint.map((hint: string, index: number) => (
-                    <li key={index} className="text-sm" style={{ color: 'rgba(0, 0, 0, 1)' }}>{hint}</li>
+                    <li key={index} className="text-sm" style={{ color: 'transparent', backgroundClip: 'text', WebkitBackgroundClip: 'text' }}>{hint}</li>
                   ))}
                 </ul>
               </div>
