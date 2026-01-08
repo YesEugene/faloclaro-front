@@ -421,9 +421,8 @@ export default function RulesTask({ task, language, onComplete, isCompleted }: R
                               : isSelected && !isCorrect
                               ? 'bg-red-100 border-red-500'
                               : 'bg-gray-100 border-gray-300'
-                            : 'border-gray-300 hover:border-blue-500'
+                            : 'bg-white border-gray-300 hover:border-blue-500'
                         }`}
-                        style={!showResult ? { backgroundColor: '#F4F5F8' } : undefined}
                       >
                         {option.text}
                       </button>
@@ -457,9 +456,8 @@ export default function RulesTask({ task, language, onComplete, isCompleted }: R
                               : isSelected && !isCorrect
                       ? 'bg-red-100 border-red-500'
                       : 'bg-gray-100 border-gray-300'
-                    : 'border-gray-300 hover:border-blue-500'
+                    : 'bg-white border-gray-300 hover:border-blue-500'
                 }`}
-                style={!showResult ? { backgroundColor: '#F4F5F8' } : undefined}
               >
                 {option.text}
               </button>
