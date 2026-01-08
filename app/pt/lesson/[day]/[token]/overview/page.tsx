@@ -119,9 +119,24 @@ function OverviewPageContent() {
   };
 
   const getTaskStatus = (taskId: number) => {
-    if (!userProgress?.task_progress) {
+    // Parse yaml_content to get tasks
+    let yamlContent: any = {};
+    if (lesson?.yaml_content) {
+      if (typeof lesson.yaml_content === 'string') {
+        try {
+          yamlContent = JSON.parse(lesson.yaml_content);
+        } catch (e) {
+          console.error('Error parsing yaml_content as JSON:', e);
+          yamlContent = {};
+        }
+      } else {
+        yamlContent = lesson.yaml_content;
+      }
+    }
+    const tasks = Array.isArray(yamlContent.tasks) ? yamlContent.tasks : [];
+    
+    if (!userProgress?.task_progress || userProgress.task_progress.length === 0) {
       // If no progress, only first task is available
-      const tasks = lesson?.yaml_content?.tasks || [];
       const firstTask = tasks[0];
       return firstTask?.task_id === taskId ? 'current' : 'locked';
     }
@@ -129,11 +144,13 @@ function OverviewPageContent() {
     const taskProgress = userProgress.task_progress.find((tp: any) => tp.task_id === taskId);
     
     // If task is completed, it should always be accessible for replay
-    if (taskProgress?.status === 'completed') return 'completed';
+    if (taskProgress?.status === 'completed') {
+      console.log(`✅ Task ${taskId} is completed - returning 'completed' status`);
+      return 'completed';
+    }
     
     // Find first incomplete task
-    const tasks = lesson?.yaml_content?.tasks || [];
-    const firstIncompleteIndex = tasks.findIndex((task: any, index: number) => {
+    const firstIncompleteIndex = tasks.findIndex((task: any) => {
       const tp = userProgress.task_progress?.find((t: any) => t.task_id === task.task_id);
       return !tp || tp.status !== 'completed';
     });
@@ -142,11 +159,15 @@ function OverviewPageContent() {
     
     // If all tasks are completed, mark all as completed (accessible for replay)
     if (firstIncompleteIndex === -1) {
+      console.log(`✅ All tasks completed - Task ${taskId} returning 'completed' status`);
       return 'completed';
     }
     
     if (currentTaskIndex === firstIncompleteIndex) return 'current';
-    if (currentTaskIndex < firstIncompleteIndex) return 'completed';
+    if (currentTaskIndex < firstIncompleteIndex) {
+      console.log(`✅ Task ${taskId} is before incomplete task - returning 'completed' status`);
+      return 'completed';
+    }
     return 'locked';
   };
 
