@@ -29,6 +29,17 @@ export default function RulesTask({ task, language, onComplete, isCompleted }: R
   const blocksOrder = structure.blocks_order || [];
   const blocks = task.blocks || {}; // Blocks are at root level
 
+  // Reset to first block when task is completed and user wants to replay
+  useEffect(() => {
+    // If task is completed but we're not in replay mode, allow starting from beginning
+    if (isCompleted && !isReplaying && currentBlockIndex === 0 && speakOutLoudCompleted) {
+      // Task is completed, but allow replay by resetting state
+      setSpeakOutLoudCompleted(false);
+      setSelectedAnswers({});
+      setShowResults({});
+    }
+  }, [isCompleted, isReplaying, currentBlockIndex, speakOutLoudCompleted]);
+
   // Debug: Log task structure
   useEffect(() => {
     console.log('🔍 RulesTask Debug:', {
@@ -41,9 +52,11 @@ export default function RulesTask({ task, language, onComplete, isCompleted }: R
       currentBlockIndex,
       currentBlockKey: blocksOrder[currentBlockIndex],
       currentBlock: blocksOrder[currentBlockIndex] ? blocks[blocksOrder[currentBlockIndex]] : null,
+      isCompleted,
+      isReplaying,
       fullTask: task
     });
-  }, [task, blocksOrder, blocks, currentBlockIndex]);
+  }, [task, blocksOrder, blocks, currentBlockIndex, isCompleted, isReplaying]);
 
   // Get current block
   const currentBlockKey = blocksOrder[currentBlockIndex];
