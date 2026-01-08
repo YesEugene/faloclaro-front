@@ -23,9 +23,10 @@ export default function RulesTask({ task, language, onComplete, isCompleted }: R
   const audioRefs = useRef<{ [key: string]: HTMLAudioElement }>({});
 
   // Parse task structure
+  // Blocks are at root level of task, not in structure
   const structure = task.structure || {};
   const blocksOrder = structure.blocks_order || [];
-  const blocks = structure.blocks || {};
+  const blocks = task.blocks || {}; // Blocks are at root level
 
   // Get current block
   const currentBlockKey = blocksOrder[currentBlockIndex];
