@@ -20,7 +20,7 @@ if (!supabaseUrl || !supabaseKey) {
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 const AUDIO_OUTPUT_DIR = path.join(__dirname, '../audio-output');
-const STORAGE_BUCKET = 'audio-files';
+const STORAGE_BUCKET = 'audio';
 
 function sanitizeFilename(text) {
   return text

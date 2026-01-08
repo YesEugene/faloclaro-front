@@ -157,7 +157,7 @@ export default function VocabularyTaskPlayer({
       
       for (const card of cards) {
         if (card.example_sentence) {
-          // Try to find phrase in database
+          // Try to find phrase in database first
           const { data: phrase } = await supabase
             .from('phrases')
             .select('audio_url, id')
@@ -166,10 +166,52 @@ export default function VocabularyTaskPlayer({
           
           if (phrase?.audio_url) {
             urls[card.example_sentence] = phrase.audio_url;
+          } else {
+            // If not in database, construct URL from Storage path for lesson cards
+            // Format: lesson-1/card-{word}-{sentence}.mp3
+            const sanitizeForUrl = (text: string) => {
+              return text
+                .toLowerCase()
+                .replace(/[àáâãäå]/g, 'a')
+                .replace(/[èéêë]/g, 'e')
+                .replace(/[ìíîï]/g, 'i')
+                .replace(/[òóôõö]/g, 'o')
+                .replace(/[ùúûü]/g, 'u')
+                .replace(/[ç]/g, 'c')
+                .replace(/[ñ]/g, 'n')
+                .replace(/[^a-z0-9\s]/g, '-')
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-')
+                .replace(/^-|-$/g, '')
+                .substring(0, 100);
+            };
+            
+            const wordSanitized = sanitizeForUrl(card.word || '');
+            const sentenceSanitized = sanitizeForUrl(card.example_sentence);
+            const filename = `lesson-1-card-${wordSanitized}-${sentenceSanitized}.mp3`;
+            const storagePath = `lesson-1/${filename}`;
+            
+            // Get public URL from Supabase Storage
+            const { data: urlData } = supabase.storage
+              .from('audio')
+              .getPublicUrl(storagePath);
+            
+            if (urlData?.publicUrl) {
+              urls[card.example_sentence] = urlData.publicUrl;
+            }
           }
 
-          // Load translations if phrase exists
-          if (phrase?.id) {
+          // Use translations from card data if available (for lesson cards)
+          if (card.sentence_translation_ru || card.sentence_translation_en || card.word_translation_ru || card.word_translation_en) {
+            translations[card.example_sentence] = {
+              ptSentence: card.example_sentence,
+              ruSentence: card.sentence_translation_ru,
+              enSentence: card.sentence_translation_en,
+              ru: card.word_translation_ru,
+              en: card.word_translation_en,
+            };
+          } else if (phrase?.id) {
+            // Load translations from database if phrase exists
             const { data: transData } = await supabase
               .from('translations')
               .select('language_code, translation_text')
@@ -561,7 +603,7 @@ export default function VocabularyTaskPlayer({
 
       {/* Settings Button - Fixed at bottom */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-30">
-        <div className="max-w-md mx-auto px-4">
+        <div className="max-w-md mx-auto px-4 py-2">
           <button
             onClick={() => setShowSettings(!showSettings)}
             className="w-full px-4 py-3 rounded-[10px] bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors text-center"
@@ -578,7 +620,7 @@ export default function VocabularyTaskPlayer({
         }`}
         style={{ maxHeight: '80vh', overflowY: 'auto' }}
       >
-        <div className="max-w-md mx-auto px-4 pt-6 pb-4">
+        <div className="max-w-md mx-auto px-4 pt-6 pb-2">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-bold">{t.settings}</h2>
             <button
