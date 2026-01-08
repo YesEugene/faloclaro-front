@@ -124,7 +124,15 @@ export default function LessonContent({ lesson, userProgress, token, onProgressU
   };
 
   const isTaskUnlocked = (taskIndex: number) => {
+    // First task is always unlocked
     if (taskIndex === 0) return true;
+    
+    // If task is already completed, it should be accessible for replay
+    const currentTask = tasks[taskIndex];
+    const currentProgress = getTaskProgress(currentTask?.task_id);
+    if (currentProgress?.status === 'completed') return true;
+    
+    // Otherwise, check if previous task is completed
     const previousTask = tasks[taskIndex - 1];
     const previousProgress = getTaskProgress(previousTask?.task_id);
     return previousProgress?.status === 'completed';

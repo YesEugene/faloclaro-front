@@ -108,7 +108,13 @@ function OverviewPageContent() {
   };
 
   const getTaskStatus = (taskId: number) => {
-    if (!userProgress?.task_progress) return 'locked';
+    if (!userProgress?.task_progress) {
+      // If no progress, only first task is available
+      const tasks = lesson?.yaml_content?.tasks || [];
+      const firstTask = tasks[0];
+      return firstTask?.task_id === taskId ? 'current' : 'locked';
+    }
+    
     const taskProgress = userProgress.task_progress.find((tp: any) => tp.task_id === taskId);
     if (taskProgress?.status === 'completed') return 'completed';
     
@@ -127,6 +133,7 @@ function OverviewPageContent() {
 
   const handleTaskClick = (taskId: number) => {
     const status = getTaskStatus(taskId);
+    // Allow clicking on completed tasks for replay - all completed tasks should be accessible
     if (status === 'locked') return;
     
     router.push(`/pt/lesson/${day}/${token}?task=${taskId}`);
