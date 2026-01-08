@@ -170,7 +170,7 @@ export default function LessonContent({ lesson, userProgress, token, onProgressU
   return (
     <div className="min-h-screen bg-white">
       {/* Header with Logo and Language Selector */}
-      <div className="sticky top-0 bg-white z-10">
+      <div className="sticky top-0 bg-white z-10 border-b border-gray-200">
         <div className="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
           {/* Logo */}
           <Link href="/pt" className="flex items-center cursor-pointer">
@@ -190,29 +190,52 @@ export default function LessonContent({ lesson, userProgress, token, onProgressU
           </div>
         </div>
 
-        {/* Back Button */}
-        <div className="max-w-md mx-auto px-4 mb-[10px]">
-          <button
-            onClick={() => router.push(`/pt/lesson/${lesson.day_number}/${token}/overview`)}
-            className="px-4 py-2 rounded-[10px] transition-colors text-center"
-            style={{ 
-              backgroundColor: '#EDF3FF',
-              width: '100%',
-            }}
-          >
-            <span className="text-gray-700">← {t.back}</span>
-          </button>
-        </div>
-      </div>
+        {/* Back and Dictionary buttons - only for vocabulary task */}
+        {currentTask?.type === 'vocabulary' && (
+          <div className="max-w-md mx-auto px-4 mb-[10px] flex gap-[10px]">
+            <button
+              onClick={() => router.push(`/pt/lesson/${lesson.day_number}/${token}/overview`)}
+              className="px-4 py-2 rounded-[10px] transition-colors text-center"
+              style={{ 
+                backgroundColor: '#EDF3FF',
+                width: 'calc(50% - 5px)',
+              }}
+            >
+              <span className="text-gray-700">
+                {appLanguage === 'ru' ? '← Назад к заданиям' : appLanguage === 'en' ? '← Back to tasks' : '← Voltar às tarefas'}
+              </span>
+            </button>
+            <button
+              onClick={() => {
+                // Navigate to phrases page with lesson context
+                const params = new URLSearchParams();
+                params.set('lesson', lesson.day_number.toString());
+                params.set('token', token);
+                params.set('task', currentTask.task_id?.toString() || '1');
+                params.set('phraseType', 'word');
+                router.push(`/phrases?${params.toString()}`);
+              }}
+              className="px-4 py-2 rounded-[10px] bg-white border-2 border-gray-300 text-black hover:bg-gray-50 transition-colors text-center font-medium"
+              style={{ 
+                width: 'calc(50% - 5px)',
+                transform: 'translateY(1px)',
+                fontWeight: 500,
+              }}
+            >
+              {appLanguage === 'ru' ? 'Словарь списком' : appLanguage === 'en' ? 'Dictionary list' : 'Lista de dicionário'}
+            </button>
+          </div>
+        )}
 
-      {/* Progress Bar */}
-      <div className="max-w-md mx-auto px-4 py-4">
-        <ProgressBar
-          completed={userProgress.tasks_completed}
-          total={userProgress.total_tasks}
-          tasks={tasks}
-          getTaskProgress={getTaskProgress}
-        />
+        {/* Progress Bar - After buttons for vocabulary task, or standalone for other tasks */}
+        <div className="max-w-md mx-auto px-4 pb-4">
+          <ProgressBar
+            completed={userProgress.tasks_completed}
+            total={userProgress.total_tasks}
+            tasks={tasks}
+            getTaskProgress={getTaskProgress}
+          />
+        </div>
       </div>
 
       {/* Tasks List (Collapsed View) */}

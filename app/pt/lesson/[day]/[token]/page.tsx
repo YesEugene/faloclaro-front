@@ -14,6 +14,8 @@ function LessonPageContent() {
   const day = parseInt(params.day as string);
   const token = params.token as string;
   const taskId = searchParams.get('task');
+  const phraseId = searchParams.get('phraseId');
+  const indexParam = searchParams.get('index');
 
   const [lesson, setLesson] = useState<any>(null);
   const [userProgress, setUserProgress] = useState<any>(null);
@@ -135,6 +137,7 @@ function LessonPageContent() {
   if (!lesson || !userProgress) {
     return null;
   }
+
 
   return (
     <LessonContent

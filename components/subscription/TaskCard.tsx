@@ -67,6 +67,12 @@ export default function TaskCard({
 
     switch (task.type) {
       case 'vocabulary':
+        // Get initial card index from URL if coming from dictionary
+        const urlParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
+        const phraseIdParam = urlParams.get('phraseId');
+        const indexParam = urlParams.get('index');
+        const initialCardIndex = indexParam ? parseInt(indexParam) : undefined;
+        
         return (
           <VocabularyTaskPlayer
             task={task}
@@ -79,6 +85,7 @@ export default function TaskCard({
             onDictionaryList={onDictionaryList}
             dayNumber={dayNumber}
             token={token}
+            initialCardIndex={initialCardIndex}
           />
         );
       case 'rules':

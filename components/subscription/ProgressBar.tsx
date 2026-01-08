@@ -12,8 +12,8 @@ export default function ProgressBar({ completed, total, tasks, getTaskProgress }
 
   return (
     <div className="space-y-2">
-      {/* Progress Text */}
-      <div className="flex justify-between items-center text-sm">
+      {/* Progress Text - reduced by 3px */}
+      <div className="flex justify-between items-center" style={{ fontSize: '10px' }}>
         <span className="text-gray-600">
           {completed} / {total} {completed === 1 ? 'задание' : 'заданий'}
         </span>

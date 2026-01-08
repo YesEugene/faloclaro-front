@@ -17,20 +17,153 @@ function PhrasesContent() {
   const phraseType = searchParams.get('phraseType') || '';
   const returnPhraseId = searchParams.get('returnPhraseId') || '';
   const returnIndex = searchParams.get('returnIndex') || '';
+  // Subscription course parameters
+  const lessonDay = searchParams.get('lesson');
+  const lessonToken = searchParams.get('token');
+  const taskId = searchParams.get('task');
   const { language } = useAppLanguage();
   const [phrases, setPhrases] = useState<Phrase[]>([]);
   const [translations, setTranslations] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (clusterIds || clusterId) {
+    if (clusterIds || clusterId || (lessonDay && lessonToken && taskId)) {
       loadPhrases();
     }
-  }, [clusterIds, clusterId, phraseType, language]);
+  }, [clusterIds, clusterId, phraseType, language, lessonDay, lessonToken, taskId]);
 
   const loadPhrases = async () => {
     try {
       setLoading(true);
+      
+      // Handle subscription course lesson
+      if (lessonDay && lessonToken && taskId) {
+        // Verify token and get lesson
+        const { data: tokenData, error: tokenError } = await supabase
+          .from('lesson_access_tokens')
+          .select('lesson_id')
+          .eq('token', lessonToken)
+          .single();
+
+        if (tokenError || !tokenData) {
+          console.error('Invalid lesson token:', tokenError);
+          setLoading(false);
+          return;
+        }
+
+        // Get lesson
+        const { data: lessonData, error: lessonError } = await supabase
+          .from('lessons')
+          .select('yaml_content')
+          .eq('id', tokenData.lesson_id)
+          .single();
+
+        if (lessonError || !lessonData) {
+          console.error('Lesson not found:', lessonError);
+          setLoading(false);
+          return;
+        }
+
+        // Find vocabulary task
+        const tasks = lessonData.yaml_content?.tasks || [];
+        const vocabularyTask = tasks.find((t: any) => t.task_id === parseInt(taskId));
+        
+        if (!vocabularyTask || !vocabularyTask.content?.cards) {
+          console.error('Vocabulary task not found or has no cards');
+          setLoading(false);
+          return;
+        }
+
+        // Load phrases from task cards
+        const cards = vocabularyTask.content.cards;
+        const phrasesList: Phrase[] = [];
+        
+        for (let i = 0; i < cards.length; i++) {
+          const card = cards[i];
+          if (card.word) {
+            // Try to find existing phrase in database by portuguese text
+            const { data: existingPhrase } = await supabase
+              .from('phrases')
+              .select('*')
+              .eq('portuguese_text', card.word)
+              .eq('phrase_type', 'word')
+              .single();
+
+            if (existingPhrase) {
+              phrasesList.push(existingPhrase);
+            } else {
+              // Create a virtual phrase from card data
+              const virtualPhrase: Phrase = {
+                id: `lesson-${lessonDay}-task-${taskId}-word-${i}`,
+                cluster_id: '',
+                portuguese_text: card.word,
+                ipa_transcription: card.transcription || '',
+                phrase_type: 'word',
+                order_index: i,
+                audio_url: null,
+                movie_title: null,
+                movie_character: null,
+                movie_year: null,
+              };
+              phrasesList.push(virtualPhrase);
+            }
+          }
+        }
+
+        setPhrases(phrasesList);
+
+        // Load translations from task cards
+        const translationsMap: Record<string, string> = {};
+        cards.forEach((card: any, index: number) => {
+          if (card.word) {
+            const phraseId = phrasesList[index]?.id;
+            if (phraseId) {
+              if (language === 'ru' && card.word_translation_ru) {
+                translationsMap[phraseId] = card.word_translation_ru;
+              } else if (language === 'en' && card.word_translation_en) {
+                translationsMap[phraseId] = card.word_translation_en;
+              } else if (language === 'pt' && (card.word_translation_ru || card.word_translation_en)) {
+                translationsMap[phraseId] = card.word_translation_ru || card.word_translation_en;
+              }
+            }
+          }
+        });
+        setTranslations(translationsMap);
+        
+        // Also try to load audio URLs for cards with example sentences
+        const audioUrlsMap: Record<string, string> = {};
+        for (const card of cards) {
+          if (card.example_sentence) {
+            const { data: phraseWithAudio } = await supabase
+              .from('phrases')
+              .select('audio_url')
+              .eq('portuguese_text', card.example_sentence)
+              .single();
+            
+            if (phraseWithAudio?.audio_url) {
+              const phraseId = phrasesList.find(p => p.portuguese_text === card.word)?.id;
+              if (phraseId) {
+                audioUrlsMap[phraseId] = phraseWithAudio.audio_url;
+              }
+            }
+          }
+        }
+        
+        // Update phrases with audio URLs
+        if (Object.keys(audioUrlsMap).length > 0) {
+          setPhrases(prevPhrases => 
+            prevPhrases.map(p => ({
+              ...p,
+              audio_url: audioUrlsMap[p.id] || p.audio_url
+            }))
+          );
+        }
+        
+        setLoading(false);
+        return;
+      }
+
+      // Regular flow - load from clusters
       let query = supabase
         .from('phrases')
         .select('*');
@@ -155,6 +288,12 @@ function PhrasesContent() {
         <div className="max-w-md mx-auto px-4">
           <button
             onClick={() => {
+              // Handle subscription course return
+              if (lessonDay && lessonToken) {
+                router.push(`/pt/lesson/${lessonDay}/${lessonToken}?task=${taskId || '1'}`);
+                return;
+              }
+              
               if (returnPhraseId) {
                 // Return to player page with saved phrase
                 const params = new URLSearchParams();
@@ -189,6 +328,17 @@ function PhrasesContent() {
           
           // Build URL with all necessary parameters
           const buildPlayerUrl = () => {
+            // Handle subscription course
+            if (lessonDay && lessonToken) {
+              const params = new URLSearchParams();
+              params.set('lesson', lessonDay);
+              params.set('token', lessonToken);
+              params.set('task', taskId || '1');
+              params.set('phraseId', phrase.id);
+              params.set('index', index.toString());
+              return `/pt/lesson/${lessonDay}/${lessonToken}?${params.toString()}`;
+            }
+            
             const params = new URLSearchParams();
             params.set('phraseId', phrase.id);
             params.set('index', index.toString());
@@ -230,14 +380,35 @@ function PhrasesContent() {
                     </div>
                   )}
                 </div>
-                <div className="ml-4">
-                  <svg
-                    className="w-8 h-8 text-blue-600"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
-                  </svg>
+                <div className="ml-4 flex-shrink-0">
+                  {phrase.audio_url ? (
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (phrase.audio_url) {
+                          const audio = new Audio(phrase.audio_url);
+                          audio.play().catch(console.error);
+                        }
+                      }}
+                      className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                    >
+                      <svg
+                        className="w-8 h-8 text-blue-600"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
+                      </svg>
+                    </button>
+                  ) : (
+                    <svg
+                      className="w-8 h-8 text-gray-400"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
+                    </svg>
+                  )}
                 </div>
               </div>
             </Link>

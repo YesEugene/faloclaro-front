@@ -17,6 +17,7 @@ interface VocabularyTaskPlayerProps {
   onDictionaryList?: () => void;
   dayNumber?: number;
   token?: string;
+  initialCardIndex?: number; // For navigation from dictionary
 }
 
 export default function VocabularyTaskPlayer({ 
@@ -29,11 +30,16 @@ export default function VocabularyTaskPlayer({
   onBackToTasks,
   onDictionaryList,
   dayNumber,
-  token
+  token,
+  initialCardIndex
 }: VocabularyTaskPlayerProps) {
   const router = useRouter();
   const { language: appLanguage } = useAppLanguage();
-  const [currentCardIndex, setCurrentCardIndex] = useState(0);
+  const [currentCardIndex, setCurrentCardIndex] = useState(() => {
+    return initialCardIndex !== undefined && initialCardIndex !== null && initialCardIndex >= 0 
+      ? initialCardIndex 
+      : 0;
+  });
   const [startTime, setStartTime] = useState<number | null>(null);
   const [elapsedTime, setElapsedTime] = useState(0);
   const [isTimerCompleted, setIsTimerCompleted] = useState(false);
@@ -115,6 +121,14 @@ export default function VocabularyTaskPlayer({
       };
     }
   }, [startTime, requiredTime, isCompleted, isTimerCompleted]);
+
+  useEffect(() => {
+    // Set initial card index if provided (from dictionary navigation)
+    if (initialCardIndex !== undefined && initialCardIndex !== null && initialCardIndex >= 0 && initialCardIndex < cards.length) {
+      setCurrentCardIndex(initialCardIndex);
+      currentIndexRef.current = initialCardIndex;
+    }
+  }, [initialCardIndex, cards.length]);
 
   useEffect(() => {
     // Start timer when task is first viewed
@@ -411,41 +425,6 @@ export default function VocabularyTaskPlayer({
 
   return (
     <div className="space-y-4 pb-24">
-      {/* Back and Dictionary buttons - only show after completion */}
-      {isCompleted && (
-        <div className="max-w-md mx-auto px-4 mb-[10px] flex gap-[10px]">
-          <button
-            onClick={onBackToTasks}
-            className="px-4 py-2 rounded-[10px] transition-colors text-center"
-            style={{ 
-              backgroundColor: '#EDF3FF',
-              width: 'calc(50% - 5px)',
-            }}
-          >
-            <span className="text-gray-700">← {t.backToTasks}</span>
-          </button>
-          <button
-            onClick={() => {
-              if (onDictionaryList) {
-                onDictionaryList();
-              } else {
-                // Fallback: navigate to phrases page
-                // For subscription course, we need to construct URL differently
-                // Since we don't have clusterId here, we'll navigate to a phrases page with lesson context
-                router.push(`/phrases?lesson=${dayNumber}&token=${token}`);
-              }
-            }}
-            className="px-4 py-2 rounded-[10px] bg-white border-2 border-gray-300 text-black hover:bg-gray-50 transition-colors text-center font-medium"
-            style={{ 
-              width: 'calc(50% - 5px)',
-              transform: 'translateY(1px)',
-              fontWeight: 500,
-            }}
-          >
-            {t.dictionaryList}
-          </button>
-        </div>
-      )}
       {/* Card - Using existing player design */}
       <div
         className="rounded-[30px] p-4 mb-6 relative touch-none select-none aspect-square shadow-lg flex flex-col"
@@ -724,8 +703,8 @@ export default function VocabularyTaskPlayer({
         />
       )}
 
-      {/* Completion Section - Show after timer completes */}
-      {isCompleted && isTimerCompleted && (
+      {/* Completion Section - Always show after completion */}
+      {isCompleted && (
         <div className="space-y-4">
           {/* Progress for today */}
           <div className="text-center">
