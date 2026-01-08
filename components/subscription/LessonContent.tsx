@@ -254,6 +254,14 @@ export default function LessonContent({ lesson, userProgress, token, onProgressU
             onPrevious={handlePreviousTask}
             canGoNext={currentTaskIndex < tasks.length - 1}
             canGoPrevious={currentTaskIndex > 0}
+            onBackToTasks={() => router.push(`/pt/lesson/${lesson.day_number}/${token}/overview`)}
+            onDictionaryList={() => {
+              // Navigate to dictionary list - we need to construct URL with cluster info
+              // For now, just navigate to phrases page with task info
+              router.push(`/pt/lesson/${lesson.day_number}/${token}?task=${currentTask.task_id}&dictionary=true`);
+            }}
+            dayNumber={lesson.day_number}
+            token={token}
           />
         </div>
       )}

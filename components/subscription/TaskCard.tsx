@@ -18,6 +18,10 @@ interface TaskCardProps {
   onPrevious: () => void;
   canGoNext: boolean;
   canGoPrevious: boolean;
+  onBackToTasks?: () => void;
+  onDictionaryList?: () => void;
+  dayNumber?: number;
+  token?: string;
 }
 
 export default function TaskCard({
@@ -30,6 +34,10 @@ export default function TaskCard({
   onPrevious,
   canGoNext,
   canGoPrevious,
+  onBackToTasks,
+  onDictionaryList,
+  dayNumber,
+  token,
 }: TaskCardProps) {
   const [isCompleted, setIsCompleted] = useState(taskProgress?.status === 'completed');
 
@@ -66,6 +74,11 @@ export default function TaskCard({
             onComplete={handleComplete}
             isCompleted={isCompleted}
             clusterColor="#94B7F2" // Default color for subscription course
+            onNextTask={canGoNext ? onNext : undefined}
+            onBackToTasks={onBackToTasks}
+            onDictionaryList={onDictionaryList}
+            dayNumber={dayNumber}
+            token={token}
           />
         );
       case 'rules':

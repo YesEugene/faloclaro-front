@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { useAppLanguage } from '@/lib/language-context';
 import { getClusterColor } from '@/lib/cluster-config';
@@ -11,6 +12,11 @@ interface VocabularyTaskPlayerProps {
   onComplete: (completionData?: any) => void;
   isCompleted: boolean;
   clusterColor?: string; // Color from lesson's cluster
+  onNextTask?: () => void;
+  onBackToTasks?: () => void;
+  onDictionaryList?: () => void;
+  dayNumber?: number;
+  token?: string;
 }
 
 export default function VocabularyTaskPlayer({ 
@@ -18,12 +24,19 @@ export default function VocabularyTaskPlayer({
   language, 
   onComplete, 
   isCompleted,
-  clusterColor = '#94B7F2' // Default color
+  clusterColor = '#94B7F2', // Default color
+  onNextTask,
+  onBackToTasks,
+  onDictionaryList,
+  dayNumber,
+  token
 }: VocabularyTaskPlayerProps) {
+  const router = useRouter();
   const { language: appLanguage } = useAppLanguage();
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [startTime, setStartTime] = useState<number | null>(null);
   const [elapsedTime, setElapsedTime] = useState(0);
+  const [isTimerCompleted, setIsTimerCompleted] = useState(false);
   const [audioUrls, setAudioUrls] = useState<{ [key: string]: string }>({});
   const [wordTranslations, setWordTranslations] = useState<{ [key: string]: {
     ptSentence?: string;
@@ -80,12 +93,17 @@ export default function VocabularyTaskPlayer({
   }, [playbackSpeed, pauseBetweenRepeats, repeatCount, isRandomMode]);
 
   useEffect(() => {
-    if (!isCompleted && startTime) {
+    if (!isCompleted && startTime && !isTimerCompleted) {
       intervalRef.current = setInterval(() => {
         const elapsed = Date.now() - startTime;
         setElapsedTime(elapsed);
         
         if (elapsed >= requiredTime && requiredTime > 0) {
+          setIsTimerCompleted(true);
+          if (intervalRef.current) {
+            clearInterval(intervalRef.current);
+          }
+          // Mark task as completed but keep player visible
           handleComplete();
         }
       }, 1000);
@@ -96,7 +114,7 @@ export default function VocabularyTaskPlayer({
         }
       };
     }
-  }, [startTime, requiredTime, isCompleted]);
+  }, [startTime, requiredTime, isCompleted, isTimerCompleted]);
 
   useEffect(() => {
     // Start timer when task is first viewed
@@ -335,6 +353,11 @@ export default function VocabularyTaskPlayer({
       previous: 'Предыдущая',
       next: 'Следующая',
       complete: 'Завершить',
+      backToTasks: 'Назад к заданиям',
+      dictionaryList: 'Словарь списком',
+      progressToday: 'Прогресс на сегодня',
+      level: 'Начало',
+      nextTask: 'Следующее задание',
     },
     en: {
       time: 'Time:',
@@ -348,6 +371,11 @@ export default function VocabularyTaskPlayer({
       previous: 'Previous',
       next: 'Next',
       complete: 'Complete',
+      backToTasks: 'Back to tasks',
+      dictionaryList: 'Dictionary list',
+      progressToday: 'Progress for today',
+      level: 'Start',
+      nextTask: 'Next task',
     },
     pt: {
       time: 'Tempo:',
@@ -361,20 +389,15 @@ export default function VocabularyTaskPlayer({
       previous: 'Anterior',
       next: 'Próxima',
       complete: 'Concluir',
+      backToTasks: 'Voltar às tarefas',
+      dictionaryList: 'Lista de dicionário',
+      progressToday: 'Progresso de hoje',
+      level: 'Início',
+      nextTask: 'Próxima tarefa',
     },
   };
 
   const t = translations[appLanguage as keyof typeof translations] || translations.en;
-
-  if (isCompleted) {
-    return (
-      <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
-        <p className="text-green-800 font-semibold">
-          {task.completion_message || 'Задание выполнено'}
-        </p>
-      </div>
-    );
-  }
 
   if (!currentCard) {
     return <div>No cards available</div>;
@@ -382,9 +405,47 @@ export default function VocabularyTaskPlayer({
 
   const currentAudioUrl = currentCard.example_sentence ? audioUrls[currentCard.example_sentence] : null;
   const currentTranslations = currentCard.example_sentence ? wordTranslations[currentCard.example_sentence] : null;
+  
+  // Show final time when timer completed
+  const displayTime = isTimerCompleted ? requiredTime : elapsedTime;
 
   return (
     <div className="space-y-4 pb-24">
+      {/* Back and Dictionary buttons - only show after completion */}
+      {isCompleted && (
+        <div className="max-w-md mx-auto px-4 mb-[10px] flex gap-[10px]">
+          <button
+            onClick={onBackToTasks}
+            className="px-4 py-2 rounded-[10px] transition-colors text-center"
+            style={{ 
+              backgroundColor: '#EDF3FF',
+              width: 'calc(50% - 5px)',
+            }}
+          >
+            <span className="text-gray-700">← {t.backToTasks}</span>
+          </button>
+          <button
+            onClick={() => {
+              if (onDictionaryList) {
+                onDictionaryList();
+              } else {
+                // Fallback: navigate to phrases page
+                // For subscription course, we need to construct URL differently
+                // Since we don't have clusterId here, we'll navigate to a phrases page with lesson context
+                router.push(`/phrases?lesson=${dayNumber}&token=${token}`);
+              }
+            }}
+            className="px-4 py-2 rounded-[10px] bg-white border-2 border-gray-300 text-black hover:bg-gray-50 transition-colors text-center font-medium"
+            style={{ 
+              width: 'calc(50% - 5px)',
+              transform: 'translateY(1px)',
+              fontWeight: 500,
+            }}
+          >
+            {t.dictionaryList}
+          </button>
+        </div>
+      )}
       {/* Card - Using existing player design */}
       <div
         className="rounded-[30px] p-4 mb-6 relative touch-none select-none aspect-square shadow-lg flex flex-col"
@@ -397,7 +458,7 @@ export default function VocabularyTaskPlayer({
         {task.ui?.show_timer && requiredTime > 0 && (
           <div className="absolute top-4 right-4 bg-white rounded-full px-3 py-1.5 shadow-sm z-10">
             <span className="text-sm font-medium text-gray-700 whitespace-nowrap">
-              {formatTime(elapsedTime)} / {formatTime(requiredTime)}
+              {formatTime(displayTime)} / {formatTime(requiredTime)}
             </span>
           </div>
         )}
@@ -663,18 +724,41 @@ export default function VocabularyTaskPlayer({
         />
       )}
 
-      {/* Completion Message */}
-      {elapsedTime >= requiredTime && requiredTime > 0 && (
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
-          <p className="text-green-800 font-semibold mb-2">
-            {task.completion_message || 'Задание выполнено'}
-          </p>
-          <button
-            onClick={handleComplete}
-            className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors"
-          >
-            {t.complete}
-          </button>
+      {/* Completion Section - Show after timer completes */}
+      {isCompleted && isTimerCompleted && (
+        <div className="space-y-4">
+          {/* Progress for today */}
+          <div className="text-center">
+            <p className="text-gray-700 font-medium mb-3">{t.progressToday}</p>
+            
+            {/* Stars - 1 star for first task */}
+            <div className="flex justify-center gap-2 mb-3">
+              <svg className="w-8 h-8 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+              </svg>
+              {[...Array(4)].map((_, i) => (
+                <svg key={i} className="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 20 20">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.364 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.364-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                </svg>
+              ))}
+            </div>
+            
+            {/* Level */}
+            <p className="text-black font-bold text-lg mb-4">{t.level}</p>
+            
+            {/* Next Task Button */}
+            {onNextTask && (
+              <button
+                onClick={onNextTask}
+                className="w-full bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-colors font-medium flex items-center justify-center gap-2"
+              >
+                <span>{t.nextTask}</span>
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            )}
+          </div>
         </div>
       )}
     </div>
