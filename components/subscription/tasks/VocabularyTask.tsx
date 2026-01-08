@@ -57,14 +57,15 @@ export default function VocabularyTask({ task, language, onComplete, isCompleted
       for (const card of cards) {
         if (card.example_sentence) {
           // Try to find phrase in database
-          const { data: phrase } = await supabase
+          // Use limit(1) instead of single() to avoid 406 errors when phrase doesn't exist
+          const { data: phraseArray } = await supabase
             .from('phrases')
             .select('audio_url')
             .eq('portuguese_text', card.example_sentence)
-            .single();
+            .limit(1);
           
-          if (phrase?.audio_url) {
-            urls[card.example_sentence] = phrase.audio_url;
+          if (phraseArray && phraseArray.length > 0 && phraseArray[0]?.audio_url) {
+            urls[card.example_sentence] = phraseArray[0].audio_url;
           }
         }
       }

@@ -158,35 +158,24 @@ export default function VocabularyTaskPlayer({
       for (const card of cards) {
         if (card.word) {
           // Try to find phrase in database first (by word, not example sentence)
+          // Use limit(1) instead of single() to avoid 406 errors when phrase doesn't exist
           try {
-            const { data: phrase, error: phraseError } = await supabase
+            const { data: phraseArray, error: phraseError } = await supabase
               .from('phrases')
               .select('audio_url, id')
               .eq('portuguese_text', card.word)
-              .single();
+              .limit(1);
             
             if (phraseError) {
-              // If single() returns error (not found), try without single() to get array
-              if (phraseError.code === 'PGRST116') {
-                // No rows returned - try without single()
-                const { data: phraseArray, error: arrayError } = await supabase
-                  .from('phrases')
-                  .select('audio_url, id')
-                  .eq('portuguese_text', card.word)
-                  .limit(1);
-                
-                if (phraseArray && phraseArray.length > 0 && phraseArray[0]?.audio_url) {
-                  urls[card.word] = phraseArray[0].audio_url;
-                  console.log(`✅ Found audio in DB for word: "${card.word}" - ${phraseArray[0].audio_url}`);
-                } else {
-                  console.warn(`⚠️  No phrase found in DB for word: "${card.word}"`, arrayError);
-                }
-              } else {
-                console.error(`❌ Error fetching phrase for word: "${card.word}"`, phraseError);
+              console.warn(`⚠️  Error fetching phrase for word: "${card.word}"`, phraseError);
+            } else if (phraseArray && phraseArray.length > 0) {
+              const phrase = phraseArray[0];
+              if (phrase?.audio_url) {
+                urls[card.word] = phrase.audio_url;
+                console.log(`✅ Found audio in DB for word: "${card.word}" - ${phrase.audio_url}`);
               }
-            } else if (phrase?.audio_url) {
-              urls[card.word] = phrase.audio_url;
-              console.log(`✅ Found audio in DB for word: "${card.word}" - ${phrase.audio_url}`);
+            } else {
+              console.log(`ℹ️  No phrase found in DB for word: "${card.word}" - will use Storage fallback`);
             }
           } catch (error) {
             console.error(`❌ Exception fetching phrase for word: "${card.word}"`, error);
@@ -269,20 +258,21 @@ export default function VocabularyTaskPlayer({
             };
           } else {
             // Try to get phrase ID again if we have it from previous query
+            // Use limit(1) instead of single() to avoid 406 errors
             try {
-              const { data: phraseData } = await supabase
+              const { data: phraseArray } = await supabase
                 .from('phrases')
                 .select('id')
                 .eq('portuguese_text', card.word)
-                .limit(1)
-                .single();
+                .limit(1);
               
-              if (phraseData?.id) {
+              if (phraseArray && phraseArray.length > 0 && phraseArray[0]?.id) {
+                const phraseId = phraseArray[0].id;
                 // Load translations from database if phrase exists
                 const { data: transData, error: transError } = await supabase
                   .from('translations')
                   .select('language_code, translation_text')
-                  .eq('phrase_id', phraseData.id)
+                  .eq('phrase_id', phraseId)
                   .in('language_code', ['pt-sentence', 'ru-sentence', 'en-sentence', 'ru', 'en']);
 
                 if (transError) {
