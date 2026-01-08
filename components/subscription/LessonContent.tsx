@@ -25,8 +25,40 @@ export default function LessonContent({ lesson, userProgress, token, onProgressU
   const [timerData, setTimerData] = useState<{ elapsed: number; required: number } | null>(null);
 
   useEffect(() => {
-    if (lesson?.yaml_content?.tasks) {
-      setTasks(lesson.yaml_content.tasks);
+    // Parse yaml_content - handle both string and object
+    let yamlContent: any = {};
+    if (lesson?.yaml_content) {
+      if (typeof lesson.yaml_content === 'string') {
+        try {
+          yamlContent = JSON.parse(lesson.yaml_content);
+        } catch (e) {
+          console.error('Error parsing yaml_content as JSON:', e);
+          yamlContent = {};
+        }
+      } else {
+        yamlContent = lesson.yaml_content;
+      }
+    }
+
+    // Debug: Log parsed content
+    console.log('📋 LessonContent Debug:', {
+      hasLesson: !!lesson,
+      hasYamlContent: !!lesson?.yaml_content,
+      yamlContentType: typeof lesson?.yaml_content,
+      tasksCount: yamlContent.tasks?.length || 0,
+      tasks: yamlContent.tasks?.map((t: any) => ({ 
+        id: t.task_id, 
+        type: t.type, 
+        title: t.title,
+        hasStructure: !!t.structure,
+        hasBlocks: !!t.blocks,
+        blocksOrder: t.structure?.blocks_order,
+        blocksKeys: t.blocks ? Object.keys(t.blocks) : []
+      })) || []
+    });
+
+    if (yamlContent.tasks) {
+      setTasks(yamlContent.tasks);
       
       // Check if taskId is in URL params
       const urlParams = new URLSearchParams(window.location.search);
@@ -34,7 +66,7 @@ export default function LessonContent({ lesson, userProgress, token, onProgressU
       
       if (taskIdParam) {
         // Find task by task_id - allow accessing completed tasks for replay
-        const taskIndex = lesson.yaml_content.tasks.findIndex((task: any) => task.task_id === parseInt(taskIdParam));
+        const taskIndex = yamlContent.tasks.findIndex((task: any) => task.task_id === parseInt(taskIdParam));
         if (taskIndex !== -1) {
           setCurrentTaskIndex(taskIndex);
           return;
@@ -43,7 +75,7 @@ export default function LessonContent({ lesson, userProgress, token, onProgressU
       
       // Otherwise, find first incomplete task
       // But if all tasks are completed, show first task for replay
-      const incompleteIndex = lesson.yaml_content.tasks.findIndex((task: any, index: number) => {
+      const incompleteIndex = yamlContent.tasks.findIndex((task: any, index: number) => {
         const taskProgress = userProgress.task_progress?.find((tp: any) => tp.task_id === task.task_id);
         return !taskProgress || taskProgress.status !== 'completed';
       });
@@ -92,7 +124,20 @@ export default function LessonContent({ lesson, userProgress, token, onProgressU
         (tp: any) => tp.status === 'completed'
       ).length + 1;
 
-      const allCompleted = completedTasks >= (lesson.yaml_content?.tasks?.length || 5);
+      // Parse yaml_content for task count
+      let yamlContent: any = {};
+      if (lesson?.yaml_content) {
+        if (typeof lesson.yaml_content === 'string') {
+          try {
+            yamlContent = JSON.parse(lesson.yaml_content);
+          } catch (e) {
+            yamlContent = {};
+          }
+        } else {
+          yamlContent = lesson.yaml_content;
+        }
+      }
+      const allCompleted = completedTasks >= (yamlContent.tasks?.length || 5);
 
       await supabase
         .from('user_progress')
@@ -152,7 +197,20 @@ export default function LessonContent({ lesson, userProgress, token, onProgressU
     setTimerData(time);
   };
 
-  const yamlContent = lesson.yaml_content || {};
+  // Parse yaml_content - handle both string and object
+  let yamlContent: any = {};
+  if (lesson?.yaml_content) {
+    if (typeof lesson.yaml_content === 'string') {
+      try {
+        yamlContent = JSON.parse(lesson.yaml_content);
+      } catch (e) {
+        console.error('Error parsing yaml_content as JSON:', e);
+        yamlContent = {};
+      }
+    } else {
+      yamlContent = lesson.yaml_content;
+    }
+  }
   const dayInfo = yamlContent.day || {};
   const progressInfo = yamlContent.progress || {};
 
