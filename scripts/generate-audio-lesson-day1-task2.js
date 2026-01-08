@@ -121,8 +121,10 @@ async function main() {
   }
 
   const yamlData = yaml.load(fs.readFileSync(yamlPath, 'utf8'));
+  
+  // Blocks are at root level, not in structure
   const structure = yamlData.structure || {};
-  const blocks = structure.blocks || {};
+  const blocks = yamlData.blocks || {}; // Blocks are at root level
   const blocksOrder = structure.blocks_order || [];
 
   // Collect all texts that need audio
@@ -131,7 +133,10 @@ async function main() {
 
   blocksOrder.forEach((blockKey) => {
     const block = blocks[blockKey];
-    if (!block) return;
+    if (!block) {
+      console.log(`⚠️  Block not found: ${blockKey}`);
+      return;
+    }
 
     if (block.type === 'explanation' && block.examples) {
       block.examples.forEach((example) => {

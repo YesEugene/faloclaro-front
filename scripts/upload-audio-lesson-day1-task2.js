@@ -114,7 +114,7 @@ async function main() {
 
   const yamlData = yaml.load(fs.readFileSync(yamlPath, 'utf8'));
   const structure = yamlData.structure || {};
-  const blocks = structure.blocks || {};
+  const blocks = yamlData.blocks || {}; // Blocks are at root level
   const blocksOrder = structure.blocks_order || [];
 
   // Collect all texts that need audio
