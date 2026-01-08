@@ -229,13 +229,10 @@ export default function VocabularyTaskPlayer({
             console.log(`   Storage path: "${storagePath}"`);
             
             // Get public URL from Supabase Storage
-            const { data: urlData, error: urlError } = supabase.storage
+            // Note: getPublicUrl doesn't return an error, it always returns a URL
+            const { data: urlData } = supabase.storage
               .from('audio')
               .getPublicUrl(storagePath);
-            
-            if (urlError) {
-              console.error(`❌ Error getting Storage URL for "${card.word}":`, urlError);
-            }
             
             if (urlData?.publicUrl) {
               urls[card.word] = urlData.publicUrl;
