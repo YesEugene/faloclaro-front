@@ -175,6 +175,16 @@ function OverviewPageContent() {
   const tasks = yamlContent.tasks || [];
   const allCompleted = userProgress.tasks_completed >= userProgress.total_tasks;
 
+  // Debug: Log tasks and completion status
+  console.log('Overview Debug:', {
+    tasksCount: tasks.length,
+    tasks: tasks.map((t: any) => ({ id: t.task_id, type: t.type })),
+    allCompleted,
+    tasksCompleted: userProgress.tasks_completed,
+    totalTasks: userProgress.total_tasks,
+    taskProgress: userProgress.task_progress
+  });
+
   const translations = {
     ru: {
       day: 'День',
@@ -308,78 +318,88 @@ function OverviewPageContent() {
           </p>
         )}
 
-        {/* Tasks List */}
-        <div className="space-y-3 mb-8">
-          {tasks.map((task: any, index: number) => {
-            const status = getTaskStatus(task.task_id);
-            const isClickable = status !== 'locked';
-            
-            return (
-              <div
-                key={task.task_id}
-                onClick={() => handleTaskClick(task.task_id)}
-                className={`rounded-lg p-4 border-2 transition-all ${
-                  status === 'current'
-                    ? 'border-black bg-white cursor-pointer hover:bg-gray-50'
-                    : status === 'completed'
-                    ? 'border-green-500 bg-green-50 cursor-pointer hover:bg-green-100'
-                    : 'border-gray-300 bg-gray-100 opacity-60 cursor-not-allowed'
-                }`}
-              >
-                <div className="flex items-start gap-3">
-                  {/* Icon */}
-                  <div className="flex-shrink-0 mt-1">
-                    {status === 'completed' ? (
-                      <svg className="w-6 h-6 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    ) : status === 'current' ? (
-                      <svg className="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                    ) : (
-                      <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    )}
-                  </div>
+        {/* Tasks List - Always visible, even when all completed */}
+        {tasks.length > 0 ? (
+          <div className="space-y-3 mb-8">
+            {tasks.map((task: any, index: number) => {
+              const status = getTaskStatus(task.task_id);
+              const isClickable = status !== 'locked';
+              
+              return (
+                <div
+                  key={task.task_id}
+                  onClick={() => handleTaskClick(task.task_id)}
+                  className={`rounded-lg p-4 border-2 transition-all ${
+                    status === 'current'
+                      ? 'border-black bg-white cursor-pointer hover:bg-gray-50'
+                      : status === 'completed'
+                      ? 'border-green-500 bg-green-50 cursor-pointer hover:bg-green-100'
+                      : 'border-gray-300 bg-gray-100 opacity-60 cursor-not-allowed'
+                  }`}
+                >
+                  <div className="flex items-start gap-3">
+                    {/* Icon */}
+                    <div className="flex-shrink-0 mt-1">
+                      {status === 'completed' ? (
+                        <svg className="w-6 h-6 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      ) : status === 'current' ? (
+                        <svg className="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      ) : (
+                        <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      )}
+                    </div>
 
-                  {/* Content */}
-                  <div className="flex-1">
-                    <h3 className={`font-bold mb-1 ${
-                      status === 'current' ? 'text-black' : status === 'completed' ? 'text-black' : 'text-gray-500'
-                    }`}>
-                      {getTaskDisplayName(task, index)}
-                    </h3>
-                    <p className={`text-sm ${
-                      status === 'current' ? 'text-gray-700' : status === 'completed' ? 'text-gray-600' : 'text-gray-400'
-                    }`}>
-                      {getTaskDescription(task)}
-                    </p>
+                    {/* Content */}
+                    <div className="flex-1">
+                      <h3 className={`font-bold mb-1 ${
+                        status === 'current' ? 'text-black' : status === 'completed' ? 'text-black' : 'text-gray-500'
+                      }`}>
+                        {getTaskDisplayName(task, index)}
+                      </h3>
+                      <p className={`text-sm ${
+                        status === 'current' ? 'text-gray-700' : status === 'completed' ? 'text-gray-600' : 'text-gray-400'
+                      }`}>
+                        {getTaskDescription(task)}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="mb-8 text-gray-500 text-center py-4">
+            {appLanguage === 'ru' 
+              ? 'Задачи не найдены' 
+              : appLanguage === 'en' 
+              ? 'No tasks found' 
+              : 'Tarefas não encontradas'}
+          </div>
+        )}
 
-        {/* Completion Icon */}
+        {/* Completion Icon - Show below tasks, not instead of them */}
         {allCompleted && (
-          <div className="flex flex-col items-center justify-center py-8">
+          <div className="flex flex-col items-center justify-center py-4 mt-4">
             <div className="relative">
-              <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center">
-                <svg className="w-12 h-12 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center">
+                <svg className="w-10 h-10 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
               </div>
-              <div className="absolute -top-1 -right-1 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center border-4 border-white">
-                <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+              <div className="absolute -top-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center border-3 border-white">
+                <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
               </div>
             </div>
-            <p className="mt-4 text-lg font-semibold text-green-600 text-center">
+            <p className="mt-3 text-base font-semibold text-green-600 text-center">
               {appLanguage === 'ru' 
                 ? 'День завершён!' 
                 : appLanguage === 'en' 
