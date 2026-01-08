@@ -226,11 +226,14 @@ export default function RulesTask({ task, language, onComplete, isCompleted }: R
                 {currentBlock.examples.map((example: any, index: number) => (
                   <div 
                     key={index} 
-                    className="border-2 border-gray-200 p-4"
+                    className="p-4"
                     style={{ 
                       height: '50px',
-                      backgroundColor: 'rgba(244, 245, 248, 1)',
-                      borderRadius: '6px'
+                      backgroundColor: 'rgba(255, 255, 255, 1)',
+                      borderRadius: '6px',
+                      borderWidth: '2px',
+                      borderColor: 'rgba(255, 255, 255, 1)',
+                      borderStyle: 'solid'
                     }}
                   >
                     <div className="flex items-center justify-between" style={{ height: '14px', marginTop: '3px', marginBottom: '3px' }}>
