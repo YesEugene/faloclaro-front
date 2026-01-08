@@ -208,7 +208,7 @@ export default function TaskCard({
           {canGoNext && (
             <button
               onClick={onNext}
-              className="flex-1 bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+              className="flex-1 bg-green-500 text-white py-3 rounded-lg font-medium hover:bg-green-600 transition-colors"
             >
               {t.next} →
             </button>

@@ -991,7 +991,7 @@ export default function VocabularyTaskPlayer({
               })()}
             </div>
             
-            {/* Level */}
+            {/* Level - Different for each task */}
             <p 
               className="text-black font-bold mb-4"
               style={{ 
@@ -1000,7 +1000,16 @@ export default function VocabularyTaskPlayer({
                 height: '51px' 
               }}
             >
-              {t.level}
+              {(() => {
+                const taskId = task?.task_id || 1;
+                if (appLanguage === 'ru') {
+                  return taskId === 1 ? 'Начало' : taskId === 2 ? 'Разогрев' : 'Начало';
+                } else if (appLanguage === 'en') {
+                  return taskId === 1 ? 'Start' : taskId === 2 ? 'Warm-up' : 'Start';
+                } else {
+                  return taskId === 1 ? 'Início' : taskId === 2 ? 'Aquecimento' : 'Início';
+                }
+              })()}
             </p>
             
             {/* Next Task Button */}
