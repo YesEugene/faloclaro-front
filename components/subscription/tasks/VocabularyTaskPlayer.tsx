@@ -969,25 +969,26 @@ export default function VocabularyTaskPlayer({
           <div className="text-center">
             <p className="text-gray-700 font-medium mb-3" style={{ height: '23px' }}>{t.progressToday}</p>
             
-            {/* Stars - 1 star for first task */}
+            {/* Stars - Number of filled stars equals task_id */}
             <div className="flex justify-center gap-2 mb-3" style={{ height: '37px' }}>
-              {/* Filled star (Star 1) */}
-              <img 
-                src="/Img/Star-1.svg" 
-                alt="Filled star" 
-                className="w-8 h-8"
-                style={{ width: '2rem', height: '2rem' }}
-              />
-              {/* Empty stars (Star 2) */}
-              {[...Array(4)].map((_, i) => (
-                <img 
-                  key={i}
-                  src="/Img/Star-2.svg" 
-                  alt="Empty star" 
-                  className="w-8 h-8"
-                  style={{ width: '2rem', height: '2rem' }}
-                />
-              ))}
+              {(() => {
+                const taskId = task?.task_id || 1;
+                const filledStars = taskId;
+                const totalStars = 5;
+                
+                return Array.from({ length: totalStars }, (_, i) => {
+                  const isFilled = i < filledStars;
+                  return (
+                    <img 
+                      key={i}
+                      src={isFilled ? "/Img/Star-1.svg" : "/Img/Star-2.svg"}
+                      alt={isFilled ? "Filled star" : "Empty star"}
+                      className="w-8 h-8"
+                      style={{ width: '2rem', height: '2rem' }}
+                    />
+                  );
+                });
+              })()}
             </div>
             
             {/* Level */}

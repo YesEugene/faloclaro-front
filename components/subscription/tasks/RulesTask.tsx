@@ -528,16 +528,27 @@ export default function RulesTask({ task, language, onComplete, isCompleted }: R
         )}
 
         {/* Complete task button (only on last block if speak_out_loud is completed) */}
+        {/* Show button even if task is already completed - allows replay */}
         {currentBlockIndex === blocksOrder.length - 1 && 
          currentBlock.type === 'speak_out_loud' && 
-         speakOutLoudCompleted && (
+         (speakOutLoudCompleted || isCompleted) && (
           <button
-            onClick={() => onComplete({
-              completedAt: new Date().toISOString(),
-            })}
+            onClick={() => {
+              if (!isCompleted) {
+                onComplete({
+                  completedAt: new Date().toISOString(),
+                });
+              } else {
+                // If already completed, allow replay by resetting to first block
+                setCurrentBlockIndex(0);
+                setSpeakOutLoudCompleted(false);
+              }
+            }}
             className="flex-1 bg-green-600 text-white py-3 rounded-lg font-medium hover:bg-green-700 transition-colors"
           >
-            {appLanguage === 'ru' ? 'Завершить' : appLanguage === 'en' ? 'Complete' : 'Concluir'}
+            {isCompleted 
+              ? (appLanguage === 'ru' ? 'Пройти заново' : appLanguage === 'en' ? 'Replay' : 'Repetir')
+              : (appLanguage === 'ru' ? 'Завершить' : appLanguage === 'en' ? 'Complete' : 'Concluir')}
           </button>
         )}
       </div>
@@ -550,6 +561,52 @@ export default function RulesTask({ task, language, onComplete, isCompleted }: R
           ? `Block ${currentBlockIndex + 1} of ${blocksOrder.length}`
           : `Bloco ${currentBlockIndex + 1} de ${blocksOrder.length}`}
       </div>
+
+      {/* Completion Section - Progress with stars (same as VocabularyTaskPlayer) */}
+      {isCompleted && (
+        <div className="space-y-4 mt-6">
+          {/* Progress for today */}
+          <div className="text-center">
+            <p className="text-gray-700 font-medium mb-3" style={{ height: '23px' }}>
+              {appLanguage === 'ru' ? 'Прогресс на сегодня' : appLanguage === 'en' ? 'Progress for today' : 'Progresso de hoje'}
+            </p>
+            
+            {/* Stars - Number of filled stars equals task_id */}
+            <div className="flex justify-center gap-2 mb-3" style={{ height: '37px' }}>
+              {(() => {
+                const taskId = task?.task_id || 1;
+                const filledStars = taskId;
+                const totalStars = 5;
+                
+                return Array.from({ length: totalStars }, (_, i) => {
+                  const isFilled = i < filledStars;
+                  return (
+                    <img 
+                      key={i}
+                      src={isFilled ? "/Img/Star-1.svg" : "/Img/Star-2.svg"}
+                      alt={isFilled ? "Filled star" : "Empty star"}
+                      className="w-8 h-8"
+                      style={{ width: '2rem', height: '2rem' }}
+                    />
+                  );
+                });
+              })()}
+            </div>
+            
+            {/* Level */}
+            <p 
+              className="text-black font-bold mb-4"
+              style={{ 
+                fontSize: '30px', 
+                lineHeight: '45px', 
+                height: '51px' 
+              }}
+            >
+              {appLanguage === 'ru' ? 'Начало' : appLanguage === 'en' ? 'Start' : 'Início'}
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
