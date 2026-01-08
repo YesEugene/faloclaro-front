@@ -131,21 +131,22 @@ async function main() {
   const audioFiles = [];
 
   for (const card of cards) {
-    if (!card.example_sentence) {
-      console.log(`⏭️  Skipped (no example sentence): ${card.word}`);
+    if (!card.word) {
+      console.log(`⏭️  Skipped (no word): ${JSON.stringify(card)}`);
       continue;
     }
 
-    // Check if audio exists in phrases table
-    const existingAudioUrl = await checkAudioInPhrases(card.example_sentence);
+    // Check if audio exists in phrases table for the word
+    const existingAudioUrl = await checkAudioInPhrases(card.word);
     if (existingAudioUrl) {
+      console.log(`⏭️  Skipped (exists in DB): ${card.word}`);
       skipped++;
       continue;
     }
 
-    // Generate audio for example sentence
-    const filename = `lesson-1-card-${sanitizeFilename(card.word)}-${sanitizeFilename(card.example_sentence)}.mp3`;
-    const result = await generateAudio(card.example_sentence, filename);
+    // Generate audio for the word itself (not the example sentence)
+    const filename = `lesson-1-word-${sanitizeFilename(card.word)}.mp3`;
+    const result = await generateAudio(card.word, filename);
 
     if (result) {
       if (result.skipped) {
@@ -156,7 +157,7 @@ async function main() {
           card: card,
           filename: result.filename,
           path: result.path,
-          text: card.example_sentence,
+          text: card.word,
         });
       }
     } else {

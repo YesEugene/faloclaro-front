@@ -202,8 +202,9 @@ export default function VocabularyTaskPlayer({
           }
 
           // Use translations from card data if available (for lesson cards)
+          // Store translations using word as key for consistency
           if (card.sentence_translation_ru || card.sentence_translation_en || card.word_translation_ru || card.word_translation_en) {
-            translations[card.example_sentence] = {
+            translations[card.word] = {
               ptSentence: card.example_sentence,
               ruSentence: card.sentence_translation_ru,
               enSentence: card.sentence_translation_en,
@@ -227,7 +228,7 @@ export default function VocabularyTaskPlayer({
                 if (t.language_code === 'ru') trans.ru = t.translation_text;
                 if (t.language_code === 'en') trans.en = t.translation_text;
               });
-              translations[card.example_sentence] = trans;
+              translations[card.word] = trans;
             }
           }
         }
@@ -270,7 +271,7 @@ export default function VocabularyTaskPlayer({
   }, []);
 
   const handlePlayPause = useCallback(async () => {
-    if (!audioRef.current || !currentCard?.example_sentence || !audioUrls[currentCard.example_sentence]) return;
+    if (!audioRef.current || !currentCard?.word || !audioUrls[currentCard.word]) return;
 
     try {
       if (isPlaying) {

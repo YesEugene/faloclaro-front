@@ -120,12 +120,12 @@ async function main() {
   let errors = 0;
 
   for (const card of cards) {
-    if (!card.example_sentence) {
+    if (!card.word) {
       continue;
     }
 
-    // Generate filename
-    const filename = `lesson-1-card-${sanitizeFilename(card.word)}-${sanitizeFilename(card.example_sentence)}.mp3`;
+    // Generate filename for word (not example sentence)
+    const filename = `lesson-1-word-${sanitizeFilename(card.word)}.mp3`;
     const localPath = path.join(AUDIO_OUTPUT_DIR, filename);
     const storagePath = `lesson-1/${filename}`;
 
@@ -147,13 +147,13 @@ async function main() {
     console.log(`✅ Uploaded: ${storagePath}`);
     console.log(`   URL: ${audioUrl}`);
 
-    // Update phrase audio_url
-    const updatedPhrase = await updatePhraseAudioUrl(card.example_sentence, audioUrl);
+    // Update phrase audio_url (search by word, not example sentence)
+    const updatedPhrase = await updatePhraseAudioUrl(card.word, audioUrl);
     if (updatedPhrase) {
       updated++;
-      console.log(`✅ Updated phrase: "${card.example_sentence}"\n`);
+      console.log(`✅ Updated phrase: "${card.word}"\n`);
     } else {
-      console.log(`ℹ️  Phrase not found or already updated: "${card.example_sentence}"\n`);
+      console.log(`ℹ️  Phrase not found or already updated: "${card.word}"\n`);
     }
 
     // Small delay
