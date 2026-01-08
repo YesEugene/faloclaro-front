@@ -271,40 +271,43 @@ export default function LessonContent({ lesson, userProgress, token, onProgressU
           </div>
         </div>
 
-        {/* Back and Dictionary buttons - only for vocabulary task */}
-        {currentTask?.type === 'vocabulary' && (
+        {/* Back button - for all tasks */}
+        {currentTask && (
           <div className="max-w-md mx-auto px-4 mb-[10px] flex gap-[10px]">
             <button
               onClick={() => router.push(`/pt/lesson/${lesson.day_number}/${token}/overview`)}
               className="px-4 py-2 rounded-[10px] transition-colors text-center"
               style={{ 
                 backgroundColor: '#EDF3FF',
-                width: 'calc(50% - 5px)',
+                width: currentTask?.type === 'vocabulary' ? 'calc(50% - 5px)' : '100%',
               }}
             >
               <span className="text-gray-700">
                 {appLanguage === 'ru' ? '← Назад к заданиям' : appLanguage === 'en' ? '← Back to tasks' : '← Voltar às tarefas'}
               </span>
             </button>
-            <button
-              onClick={() => {
-                // Navigate to phrases page with lesson context
-                const params = new URLSearchParams();
-                params.set('lesson', lesson.day_number.toString());
-                params.set('token', token);
-                params.set('task', currentTask.task_id?.toString() || '1');
-                params.set('phraseType', 'word');
-                router.push(`/phrases?${params.toString()}`);
-              }}
-              className="px-4 py-2 rounded-[10px] bg-white border-2 border-gray-300 text-black hover:bg-gray-50 transition-colors text-center font-medium"
-              style={{ 
-                width: 'calc(50% - 5px)',
-                transform: 'translateY(1px)',
-                fontWeight: 500,
-              }}
-            >
-              {appLanguage === 'ru' ? 'Словарь списком' : appLanguage === 'en' ? 'Dictionary list' : 'Lista de dicionário'}
-            </button>
+            {/* Dictionary button - only for vocabulary task */}
+            {currentTask?.type === 'vocabulary' && (
+              <button
+                onClick={() => {
+                  // Navigate to phrases page with lesson context
+                  const params = new URLSearchParams();
+                  params.set('lesson', lesson.day_number.toString());
+                  params.set('token', token);
+                  params.set('task', currentTask.task_id?.toString() || '1');
+                  params.set('phraseType', 'word');
+                  router.push(`/phrases?${params.toString()}`);
+                }}
+                className="px-4 py-2 rounded-[10px] bg-white border-2 border-gray-300 text-black hover:bg-gray-50 transition-colors text-center font-medium"
+                style={{ 
+                  width: 'calc(50% - 5px)',
+                  transform: 'translateY(1px)',
+                  fontWeight: 500,
+                }}
+              >
+                {appLanguage === 'ru' ? 'Словарь списком' : appLanguage === 'en' ? 'Dictionary list' : 'Lista de dicionário'}
+              </button>
+            )}
           </div>
         )}
 
