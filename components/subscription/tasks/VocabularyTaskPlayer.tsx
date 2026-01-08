@@ -723,7 +723,7 @@ export default function VocabularyTaskPlayer({
         className={`fixed bottom-0 left-0 right-0 bg-white rounded-t-[20px] shadow-2xl transition-transform duration-300 z-50 ${
           showSettings ? 'translate-y-0' : 'translate-y-full'
         }`}
-        style={{ maxHeight: '80vh', overflowY: 'auto' }}
+        style={{ maxHeight: '80vh', overflowY: 'auto', marginBottom: 0 }}
       >
         <div className="max-w-md mx-auto px-4 pt-6 pb-2">
           <div className="flex justify-between items-center mb-6">
