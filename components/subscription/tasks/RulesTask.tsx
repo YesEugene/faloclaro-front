@@ -506,7 +506,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted }: R
   return (
     <div className="space-y-6 w-full">
       {/* Block Content - Full width */}
-      <div className="bg-white rounded-lg border-2 border-gray-200 p-6 w-full">
+      <div className="rounded-lg border-2 border-gray-200 p-6 w-full" style={{ backgroundColor: 'rgba(244, 245, 248, 1)' }}>
         {renderBlock()}
       </div>
 
