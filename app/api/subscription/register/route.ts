@@ -140,9 +140,17 @@ export async function POST(request: NextRequest) {
 
     // Send email with lesson link (async, don't wait)
     // Call function directly instead of HTTP fetch to avoid connection issues
-    sendLessonEmail(user.id, lesson.id, 1).catch(err => {
-      console.error('Error sending email (non-blocking):', err);
-    });
+    sendLessonEmail(user.id, lesson.id, 1)
+      .then(result => {
+        if (result.success) {
+          console.log('Email sent successfully:', result);
+        } else {
+          console.error('Email sending failed:', result.error);
+        }
+      })
+      .catch(err => {
+        console.error('Error sending email (non-blocking):', err);
+      });
 
     // Log email sent
     await supabase

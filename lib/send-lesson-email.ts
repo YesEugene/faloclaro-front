@@ -71,46 +71,82 @@ export async function sendLessonEmail(userId: string, lessonId: string, dayNumbe
     const lessonUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://www.faloclaro.com'}/pt/lesson/${dayNumber}/${tokenData.token}`;
 
     // Send email via Resend
-    if (process.env.RESEND_API_KEY) {
-      try {
-        const { Resend } = require('resend');
-        const resend = new Resend(process.env.RESEND_API_KEY);
-
-        const emailContent = getEmailContent(lesson, user.language_preference, lessonUrl);
-        
-        const fromEmail = process.env.RESEND_FROM_EMAIL || 'FaloClaro <noreply@faloclaro.com>';
-        
-        const { data, error } = await resend.emails.send({
-          from: fromEmail,
-          to: user.email,
-          subject: emailContent.subject,
-          html: emailContent.html,
-          text: emailContent.text,
-        });
-
-        if (error) {
-          console.error('Resend error:', error);
-          return { success: false, error: error.message || 'Failed to send email' };
-        }
-
-        // Log email sent
-        await supabase
-          .from('email_logs')
-          .insert({
-            user_id: userId,
-            lesson_id: lessonId,
-            day_number: dayNumber,
-            email_type: 'lesson',
-          });
-
-        return { success: true, emailId: data?.id, lessonUrl };
-      } catch (err) {
-        console.error('Error sending email:', err);
-        return { success: false, error: err instanceof Error ? err.message : 'Unknown error' };
-      }
-    } else {
+    if (!process.env.RESEND_API_KEY) {
       console.warn('RESEND_API_KEY not configured. Email not sent.');
       return { success: false, error: 'Resend not configured' };
+    }
+
+    console.log('Starting email send:', {
+      userId,
+      lessonId,
+      dayNumber,
+      userEmail: user.email,
+      hasResendKey: !!process.env.RESEND_API_KEY,
+      resendKeyPrefix: process.env.RESEND_API_KEY?.substring(0, 5) + '...',
+    });
+
+    try {
+      const { Resend } = require('resend');
+      const resend = new Resend(process.env.RESEND_API_KEY);
+
+      const emailContent = getEmailContent(lesson, user.language_preference, lessonUrl);
+      
+      const fromEmail = process.env.RESEND_FROM_EMAIL || 'FaloClaro <noreply@faloclaro.com>';
+      
+      console.log('Sending email via Resend:', {
+        from: fromEmail,
+        to: user.email,
+        subject: emailContent.subject,
+        lessonUrl,
+      });
+      
+      const { data, error } = await resend.emails.send({
+        from: fromEmail,
+        to: user.email,
+        subject: emailContent.subject,
+        html: emailContent.html,
+        text: emailContent.text,
+      });
+
+      if (error) {
+        console.error('Resend API error:', {
+          error,
+          message: error.message,
+          name: error.name,
+          stack: error.stack,
+        });
+        return { success: false, error: error.message || 'Failed to send email' };
+      }
+
+      console.log('Email sent successfully via Resend:', {
+        emailId: data?.id,
+        to: user.email,
+        from: fromEmail,
+      });
+
+      // Log email sent
+      const { error: logError } = await supabase
+        .from('email_logs')
+        .insert({
+          user_id: userId,
+          lesson_id: lessonId,
+          day_number: dayNumber,
+          email_type: 'lesson',
+        });
+
+      if (logError) {
+        console.error('Error logging email:', logError);
+      }
+
+      return { success: true, emailId: data?.id, lessonUrl };
+    } catch (err) {
+      console.error('Exception sending email:', {
+        error: err,
+        message: err instanceof Error ? err.message : 'Unknown error',
+        stack: err instanceof Error ? err.stack : undefined,
+        name: err instanceof Error ? err.name : undefined,
+      });
+      return { success: false, error: err instanceof Error ? err.message : 'Unknown error' };
     }
   } catch (error) {
     console.error('Error in sendLessonEmail:', error);
