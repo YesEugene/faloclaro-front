@@ -236,7 +236,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted }: R
                       borderStyle: 'solid'
                     }}
                   >
-                    <div className="flex items-center justify-between" style={{ height: '14px', marginTop: '3px', marginBottom: '3px' }}>
+                    <div className="flex items-center justify-between" style={{ height: '10px', marginTop: '3px', marginBottom: '3px' }}>
                       <p className="text-black font-medium text-lg">{example.text}</p>
                       {example.audio && audioUrls[example.text] && (
                         <button
@@ -315,7 +315,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted }: R
                       borderStyle: 'solid'
                     }}
                   >
-                    <div className="flex items-center justify-between" style={{ height: '14px', marginTop: '3px', marginBottom: '3px' }}>
+                    <div className="flex items-center justify-between" style={{ height: '9px', marginTop: '3px', marginBottom: '3px' }}>
                       <p className="text-black font-medium text-lg">{card.text}</p>
                       {card.audio && audioUrls[card.text] && (
                         <button
