@@ -44,8 +44,15 @@ export default function TaskCard({
   const [isCompleted, setIsCompleted] = useState(taskProgress?.status === 'completed');
 
   useEffect(() => {
-    setIsCompleted(taskProgress?.status === 'completed');
-  }, [taskProgress]);
+    const completed = taskProgress?.status === 'completed';
+    console.log('📊 TaskCard: taskProgress updated', {
+      taskId: task?.task_id,
+      status: taskProgress?.status,
+      isCompleted: completed,
+      taskProgress
+    });
+    setIsCompleted(completed);
+  }, [taskProgress, task?.task_id]);
 
   const handleComplete = (completionData?: any) => {
     setIsCompleted(true);

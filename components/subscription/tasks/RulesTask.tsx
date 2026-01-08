@@ -581,6 +581,16 @@ export default function RulesTask({ task, language, onComplete, isCompleted }: R
       </div>
 
       {/* Completion Section - Progress with stars (same as VocabularyTaskPlayer) */}
+      {(() => {
+        console.log('🎯 RulesTask: Rendering completion section', {
+          isCompleted,
+          taskId: task?.task_id,
+          currentBlockIndex,
+          blocksOrderLength: blocksOrder.length,
+          isLastBlock: currentBlockIndex === blocksOrder.length - 1
+        });
+        return null;
+      })()}
       {isCompleted && (
         <div className="space-y-4 mt-6">
           {/* Progress for today */}
