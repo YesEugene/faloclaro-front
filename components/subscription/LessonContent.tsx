@@ -33,7 +33,7 @@ export default function LessonContent({ lesson, userProgress, token, onProgressU
       const taskIdParam = urlParams.get('task');
       
       if (taskIdParam) {
-        // Find task by task_id
+        // Find task by task_id - allow accessing completed tasks for replay
         const taskIndex = lesson.yaml_content.tasks.findIndex((task: any) => task.task_id === parseInt(taskIdParam));
         if (taskIndex !== -1) {
           setCurrentTaskIndex(taskIndex);
@@ -42,6 +42,7 @@ export default function LessonContent({ lesson, userProgress, token, onProgressU
       }
       
       // Otherwise, find first incomplete task
+      // But if all tasks are completed, show first task for replay
       const incompleteIndex = lesson.yaml_content.tasks.findIndex((task: any, index: number) => {
         const taskProgress = userProgress.task_progress?.find((tp: any) => tp.task_id === task.task_id);
         return !taskProgress || taskProgress.status !== 'completed';
@@ -49,6 +50,9 @@ export default function LessonContent({ lesson, userProgress, token, onProgressU
       
       if (incompleteIndex !== -1) {
         setCurrentTaskIndex(incompleteIndex);
+      } else {
+        // All tasks completed - show first task for replay
+        setCurrentTaskIndex(0);
       }
     }
   }, [lesson, userProgress]);

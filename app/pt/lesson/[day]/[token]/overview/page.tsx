@@ -116,6 +116,8 @@ function OverviewPageContent() {
     }
     
     const taskProgress = userProgress.task_progress.find((tp: any) => tp.task_id === taskId);
+    
+    // If task is completed, it should always be accessible for replay
     if (taskProgress?.status === 'completed') return 'completed';
     
     // Find first incomplete task
@@ -126,6 +128,12 @@ function OverviewPageContent() {
     });
     
     const currentTaskIndex = tasks.findIndex((t: any) => t.task_id === taskId);
+    
+    // If all tasks are completed, mark all as completed (accessible for replay)
+    if (firstIncompleteIndex === -1) {
+      return 'completed';
+    }
+    
     if (currentTaskIndex === firstIncompleteIndex) return 'current';
     if (currentTaskIndex < firstIncompleteIndex) return 'completed';
     return 'locked';
