@@ -28,6 +28,22 @@ export default function RulesTask({ task, language, onComplete, isCompleted }: R
   const blocksOrder = structure.blocks_order || [];
   const blocks = task.blocks || {}; // Blocks are at root level
 
+  // Debug: Log task structure
+  useEffect(() => {
+    console.log('🔍 RulesTask Debug:', {
+      hasTask: !!task,
+      taskType: task?.type,
+      hasStructure: !!task?.structure,
+      hasBlocks: !!task?.blocks,
+      blocksOrder: blocksOrder,
+      blocksKeys: Object.keys(blocks),
+      currentBlockIndex,
+      currentBlockKey: blocksOrder[currentBlockIndex],
+      currentBlock: blocksOrder[currentBlockIndex] ? blocks[blocksOrder[currentBlockIndex]] : null,
+      fullTask: task
+    });
+  }, [task, blocksOrder, blocks, currentBlockIndex]);
+
   // Get current block
   const currentBlockKey = blocksOrder[currentBlockIndex];
   const currentBlock = currentBlockKey ? blocks[currentBlockKey] : null;
