@@ -224,14 +224,32 @@ export default function RulesTask({ task, language, onComplete, isCompleted }: R
             {currentBlock.examples && currentBlock.examples.length > 0 && (
               <div className="space-y-3">
                 {currentBlock.examples.map((example: any, index: number) => (
-                  <div key={index} className="bg-white rounded-lg border-2 border-gray-200 p-4">
-                    <div className="flex items-center justify-between mb-2">
+                  <div 
+                    key={index} 
+                    className="border-2 border-gray-200 p-4"
+                    style={{ 
+                      height: '50px',
+                      backgroundColor: 'rgba(244, 245, 248, 1)',
+                      borderRadius: '6px'
+                    }}
+                  >
+                    <div className="flex items-center justify-between" style={{ height: '14px' }}>
                       <p className="text-black font-medium text-lg">{example.text}</p>
                       {example.audio && audioUrls[example.text] && (
                         <button
                           onClick={() => playAudio(example.text)}
                           disabled={isPlayingAudio[example.text]}
-                          className="flex-shrink-0 ml-3 p-2 rounded-full bg-blue-100 hover:bg-blue-200 transition-colors"
+                          className="flex-shrink-0 ml-3 transition-colors"
+                          style={{
+                            width: '30px',
+                            height: '30px',
+                            paddingTop: '0px',
+                            paddingBottom: '0px',
+                            paddingLeft: '11px',
+                            paddingRight: '11px',
+                            borderRadius: '0px',
+                            backgroundColor: 'transparent'
+                          }}
                         >
                           {isPlayingAudio[example.text] ? (
                             <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
@@ -251,13 +269,20 @@ export default function RulesTask({ task, language, onComplete, isCompleted }: R
             )}
 
             {currentBlock.hint && currentBlock.hint.length > 0 && (
-              <div className="bg-blue-50 rounded-lg p-4 mt-4">
-                <p className="text-sm font-semibold text-blue-900 mb-2">
+              <div 
+                className="bg-blue-50 rounded-lg p-4 mt-4"
+                style={{ 
+                  color: 'rgba(0, 0, 0, 1)',
+                  backgroundClip: 'unset',
+                  WebkitBackgroundClip: 'unset'
+                }}
+              >
+                <p className="text-sm font-semibold mb-2" style={{ color: 'rgba(0, 0, 0, 1)' }}>
                   {appLanguage === 'ru' ? 'Подсказка:' : appLanguage === 'en' ? 'Hint:' : 'Dica:'}
                 </p>
                 <ul className="list-disc list-inside space-y-1">
                   {currentBlock.hint.map((hint: string, index: number) => (
-                    <li key={index} className="text-sm text-blue-800">{hint}</li>
+                    <li key={index} className="text-sm" style={{ color: 'rgba(0, 0, 0, 1)' }}>{hint}</li>
                   ))}
                 </ul>
               </div>
@@ -273,14 +298,32 @@ export default function RulesTask({ task, language, onComplete, isCompleted }: R
             {currentBlock.comparison_card && (
               <div className="grid grid-cols-1 gap-4">
                 {currentBlock.comparison_card.map((card: any, index: number) => (
-                  <div key={index} className="bg-white rounded-lg border-2 border-gray-200 p-4">
-                    <div className="flex items-center justify-between">
+                  <div 
+                    key={index} 
+                    className="border-2 border-gray-200 p-4"
+                    style={{ 
+                      height: '50px',
+                      backgroundColor: 'rgba(244, 245, 248, 1)',
+                      borderRadius: '6px'
+                    }}
+                  >
+                    <div className="flex items-center justify-between" style={{ height: '14px' }}>
                       <p className="text-black font-medium text-lg">{card.text}</p>
                       {card.audio && audioUrls[card.text] && (
                         <button
                           onClick={() => playAudio(card.text)}
                           disabled={isPlayingAudio[card.text]}
-                          className="flex-shrink-0 ml-3 p-2 rounded-full bg-blue-100 hover:bg-blue-200 transition-colors"
+                          className="flex-shrink-0 ml-3 transition-colors"
+                          style={{
+                            width: '30px',
+                            height: '30px',
+                            paddingTop: '0px',
+                            paddingBottom: '0px',
+                            paddingLeft: '11px',
+                            paddingRight: '11px',
+                            borderRadius: '0px',
+                            backgroundColor: 'transparent'
+                          }}
                         >
                           {isPlayingAudio[card.text] ? (
                             <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
