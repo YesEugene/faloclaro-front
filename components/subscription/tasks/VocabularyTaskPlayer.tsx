@@ -158,16 +158,42 @@ export default function VocabularyTaskPlayer({
       for (const card of cards) {
         if (card.word) {
           // Try to find phrase in database first (by word, not example sentence)
-          const { data: phrase, error: phraseError } = await supabase
-            .from('phrases')
-            .select('audio_url, id')
-            .eq('portuguese_text', card.word)
-            .single();
+          try {
+            const { data: phrase, error: phraseError } = await supabase
+              .from('phrases')
+              .select('audio_url, id')
+              .eq('portuguese_text', card.word)
+              .single();
+            
+            if (phraseError) {
+              // If single() returns error (not found), try without single() to get array
+              if (phraseError.code === 'PGRST116') {
+                // No rows returned - try without single()
+                const { data: phraseArray, error: arrayError } = await supabase
+                  .from('phrases')
+                  .select('audio_url, id')
+                  .eq('portuguese_text', card.word)
+                  .limit(1);
+                
+                if (phraseArray && phraseArray.length > 0 && phraseArray[0]?.audio_url) {
+                  urls[card.word] = phraseArray[0].audio_url;
+                  console.log(`✅ Found audio in DB for word: "${card.word}" - ${phraseArray[0].audio_url}`);
+                } else {
+                  console.warn(`⚠️  No phrase found in DB for word: "${card.word}"`, arrayError);
+                }
+              } else {
+                console.error(`❌ Error fetching phrase for word: "${card.word}"`, phraseError);
+              }
+            } else if (phrase?.audio_url) {
+              urls[card.word] = phrase.audio_url;
+              console.log(`✅ Found audio in DB for word: "${card.word}" - ${phrase.audio_url}`);
+            }
+          } catch (error) {
+            console.error(`❌ Exception fetching phrase for word: "${card.word}"`, error);
+          }
           
-          if (phrase?.audio_url) {
-            urls[card.word] = phrase.audio_url;
-            console.log(`✅ Found audio in DB for word: "${card.word}" - ${phrase.audio_url}`);
-          } else {
+          // If no audio URL from database, try Storage fallback
+          if (!urls[card.word]) {
             // If not in database, construct URL from Storage path for lesson cards
             // Format: lesson-1/word-{word}.mp3
             const sanitizeForUrl = (text: string) => {
@@ -214,24 +240,40 @@ export default function VocabularyTaskPlayer({
               ru: card.word_translation_ru,
               en: card.word_translation_en,
             };
-          } else if (phrase?.id) {
-            // Load translations from database if phrase exists
-            const { data: transData } = await supabase
-              .from('translations')
-              .select('language_code, translation_text')
-              .eq('phrase_id', phrase.id)
-              .in('language_code', ['pt-sentence', 'ru-sentence', 'en-sentence', 'ru', 'en']);
+          } else {
+            // Try to get phrase ID again if we have it from previous query
+            try {
+              const { data: phraseData } = await supabase
+                .from('phrases')
+                .select('id')
+                .eq('portuguese_text', card.word)
+                .limit(1)
+                .single();
+              
+              if (phraseData?.id) {
+                // Load translations from database if phrase exists
+                const { data: transData, error: transError } = await supabase
+                  .from('translations')
+                  .select('language_code, translation_text')
+                  .eq('phrase_id', phraseData.id)
+                  .in('language_code', ['pt-sentence', 'ru-sentence', 'en-sentence', 'ru', 'en']);
 
-            if (transData) {
-              const trans: any = {};
-              transData.forEach(t => {
-                if (t.language_code === 'pt-sentence') trans.ptSentence = t.translation_text;
-                if (t.language_code === 'ru-sentence') trans.ruSentence = t.translation_text;
-                if (t.language_code === 'en-sentence') trans.enSentence = t.translation_text;
-                if (t.language_code === 'ru') trans.ru = t.translation_text;
-                if (t.language_code === 'en') trans.en = t.translation_text;
-              });
-              translations[card.word] = trans;
+                if (transError) {
+                  console.warn(`⚠️  Error loading translations for word: "${card.word}"`, transError);
+                } else if (transData) {
+                  const trans: any = {};
+                  transData.forEach(t => {
+                    if (t.language_code === 'pt-sentence') trans.ptSentence = t.translation_text;
+                    if (t.language_code === 'ru-sentence') trans.ruSentence = t.translation_text;
+                    if (t.language_code === 'en-sentence') trans.enSentence = t.translation_text;
+                    if (t.language_code === 'ru') trans.ru = t.translation_text;
+                    if (t.language_code === 'en') trans.en = t.translation_text;
+                  });
+                  translations[card.word] = trans;
+                }
+              }
+            } catch (error) {
+              console.warn(`⚠️  Error loading translations for word: "${card.word}"`, error);
             }
           }
         }
