@@ -19,6 +19,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted }: R
   const [selectedAnswers, setSelectedAnswers] = useState<{ [key: string]: string | null }>({});
   const [showResults, setShowResults] = useState<{ [key: string]: boolean }>({});
   const [speakOutLoudCompleted, setSpeakOutLoudCompleted] = useState(false);
+  const [isReplaying, setIsReplaying] = useState(false);
   
   const audioRefs = useRef<{ [key: string]: HTMLAudioElement }>({});
 
@@ -534,19 +535,23 @@ export default function RulesTask({ task, language, onComplete, isCompleted }: R
          (speakOutLoudCompleted || isCompleted) && (
           <button
             onClick={() => {
-              if (!isCompleted) {
+              if (!isCompleted || isReplaying) {
                 onComplete({
                   completedAt: new Date().toISOString(),
                 });
+                setIsReplaying(false);
               } else {
                 // If already completed, allow replay by resetting to first block
                 setCurrentBlockIndex(0);
                 setSpeakOutLoudCompleted(false);
+                setSelectedAnswers({});
+                setShowResults({});
+                setIsReplaying(true);
               }
             }}
             className="flex-1 bg-green-600 text-white py-3 rounded-lg font-medium hover:bg-green-700 transition-colors"
           >
-            {isCompleted 
+            {isCompleted && !isReplaying
               ? (appLanguage === 'ru' ? 'Пройти заново' : appLanguage === 'en' ? 'Replay' : 'Repetir')
               : (appLanguage === 'ru' ? 'Завершить' : appLanguage === 'en' ? 'Complete' : 'Concluir')}
           </button>
