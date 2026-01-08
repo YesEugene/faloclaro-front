@@ -164,12 +164,12 @@ function OverviewPageContent() {
     ru: {
       day: 'День',
       estimatedTime: 'мин',
-      newWords: 'Новые слова',
-      rules: 'Правила',
-      sentences: 'Предложения и понимание',
-      attention: 'Внимательность',
-      writing: 'Письмо',
-      playListenRepeat: 'Нажми «Play», слушай и повторяй вслух.',
+      task1: 'Слушай и повторяй',
+      task2: 'Говорим правильно',
+      task3: 'Пойми смысл',
+      task4: 'Выбери ситуацию',
+      task5: 'Попробуй сам',
+      playListenRepeat: 'Слушай, повторяй и привыкай к звучанию языка.',
       listenExamples: 'Послушай примеры и повтори вслух.',
       listenAnswer: 'Послушай фразу и ответь на вопрос.',
       listenChoose: 'Послушай фразу и выбери ситуацию.',
@@ -178,12 +178,12 @@ function OverviewPageContent() {
     en: {
       day: 'Day',
       estimatedTime: 'min',
-      newWords: 'New words',
-      rules: 'Rules',
-      sentences: 'Sentences and understanding',
-      attention: 'Attention',
-      writing: 'Writing',
-      playListenRepeat: 'Press "Play", listen and repeat aloud.',
+      task1: 'Listen and repeat',
+      task2: 'Speak correctly',
+      task3: 'Understand the meaning',
+      task4: 'Choose the situation',
+      task5: 'Try yourself',
+      playListenRepeat: 'Listen, repeat and get used to the sound of the language',
       listenExamples: 'Listen to examples and repeat aloud.',
       listenAnswer: 'Listen to the phrase and answer the question.',
       listenChoose: 'Listen to the phrase and choose the situation.',
@@ -192,12 +192,12 @@ function OverviewPageContent() {
     pt: {
       day: 'Dia',
       estimatedTime: 'min',
-      newWords: 'Novas palavras',
-      rules: 'Regras',
-      sentences: 'Frases e compreensão',
-      attention: 'Atenção',
-      writing: 'Escrita',
-      playListenRepeat: 'Pressiona "Play", ouve e repete em voz alta.',
+      task1: 'Ouve e repete',
+      task2: 'Falamos corretamente',
+      task3: 'Compreende o significado',
+      task4: 'Escolhe a situação',
+      task5: 'Experimenta tu mesmo',
+      playListenRepeat: 'Ouve, repete e habitua-te ao som da língua',
       listenExamples: 'Ouve exemplos e repete em voz alta.',
       listenAnswer: 'Ouve a frase e responde à pergunta.',
       listenChoose: 'Ouve a frase e escolhe a situação.',
@@ -207,23 +207,11 @@ function OverviewPageContent() {
 
   const t = translations[appLanguage] || translations.ru;
 
-  // Map task types to display names
-  const getTaskDisplayName = (task: any) => {
-    if (task.title) return task.title;
-    switch (task.type) {
-      case 'vocabulary':
-        return t.newWords;
-      case 'rules':
-        return t.rules;
-      case 'listening_comprehension':
-        return t.sentences;
-      case 'attention':
-        return t.attention;
-      case 'writing_optional':
-        return t.writing;
-      default:
-        return task.title || 'Task';
-    }
+  // Map task types to fixed display names based on index
+  const getTaskDisplayName = (task: any, index: number) => {
+    // Fixed names based on task order (1-5)
+    const taskNames = [t.task1, t.task2, t.task3, t.task4, t.task5];
+    return taskNames[index] || task.title || 'Task';
   };
 
   const getTaskDescription = (task: any) => {
@@ -270,24 +258,27 @@ function OverviewPageContent() {
 
       {/* Main Content */}
       <div className="max-w-md mx-auto px-4 py-6">
-        {/* Day Tag */}
-        <div className="text-center mb-4">
-          <div className="inline-block bg-gray-100 rounded-lg px-4 py-2">
+        {/* Day Tag - Clickable button */}
+        <div className="mb-4">
+          <Link 
+            href="/pt"
+            className="inline-block bg-gray-100 rounded-lg px-4 py-2 hover:bg-gray-200 transition-colors cursor-pointer"
+          >
             <span className="text-gray-700 text-sm">
               {appLanguage === 'ru' ? 'Португальский язык за 60 дней' : appLanguage === 'en' ? 'Portuguese in 60 days' : 'Português em 60 dias'}
             </span>
-          </div>
+          </Link>
         </div>
 
         {/* Day Title */}
-        <h1 className="text-2xl font-bold text-black text-center mb-2">
+        <h1 className="text-2xl font-bold text-black mb-2 text-left">
           {t.day} {lesson.day_number}/60: {appLanguage === 'ru' ? dayInfo.title : appLanguage === 'en' ? dayInfo.title_en : dayInfo.title_pt}
         </h1>
 
-        {/* Estimated Time */}
+        {/* Estimated Time - Smaller (20% reduction) and more rounded */}
         {dayInfo.estimated_time && (
-          <div className="text-center mb-4">
-            <div className="inline-block bg-gray-100 rounded-lg px-4 py-2">
+          <div className="mb-4">
+            <div className="inline-block bg-gray-100 rounded-2xl px-3 py-1.5" style={{ fontSize: '0.8em' }}>
               <span className="text-gray-700 text-sm">
                 {dayInfo.estimated_time} {t.estimatedTime}
               </span>
@@ -297,7 +288,7 @@ function OverviewPageContent() {
 
         {/* Subtitle/Description */}
         {dayInfo.subtitle && (
-          <p className="text-gray-700 text-center mb-8">
+          <p className="text-gray-700 mb-8 text-left">
             {appLanguage === 'ru' ? dayInfo.subtitle : appLanguage === 'en' ? dayInfo.subtitle_en : dayInfo.subtitle_pt}
           </p>
         )}
@@ -344,7 +335,7 @@ function OverviewPageContent() {
                     <h3 className={`font-bold mb-1 ${
                       status === 'current' ? 'text-black' : status === 'completed' ? 'text-black' : 'text-gray-500'
                     }`}>
-                      {getTaskDisplayName(task)}
+                      {getTaskDisplayName(task, index)}
                     </h3>
                     <p className={`text-sm ${
                       status === 'current' ? 'text-gray-700' : status === 'completed' ? 'text-gray-600' : 'text-gray-400'
