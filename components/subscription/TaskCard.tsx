@@ -171,8 +171,8 @@ export default function TaskCard({
 
   return (
     <div className="space-y-4">
-      {/* Task Header - Hide for rules task */}
-      {task.type !== 'rules' && (
+      {/* Task Header - Hide for rules and listening_comprehension tasks */}
+      {task.type !== 'rules' && task.type !== 'listening_comprehension' && (
         <div className="bg-white rounded-lg border-2 border-gray-200 p-6">
           <div className="mb-4">
             <h2 className="text-xl font-bold text-black mb-2">{task.title}</h2>
@@ -191,8 +191,8 @@ export default function TaskCard({
         </div>
       )}
 
-      {/* Task Content for rules - without header wrapper */}
-      {task.type === 'rules' && renderTask()}
+      {/* Task Content for rules and listening_comprehension - without header wrapper */}
+      {(task.type === 'rules' || task.type === 'listening_comprehension') && renderTask()}
 
       {/* Navigation */}
       {isCompleted && (
