@@ -91,29 +91,43 @@ export async function POST(request: NextRequest) {
 
     const lessonUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://www.faloclaro.com'}/pt/lesson/${dayNumber}/${tokenData.token}`;
 
-    // TODO: Uncomment when Resend is configured
-    /*
-    const Resend = require('resend');
-    const resend = new Resend(process.env.RESEND_API_KEY);
+    // Send email via Resend
+    let emailSent = false;
+    let emailError = null;
 
-    const emailContent = getEmailContent(lesson, user.language_preference, lessonUrl);
-    
-    const { data, error } = await resend.emails.send({
-      from: 'FaloClaro <noreply@faloclaro.com>',
-      to: user.email,
-      subject: emailContent.subject,
-      html: emailContent.html,
-      text: emailContent.text,
-    });
+    if (process.env.RESEND_API_KEY) {
+      try {
+        const { Resend } = require('resend');
+        const resend = new Resend(process.env.RESEND_API_KEY);
 
-    if (error) {
-      console.error('Resend error:', error);
-      return NextResponse.json(
-        { error: 'Failed to send email' },
-        { status: 500 }
-      );
+        const emailContent = getEmailContent(lesson, user.language_preference, lessonUrl);
+        
+        // Use verified domain: faloclaro.com
+        // Make sure domain is verified in Resend Dashboard before using
+        const fromEmail = process.env.RESEND_FROM_EMAIL || 'FaloClaro <noreply@faloclaro.com>';
+        
+        const { data, error } = await resend.emails.send({
+          from: fromEmail,
+          to: user.email,
+          subject: emailContent.subject,
+          html: emailContent.html,
+          text: emailContent.text,
+        });
+
+        if (error) {
+          console.error('Resend error:', error);
+          emailError = error;
+        } else {
+          emailSent = true;
+          console.log('Email sent successfully:', data?.id);
+        }
+      } catch (err) {
+        console.error('Error sending email:', err);
+        emailError = err;
+      }
+    } else {
+      console.warn('RESEND_API_KEY not configured. Email not sent.');
     }
-    */
 
     // Log email sent (even if not actually sent yet)
     await supabase
@@ -127,9 +141,10 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: 'Email queued for sending',
+      message: emailSent ? 'Email sent successfully' : emailError ? 'Email failed to send' : 'Email queued (Resend not configured)',
       lessonUrl, // Return URL for testing
-      // emailId: data?.id, // Uncomment when Resend is active
+      emailSent,
+      ...(emailError && { error: emailError.message || 'Email sending failed' }),
     });
   } catch (error) {
     console.error('Error sending lesson email:', error);
