@@ -243,22 +243,14 @@ export default function ListeningTask({ task, language, onComplete, isCompleted 
                   key={index}
                   onClick={() => handleAnswerSelect(currentItemIndex, option.text)}
                   disabled={showResultForOption}
-                  className={`w-full text-left px-4 rounded-lg transition-colors flex items-center ${
-                    showResultForOption
-                      ? isCorrect
-                        ? 'bg-green-100 border-2 border-green-500'
-                        : isSelected && !isCorrect
-                        ? 'bg-red-100 border-2 border-red-500'
-                        : 'bg-gray-100 border-2 border-gray-300'
-                      : 'bg-white border-0 hover:border-0'
-                  }`}
+                  className="w-full text-left px-4 rounded-lg transition-colors flex items-center"
                   style={{
                     height: '55px',
                     backgroundColor: showResultForOption 
-                      ? (isCorrect ? 'rgb(220 252 231)' : (isSelected && !isCorrect ? 'rgb(254 226 226)' : 'rgb(243 244 246)'))
+                      ? (isCorrect ? 'rgb(220 252 231)' : (isSelected && !isCorrect ? 'rgb(254 226 226)' : 'white'))
                       : 'white',
                     border: showResultForOption 
-                      ? (isCorrect ? '2px solid rgb(34 197 94)' : (isSelected && !isCorrect ? '2px solid rgb(239 68 68)' : '2px solid rgb(209 213 219)'))
+                      ? (isCorrect ? '2px solid rgb(34 197 94)' : (isSelected && !isCorrect ? '2px solid rgb(239 68 68)' : 'none'))
                       : 'none'
                   }}
                 >
