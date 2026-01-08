@@ -82,6 +82,13 @@ export async function POST(request: NextRequest) {
       throw tokenError;
     }
 
+    if (!tokenData || !tokenData.token) {
+      return NextResponse.json(
+        { error: 'Failed to create access token' },
+        { status: 500 }
+      );
+    }
+
     const lessonUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://www.faloclaro.com'}/pt/lesson/${dayNumber}/${tokenData.token}`;
 
     // TODO: Uncomment when Resend is configured

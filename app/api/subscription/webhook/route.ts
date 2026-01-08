@@ -10,15 +10,22 @@ import { supabase } from '@/lib/supabase';
  * - payment_intent.succeeded - Payment confirmed
  */
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2025-12-15.clover',
-});
+const getStripe = () => {
+  const key = process.env.STRIPE_SECRET_KEY;
+  if (!key) {
+    return null;
+  }
+  return new Stripe(key, {
+    apiVersion: '2025-12-15.clover',
+  });
+};
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 export async function POST(request: NextRequest) {
   try {
-    if (!process.env.STRIPE_SECRET_KEY) {
+    const stripe = getStripe();
+    if (!stripe) {
       return NextResponse.json(
         { error: 'Stripe not configured' },
         { status: 500 }

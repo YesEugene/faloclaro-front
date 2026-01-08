@@ -8,13 +8,20 @@ import { supabase } from '@/lib/supabase';
  * This is called when user wants to pay for full course after trial
  */
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2025-12-15.clover',
-});
+const getStripe = () => {
+  const key = process.env.STRIPE_SECRET_KEY;
+  if (!key) {
+    return null;
+  }
+  return new Stripe(key, {
+    apiVersion: '2025-12-15.clover',
+  });
+};
 
 export async function POST(request: NextRequest) {
   try {
-    if (!process.env.STRIPE_SECRET_KEY) {
+    const stripe = getStripe();
+    if (!stripe) {
       return NextResponse.json(
         { error: 'Stripe secret key not configured' },
         { status: 500 }

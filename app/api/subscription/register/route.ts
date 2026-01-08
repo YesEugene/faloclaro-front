@@ -137,9 +137,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // TODO: Send email with lesson link
-    // For now, we'll just return success
-    // In production, integrate with email service (SendGrid, Resend, etc.)
+    // Send email with lesson link (async, don't wait)
+    // This will be handled by the send-lesson-email endpoint when Resend is configured
+    fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/subscription/send-lesson-email`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        userId: user.id,
+        lessonId: lesson.id,
+        dayNumber: 1,
+      }),
+    }).catch(err => {
+      console.error('Error sending email (non-blocking):', err);
+    });
 
     // Log email sent
     await supabase
