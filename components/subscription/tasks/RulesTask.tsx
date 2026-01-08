@@ -245,9 +245,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted }: R
                       height: '50px',
                       backgroundColor: 'rgba(255, 255, 255, 1)',
                       borderRadius: '6px',
-                      borderWidth: '2px',
-                      borderColor: 'rgba(255, 255, 255, 1)',
-                      borderStyle: 'solid'
+                      border: 'none'
                     }}
                   >
                     <div className="flex items-center justify-between" style={{ height: '10px', marginTop: '3px', marginBottom: '3px' }}>
@@ -270,12 +268,12 @@ export default function RulesTask({ task, language, onComplete, isCompleted }: R
                           }}
                         >
                           {isPlayingAudio[example.text] ? (
-                            <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                            <svg className="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
                               <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
                             </svg>
                           ) : (
-                            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" style={{ color: 'rgba(0, 0, 0, 1)' }}>
-                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" style={{ color: 'rgba(0, 0, 0, 1)' }} />
+                            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" style={{ color: 'rgba(59, 130, 246, 1)' }}>
+                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
                             </svg>
                           )}
                         </button>
@@ -293,7 +291,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted }: R
                   borderWidth: '1px',
                   borderColor: 'rgba(194, 194, 194, 1)',
                   borderStyle: 'solid',
-                  backgroundColor: 'rgba(199, 199, 199, 0)'
+                  backgroundColor: '#F4F5F8'
                 }}
               >
                 <p className="text-sm font-semibold mb-2" style={{ color: 'rgba(0, 0, 0, 1)', backgroundClip: 'unset', WebkitBackgroundClip: 'unset' }}>
@@ -324,9 +322,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted }: R
                       height: '50px',
                       backgroundColor: 'rgba(255, 255, 255, 1)',
                       borderRadius: '6px',
-                      borderWidth: '2px',
-                      borderColor: 'rgba(255, 255, 255, 1)',
-                      borderStyle: 'solid'
+                      border: 'none'
                     }}
                   >
                     <div className="flex items-center justify-between" style={{ height: '9px', marginTop: '3px', marginBottom: '3px' }}>
@@ -349,12 +345,12 @@ export default function RulesTask({ task, language, onComplete, isCompleted }: R
                           }}
                         >
                           {isPlayingAudio[card.text] ? (
-                            <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                            <svg className="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
                               <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
                             </svg>
                           ) : (
-                            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" style={{ color: 'rgba(0, 0, 0, 1)' }}>
-                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" style={{ color: 'rgba(0, 0, 0, 1)' }} />
+                            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" style={{ color: 'rgba(59, 130, 246, 1)' }}>
+                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
                             </svg>
                           )}
                         </button>
@@ -366,7 +362,15 @@ export default function RulesTask({ task, language, onComplete, isCompleted }: R
             )}
 
             {currentBlock.note && (
-              <div className="bg-gray-50 rounded-lg p-4 mt-4">
+              <div 
+                className="rounded-lg p-4 mt-4"
+                style={{ 
+                  borderWidth: '1px',
+                  borderColor: 'rgba(194, 194, 194, 1)',
+                  borderStyle: 'solid',
+                  backgroundColor: '#F4F5F8'
+                }}
+              >
                 <p className="text-sm text-gray-700 whitespace-pre-line">{currentBlock.note}</p>
               </div>
             )}
@@ -414,14 +418,14 @@ export default function RulesTask({ task, language, onComplete, isCompleted }: R
                         key={index}
                         onClick={() => handleAnswerSelect(taskKey, option.text)}
                         disabled={showResult}
-                        className={`w-full text-left p-4 rounded-lg border-2 transition-colors ${
+                        className={`w-full text-left p-4 rounded-lg transition-colors ${
                           showResult
                             ? isCorrect
-                              ? 'bg-green-100 border-green-500'
+                              ? 'bg-green-100 border-2 border-green-500'
                               : isSelected && !isCorrect
-                              ? 'bg-red-100 border-red-500'
-                              : 'bg-gray-100 border-gray-300'
-                            : 'bg-white border-gray-300 hover:border-blue-500'
+                              ? 'bg-red-100 border-2 border-red-500'
+                              : 'bg-gray-100 border-2 border-gray-300'
+                            : 'bg-white border-0 hover:border-0'
                         }`}
                       >
                         {option.text}
@@ -449,14 +453,14 @@ export default function RulesTask({ task, language, onComplete, isCompleted }: R
                 key={index}
                         onClick={() => handleAnswerSelect(taskKey, option.text)}
                 disabled={showResult}
-                        className={`w-full text-left p-4 rounded-lg border-2 transition-colors ${
+                        className={`w-full text-left p-4 rounded-lg transition-colors ${
                   showResult
                             ? isCorrect
-                      ? 'bg-green-100 border-green-500'
+                      ? 'bg-green-100 border-2 border-green-500'
                               : isSelected && !isCorrect
-                      ? 'bg-red-100 border-red-500'
-                      : 'bg-gray-100 border-gray-300'
-                    : 'bg-white border-gray-300 hover:border-blue-500'
+                      ? 'bg-red-100 border-2 border-red-500'
+                      : 'bg-gray-100 border-2 border-gray-300'
+                    : 'bg-white border-0 hover:border-0'
                 }`}
               >
                 {option.text}
@@ -470,10 +474,23 @@ export default function RulesTask({ task, language, onComplete, isCompleted }: R
         );
 
       case 'speak_out_loud':
+        // Process instruction_text to make "Olá. Eu sou …" and "Olá. Chamo-me …" bold
+        const processInstructionText = (text: string) => {
+          if (!text) return text;
+          // Replace "Olá. Eu sou …" with bold version
+          let processed = text.replace(/(Olá\.\s*Eu sou\s*…)/gi, '<strong>$1</strong>');
+          // Replace "Olá. Chamo-me …" with bold version
+          processed = processed.replace(/(Olá\.\s*Chamo-me\s*…)/gi, '<strong>$1</strong>');
+          return processed;
+        };
+        
         return (
           <div className="space-y-4">
             <h3 className="text-xl font-bold text-black mb-4">{currentBlock.title}</h3>
-            <p className="text-gray-700 whitespace-pre-line mb-6">{currentBlock.instruction_text}</p>
+            <p 
+              className="text-gray-700 whitespace-pre-line mb-6"
+              dangerouslySetInnerHTML={{ __html: processInstructionText(currentBlock.instruction_text) }}
+            />
             
             {!speakOutLoudCompleted ? (
               <button
