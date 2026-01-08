@@ -504,7 +504,7 @@ export default function VocabularyTaskPlayer({
       >
         {/* Timer - Small white rounded badge in top right */}
         {task.ui?.show_timer && requiredTime > 0 && (
-          <div className="absolute top-4 right-4 bg-white rounded-full px-3 py-1.5 shadow-sm z-10">
+          <div className="absolute top-4 right-4 bg-white rounded-full px-3 py-1.5 shadow-sm" style={{ zIndex: 0 }}>
             <span className="text-sm font-medium text-gray-700 whitespace-nowrap">
               {formatTime(displayTime)} / {formatTime(requiredTime)}
             </span>
