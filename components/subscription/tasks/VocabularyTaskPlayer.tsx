@@ -690,7 +690,7 @@ export default function VocabularyTaskPlayer({
               zIndex: 35
             }}
           >
-            <span className="text-sm font-medium text-gray-700 whitespace-nowrap">
+            <span className="text-xs font-medium text-gray-700 whitespace-nowrap" style={{ height: '12px', fontSize: '12px' }}>
               {formatTime(displayTime)} / {formatTime(requiredTime)}
             </span>
           </div>
