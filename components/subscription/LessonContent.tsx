@@ -251,7 +251,7 @@ export default function LessonContent({ lesson, userProgress, token, onProgressU
   return (
     <div className="min-h-screen bg-white">
       {/* Header with Logo and Language Selector */}
-      <div className="sticky top-0 bg-white z-10 border-b border-gray-200">
+      <div className="sticky top-0 bg-white z-10" style={{ borderBottomWidth: '0px', borderWidth: '0px' }}>
         <div className="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
           {/* Logo */}
           <Link href="/pt" className="flex items-center cursor-pointer">
