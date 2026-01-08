@@ -233,7 +233,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted }: R
                       borderRadius: '6px'
                     }}
                   >
-                    <div className="flex items-center justify-between" style={{ height: '14px' }}>
+                    <div className="flex items-center justify-between" style={{ height: '14px', marginTop: '3px', marginBottom: '3px' }}>
                       <p className="text-black font-medium text-lg">{example.text}</p>
                       {example.audio && audioUrls[example.text] && (
                         <button
@@ -287,7 +287,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted }: R
                 </p>
                 <ul className="list-disc list-inside space-y-1">
                   {currentBlock.hint.map((hint: string, index: number) => (
-                    <li key={index} className="text-sm" style={{ color: 'transparent', backgroundClip: 'text', WebkitBackgroundClip: 'text' }}>{hint}</li>
+                    <li key={index} className="text-sm" style={{ color: 'rgba(0, 0, 0, 1)', marginTop: '2px', marginBottom: '2px' }}>{hint}</li>
                   ))}
                 </ul>
               </div>
@@ -305,14 +305,17 @@ export default function RulesTask({ task, language, onComplete, isCompleted }: R
                 {currentBlock.comparison_card.map((card: any, index: number) => (
                   <div 
                     key={index} 
-                    className="border-2 border-gray-200 p-4"
+                    className="p-4"
                     style={{ 
                       height: '50px',
-                      backgroundColor: 'rgba(244, 245, 248, 1)',
-                      borderRadius: '6px'
+                      backgroundColor: 'rgba(255, 255, 255, 1)',
+                      borderRadius: '6px',
+                      borderWidth: '2px',
+                      borderColor: 'rgba(255, 255, 255, 1)',
+                      borderStyle: 'solid'
                     }}
                   >
-                    <div className="flex items-center justify-between" style={{ height: '14px' }}>
+                    <div className="flex items-center justify-between" style={{ height: '14px', marginTop: '3px', marginBottom: '3px' }}>
                       <p className="text-black font-medium text-lg">{card.text}</p>
                       {card.audio && audioUrls[card.text] && (
                         <button
