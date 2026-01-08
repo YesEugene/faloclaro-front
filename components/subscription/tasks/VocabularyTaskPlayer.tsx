@@ -241,12 +241,14 @@ export default function VocabularyTaskPlayer({
       setWordTranslations(translations);
       
       console.log('📋 Loaded audio URLs:', Object.keys(urls).length, 'out of', cards.length);
+      console.log('📋 Audio URLs details:', Object.entries(urls).map(([word, url]) => `${word}: ${url ? 'OK' : 'MISSING'}`).join(', '));
     };
 
     if (cards.length > 0) {
       loadCardData();
     }
   }, [cards]);
+
 
   // Audio playback logic (from existing player)
   const playAudioSafely = useCallback(async (audio: HTMLAudioElement): Promise<boolean> => {
@@ -296,7 +298,7 @@ export default function VocabularyTaskPlayer({
     }
   }, [isPlaying, currentCard, audioUrls, playAudioSafely]);
 
-  const handleAudioEnded = useCallback(async () => {
+  const handleAudioEnded = useCallback(() => {
     if (!audioRef.current || !currentCard) return;
     
     if (isRepeatingRef.current) return;
@@ -306,12 +308,57 @@ export default function VocabularyTaskPlayer({
       const newRepeat = prevRepeat + 1;
       const maxRepeats = repeatCount === 'infinite' ? Infinity : repeatCount;
 
-      if (newRepeat >= maxRepeats) {
+      // If reached max repeats (and not infinite), switch to next card
+      if (newRepeat >= maxRepeats && repeatCount !== 'infinite') {
         setIsPlaying(false);
         isRepeatingRef.current = false;
+        
+        // Auto-advance to next card after a short delay
+        setTimeout(() => {
+          if (audioRef.current && !audioRef.current.paused) {
+            audioRef.current.pause();
+            setIsPlaying(false);
+          }
+          if (repeatTimeoutRef.current) {
+            clearTimeout(repeatTimeoutRef.current);
+          }
+          setCurrentRepeat(0);
+          
+          // Calculate next index (with wrap-around for infinite loop)
+          let nextIndex: number;
+          if (isRandomMode) {
+            nextIndex = Math.floor(Math.random() * cards.length);
+          } else {
+            nextIndex = currentCardIndex + 1;
+            if (nextIndex >= cards.length) {
+              // Wrap around to first card for infinite loop
+              nextIndex = 0;
+            }
+          }
+          
+          setCurrentCardIndex(nextIndex);
+          currentIndexRef.current = nextIndex;
+          
+          // Auto-play next card after switching
+          setTimeout(async () => {
+            const nextCard = cards[nextIndex];
+            if (audioRef.current && nextCard?.word && audioUrls[nextCard.word]) {
+              audioRef.current.src = audioUrls[nextCard.word];
+              audioRef.current.load();
+              const success = await playAudioSafely(audioRef.current);
+              if (success) {
+                setIsPlaying(true);
+              }
+            } else {
+              console.warn(`⚠️  Cannot auto-play next card: word="${nextCard?.word}", url="${audioUrls[nextCard?.word]}"`);
+            }
+          }, 100);
+        }, 500);
+        
         return newRepeat;
       }
 
+      // If infinite mode or not reached max repeats, continue repeating
       const pauseDelay = pauseBetweenRepeats * 1000;
       repeatTimeoutRef.current = setTimeout(async () => {
         if (!audioRef.current) {
@@ -332,7 +379,7 @@ export default function VocabularyTaskPlayer({
 
       return newRepeat;
     });
-  }, [repeatCount, pauseBetweenRepeats, playAudioSafely, currentCard]);
+  }, [repeatCount, pauseBetweenRepeats, playAudioSafely, currentCard, currentCardIndex, cards, isRandomMode, audioUrls]);
 
   // Audio event listeners
   useEffect(() => {
@@ -384,15 +431,25 @@ export default function VocabularyTaskPlayer({
     });
   };
 
+
   const handleNextCard = () => {
     if (audioRef.current && !audioRef.current.paused) {
       audioRef.current.pause();
       setIsPlaying(false);
     }
+    if (repeatTimeoutRef.current) {
+      clearTimeout(repeatTimeoutRef.current);
+    }
+    isRepeatingRef.current = false;
+    setCurrentRepeat(0);
+    
     if (currentCardIndex < cards.length - 1) {
       setCurrentCardIndex(currentCardIndex + 1);
       currentIndexRef.current = currentCardIndex + 1;
-      setCurrentRepeat(0);
+    } else if (isRandomMode || repeatCount === 'infinite') {
+      // Wrap around to first card for infinite loop
+      setCurrentCardIndex(0);
+      currentIndexRef.current = 0;
     }
   };
 
@@ -484,18 +541,24 @@ export default function VocabularyTaskPlayer({
   // Show final time when timer completed
   const displayTime = isTimerCompleted ? requiredTime : elapsedTime;
 
-  // Update audio source when currentAudioUrl changes
+  // Update audio source when currentCard changes
   useEffect(() => {
-    if (audioRef.current && currentAudioUrl) {
-      audioRef.current.src = currentAudioUrl;
-      audioRef.current.load();
-      console.log('🎵 Updated audio source:', currentAudioUrl);
-    } else if (audioRef.current && !currentAudioUrl) {
-      // Clear audio if no URL
+    if (audioRef.current && currentCard?.word) {
+      const audioUrl = audioUrls[currentCard.word];
+      if (audioUrl) {
+        audioRef.current.src = audioUrl;
+        audioRef.current.load();
+        console.log(`🎵 Updated audio source for word "${currentCard.word}" (card ${currentCardIndex + 1}/${cards.length}):`, audioUrl);
+      } else {
+        console.warn(`⚠️  No audio URL found for word "${currentCard.word}" (card ${currentCardIndex + 1}/${cards.length})`);
+        console.warn(`   Available URLs:`, Object.keys(audioUrls).join(', '));
+        audioRef.current.src = '';
+      }
+    } else if (audioRef.current && !currentCard?.word) {
       audioRef.current.src = '';
-      console.log('⚠️  No audio URL for current card');
+      console.log('⚠️  No word for current card');
     }
-  }, [currentAudioUrl]);
+  }, [currentCardIndex, currentCard, audioUrls, cards.length]);
 
   return (
     <div className="space-y-4 pb-24">
