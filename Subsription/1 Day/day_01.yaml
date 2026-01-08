@@ -225,10 +225,17 @@ tasks:
   - task_id: 3
     type: "listening_comprehension"
     title: "Предложения и понимание"
+    subtitle: "Слушай фразу и пойми, о чём она"
+    estimated_time: "≈5 минут"
+    show_timer: false
+    show_settings: false
+    completion_message: "Уровень прогресса: Понимание"
 
     items:
-      - audio: "Olá, chamo-me Ana"
+      - item_id: 1
+        audio: "Olá, chamo-me Ana."
         show_text_after_answer: true
+        text_hidden_before_answer: true
         question: "Como se chama a pessoa?"
         options:
           - text: "Ana"
@@ -238,8 +245,10 @@ tasks:
           - text: "Maria"
             correct: false
 
-      - audio: "Bom dia. Eu sou João"
+      - item_id: 2
+        audio: "Bom dia. Eu sou João."
         show_text_after_answer: true
+        text_hidden_before_answer: true
         question: "Quem é?"
         options:
           - text: "João"
@@ -249,7 +258,19 @@ tasks:
           - text: "Não sabemos"
             correct: false
 
-    completion_message: "Уровень прогресса: Понимание"
+      - item_id: 3
+        optional: true
+        audio: "Olá, eu sou Maria."
+        show_text_after_answer: true
+        text_hidden_before_answer: true
+        question: "O que a pessoa faz?"
+        options:
+          - text: "Apresenta-se"
+            correct: true
+          - text: "Despede-se"
+            correct: false
+          - text: "Pede ajuda"
+            correct: false
 
   - task_id: 4
     type: "attention"
