@@ -97,6 +97,17 @@ function OverviewPageContent() {
         throw progressError;
       }
 
+      // Debug: Log lesson data
+      console.log('Lesson loaded:', {
+        lessonId: lessonData.id,
+        dayNumber: lessonData.day_number,
+        hasYamlContent: !!lessonData.yaml_content,
+        yamlContentType: typeof lessonData.yaml_content,
+        yamlContentKeys: lessonData.yaml_content ? Object.keys(lessonData.yaml_content) : [],
+        tasksInYaml: lessonData.yaml_content?.tasks?.length || 0,
+        yamlContent: lessonData.yaml_content
+      });
+
       setLesson(lessonData);
       setUserProgress(progressData);
     } catch (err) {
@@ -170,15 +181,33 @@ function OverviewPageContent() {
     return null;
   }
 
-  const yamlContent = lesson.yaml_content || {};
+  // Parse yaml_content - handle both string and object
+  let yamlContent = {};
+  if (lesson.yaml_content) {
+    if (typeof lesson.yaml_content === 'string') {
+      try {
+        yamlContent = JSON.parse(lesson.yaml_content);
+      } catch (e) {
+        console.error('Error parsing yaml_content as JSON:', e);
+        yamlContent = {};
+      }
+    } else {
+      yamlContent = lesson.yaml_content;
+    }
+  }
+
   const dayInfo = yamlContent.day || {};
-  const tasks = yamlContent.tasks || [];
+  const tasks = Array.isArray(yamlContent.tasks) ? yamlContent.tasks : [];
   const allCompleted = userProgress.tasks_completed >= userProgress.total_tasks;
 
   // Debug: Log tasks and completion status
   console.log('Overview Debug:', {
+    hasLesson: !!lesson,
+    hasYamlContent: !!lesson?.yaml_content,
+    yamlContentType: typeof lesson?.yaml_content,
+    parsedYamlContent: yamlContent,
     tasksCount: tasks.length,
-    tasks: tasks.map((t: any) => ({ id: t.task_id, type: t.type })),
+    tasks: tasks.map((t: any) => ({ id: t.task_id, type: t.type, title: t.title })),
     allCompleted,
     tasksCompleted: userProgress.tasks_completed,
     totalTasks: userProgress.total_tasks,
@@ -319,70 +348,82 @@ function OverviewPageContent() {
         )}
 
         {/* Tasks List - Always visible, even when all completed */}
-        {tasks.length > 0 ? (
-          <div className="space-y-3 mb-8">
-            {tasks.map((task: any, index: number) => {
-              const status = getTaskStatus(task.task_id);
-              const isClickable = status !== 'locked';
-              
-              return (
-                <div
-                  key={task.task_id}
-                  onClick={() => handleTaskClick(task.task_id)}
-                  className={`rounded-lg p-4 border-2 transition-all ${
-                    status === 'current'
-                      ? 'border-black bg-white cursor-pointer hover:bg-gray-50'
-                      : status === 'completed'
-                      ? 'border-green-500 bg-green-50 cursor-pointer hover:bg-green-100'
-                      : 'border-gray-300 bg-gray-100 opacity-60 cursor-not-allowed'
-                  }`}
-                >
-                  <div className="flex items-start gap-3">
-                    {/* Icon */}
-                    <div className="flex-shrink-0 mt-1">
-                      {status === 'completed' ? (
-                        <svg className="w-6 h-6 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                      ) : status === 'current' ? (
-                        <svg className="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                      ) : (
-                        <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                      )}
-                    </div>
+        <div className="mb-8">
+          {tasks.length > 0 ? (
+            <div className="space-y-3">
+              {tasks.map((task: any, index: number) => {
+                const status = getTaskStatus(task.task_id);
+                const isClickable = status !== 'locked';
+                
+                return (
+                  <div
+                    key={task.task_id || index}
+                    onClick={() => handleTaskClick(task.task_id)}
+                    className={`rounded-lg p-4 border-2 transition-all ${
+                      status === 'current'
+                        ? 'border-black bg-white cursor-pointer hover:bg-gray-50'
+                        : status === 'completed'
+                        ? 'border-green-500 bg-green-50 cursor-pointer hover:bg-green-100'
+                        : 'border-gray-300 bg-gray-100 opacity-60 cursor-not-allowed'
+                    }`}
+                    style={{ display: 'block' }}
+                  >
+                    <div className="flex items-start gap-3">
+                      {/* Icon */}
+                      <div className="flex-shrink-0 mt-1">
+                        {status === 'completed' ? (
+                          <svg className="w-6 h-6 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          </svg>
+                        ) : status === 'current' ? (
+                          <svg className="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                        ) : (
+                          <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
+                        )}
+                      </div>
 
-                    {/* Content */}
-                    <div className="flex-1">
-                      <h3 className={`font-bold mb-1 ${
-                        status === 'current' ? 'text-black' : status === 'completed' ? 'text-black' : 'text-gray-500'
-                      }`}>
-                        {getTaskDisplayName(task, index)}
-                      </h3>
-                      <p className={`text-sm ${
-                        status === 'current' ? 'text-gray-700' : status === 'completed' ? 'text-gray-600' : 'text-gray-400'
-                      }`}>
-                        {getTaskDescription(task)}
-                      </p>
+                      {/* Content */}
+                      <div className="flex-1">
+                        <h3 className={`font-bold mb-1 ${
+                          status === 'current' ? 'text-black' : status === 'completed' ? 'text-black' : 'text-gray-500'
+                        }`}>
+                          {getTaskDisplayName(task, index)}
+                        </h3>
+                        <p className={`text-sm ${
+                          status === 'current' ? 'text-gray-700' : status === 'completed' ? 'text-gray-600' : 'text-gray-400'
+                        }`}>
+                          {getTaskDescription(task)}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
-        ) : (
-          <div className="mb-8 text-gray-500 text-center py-4">
-            {appLanguage === 'ru' 
-              ? 'Задачи не найдены' 
-              : appLanguage === 'en' 
-              ? 'No tasks found' 
-              : 'Tarefas não encontradas'}
-          </div>
-        )}
+                );
+              })}
+            </div>
+          ) : (
+            <div className="text-gray-500 text-center py-8 border-2 border-dashed border-gray-300 rounded-lg">
+              <p className="text-lg mb-2">
+                {appLanguage === 'ru' 
+                  ? 'Задачи не найдены' 
+                  : appLanguage === 'en' 
+                  ? 'No tasks found' 
+                  : 'Tarefas não encontradas'}
+              </p>
+              <p className="text-sm text-gray-400">
+                {appLanguage === 'ru' 
+                  ? 'Проверьте консоль браузера (F12) для отладки' 
+                  : appLanguage === 'en' 
+                  ? 'Check browser console (F12) for debugging' 
+                  : 'Verifique o console do navegador (F12) para depuração'}
+              </p>
+            </div>
+          )}
+        </div>
 
         {/* Completion Icon - Show below tasks, not instead of them */}
         {allCompleted && (
