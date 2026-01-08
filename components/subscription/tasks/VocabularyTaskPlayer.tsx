@@ -385,18 +385,6 @@ export default function VocabularyTaskPlayer({
 
   return (
     <div className="space-y-4 pb-24">
-      {/* Timer */}
-      {task.ui?.show_timer && requiredTime > 0 && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-center mb-4">
-          <div className="text-sm text-blue-600 mb-1">
-            {t.time}
-          </div>
-          <div className="text-2xl font-bold text-blue-800">
-            {formatTime(elapsedTime)} / {formatTime(requiredTime)}
-          </div>
-        </div>
-      )}
-
       {/* Card - Using existing player design */}
       <div
         className="rounded-[30px] p-4 mb-6 relative touch-none select-none aspect-square shadow-lg flex flex-col"
@@ -405,6 +393,15 @@ export default function VocabularyTaskPlayer({
           border: '2px solid white',
         }}
       >
+        {/* Timer - Small white rounded badge in top right */}
+        {task.ui?.show_timer && requiredTime > 0 && (
+          <div className="absolute top-4 right-4 bg-white rounded-full px-3 py-1.5 shadow-sm z-10">
+            <span className="text-sm font-medium text-gray-700 whitespace-nowrap">
+              {formatTime(elapsedTime)} / {formatTime(requiredTime)}
+            </span>
+          </div>
+        )}
+
         {/* Progress Indicator */}
         <div className="text-black text-center mt-5 mb-5 font-medium">
           {currentCardIndex + 1} / {cards.length}

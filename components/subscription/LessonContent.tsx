@@ -203,21 +203,6 @@ export default function LessonContent({ lesson, userProgress, token, onProgressU
             <span className="text-gray-700">← {t.back}</span>
           </button>
         </div>
-
-        {/* Day Info */}
-        <div className="max-w-md mx-auto px-4 pb-4">
-          <div className="text-sm text-gray-600 mb-2 text-center">
-            {t.day} {lesson.day_number} / 60
-          </div>
-          <h1 className="text-2xl font-bold text-black text-center">
-            {appLanguage === 'ru' ? dayInfo.title : appLanguage === 'en' ? dayInfo.title_en : dayInfo.title_pt}
-          </h1>
-          {dayInfo.subtitle && (
-            <p className="text-gray-600 mt-1 text-center">
-              {appLanguage === 'ru' ? dayInfo.subtitle : appLanguage === 'en' ? dayInfo.subtitle_en : dayInfo.subtitle_pt}
-            </p>
-          )}
-        </div>
       </div>
 
       {/* Progress Bar */}
