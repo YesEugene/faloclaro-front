@@ -182,7 +182,7 @@ function OverviewPageContent() {
   }
 
   // Parse yaml_content - handle both string and object
-  let yamlContent = {};
+  let yamlContent: any = {};
   if (lesson.yaml_content) {
     if (typeof lesson.yaml_content === 'string') {
       try {
@@ -196,7 +196,7 @@ function OverviewPageContent() {
     }
   }
 
-  const dayInfo = yamlContent.day || {};
+  const dayInfo = (yamlContent.day || {}) as any;
   const tasks = Array.isArray(yamlContent.tasks) ? yamlContent.tasks : [];
   const allCompleted = userProgress.tasks_completed >= userProgress.total_tasks;
 
