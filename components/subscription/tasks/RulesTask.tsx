@@ -276,16 +276,13 @@ export default function RulesTask({ task, language, onComplete, isCompleted }: R
               <div 
                 className="rounded-lg p-4 mt-4"
                 style={{ 
-                  color: 'transparent',
-                  backgroundClip: 'text',
-                  WebkitBackgroundClip: 'text',
                   borderWidth: '1px',
                   borderColor: 'rgba(194, 194, 194, 1)',
                   borderStyle: 'solid',
                   backgroundColor: 'rgba(199, 199, 199, 0)'
                 }}
               >
-                <p className="text-sm font-semibold mb-2" style={{ color: 'rgba(0, 0, 0, 1)' }}>
+                <p className="text-sm font-semibold mb-2" style={{ color: 'rgba(0, 0, 0, 1)', backgroundClip: 'unset', WebkitBackgroundClip: 'unset' }}>
                   {appLanguage === 'ru' ? 'Подсказка:' : appLanguage === 'en' ? 'Hint:' : 'Dica:'}
                 </p>
                 <ul className="list-disc list-inside space-y-1">
