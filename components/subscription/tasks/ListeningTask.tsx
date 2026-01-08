@@ -22,6 +22,20 @@ export default function ListeningTask({ task, language, onComplete, isCompleted 
   
   const audioRefs = useRef<{ [key: string]: HTMLAudioElement }>({});
 
+  // Debug: Log task structure
+  useEffect(() => {
+    console.log('🔍 ListeningTask Debug:', {
+      hasTask: !!task,
+      taskId: task?.task_id,
+      taskType: task?.type,
+      hasItems: !!task?.items,
+      itemsCount: task?.items?.length || 0,
+      items: task?.items || [],
+      fullTask: task
+    });
+  }, [task]);
+
+  // Get items from task - listening_comprehension uses items, not blocks
   const items = task.items || [];
   const currentItem = items[currentItemIndex];
 
