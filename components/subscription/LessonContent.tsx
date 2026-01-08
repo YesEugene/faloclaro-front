@@ -247,14 +247,6 @@ export default function LessonContent({ lesson, userProgress, token, onProgressU
             getTaskProgress={getTaskProgress}
           />
           
-          {/* Timer - Below progress bar for vocabulary task */}
-          {currentTask?.type === 'vocabulary' && currentTask?.ui?.show_timer && timerData && (
-            <div className="absolute top-0 right-4 bg-white rounded-full px-3 py-1.5 shadow-sm z-10">
-              <span className="text-sm font-medium text-gray-700 whitespace-nowrap">
-                {formatTime(timerData.elapsed)} / {formatTime(timerData.required)}
-              </span>
-            </div>
-          )}
         </div>
       </div>
 

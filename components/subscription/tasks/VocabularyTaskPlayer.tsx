@@ -235,6 +235,8 @@ export default function VocabularyTaskPlayer({
       
       setAudioUrls(urls);
       setWordTranslations(translations);
+      
+      console.log('📋 Loaded audio URLs:', Object.keys(urls).length, 'out of', cards.length);
     };
 
     if (cards.length > 0) {
@@ -477,6 +479,19 @@ export default function VocabularyTaskPlayer({
   // Show final time when timer completed
   const displayTime = isTimerCompleted ? requiredTime : elapsedTime;
 
+  // Update audio source when currentAudioUrl changes
+  useEffect(() => {
+    if (audioRef.current && currentAudioUrl) {
+      audioRef.current.src = currentAudioUrl;
+      audioRef.current.load();
+      console.log('🎵 Updated audio source:', currentAudioUrl);
+    } else if (audioRef.current && !currentAudioUrl) {
+      // Clear audio if no URL
+      audioRef.current.src = '';
+      console.log('⚠️  No audio URL for current card');
+    }
+  }, [currentAudioUrl]);
+
   return (
     <div className="space-y-4 pb-24">
       {/* Card - Using existing player design */}
@@ -487,6 +502,15 @@ export default function VocabularyTaskPlayer({
           border: '2px solid white',
         }}
       >
+        {/* Timer - Small white rounded badge in top right */}
+        {task.ui?.show_timer && requiredTime > 0 && (
+          <div className="absolute top-4 right-4 bg-white rounded-full px-3 py-1.5 shadow-sm z-10">
+            <span className="text-sm font-medium text-gray-700 whitespace-nowrap">
+              {formatTime(displayTime)} / {formatTime(requiredTime)}
+            </span>
+          </div>
+        )}
+
         {/* Progress Indicator */}
         <div className="text-black text-center mt-5 mb-5 font-medium">
           {currentCardIndex + 1} / {cards.length}
@@ -603,7 +627,7 @@ export default function VocabularyTaskPlayer({
 
       {/* Settings Button - Fixed at bottom */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-30">
-        <div className="max-w-md mx-auto px-4 py-2">
+        <div className="max-w-md mx-auto px-4 pt-[10px] pb-2">
           <button
             onClick={() => setShowSettings(!showSettings)}
             className="w-full px-4 py-3 rounded-[10px] bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors text-center"
@@ -761,7 +785,7 @@ export default function VocabularyTaskPlayer({
                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
               </svg>
               {[...Array(4)].map((_, i) => (
-                <svg key={i} className="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 20 20">
+                <svg key={i} className="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 20 20" style={{ width: '2rem', height: '2rem' }}>
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.364 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.364-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
                 </svg>
               ))}
