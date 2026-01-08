@@ -281,8 +281,8 @@ export default function VocabularyTaskPlayer({
         audioRef.current.pause();
         setIsPlaying(false);
       } else {
-        if (audioRef.current.src !== audioUrls[currentCard.example_sentence]) {
-          audioRef.current.src = audioUrls[currentCard.example_sentence];
+        if (audioRef.current.src !== audioUrls[currentCard.word]) {
+          audioRef.current.src = audioUrls[currentCard.word];
           audioRef.current.load();
         }
         const success = await playAudioSafely(audioRef.current);
