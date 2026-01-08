@@ -17,12 +17,18 @@ interface LessonContentProps {
   onProgressUpdate: () => void;
 }
 
-export default function LessonContent({ lesson, userProgress, token, onProgressUpdate }: LessonContentProps) {
+export default function LessonContent({ lesson, userProgress: initialUserProgress, token, onProgressUpdate }: LessonContentProps) {
   const router = useRouter();
   const { language: appLanguage } = useAppLanguage();
   const [tasks, setTasks] = useState<any[]>([]);
   const [currentTaskIndex, setCurrentTaskIndex] = useState(0);
   const [timerData, setTimerData] = useState<{ elapsed: number; required: number } | null>(null);
+  const [userProgress, setUserProgress] = useState(initialUserProgress);
+  
+  // Update userProgress when initialUserProgress changes
+  useEffect(() => {
+    setUserProgress(initialUserProgress);
+  }, [initialUserProgress]);
 
   useEffect(() => {
     // Parse yaml_content - handle both string and object
@@ -93,6 +99,7 @@ export default function LessonContent({ lesson, userProgress, token, onProgressU
     try {
       // Update task progress
       const taskProgress = userProgress.task_progress?.find((tp: any) => tp.task_id === taskId);
+      const wasAlreadyCompleted = taskProgress?.status === 'completed';
       
       if (taskProgress) {
         // Update existing
@@ -119,10 +126,12 @@ export default function LessonContent({ lesson, userProgress, token, onProgressU
           });
       }
 
-      // Update user progress
-      const completedTasks = (userProgress.task_progress || []).filter(
+      // Update user progress - count completed tasks correctly
+      // If task was already completed, don't add +1
+      const currentCompletedCount = (userProgress.task_progress || []).filter(
         (tp: any) => tp.status === 'completed'
-      ).length + 1;
+      ).length;
+      const completedTasks = wasAlreadyCompleted ? currentCompletedCount : currentCompletedCount + 1;
 
       // Parse yaml_content for task count
       let yamlContent: any = {};
@@ -149,8 +158,29 @@ export default function LessonContent({ lesson, userProgress, token, onProgressU
         })
         .eq('id', userProgress.id);
 
-      // Reload progress
-      onProgressUpdate();
+      // Reload progress - this will update userProgress from parent
+      await onProgressUpdate();
+      
+      // Also update local state immediately to reflect completion
+      // This ensures isCompleted is set correctly in TaskCard
+      const updatedTaskProgress = userProgress.task_progress?.map((tp: any) => 
+        tp.task_id === taskId ? { ...tp, status: 'completed', completed_at: new Date().toISOString() } : tp
+      ) || [];
+      
+      // If task progress didn't exist, add it
+      if (!taskProgress) {
+        updatedTaskProgress.push({
+          task_id: taskId,
+          status: 'completed',
+          completed_at: new Date().toISOString(),
+        });
+      }
+      
+      setUserProgress({
+        ...userProgress,
+        task_progress: updatedTaskProgress,
+        tasks_completed: completedTasks,
+      });
     } catch (error) {
       console.error('Error updating progress:', error);
     }
