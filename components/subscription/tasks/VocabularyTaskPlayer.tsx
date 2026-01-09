@@ -13,6 +13,9 @@ interface VocabularyTaskPlayerProps {
   isCompleted: boolean;
   clusterColor?: string; // Color from lesson's cluster
   onNextTask?: () => void;
+  onPreviousTask?: () => void;
+  canGoNext?: boolean;
+  canGoPrevious?: boolean;
   onBackToTasks?: () => void;
   onDictionaryList?: () => void;
   dayNumber?: number;
@@ -28,6 +31,9 @@ export default function VocabularyTaskPlayer({
   isCompleted,
   clusterColor = '#94B7F2', // Default color
   onNextTask,
+  onPreviousTask,
+  canGoNext = false,
+  canGoPrevious = false,
   onBackToTasks,
   onDictionaryList,
   dayNumber,
@@ -594,6 +600,7 @@ export default function VocabularyTaskPlayer({
       progressToday: 'Прогресс на сегодня',
       level: 'Начало',
       nextTask: 'Следующее задание',
+      previousTask: 'Предыдущее задание',
     },
     en: {
       time: 'Time:',
@@ -612,6 +619,7 @@ export default function VocabularyTaskPlayer({
       progressToday: 'Progress for today',
       level: 'Start',
       nextTask: 'Next task',
+      previousTask: 'Previous task',
     },
     pt: {
       time: 'Tempo:',
@@ -630,6 +638,7 @@ export default function VocabularyTaskPlayer({
       progressToday: 'Progresso de hoje',
       level: 'Início',
       nextTask: 'Próxima tarefa',
+      previousTask: 'Tarefa anterior',
     },
   };
 
@@ -815,15 +824,46 @@ export default function VocabularyTaskPlayer({
         </button>
       </div>
 
-      {/* Settings Button - Fixed at bottom */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-30" style={{ marginBottom: 0 }}>
+      {/* Settings Icon - Under Play button */}
+      <div className="flex items-center justify-center mb-6">
+        <button
+          onClick={() => setShowSettings(!showSettings)}
+          className="p-3 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+          aria-label={t.settings}
+        >
+          <img 
+            src="/Img/settings.svg" 
+            alt={t.settings}
+            className="w-6 h-6"
+            style={{ width: '24px', height: '24px' }}
+          />
+        </button>
+      </div>
+
+      {/* Navigation Panel - Fixed at bottom (Cross-task navigation) */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-30">
         <div className="max-w-md mx-auto px-4 pt-[10px] pb-3" style={{ height: '70px' }}>
-          <button
-            onClick={() => setShowSettings(!showSettings)}
-            className="w-full px-4 py-3 rounded-[10px] bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors text-center"
-          >
-            {t.settings}
-          </button>
+          <div className="flex gap-3">
+            {canGoPrevious && onPreviousTask && (
+              <button
+                onClick={onPreviousTask}
+                className="flex-1 px-4 py-3 rounded-[10px] bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors text-center font-medium"
+              >
+                ← {t.previousTask}
+              </button>
+            )}
+            {canGoNext && onNextTask && (
+              <button
+                onClick={onNextTask}
+                className={`${canGoPrevious && onPreviousTask ? 'flex-1' : 'w-full'} px-4 py-3 rounded-[10px] bg-green-500 text-white hover:bg-green-600 transition-colors text-center font-medium`}
+              >
+                {t.nextTask} →
+              </button>
+            )}
+            {!canGoPrevious && !canGoNext && (
+              <div className="flex-1"></div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -962,20 +1002,6 @@ export default function VocabularyTaskPlayer({
         />
       )}
 
-      {/* Next Task Button - Show after completion */}
-      {isCompleted && onNextTask && (
-        <div className="mt-6">
-          <button
-            onClick={onNextTask}
-            className="w-full bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-colors font-medium flex items-center justify-center gap-2"
-          >
-            <span>{t.nextTask}</span>
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-        </div>
-      )}
     </div>
   );
 }

@@ -9,9 +9,13 @@ interface ListeningTaskProps {
   language: string;
   onComplete: (completionData?: any) => void;
   isCompleted: boolean;
+  onNextTask?: () => void;
+  onPreviousTask?: () => void;
+  canGoNext?: boolean;
+  canGoPrevious?: boolean;
 }
 
-export default function ListeningTask({ task, language, onComplete, isCompleted }: ListeningTaskProps) {
+export default function ListeningTask({ task, language, onComplete, isCompleted, onNextTask, onPreviousTask, canGoNext = false, canGoPrevious = false }: ListeningTaskProps) {
   const { language: appLanguage } = useAppLanguage();
   const [currentItemIndex, setCurrentItemIndex] = useState(0);
   const [answers, setAnswers] = useState<{ [key: number]: string }>({});
@@ -330,6 +334,32 @@ export default function ListeningTask({ task, language, onComplete, isCompleted 
           : `Pergunta ${currentItemIndex + 1} de ${items.length}`}
       </div>
 
+      {/* Navigation Panel - Fixed at bottom (Cross-task navigation) */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-30">
+        <div className="max-w-md mx-auto px-4 pt-[10px] pb-3" style={{ height: '70px' }}>
+          <div className="flex gap-3">
+            {canGoPrevious && onPreviousTask && (
+              <button
+                onClick={onPreviousTask}
+                className="flex-1 px-4 py-3 rounded-[10px] bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors text-center font-medium"
+              >
+                ← {appLanguage === 'ru' ? 'Предыдущее задание' : appLanguage === 'en' ? 'Previous task' : 'Tarefa anterior'}
+              </button>
+            )}
+            {canGoNext && onNextTask && (
+              <button
+                onClick={onNextTask}
+                className={`${canGoPrevious && onPreviousTask ? 'flex-1' : 'w-full'} px-4 py-3 rounded-[10px] bg-green-500 text-white hover:bg-green-600 transition-colors text-center font-medium`}
+              >
+                {appLanguage === 'ru' ? 'Следующее задание' : appLanguage === 'en' ? 'Next task' : 'Próxima tarefa'} →
+              </button>
+            )}
+            {!canGoPrevious && !canGoNext && (
+              <div className="flex-1"></div>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

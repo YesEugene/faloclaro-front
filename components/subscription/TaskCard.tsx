@@ -90,6 +90,9 @@ export default function TaskCard({
             isCompleted={isCompleted}
             clusterColor="#94B7F2" // Default color for subscription course
             onNextTask={canGoNext ? onNext : undefined}
+            onPreviousTask={canGoPrevious ? onPrevious : undefined}
+            canGoNext={canGoNext}
+            canGoPrevious={canGoPrevious}
             onBackToTasks={onBackToTasks}
             onDictionaryList={onDictionaryList}
             dayNumber={dayNumber}
@@ -105,6 +108,10 @@ export default function TaskCard({
             language={language}
             onComplete={handleComplete}
             isCompleted={isCompleted}
+            onNextTask={canGoNext ? onNext : undefined}
+            onPreviousTask={canGoPrevious ? onPrevious : undefined}
+            canGoNext={canGoNext}
+            canGoPrevious={canGoPrevious}
           />
         );
       case 'listening_comprehension':
@@ -114,6 +121,10 @@ export default function TaskCard({
             language={language}
             onComplete={handleComplete}
             isCompleted={isCompleted}
+            onNextTask={canGoNext ? onNext : undefined}
+            onPreviousTask={canGoPrevious ? onPrevious : undefined}
+            canGoNext={canGoNext}
+            canGoPrevious={canGoPrevious}
           />
         );
       case 'attention':
@@ -123,6 +134,10 @@ export default function TaskCard({
             language={language}
             onComplete={handleComplete}
             isCompleted={isCompleted}
+            onNextTask={canGoNext ? onNext : undefined}
+            onPreviousTask={canGoPrevious ? onPrevious : undefined}
+            canGoNext={canGoNext}
+            canGoPrevious={canGoPrevious}
           />
         );
       case 'writing_optional':
@@ -132,6 +147,10 @@ export default function TaskCard({
             language={language}
             onComplete={handleComplete}
             isCompleted={isCompleted}
+            onNextTask={canGoNext ? onNext : undefined}
+            onPreviousTask={canGoPrevious ? onPrevious : undefined}
+            canGoNext={canGoNext}
+            canGoPrevious={canGoPrevious}
           />
         );
       default:
