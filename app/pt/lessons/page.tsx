@@ -155,19 +155,39 @@ function LessonsPageContent() {
           .limit(1)
           .maybeSingle(); // Use maybeSingle instead of single to avoid errors if no subscription
 
-        console.log('📊 Subscription data:', {
+        console.log('📊 Subscription query result:', {
           userId,
-          subData,
-          subError,
-          status: subData?.status,
-          hasSubscription: !!subData,
+          hasSubData: !!subData,
+          subData: subData ? {
+            id: subData.id,
+            status: subData.status,
+            statusType: typeof subData.status,
+            user_id: subData.user_id,
+            created_at: subData.created_at,
+            paid_at: subData.paid_at,
+            allFields: Object.keys(subData)
+          } : null,
+          subError: subError ? {
+            message: subError.message,
+            code: subError.code,
+            details: subError.details,
+            hint: subError.hint
+          } : null,
           errorCode: subError?.code
         });
 
         if (subData) {
+          console.log('✅ Subscription found:', {
+            status: subData.status,
+            statusIsPaid: subData.status === 'paid',
+            statusIsTrial: subData.status === 'trial',
+            statusIsActive: subData.status === 'active',
+            paidAt: subData.paid_at
+          });
           setSubscription(subData);
         } else {
           // No subscription found - user is on free trial (lessons 1-3 only)
+          console.log('ℹ️ No subscription found - user is on free trial (lessons 1-3 only)');
           setSubscription(null);
         }
 
