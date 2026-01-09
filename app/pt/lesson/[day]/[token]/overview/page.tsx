@@ -625,10 +625,11 @@ function OverviewPageContent() {
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
-                    justifyContent: 'center',
+                    justifyContent: 'flex-start',
                     cursor: 'pointer',
                     flexShrink: 0,
-                    gap: '4px',
+                    paddingTop: '12px',
+                    paddingBottom: '8px',
                   };
 
                   if (isCompleted) {
@@ -664,20 +665,17 @@ function OverviewPageContent() {
                       className="transition-all hover:opacity-80"
                     >
                       {/* Icon above number */}
-                      <div className="flex-shrink-0">
+                      <div className="flex-shrink-0 mb-2">
                         <Image
                           src={iconSrc}
                           alt={isCompleted ? 'Completed' : isCurrentLesson ? 'Current' : isUnlocked ? 'Unlocked' : 'Locked'}
                           width={24}
                           height={24}
                           className="w-6 h-6"
-                          style={{ 
-                            color: isCompleted ? '#10B981' : isCurrentLesson ? '#3B82F6' : isUnlocked ? '#6B7280' : '#9CA3AF'
-                          }}
                         />
                       </div>
                       {/* Lesson number - positioned below middle */}
-                      <span className="text-sm font-medium text-gray-700 text-center" style={{ marginTop: 'auto', paddingBottom: '8px' }}>
+                      <span className="text-sm font-medium text-gray-700 text-center mt-auto">
                         {lessonDay} {appLanguage === 'ru' ? 'Урок' : appLanguage === 'en' ? 'Lesson' : 'Lição'}
                       </span>
                     </Link>
