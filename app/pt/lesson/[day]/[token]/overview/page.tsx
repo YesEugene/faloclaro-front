@@ -241,12 +241,9 @@ function OverviewPageContent() {
       }
       
       if (allPreviousCompleted) {
-        // All previous tasks are completed, so this task is unlocked
-        // If it's the immediate next task after the first incomplete, it's 'current'
-        // Otherwise it's still 'locked' (user needs to complete tasks in order)
-        if (currentTaskIndex === firstIncompleteIndex + 1) {
-          return 'current';
-        }
+        // All previous tasks are completed, so this task is unlocked and should be 'current'
+        // This allows sequential unlocking: after completing task N, task N+1 becomes available
+        return 'current';
       }
     }
     
