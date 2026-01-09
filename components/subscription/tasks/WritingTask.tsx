@@ -273,11 +273,11 @@ export default function WritingTask({ task, language, onComplete, isCompleted, o
       )}
 
       {/* Progress Bar - Above navigation panel */}
-      <div className="fixed bottom-[70px] left-0 right-0 bg-white z-30" style={{ marginBottom: '0px' }}>
-        <div className="max-w-md mx-auto px-4" style={{ paddingTop: '0px', paddingBottom: '16px' }}>
+      <div className="fixed bottom-[70px] left-0 right-0 bg-white z-30" style={{ marginBottom: '0px', borderRadius: '0px', borderTopLeftRadius: '0px', borderTopRightRadius: '0px', borderBottomRightRadius: '0px', borderBottomLeftRadius: '0px', opacity: 1, color: 'rgba(23, 23, 23, 1)', verticalAlign: 'bottom', height: '33px' }}>
+        <div className="max-w-md mx-auto" style={{ paddingTop: '2px', paddingBottom: '6px', paddingLeft: '0px', paddingRight: '16px', background: 'unset', backgroundColor: 'unset' }}>
           <div className="space-y-2">
             {/* Progress Text */}
-            <div className="flex justify-between items-center" style={{ fontSize: '10px', color: 'rgba(23, 23, 23, 0)' }}>
+            <div className="flex justify-between items-center" style={{ fontSize: '10px', color: 'rgba(23, 23, 23, 1)' }}>
               <span className="text-gray-600" style={{ color: 'rgba(23, 23, 23, 1)' }}>
                 {progressCompleted} / {progressTotal} {appLanguage === 'ru' ? 'выполнено' : appLanguage === 'en' ? 'completed' : 'concluídos'}
               </span>
