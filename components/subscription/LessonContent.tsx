@@ -87,7 +87,7 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
         }
       }
       
-      // Only auto-select task on initial load, not after completion
+      // Only auto-select task on initial load, not after completion or manual navigation
       if (!initializedRef.current) {
         // Find first incomplete task
         // But if all tasks are completed, show first task for replay
@@ -99,10 +99,20 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
         if (incompleteIndex !== -1) {
           setCurrentTaskIndex(incompleteIndex);
           currentTaskIdRef.current = yamlContent.tasks[incompleteIndex]?.task_id || null;
+          // Update URL to reflect selected task
+          const urlParams = new URLSearchParams(window.location.search);
+          urlParams.set('task', String(yamlContent.tasks[incompleteIndex]?.task_id));
+          const newUrl = `${window.location.pathname}?${urlParams.toString()}`;
+          window.history.replaceState({}, '', newUrl);
         } else {
           // All tasks completed - show first task for replay
           setCurrentTaskIndex(0);
           currentTaskIdRef.current = yamlContent.tasks[0]?.task_id || null;
+          // Update URL to reflect first task
+          const urlParams = new URLSearchParams(window.location.search);
+          urlParams.set('task', String(yamlContent.tasks[0]?.task_id));
+          const newUrl = `${window.location.pathname}?${urlParams.toString()}`;
+          window.history.replaceState({}, '', newUrl);
         }
         initializedRef.current = true;
       }
@@ -286,16 +296,32 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
   const handleNextTask = () => {
     if (currentTaskIndex < tasks.length - 1) {
       const nextIndex = currentTaskIndex + 1;
+      const nextTaskId = tasks[nextIndex]?.task_id;
       setCurrentTaskIndex(nextIndex);
-      currentTaskIdRef.current = tasks[nextIndex]?.task_id || null;
+      currentTaskIdRef.current = nextTaskId || null;
+      initializedRef.current = true; // Mark as initialized to prevent auto-switch
+      
+      // Update URL to reflect current task
+      const urlParams = new URLSearchParams(window.location.search);
+      urlParams.set('task', String(nextTaskId));
+      const newUrl = `${window.location.pathname}?${urlParams.toString()}`;
+      window.history.pushState({}, '', newUrl);
     }
   };
 
   const handlePreviousTask = () => {
     if (currentTaskIndex > 0) {
       const prevIndex = currentTaskIndex - 1;
+      const prevTaskId = tasks[prevIndex]?.task_id;
       setCurrentTaskIndex(prevIndex);
-      currentTaskIdRef.current = tasks[prevIndex]?.task_id || null;
+      currentTaskIdRef.current = prevTaskId || null;
+      initializedRef.current = true; // Mark as initialized to prevent auto-switch
+      
+      // Update URL to reflect current task
+      const urlParams = new URLSearchParams(window.location.search);
+      urlParams.set('task', String(prevTaskId));
+      const newUrl = `${window.location.pathname}?${urlParams.toString()}`;
+      window.history.pushState({}, '', newUrl);
     }
   };
 
