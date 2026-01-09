@@ -828,20 +828,19 @@ export default function VocabularyTaskPlayer({
       <div className="flex items-center justify-center mb-6">
         <button
           onClick={() => setShowSettings(!showSettings)}
-          className="p-3 rounded-full transition-colors"
+          className="transition-opacity hover:opacity-80"
           style={{ 
-            backgroundColor: 'rgba(255, 255, 255, 1)',
-            borderWidth: '1px',
-            borderColor: 'rgba(176, 176, 176, 1)',
-            borderStyle: 'solid'
+            backgroundColor: 'transparent',
+            border: 'none',
+            padding: 0,
+            cursor: 'pointer'
           }}
           aria-label={t.settings}
         >
           <img 
             src="/Img/settings.svg" 
             alt={t.settings}
-            className="w-6 h-6"
-            style={{ width: '24px', height: '24px' }}
+            style={{ width: '50px', height: '50px' }}
           />
         </button>
       </div>
