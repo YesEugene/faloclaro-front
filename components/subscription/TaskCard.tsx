@@ -141,13 +141,6 @@ export default function TaskCard({
             language={language}
             onComplete={handleComplete}
             isCompleted={isCompleted}
-            savedAnswers={taskProgress?.completion_data?.answers}
-            onNextTask={canGoNext ? onNext : undefined}
-            onPreviousTask={canGoPrevious ? onPrevious : undefined}
-            canGoNext={canGoNext}
-            canGoPrevious={canGoPrevious}
-            progressCompleted={progressCompleted}
-            progressTotal={progressTotal}
           />
         );
       case 'writing_optional':
@@ -157,12 +150,6 @@ export default function TaskCard({
             language={language}
             onComplete={handleComplete}
             isCompleted={isCompleted}
-            onNextTask={canGoNext ? onNext : undefined}
-            onPreviousTask={canGoPrevious ? onPrevious : undefined}
-            canGoNext={canGoNext}
-            canGoPrevious={canGoPrevious}
-            progressCompleted={progressCompleted}
-            progressTotal={progressTotal}
           />
         );
       default:
