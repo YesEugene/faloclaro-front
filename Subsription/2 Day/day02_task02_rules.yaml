@@ -109,11 +109,17 @@ blocks:
         ru: "О чём говорит человек?"
         en: "What is the person saying?"
       options:
-        - text: "Откуда он"
+        - text:
+            ru: "Откуда он"
+            en: "Where he is from"
           correct: true
-        - text: "Где он живёт"
+        - text:
+            ru: "Где он живёт"
+            en: "Where he lives"
           correct: false
-        - text: "Кто он"
+        - text:
+            ru: "Кто он"
+            en: "Who he is"
           correct: false
 
     task_2:

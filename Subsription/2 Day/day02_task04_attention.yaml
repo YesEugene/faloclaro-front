@@ -27,14 +27,20 @@ items:
       ru: "О чём говорит человек?"
       en: "What is the person talking about?"
     options:
-      - text: "Откуда он"
+      - text:
+          ru: "Откуда он"
+          en: "Where he is from"
         correct: true
         feedback:
           ru: "Эта фраза говорит о происхождении."
           en: "This phrase talks about origin."
-      - text: "Где он живёт"
+      - text:
+          ru: "Где он живёт"
+          en: "Where he lives"
         correct: false
-      - text: "Кто он"
+      - text:
+          ru: "Кто он"
+          en: "Who he is"
         correct: false
 
   - item_id: 2
@@ -43,11 +49,17 @@ items:
       ru: "О чём говорит человек?"
       en: "What is the person talking about?"
     options:
-      - text: "Где он живёт"
+      - text:
+          ru: "Где он живёт"
+          en: "Where he lives"
         correct: true
-      - text: "Откуда он"
+      - text:
+          ru: "Откуда он"
+          en: "Where he is from"
         correct: false
-      - text: "Кто он"
+      - text:
+          ru: "Кто он"
+          en: "Who he is"
         correct: false
 
   - item_id: 3
@@ -57,9 +69,15 @@ items:
       ru: "Что делает человек?"
       en: "What is the person doing?"
     options:
-      - text: "Говорит, где живёт"
+      - text:
+          ru: "Говорит, где живёт"
+          en: "Says where they live"
         correct: true
-      - text: "Говорит, откуда он"
+      - text:
+          ru: "Говорит, откуда он"
+          en: "Says where they are from"
         correct: false
-      - text: "Представляется"
+      - text:
+          ru: "Представляется"
+          en: "Introduces themselves"
         correct: false
