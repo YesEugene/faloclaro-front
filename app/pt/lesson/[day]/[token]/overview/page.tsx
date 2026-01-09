@@ -560,6 +560,16 @@ function OverviewPageContent() {
                 const status = getTaskStatus(task.task_id);
                 const isClickable = status !== 'locked';
                 
+                // Debug: Log each task being rendered
+                console.log(`🎨 Rendering task ${task.task_id} (index ${index}):`, {
+                  taskId: task.task_id,
+                  type: task.type,
+                  title: task.title,
+                  status,
+                  isClickable,
+                  willRender: true
+                });
+                
                 return (
                   <div
                     key={task.task_id || index}
@@ -571,7 +581,7 @@ function OverviewPageContent() {
                         ? 'border-green-500 bg-green-50 cursor-pointer hover:bg-green-100'
                         : 'border-gray-300 bg-gray-100 opacity-60 cursor-not-allowed'
                     }`}
-                    style={{ display: 'block' }}
+                    style={{ display: 'block', visibility: 'visible' }}
                   >
                     <div className="flex items-start gap-3">
                       {/* Icon */}
