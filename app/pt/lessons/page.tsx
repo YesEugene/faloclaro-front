@@ -101,6 +101,11 @@ function LessonsPageContent() {
           .eq('user_id', userId);
 
         if (!tokensError && tokensData) {
+          console.log('🔑 Raw tokens data from DB:', {
+            tokensCount: tokensData.length,
+            tokens: tokensData.map(t => ({ lesson_id: t.lesson_id, token: t.token.substring(0, 10) + '...' }))
+          });
+          
           // Get lesson day_numbers for these tokens
           const lessonIds = tokensData.map(t => t.lesson_id);
           const { data: lessonsWithTokens, error: lessonsWithTokensError } = await supabase
@@ -108,22 +113,37 @@ function LessonsPageContent() {
             .select('id, day_number')
             .in('id', lessonIds);
 
+          console.log('📚 Lessons with tokens:', {
+            lessonsCount: lessonsWithTokens?.length || 0,
+            lessons: lessonsWithTokens?.map(l => ({ id: l.id, day_number: l.day_number })) || []
+          });
+
           if (!lessonsWithTokensError && lessonsWithTokens) {
             const tokenMap = new Map<number, string>();
             tokensData.forEach(tokenData => {
               const lesson = lessonsWithTokens.find(l => l.id === tokenData.lesson_id);
               if (lesson) {
                 tokenMap.set(lesson.day_number, tokenData.token);
+                console.log(`  ✓ Token for lesson ${lesson.day_number} (ID: ${lesson.id})`);
+              } else {
+                console.warn(`  ⚠️ No lesson found for token with lesson_id: ${tokenData.lesson_id}`);
               }
             });
-            console.log('🔑 User tokens loaded:', {
+            console.log('🔑 Final user tokens map:', {
               tokensCount: tokenMap.size,
-              lessonNumbers: Array.from(tokenMap.keys())
+              lessonNumbers: Array.from(tokenMap.keys()).sort((a, b) => a - b),
+              allLessons: Array.from(tokenMap.entries()).map(([day, token]) => ({ day, token: token.substring(0, 10) + '...' }))
             });
             setUserTokens(tokenMap);
+          } else {
+            console.error('❌ Error loading lessons with tokens:', lessonsWithTokensError);
           }
         } else {
-          console.log('⚠️ No tokens found for user:', { tokensError, tokensData });
+          console.log('⚠️ No tokens found for user:', { 
+            tokensError: tokensError?.message || tokensError,
+            tokensErrorCode: tokensError?.code,
+            tokensDataCount: tokensData?.length || 0
+          });
         }
 
         // Get subscription to check if user has paid
@@ -187,24 +207,54 @@ function LessonsPageContent() {
   };
 
   const isLessonUnlocked = (dayNumber: number): boolean => {
+    console.log(`\n🔍 Checking lesson ${dayNumber}:`, {
+      dayNumber,
+      isFirstThree: dayNumber <= 3,
+      userTokensSize: userTokens.size,
+      userTokensKeys: Array.from(userTokens.keys()),
+      subscriptionStatus: subscription?.status,
+      hasSubscription: !!subscription,
+      subscriptionObject: subscription
+    });
+
     // First 3 lessons are always unlocked (if user has token)
     if (dayNumber <= 3) {
-      const unlocked = userTokens.has(dayNumber);
-      console.log(`🔓 Lesson ${dayNumber} (1-3):`, { unlocked, hasToken: userTokens.has(dayNumber) });
+      const hasToken = userTokens.has(dayNumber);
+      const unlocked = hasToken;
+      console.log(`✅ Lesson ${dayNumber} (1-3):`, { 
+        unlocked, 
+        hasToken,
+        tokenValue: userTokens.get(dayNumber) ? 'exists' : 'missing'
+      });
       return unlocked;
     }
+    
     // After 3, check if user has paid (only 'paid' status, not 'trial')
     // Also check if user has a token for this specific lesson (created after payment)
     const hasToken = userTokens.has(dayNumber);
     const hasPaid = subscription?.status === 'paid';
     const unlocked = hasPaid || hasToken;
-    console.log(`🔒 Lesson ${dayNumber} (4+):`, { 
+    
+    console.log(`❌ Lesson ${dayNumber} (4+):`, { 
       unlocked, 
-      hasToken, 
-      hasPaid, 
+      hasToken,
+      hasPaid,
       subscriptionStatus: subscription?.status,
-      hasSubscription: !!subscription
+      subscriptionStatusType: typeof subscription?.status,
+      subscriptionStatusComparison: subscription?.status === 'paid',
+      hasSubscription: !!subscription,
+      subscriptionId: subscription?.id,
+      allSubscriptionFields: subscription ? Object.keys(subscription) : null
     });
+    
+    if (unlocked && !hasPaid) {
+      console.warn(`⚠️ WARNING: Lesson ${dayNumber} is unlocked but user hasn't paid!`, {
+        hasToken,
+        hasPaid,
+        subscriptionStatus: subscription?.status
+      });
+    }
+    
     return unlocked;
   };
 
@@ -319,9 +369,17 @@ function LessonsPageContent() {
         <div className="overflow-x-auto pb-4 -mx-4 px-4">
           <div className="flex gap-3" style={{ minWidth: 'max-content' }}>
             {lessons.map((lesson) => {
+              console.log(`\n🎨 Rendering lesson ${lesson.day_number}:`);
               const isUnlocked = isLessonUnlocked(lesson.day_number);
               const progressStatus = userProgress.get(lesson.day_number);
               const isCompleted = progressStatus === 'completed';
+              
+              console.log(`  Status:`, {
+                isUnlocked,
+                progressStatus,
+                isCompleted,
+                willShowAsLocked: !isUnlocked
+              });
               
               // Find first unlocked lesson that is not completed (for determining current lesson)
               const firstUnlockedNotCompleted = lessons.find(l => 
