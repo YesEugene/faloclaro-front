@@ -332,6 +332,13 @@ function OverviewPageContent() {
   }
   
   // Log each task status to debug why tasks 3, 4, 5 might not be visible
+  console.log('🔍 ALL TASKS IN ARRAY:', tasks.map((t: any, i: number) => ({
+    index: i,
+    taskId: t.task_id,
+    type: t.type,
+    title: t.title || 'No title'
+  })));
+  
   tasks.forEach((task: any, index: number) => {
     const status = getTaskStatus(task.task_id);
     const taskProgress = userProgress.task_progress?.find((tp: any) => tp.task_id === task.task_id);
@@ -342,7 +349,8 @@ function OverviewPageContent() {
       status,
       hasProgress: !!taskProgress,
       progressStatus: taskProgress?.status,
-      willBeDisplayed: true // All tasks should be displayed
+      willBeDisplayed: true, // All tasks should be displayed
+      willBeRendered: true // All tasks should be rendered
     });
   });
 
