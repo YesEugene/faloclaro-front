@@ -140,7 +140,8 @@ function LessonsPageContent() {
           subData,
           subError,
           status: subData?.status,
-          hasSubscription: !!subData
+          hasSubscription: !!subData,
+          errorCode: subError?.code
         });
 
         if (subData) {
