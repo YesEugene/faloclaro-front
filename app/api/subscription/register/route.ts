@@ -123,8 +123,7 @@ export async function POST(request: NextRequest) {
 
     for (const lesson of lessons) {
       const token = crypto.randomBytes(32).toString('hex');
-      tokens.push(token);
-
+      
       const { data: insertedToken, error: tokenError } = await supabase
         .from('lesson_access_tokens')
         .insert({
@@ -140,16 +139,19 @@ export async function POST(request: NextRequest) {
         console.error(`❌ Error creating token for lesson ${lesson.day_number}:`, tokenError);
         // Continue with other lessons even if one fails
       } else {
+        // Use the token from database (may differ from generated one if duplicate)
+        const savedToken = insertedToken?.token || token;
+        tokens.push(savedToken);
         console.log(`✅ Token created for lesson ${lesson.day_number}:`, {
           tokenId: insertedToken?.id,
-          token: insertedToken?.token?.substring(0, 8) + '...',
+          token: savedToken?.substring(0, 8) + '...',
           lessonId: lesson.id,
           dayNumber: lesson.day_number,
         });
       }
     }
 
-    // Validate that at least first token was created
+    // Validate that at least first token was created and saved
     if (tokens.length === 0 || !tokens[0]) {
       console.error('❌ No tokens created for lessons');
       return NextResponse.json(
@@ -158,10 +160,36 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Verify first token exists in database before sending email
+    const firstToken = tokens[0];
+    const { data: verifyToken, error: verifyError } = await supabase
+      .from('lesson_access_tokens')
+      .select('id, token, lesson_id, user_id')
+      .eq('token', firstToken)
+      .eq('user_id', user.id)
+      .single();
+
+    if (verifyError || !verifyToken) {
+      console.error('❌ Token verification failed:', verifyError);
+      return NextResponse.json(
+        { error: 'Failed to verify access token' },
+        { status: 500 }
+      );
+    }
+
+    console.log('✅ Token verified in database:', {
+      tokenId: verifyToken.id,
+      token: verifyToken.token?.substring(0, 8) + '...',
+      lessonId: verifyToken.lesson_id,
+      userId: verifyToken.user_id,
+    });
+
     // Send email with link to lessons page
     // IMPORTANT: In Vercel Serverless Functions, we need to await the email
     // Otherwise the function may terminate before email is sent
-    const firstToken = tokens[0]; // Use first token for email link
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.faloclaro.com';
+    const emailUrl = `${baseUrl}/pt/lesson/1/${firstToken}/overview`;
+    
     console.log('📧 About to send email:', {
       userId: user.id,
       userEmail: user.email,
@@ -169,11 +197,13 @@ export async function POST(request: NextRequest) {
       dayNumbers: lessons.map(l => l.day_number),
       firstToken: firstToken?.substring(0, 8) + '...',
       tokenCount: tokens.length,
+      emailUrl,
+      baseUrl,
     });
     
     try {
       // Send email with link to lessons page
-      // Use dayNumber = 1 for registration email
+      // Use dayNumber = 1 for registration email (always registration email)
       const emailResult = await sendLessonEmail(user.id, lessons[0].id, 1, firstToken);
       
       console.log('Email send completed:', {
