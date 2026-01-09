@@ -506,9 +506,10 @@ function OverviewPageContent() {
               const showText = isUnlocked || isCompleted;
               
               // Get token for this lesson or use current token
-              const lessonToken = userTokens.get(lessonDay) || token;
+              // For first 3 lessons, if unlocked but no token, use current token (they're free)
+              const lessonToken = userTokens.get(lessonDay) || (isUnlocked && lessonDay <= 3 ? token : null);
               const lessonUrl = isUnlocked || isCompleted
-                ? `/pt/lesson/${lessonDay}/${lessonToken}/overview`
+                ? `/pt/lesson/${lessonDay}/${lessonToken || token}/overview`
                 : `/pt/payment?lesson=${lessonDay}${token ? `&token=${token}` : ''}`;
 
               return (
