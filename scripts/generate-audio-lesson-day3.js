@@ -116,12 +116,20 @@ async function main() {
 
   const yamlData = yaml.load(fs.readFileSync(yamlPath, 'utf8'));
   
+  // Tasks are at the same level as day (structure: day: {...}, tasks: [...])
+  // Or inside day object (structure: day: { tasks: [...] })
+  const tasks = yamlData.tasks || yamlData.day?.tasks || [];
+  
+  console.log(`📋 Found ${tasks.length} tasks in main YAML file\n`);
+  
   // Read task YAML files
+  const task1Path = path.join(__dirname, '../Subsription/3 Day/day03_task01_vocabulary.yaml');
   const task2Path = path.join(__dirname, '../Subsription/3 Day/day03_task02_rules.yaml');
   const task3Path = path.join(__dirname, '../Subsription/3 Day/day03_task03_listening.yaml');
   const task4Path = path.join(__dirname, '../Subsription/3 Day/day03_task04_attention.yaml');
   const task5Path = path.join(__dirname, '../Subsription/3 Day/day03_task05_writing.yaml');
 
+  const task1Data = fs.existsSync(task1Path) ? yaml.load(fs.readFileSync(task1Path, 'utf8')) : null;
   const task2Data = fs.existsSync(task2Path) ? yaml.load(fs.readFileSync(task2Path, 'utf8')) : null;
   const task3Data = fs.existsSync(task3Path) ? yaml.load(fs.readFileSync(task3Path, 'utf8')) : null;
   const task4Data = fs.existsSync(task4Path) ? yaml.load(fs.readFileSync(task4Path, 'utf8')) : null;
@@ -130,26 +138,58 @@ async function main() {
   // Collect all texts to generate
   const textsToGenerate = new Set(); // Use Set to avoid duplicates
 
-  // 1. Vocabulary words from task 1
-  const vocabularyTask = yamlData.tasks?.find(t => t.type === 'vocabulary');
-  if (vocabularyTask && vocabularyTask.content?.cards) {
-    console.log(`📝 Found ${vocabularyTask.content.cards.length} vocabulary cards\n`);
-    for (const card of vocabularyTask.content.cards) {
+  // 1. Vocabulary words from task 1 (from separate file or main YAML)
+  if (task1Data && task1Data.content?.cards) {
+    console.log(`📝 Found ${task1Data.content.cards.length} vocabulary cards in task file`);
+    for (const card of task1Data.content.cards) {
       if (card.word) {
+        console.log(`   Adding word: ${card.word}`);
         textsToGenerate.add(card.word);
       }
       if (card.example_sentence) {
+        console.log(`   Adding example: ${card.example_sentence}`);
         textsToGenerate.add(card.example_sentence);
       }
+    }
+    console.log('');
+  } else {
+    // Fallback to main YAML
+    const vocabularyTask = tasks.find(t => t.type === 'vocabulary');
+    if (vocabularyTask && vocabularyTask.content?.cards) {
+      console.log(`📝 Found ${vocabularyTask.content.cards.length} vocabulary cards in main YAML`);
+      for (const card of vocabularyTask.content.cards) {
+        if (card.word) {
+          console.log(`   Adding word: ${card.word}`);
+          textsToGenerate.add(card.word);
+        }
+        if (card.example_sentence) {
+          console.log(`   Adding example: ${card.example_sentence}`);
+          textsToGenerate.add(card.example_sentence);
+        }
+      }
+      console.log('');
+    } else {
+      console.log(`⚠️  Vocabulary task not found or has no cards\n`);
     }
   }
 
   // 2. Phrases from task 2 (rules)
   if (task2Data) {
     console.log(`📝 Processing task 2 (rules) phrases...\n`);
-    // Blocks are at the top level of the file (not inside task)
-    const blocks = task2Data.blocks || {};
-    console.log(`   Found ${Object.keys(blocks).length} blocks`);
+    // Blocks can be at top level or inside task
+    const blocks = task2Data.blocks || (task2Data.task ? {} : {});
+    // If blocks are not at top level, check if they're in a different structure
+    if (!blocks || Object.keys(blocks).length === 0) {
+      // Try to find blocks in the file structure
+      const allKeys = Object.keys(task2Data);
+      console.log(`   File keys: ${allKeys.join(', ')}`);
+      if (task2Data.task && typeof task2Data.task === 'object') {
+        const taskKeys = Object.keys(task2Data.task);
+        console.log(`   Task keys: ${taskKeys.join(', ')}`);
+      }
+    }
+    const blocksToProcess = blocks || {};
+    console.log(`   Found ${Object.keys(blocksToProcess).length} blocks`);
     for (const blockKey in blocks) {
       const block = blocks[blockKey];
       // Examples in explanation blocks
@@ -189,8 +229,8 @@ async function main() {
   // 3. Phrases from task 3 (listening)
   if (task3Data) {
     console.log(`📝 Processing task 3 (listening) phrases...\n`);
-    // Items are at the top level of the file (not inside task)
-    const items = task3Data.items || task3Data.task?.items || [];
+    // Items are at the same level as task (not inside task)
+    const items = task3Data.items || [];
     console.log(`   Found ${items.length} items`);
     for (const item of items) {
       if (item.audio) {
@@ -203,8 +243,8 @@ async function main() {
   // 4. Phrases from task 4 (attention)
   if (task4Data) {
     console.log(`📝 Processing task 4 (attention) phrases...\n`);
-    // Items are at the top level of the file (not inside task)
-    const items = task4Data.items || task4Data.task?.items || [];
+    // Items are at the same level as task (not inside task)
+    const items = task4Data.items || [];
     console.log(`   Found ${items.length} items`);
     for (const item of items) {
       if (item.audio) {
@@ -217,13 +257,14 @@ async function main() {
   // 5. Phrases from task 5 (writing)
   if (task5Data) {
     console.log(`📝 Processing task 5 (writing) phrases...\n`);
-    // Writing task structure is at the top level
+    // Writing task structure - main_task, example, alternative are at top level (same as task)
     const task = task5Data;
     if (task.main_task?.template && Array.isArray(task.main_task.template)) {
       for (const template of task.main_task.template) {
         // Extract text from template (remove ___)
         const text = template.replace(/___/g, '').trim();
         if (text) {
+          console.log(`   Adding template: ${text}`);
           textsToGenerate.add(text);
         }
       }
@@ -231,7 +272,29 @@ async function main() {
     if (task.example?.content && Array.isArray(task.example.content)) {
       for (const example of task.example.content) {
         if (example) {
+          console.log(`   Adding example: ${example}`);
           textsToGenerate.add(example);
+        }
+      }
+    }
+    // Also check alternative instruction text (phrases to say out loud)
+    if (task.alternative?.instruction) {
+      const instruction = task.alternative.instruction;
+      // Instruction can be a string or an object with ru/en
+      const instructionText = typeof instruction === 'string' 
+        ? instruction 
+        : (instruction.ru || instruction.en || '');
+      // Extract bold text (phrases to pronounce)
+      if (instructionText && typeof instructionText === 'string') {
+        const boldMatches = instructionText.match(/\*\*(.*?)\*\*/g);
+        if (boldMatches) {
+          for (const match of boldMatches) {
+            const text = match.replace(/\*\*/g, '').trim();
+            if (text) {
+              console.log(`   Adding alternative phrase: ${text}`);
+              textsToGenerate.add(text);
+            }
+          }
         }
       }
     }

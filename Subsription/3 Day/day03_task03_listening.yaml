@@ -7,7 +7,7 @@ task:
   subtitle:
     ru: "Слушай фразу и пойми, о чём она"
     en: "Listen to the phrase and understand what it's about"
-  estimated_time: "≈5 минут"
+  estimated_time: "≈5"
   show_timer: false
   show_settings: false
   completion_message:

@@ -7,7 +7,7 @@ task:
   subtitle:
     ru: "Пойми, что здесь происходит"
     en: "Understand what is happening here"
-  estimated_time: "≈3–5 минут"
+  estimated_time: "≈3–5"
   show_timer: false
   show_settings: false
   completion_message:

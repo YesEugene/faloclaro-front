@@ -142,6 +142,16 @@ function loadLessonFiles(dayNumber) {
         if (taskData.reflection) {
           taskItem.reflection = taskData.reflection;
         }
+        // Also include ui, card_format, content for vocabulary tasks
+        if (taskData.ui) {
+          taskItem.ui = taskData.ui;
+        }
+        if (taskData.card_format) {
+          taskItem.card_format = taskData.card_format;
+        }
+        if (taskData.content) {
+          taskItem.content = taskData.content;
+        }
 
         // Find and replace existing task or add new one
         const existingIndex = dayData.tasks.findIndex(t => t.task_id === taskItem.task_id);
@@ -171,6 +181,7 @@ function loadLessonFiles(dayNumber) {
             }
             console.log(`  ✅ Merged vocabulary content into task ${taskItem.task_id}`);
           } else {
+            // For tasks 2-5, replace completely to ensure all data is included
             dayData.tasks[existingIndex] = taskItem;
             console.log(`  ✅ Updated task ${taskItem.task_id} (${taskItem.type})`);
           }
