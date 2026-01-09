@@ -540,7 +540,7 @@ function OverviewPageContent() {
 
         {/* Day Title */}
         <h1 className="text-2xl font-bold text-black mb-2 text-left">
-          {lesson.day_number}/60: {appLanguage === 'ru' ? dayInfo.title : appLanguage === 'en' ? dayInfo.title_en : dayInfo.title_pt}
+          {lesson.day_number}/60: {getDayTitle(dayInfo, appLanguage)}
         </h1>
 
         {/* Estimated Time - Smaller (20% reduction) and more rounded */}
@@ -555,9 +555,9 @@ function OverviewPageContent() {
         )}
 
         {/* Subtitle/Description */}
-        {dayInfo.subtitle && (
+        {getDaySubtitle(dayInfo, appLanguage) && (
           <p className="text-gray-700 mb-8 text-left">
-            {appLanguage === 'ru' ? dayInfo.subtitle : appLanguage === 'en' ? dayInfo.subtitle_en : dayInfo.subtitle_pt}
+            {getDaySubtitle(dayInfo, appLanguage)}
           </p>
         )}
 
