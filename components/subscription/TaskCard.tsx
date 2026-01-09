@@ -114,6 +114,9 @@ export default function TaskCard({
             language={language}
             onComplete={handleComplete}
             isCompleted={isCompleted}
+            savedAnswers={taskProgress?.completion_data?.selectedAnswers}
+            savedShowResults={taskProgress?.completion_data?.showResults}
+            savedSpeakOutLoudCompleted={taskProgress?.completion_data?.speakOutLoudCompleted}
             onNextTask={canGoNext ? onNext : undefined}
             onPreviousTask={canGoPrevious ? onPrevious : undefined}
             canGoNext={canGoNext}

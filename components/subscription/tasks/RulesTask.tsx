@@ -9,6 +9,9 @@ interface RulesTaskProps {
   language: string;
   onComplete: (completionData?: any) => void;
   isCompleted: boolean;
+  savedAnswers?: { [key: string]: string | null };
+  savedShowResults?: { [key: string]: boolean };
+  savedSpeakOutLoudCompleted?: boolean;
   onNextTask?: () => void;
   onPreviousTask?: () => void;
   canGoNext?: boolean;
@@ -17,19 +20,32 @@ interface RulesTaskProps {
   progressTotal?: number;
 }
 
-export default function RulesTask({ task, language, onComplete, isCompleted, onNextTask, onPreviousTask, canGoNext = false, canGoPrevious = false, progressCompleted = 0, progressTotal = 5 }: RulesTaskProps) {
+export default function RulesTask({ task, language, onComplete, isCompleted, savedAnswers, savedShowResults, savedSpeakOutLoudCompleted, onNextTask, onPreviousTask, canGoNext = false, canGoPrevious = false, progressCompleted = 0, progressTotal = 5 }: RulesTaskProps) {
   const { language: appLanguage } = useAppLanguage();
   const [currentBlockIndex, setCurrentBlockIndex] = useState(0);
   const [audioUrls, setAudioUrls] = useState<{ [key: string]: string }>({});
   const [isPlayingAudio, setIsPlayingAudio] = useState<{ [key: string]: boolean }>({});
-  const [selectedAnswers, setSelectedAnswers] = useState<{ [key: string]: string | null }>({});
-  const [showResults, setShowResults] = useState<{ [key: string]: boolean }>({});
-  const [speakOutLoudCompleted, setSpeakOutLoudCompleted] = useState(false);
+  const [selectedAnswers, setSelectedAnswers] = useState<{ [key: string]: string | null }>(savedAnswers || {});
+  const [showResults, setShowResults] = useState<{ [key: string]: boolean }>(savedShowResults || {});
+  const [speakOutLoudCompleted, setSpeakOutLoudCompleted] = useState(savedSpeakOutLoudCompleted || false);
   const [isReplaying, setIsReplaying] = useState(false);
   const [localIsCompleted, setLocalIsCompleted] = useState(isCompleted);
   
   const audioRefs = useRef<{ [key: string]: HTMLAudioElement }>({});
   
+  // Load saved answers and state from completion_data if task was already completed
+  useEffect(() => {
+    if (savedAnswers && Object.keys(savedAnswers).length > 0) {
+      setSelectedAnswers(savedAnswers);
+    }
+    if (savedShowResults && Object.keys(savedShowResults).length > 0) {
+      setShowResults(savedShowResults);
+    }
+    if (savedSpeakOutLoudCompleted) {
+      setSpeakOutLoudCompleted(true);
+    }
+  }, [savedAnswers, savedShowResults, savedSpeakOutLoudCompleted]);
+
   // Update local completion state when prop changes
   // But don't reset if we're in replay mode
   useEffect(() => {
@@ -235,7 +251,11 @@ export default function RulesTask({ task, language, onComplete, isCompleted, onN
       const allTasksCompleted = checkAllReinforcementTasksCompleted();
       if (allTasksCompleted) {
         setLocalIsCompleted(true);
+        // Save all answers and state
         onComplete({
+          selectedAnswers, // Save all selected answers
+          showResults, // Save all show results
+          speakOutLoudCompleted, // Save speak out loud completion state
           completedAt: new Date().toISOString(),
         });
       }
@@ -274,15 +294,21 @@ export default function RulesTask({ task, language, onComplete, isCompleted, onN
     console.log('🎯 handleSpeakOutLoudComplete called', {
       currentBlockIndex,
       blocksOrderLength: blocksOrder.length,
-      isLastBlock: currentBlockIndex === blocksOrder.length - 1
+      isLastBlock: currentBlockIndex === blocksOrder.length - 1,
+      speakOutLoudCompleted,
+      selectedAnswers,
+      showResults
     });
     setSpeakOutLoudCompleted(true);
     // Mark task as completed if this is the last block and last action
     if (currentBlockIndex === blocksOrder.length - 1) {
       console.log('✅ Last block completed, calling onComplete');
       setLocalIsCompleted(true); // Update local state immediately
-      // Complete the task - this saves progress but doesn't reset anything
+      // Complete the task - save all answers and state
       onComplete({
+        selectedAnswers, // Save all selected answers
+        showResults, // Save all show results
+        speakOutLoudCompleted: true, // Save speak out loud completion
         completedAt: new Date().toISOString(),
       });
     }
