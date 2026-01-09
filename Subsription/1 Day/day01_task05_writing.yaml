@@ -14,9 +14,13 @@ task:
   completion_message: "Уровень прогресса: Закреплено"
 
 instruction:
-  text: |
-    Используй слова и фразы из сегодняшнего урока.
-    Можно просто сказать вслух — это тоже считается.
+  text:
+    ru: |
+      Используй слова и фразы из сегодняшнего урока.
+      Можно просто сказать вслух — это тоже считается.
+    en: |
+      Use words and phrases from today's lesson.
+      You can just say it out loud — that counts too.
 
 main_task:
   format: template_fill_or_speak
@@ -29,22 +33,36 @@ main_task:
 
 example:
   show_by_button: true
-  button_text: "Показать пример"
+  button_text:
+    ru: "Показать пример"
+    en: "Show example"
   content:
     - "Olá, chamo-me Ana."
     - "Eu sou Ana."
 
 alternative:
-  title: "Не хочешь писать?"
-  instruction: |
-    Просто скажи вслух:
-    Olá, chamo-me … Eu sou …
+  title:
+    ru: "Не хочешь писать?"
+    en: "Don't want to write?"
+  instruction:
+    ru: |
+      Просто скажи вслух:
+      Olá, chamo-me … Eu sou …
+    en: |
+      Just say out loud:
+      Olá, chamo-me … Eu sou …
   action_button:
-    text: "✔ Я сказал(а) вслух"
+    text:
+      ru: "✔ Я сказал(а) вслух"
+      en: "✔ I said it out loud"
     completes_task: true
 
 reflection:
   optional: true
-  text: |
-    Это уже португальский 🙂
-    Даже если с ошибками — это нормально.
+  text:
+    ru: |
+      Это уже португальский 🙂
+      Даже если с ошибками — это нормально.
+    en: |
+      This is already Portuguese 🙂
+      Even with mistakes — that's normal.

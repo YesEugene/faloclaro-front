@@ -581,14 +581,15 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
             <div className="space-y-2">
                   {currentBlock.task_1.options?.map((option: any, index: number) => {
                     const taskKey = 'task_1';
-                    const isSelected = selectedAnswers[taskKey] === option.text;
+                    const optionText = getTranslatedText(option.text, appLanguage);
+                    const isSelected = selectedAnswers[taskKey] === optionText || selectedAnswers[taskKey] === option.text;
                     const isCorrect = option.correct;
                     const showResult = showResults[taskKey];
                     
                     return (
                       <button
                         key={index}
-                        onClick={() => handleAnswerSelect(taskKey, option.text)}
+                        onClick={() => handleAnswerSelect(taskKey, optionText)}
                         disabled={showResult}
                         className={`w-full text-left p-4 rounded-lg transition-colors ${
                           showResult
@@ -616,7 +617,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                             : 'none'
                         }}
                       >
-                        {option.text}
+                        {optionText}
                       </button>
                     );
                   })}

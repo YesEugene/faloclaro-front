@@ -21,35 +21,61 @@ ui_rules:
 items:
   - item_id: 1
     audio: "Olá, chamo-me Ana."
-    question: "В какой ситуации это говорят?"
+    question:
+      ru: "В какой ситуации это говорят?"
+      en: "In what situation is this said?"
     options:
-      - text: "Знакомство"
+      - text:
+          ru: "Знакомство"
+          en: "Acquaintance"
         correct: true
-        feedback: "Эта фраза используется, когда люди знакомятся."
-      - text: "Прощание"
+        feedback:
+          ru: "Эта фраза используется, когда люди знакомятся."
+          en: "This phrase is used when people introduce themselves."
+      - text:
+          ru: "Прощание"
+          en: "Farewell"
         correct: false
-      - text: "Просьба"
+      - text:
+          ru: "Просьба"
+          en: "Request"
         correct: false
 
   - item_id: 2
     audio: "Bom dia. Eu sou João."
-    question: "Что делает человек?"
+    question:
+      ru: "Что делает человек?"
+      en: "What is the person doing?"
     options:
-      - text: "Представляется"
+      - text:
+          ru: "Представляется"
+          en: "Introducing oneself"
         correct: true
-      - text: "Благодарит"
+      - text:
+          ru: "Благодарит"
+          en: "Thanking"
         correct: false
-      - text: "Извиняется"
+      - text:
+          ru: "Извиняется"
+          en: "Apologizing"
         correct: false
 
   - item_id: 3
     optional: true
     audio: "Prazer em conhecê-la."
-    question: "Когда так говорят?"
+    question:
+      ru: "Когда так говорят?"
+      en: "When do they say that?"
     options:
-      - text: "При знакомстве"
+      - text:
+          ru: "При знакомстве"
+          en: "When meeting someone"
         correct: true
-      - text: "Когда просят помощи"
+      - text:
+          ru: "Когда просят помощи"
+          en: "When asking for help"
         correct: false
-      - text: "Когда уходят"
+      - text:
+          ru: "Когда уходят"
+          en: "When leaving"
         correct: false

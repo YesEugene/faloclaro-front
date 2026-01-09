@@ -99,11 +99,17 @@ blocks:
         ru: "О чём говорит человек?"
         en: "What is the person saying?"
       options:
-        - text: "Как её зовут"
+        - text:
+            ru: "Как её зовут"
+            en: "What is her name"
           correct: true
-        - text: "Где она живёт"
+        - text:
+            ru: "Где она живёт"
+            en: "Where does she live"
           correct: false
-        - text: "Сколько ей лет"
+        - text:
+            ru: "Сколько ей лет"
+            en: "How old is she"
           correct: false
 
     task_2:
