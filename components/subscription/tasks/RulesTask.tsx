@@ -271,9 +271,15 @@ export default function RulesTask({ task, language, onComplete, isCompleted, onN
 
   // Handle speak out loud completion
   const handleSpeakOutLoudComplete = () => {
+    console.log('🎯 handleSpeakOutLoudComplete called', {
+      currentBlockIndex,
+      blocksOrderLength: blocksOrder.length,
+      isLastBlock: currentBlockIndex === blocksOrder.length - 1
+    });
     setSpeakOutLoudCompleted(true);
     // Mark task as completed if this is the last block and last action
     if (currentBlockIndex === blocksOrder.length - 1) {
+      console.log('✅ Last block completed, calling onComplete');
       setLocalIsCompleted(true); // Update local state immediately
       // Complete the task - this saves progress but doesn't reset anything
       onComplete({
@@ -284,6 +290,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted, onN
   
   // Handle replay - reset all progress and go to first block
   const handleReplay = () => {
+    console.log('🔄 handleReplay called - resetting task');
     setCurrentBlockIndex(0);
     setSpeakOutLoudCompleted(false);
     setSelectedAnswers({});
