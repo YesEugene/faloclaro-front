@@ -390,7 +390,7 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
         <div className="max-w-md mx-auto" style={{ paddingTop: '2px', paddingBottom: '0px', paddingLeft: '16px', paddingRight: '16px', background: 'unset', backgroundColor: 'unset' }}>
           <div className="space-y-2">
             {/* Progress Text */}
-            <div className="flex justify-between items-center" style={{ fontSize: '10px', color: 'rgba(23, 23, 23, 1)' }}>
+            <div className="flex justify-between items-center" style={{ fontSize: '12px', color: 'rgba(23, 23, 23, 1)' }}>
               <span className="text-gray-600" style={{ color: 'rgba(23, 23, 23, 1)' }}>
                 {getProgressMessage(progressCompleted, progressTotal)}
               </span>
