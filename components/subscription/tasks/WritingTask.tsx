@@ -59,11 +59,14 @@ export default function WritingTask({ task, language, onComplete, isCompleted, o
     }
   }, [isCompleted, isReplaying]);
 
-  const handleComplete = () => {
-    if (speakOutLoud || writtenText.trim()) {
+  const handleComplete = (forceSpeakOutLoud?: boolean) => {
+    // Writing task is optional - can be completed with either text or speaking out loud
+    // If user clicked "I said it out loud" button, complete immediately
+    const shouldComplete = forceSpeakOutLoud || speakOutLoud || writtenText.trim();
+    if (shouldComplete) {
       onComplete({
-        writtenText: speakOutLoud ? null : writtenText,
-        speakOutLoud,
+        writtenText: (forceSpeakOutLoud || speakOutLoud) ? null : writtenText,
+        speakOutLoud: forceSpeakOutLoud || speakOutLoud,
         completedAt: new Date().toISOString(),
       });
       setIsReplaying(false);
@@ -252,8 +255,9 @@ export default function WritingTask({ task, language, onComplete, isCompleted, o
               <button
                 onClick={() => {
                   setSpeakOutLoud(true);
+                  // If button completes task, complete immediately with speakOutLoud flag
                   if (alternative.action_button?.completes_task) {
-                    handleComplete();
+                    handleComplete(true); // Pass true to force completion with speakOutLoud
                   }
                 }}
                 disabled={speakOutLoud || isCompleted}
@@ -301,12 +305,10 @@ export default function WritingTask({ task, language, onComplete, isCompleted, o
               setIsReplaying(true);
             }
           }}
-          disabled={!speakOutLoud && !writtenText.trim() && !isCompleted}
+          disabled={isCompleted && !isReplaying}
           className={`w-full py-3 rounded-lg font-medium transition-colors ${
             isCompleted && !isReplaying
               ? 'bg-green-600 text-white hover:bg-green-700'
-              : (!speakOutLoud && !writtenText.trim())
-              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
               : 'bg-green-600 text-white hover:bg-green-700'
           }`}
         >
