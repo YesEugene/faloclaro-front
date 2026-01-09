@@ -609,14 +609,14 @@ export default function RulesTask({ task, language, onComplete, isCompleted, onN
 
       {/* Progress Bar - Above navigation panel */}
       <div className="fixed bottom-[70px] left-0 right-0 bg-white z-30">
-        <div className="max-w-md mx-auto px-4 pt-3 pb-2">
+        <div className="max-w-md mx-auto px-4" style={{ paddingTop: '0px', paddingBottom: '8px' }}>
           <div className="space-y-2">
             {/* Progress Text */}
-            <div className="flex justify-between items-center" style={{ fontSize: '10px' }}>
-              <span className="text-gray-600">
+            <div className="flex justify-between items-center" style={{ fontSize: '10px', color: 'rgba(23, 23, 23, 0)' }}>
+              <span className="text-gray-600" style={{ color: 'rgba(23, 23, 23, 1)' }}>
                 {progressCompleted} / {progressTotal} {appLanguage === 'ru' ? 'выполнено' : appLanguage === 'en' ? 'completed' : 'concluídos'}
               </span>
-              <span className="text-gray-600">{Math.round((progressCompleted / progressTotal) * 100)}%</span>
+              <span className="text-gray-600" style={{ color: 'rgba(23, 23, 23, 1)' }}>{Math.round((progressCompleted / progressTotal) * 100)}%</span>
             </div>
 
             {/* Progress Bar - Green, 4px thick */}
@@ -636,7 +636,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted, onN
 
       {/* Navigation Panel - Fixed at bottom (Cross-task navigation) */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-30">
-        <div className="max-w-md mx-auto px-4 pt-3 pb-3">
+        <div className="max-w-md mx-auto px-4 pt-3 pb-3" style={{ paddingBottom: 'env(safe-area-inset-bottom, 12px)' }}>
           <div className="flex items-center justify-between gap-4">
             {/* Previous Button - Left */}
             {canGoPrevious && onPreviousTask ? (
