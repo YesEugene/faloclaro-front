@@ -66,6 +66,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
   const [speakOutLoudCompleted, setSpeakOutLoudCompleted] = useState(savedSpeakOutLoudCompleted || false);
   const [isReplaying, setIsReplaying] = useState(false);
   const [localIsCompleted, setLocalIsCompleted] = useState(isCompleted);
+  const [hasUserInteracted, setHasUserInteracted] = useState(false);
   
   const audioRefs = useRef<{ [key: string]: HTMLAudioElement }>({});
   
