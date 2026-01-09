@@ -718,22 +718,7 @@ export default function VocabularyTaskPlayer({
           border: '2px solid white',
         }}
       >
-        {/* Timer - Small white rounded badge in top right */}
-        {task.ui?.show_timer && requiredTime > 0 && (
-          <div 
-            className="absolute right-4 bg-white rounded-full py-1.5 shadow-sm" 
-            style={{ 
-              top: '29px',
-              paddingLeft: '16px',
-              paddingRight: '16px',
-              zIndex: 35
-            }}
-          >
-            <span className="text-xs font-medium text-gray-700 whitespace-nowrap" style={{ height: '12px', fontSize: '12px' }}>
-              {formatTime(displayTime)} / {formatTime(requiredTime)}
-            </span>
-          </div>
-        )}
+        {/* Timer is now displayed in LessonContent below the buttons */}
 
         {/* Progress Indicator */}
         <div className="text-black text-center mt-5 mb-5 font-medium">
