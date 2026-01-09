@@ -224,18 +224,28 @@ function OverviewPageContent() {
       return 'completed';
     }
     
-    // For tasks after the first incomplete: check if previous task is completed
-    // If previous task is completed, this task should be 'current' (unlocked)
+    // For tasks after the first incomplete: check if ALL previous tasks are completed
+    // Tasks unlock sequentially - if all previous tasks are completed, this task is unlocked
     if (currentTaskIndex > firstIncompleteIndex) {
-      const previousTask = tasks[currentTaskIndex - 1];
-      if (previousTask) {
-        const previousTaskProgress = userProgress.task_progress?.find((tp: any) => tp.task_id === previousTask.task_id);
-        if (previousTaskProgress?.status === 'completed') {
-          // Previous task is completed, so this task is unlocked and should be 'current'
-          // But only if it's the immediate next task
-          if (currentTaskIndex === firstIncompleteIndex + 1) {
-            return 'current';
+      // Check if all tasks before this one are completed
+      let allPreviousCompleted = true;
+      for (let i = 0; i < currentTaskIndex; i++) {
+        const prevTask = tasks[i];
+        if (prevTask) {
+          const prevTaskProgress = userProgress.task_progress?.find((tp: any) => tp.task_id === prevTask.task_id);
+          if (!prevTaskProgress || prevTaskProgress.status !== 'completed') {
+            allPreviousCompleted = false;
+            break;
           }
+        }
+      }
+      
+      if (allPreviousCompleted) {
+        // All previous tasks are completed, so this task is unlocked
+        // If it's the immediate next task after the first incomplete, it's 'current'
+        // Otherwise it's still 'locked' (user needs to complete tasks in order)
+        if (currentTaskIndex === firstIncompleteIndex + 1) {
+          return 'current';
         }
       }
     }
