@@ -56,7 +56,8 @@ function loadLessonFiles(dayNumber) {
     return null;
   }
 
-  // Ensure tasks array exists - tasks can be at top level or inside day
+  // Ensure tasks array exists - tasks can be at top level (same level as day) or inside day
+  // First, check if tasks are at top level
   if (!dayData.tasks) {
     dayData.tasks = [];
   }
@@ -67,6 +68,14 @@ function loadLessonFiles(dayNumber) {
     dayData.tasks = [...dayData.day.tasks, ...dayData.tasks];
     // Remove tasks from day object to avoid duplication
     delete dayData.day.tasks;
+  }
+  
+  // Log initial tasks count (task 1 should be here if it exists in day_XX.yaml)
+  console.log(`  📋 Initial tasks count: ${dayData.tasks.length}`);
+  if (dayData.tasks.length > 0) {
+    dayData.tasks.forEach((t, i) => {
+      console.log(`    Task ${i+1}: task_id=${t.task_id}, type=${t.type}`);
+    });
   }
 
   // Load task files (tasks 2-5)
