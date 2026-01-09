@@ -192,7 +192,7 @@ export async function POST(request: NextRequest) {
     
     console.log('📧 About to send email:', {
       userId: user.id,
-      userEmail: user.email,
+      userEmail: normalizedEmail, // Use normalizedEmail from request
       lessonIds: lessons.map(l => l.id),
       dayNumbers: lessons.map(l => l.day_number),
       firstToken: firstToken?.substring(0, 8) + '...',
