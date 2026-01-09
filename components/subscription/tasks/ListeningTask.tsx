@@ -337,7 +337,7 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
       </div>
 
       {/* Progress Bar - Above navigation panel */}
-      <div className="fixed bottom-[70px] left-0 right-0 bg-white z-30">
+      <div className="fixed bottom-[70px] left-0 right-0 bg-white z-30" style={{ marginBottom: '0px' }}>
         <div className="max-w-md mx-auto px-4" style={{ paddingTop: '0px', paddingBottom: '8px' }}>
           <div className="space-y-2">
             {/* Progress Text */}
@@ -364,8 +364,8 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
       </div>
 
       {/* Navigation Panel - Fixed at bottom (Cross-task navigation) */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-30">
-        <div className="max-w-md mx-auto px-4 pt-3 pb-3" style={{ paddingBottom: 'env(safe-area-inset-bottom, 12px)' }}>
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-30" style={{ borderRadius: '183px', borderTopLeftRadius: '183px', borderTopRightRadius: '183px', borderBottomRightRadius: '0px', borderBottomLeftRadius: '0px', height: '69px', verticalAlign: 'bottom' }}>
+        <div className="max-w-md mx-auto px-4 pt-3 pb-3" style={{ paddingBottom: 'env(safe-area-inset-bottom, 12px)', height: '69px', color: 'rgba(0, 0, 0, 1)' }}>
           <div className="flex items-center justify-between gap-4">
             {/* Previous Button - Left */}
             {canGoPrevious && onPreviousTask ? (
@@ -384,7 +384,7 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
 
             {/* Task Title - Center */}
             <div className="flex-1 text-center">
-              <p className="text-sm font-medium text-gray-900">
+              <p className="text-sm font-medium" style={{ color: 'rgba(0, 0, 0, 1)' }}>
                 {(() => {
                   const taskId = task?.task_id || 3;
                   if (appLanguage === 'ru') {
