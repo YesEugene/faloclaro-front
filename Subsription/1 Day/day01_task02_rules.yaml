@@ -1,12 +1,18 @@
 task:
   task_id: 2
   type: rules
-  title: "Как это сказать"
-  subtitle: "Соединяем знакомые слова в смысл"
+  title:
+    ru: "Как это сказать"
+    en: "How to say it"
+  subtitle:
+    ru: "Соединяем знакомые слова в смысл"
+    en: "Connecting familiar words into meaning"
   estimated_time: "≈5 минут"
   show_timer: false
   show_settings: false
-  completion_message: "Уровень прогресса: Разогрев"
+  completion_message:
+    ru: "Уровень прогресса: Разогрев"
+    en: "Progress level: Warm-up"
 
 structure:
   blocks_order:
@@ -19,10 +25,16 @@ structure:
 blocks:
   block_1_identity:
     type: explanation
-    title: "Как сказать, кто ты"
-    explanation_text: |
-      Чтобы сказать, кто ты, в португальском говорят:
-      Eu sou + имя
+    title:
+      ru: "Как сказать, кто ты"
+      en: "How to say who you are"
+    explanation_text:
+      ru: |
+        Чтобы сказать, кто ты, в португальском говорят:
+        Eu sou + имя
+      en: |
+        To say who you are in Portuguese, they say:
+        Eu sou + name
     examples:
       - text: "Eu sou Ana."
         audio: true
@@ -31,15 +43,23 @@ blocks:
         audio: true
         pause_after_audio_sec: 1.5
     hint:
-      - "Eu — это «я»"
-      - "sou — «есть / являюсь»"
+      - ru: "Eu — это «я»"
+        en: "Eu means «I»"
+      - ru: "sou — «есть / являюсь»"
+        en: "sou means «am / is»"
 
   block_2_name:
     type: explanation
-    title: "Как сказать, как тебя зовут"
-    explanation_text: |
-      Чтобы сказать своё имя, часто говорят:
-      Chamo-me + имя
+    title:
+      ru: "Как сказать, как тебя зовут"
+      en: "How to say your name"
+    explanation_text:
+      ru: |
+        Чтобы сказать своё имя, часто говорят:
+        Chamo-me + имя
+      en: |
+        To say your name, they often say:
+        Chamo-me + name
     examples:
       - text: "Chamo-me Ana."
         audio: true
@@ -48,19 +68,26 @@ blocks:
         audio: true
         pause_after_audio_sec: 1.5
     hint:
-      - "Это буквально значит: «Меня зовут…»"
+      - ru: "Это буквально значит: «Меня зовут…»"
+        en: "This literally means: «My name is…»"
 
   block_3_equivalence:
     type: comparison
-    title: "Два варианта — один смысл"
+    title:
+      ru: "Два варианта — один смысл"
+      en: "Two options — one meaning"
     comparison_card:
       - text: "Eu sou Ana."
         audio: true
       - text: "Chamo-me Ana."
         audio: true
-    note: |
-      Оба варианта — нормальные и правильные.
-      Можно использовать любой.
+    note:
+      ru: |
+        Оба варианта — нормальные и правильные.
+        Можно использовать любой.
+      en: |
+        Both options are normal and correct.
+        You can use either one.
 
   block_4_reinforcement:
     type: reinforcement
@@ -68,7 +95,9 @@ blocks:
     task_1:
       format: single_choice
       audio: "Chamo-me Maria."
-      question: "О чём говорит человек?"
+      question:
+        ru: "О чём говорит человек?"
+        en: "What is the person saying?"
       options:
         - text: "Как её зовут"
           correct: true
@@ -79,7 +108,9 @@ blocks:
 
     task_2:
       format: situation_to_phrase
-      situation_text: "Ты хочешь сказать своё имя."
+      situation_text:
+        ru: "Ты хочешь сказать своё имя."
+        en: "You want to say your name."
       options:
         - text: "Eu sou Ana."
           correct: true
@@ -90,12 +121,22 @@ blocks:
 
   block_5_speak_out_loud:
     type: speak_out_loud
-    title: "Скажи вслух"
-    instruction_text: |
-      Попробуй сказать о себе:
-      Olá. Eu sou …
-      или
-      Olá. Chamo-me …
+    title:
+      ru: "Скажи вслух"
+      en: "Speak out loud"
+    instruction_text:
+      ru: |
+        Попробуй сказать о себе:
+        Olá. Eu sou …
+        или
+        Olá. Chamo-me …
+      en: |
+        Try to say about yourself:
+        Olá. Eu sou …
+        or
+        Olá. Chamo-me …
     action_button:
-      text: "✔ Я сказал(а) вслух"
+      text:
+        ru: "✔ Я сказал(а) вслух"
+        en: "✔ I said it out loud"
       completes_task: true

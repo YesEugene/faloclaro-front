@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { useAppLanguage } from '@/lib/language-context';
@@ -28,6 +28,10 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
   useEffect(() => {
     setUserProgress(initialUserProgress);
   }, [initialUserProgress]);
+
+  // Track if we've initialized to prevent auto-switching after task completion
+  const initializedRef = useRef(false);
+  const currentTaskIdRef = useRef<number | null>(null);
 
   useEffect(() => {
     // Parse yaml_content - handle both string and object
@@ -65,7 +69,7 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
     if (yamlContent.tasks) {
       setTasks(yamlContent.tasks);
       
-      // Check if taskId is in URL params
+      // Check if taskId is in URL params - always respect URL
       const urlParams = new URLSearchParams(window.location.search);
       const taskIdParam = urlParams.get('task');
       
@@ -73,23 +77,34 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
         // Find task by task_id - allow accessing completed tasks for replay
         const taskIndex = yamlContent.tasks.findIndex((task: any) => task.task_id === parseInt(taskIdParam));
         if (taskIndex !== -1) {
-          setCurrentTaskIndex(taskIndex);
+          // Only update if task changed or not initialized
+          if (!initializedRef.current || currentTaskIdRef.current !== parseInt(taskIdParam)) {
+            setCurrentTaskIndex(taskIndex);
+            currentTaskIdRef.current = parseInt(taskIdParam);
+            initializedRef.current = true;
+          }
           return;
         }
       }
       
-      // Otherwise, find first incomplete task
-      // But if all tasks are completed, show first task for replay
-      const incompleteIndex = yamlContent.tasks.findIndex((task: any, index: number) => {
-        const taskProgress = userProgress.task_progress?.find((tp: any) => tp.task_id === task.task_id);
-        return !taskProgress || taskProgress.status !== 'completed';
-      });
-      
-      if (incompleteIndex !== -1) {
-        setCurrentTaskIndex(incompleteIndex);
-      } else {
-        // All tasks completed - show first task for replay
-        setCurrentTaskIndex(0);
+      // Only auto-select task on initial load, not after completion
+      if (!initializedRef.current) {
+        // Find first incomplete task
+        // But if all tasks are completed, show first task for replay
+        const incompleteIndex = yamlContent.tasks.findIndex((task: any, index: number) => {
+          const taskProgress = userProgress.task_progress?.find((tp: any) => tp.task_id === task.task_id);
+          return !taskProgress || taskProgress.status !== 'completed';
+        });
+        
+        if (incompleteIndex !== -1) {
+          setCurrentTaskIndex(incompleteIndex);
+          currentTaskIdRef.current = yamlContent.tasks[incompleteIndex]?.task_id || null;
+        } else {
+          // All tasks completed - show first task for replay
+          setCurrentTaskIndex(0);
+          currentTaskIdRef.current = yamlContent.tasks[0]?.task_id || null;
+        }
+        initializedRef.current = true;
       }
     }
   }, [lesson, userProgress]);
@@ -157,10 +172,7 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
         })
         .eq('id', userProgress.id);
 
-      // Reload progress - this will update userProgress from parent
-      await onProgressUpdate();
-      
-      // Also update local state immediately to reflect completion
+      // Update local state immediately to reflect completion
       // This ensures isCompleted is set correctly in TaskCard
       const updatedTaskProgress = userProgress.task_progress?.map((tp: any) => 
         tp.task_id === taskId ? { ...tp, status: 'completed', completed_at: new Date().toISOString() } : tp
@@ -180,6 +192,10 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
         task_progress: updatedTaskProgress,
         tasks_completed: completedTasks,
       });
+      
+      // Reload progress in background - don't wait for it
+      // This updates the database but won't cause immediate re-render that switches tasks
+      onProgressUpdate().catch(err => console.error('Error in background progress update:', err));
     } catch (error) {
       console.error('Error updating progress:', error);
     }
@@ -187,13 +203,17 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
 
   const handleNextTask = () => {
     if (currentTaskIndex < tasks.length - 1) {
-      setCurrentTaskIndex(currentTaskIndex + 1);
+      const nextIndex = currentTaskIndex + 1;
+      setCurrentTaskIndex(nextIndex);
+      currentTaskIdRef.current = tasks[nextIndex]?.task_id || null;
     }
   };
 
   const handlePreviousTask = () => {
     if (currentTaskIndex > 0) {
-      setCurrentTaskIndex(currentTaskIndex - 1);
+      const prevIndex = currentTaskIndex - 1;
+      setCurrentTaskIndex(prevIndex);
+      currentTaskIdRef.current = tasks[prevIndex]?.task_id || null;
     }
   };
 

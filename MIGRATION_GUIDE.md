@@ -107,3 +107,7 @@ ALTER TABLE phrases DROP COLUMN IF EXISTS phrase_type;
 ```
 
 
+
+
+
+

@@ -68,3 +68,7 @@ FROM clusters WHERE name = 'Приветствия' LIMIT 1;
 
 
 
+
+
+
+

@@ -69,3 +69,7 @@ UNION ALL SELECT id, 'ru', 'Готово / договорились.' FROM phras
 
 
 
+
+
+
+

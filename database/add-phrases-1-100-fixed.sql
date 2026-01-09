@@ -307,3 +307,7 @@ SELECT id, 'Está perto.', 25 FROM clusters WHERE name = 'Movement, Time, Pauses
 
 
 
+
+
+
+

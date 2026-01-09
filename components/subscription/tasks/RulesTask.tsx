@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAppLanguage } from '@/lib/language-context';
-import { getBlockTitle, getBlockExplanationText, getBlockNote, getInstructionText } from '@/lib/lesson-translations';
+import { getBlockTitle, getBlockExplanationText, getBlockNote, getInstructionText, getHintText, getQuestionText, getSituationText, getTranslatedText } from '@/lib/lesson-translations';
 
 interface RulesTaskProps {
   task: any;
@@ -382,9 +382,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
             <div className="text-sm text-gray-500 mb-2">
               {appLanguage === 'ru' 
                 ? `Блок ${currentBlockIndex + 1} / ${blocksOrder.length}`
-                : appLanguage === 'en'
-                ? `Block ${currentBlockIndex + 1} / ${blocksOrder.length}`
-                : `Bloco ${currentBlockIndex + 1} / ${blocksOrder.length}`}
+                : `Block ${currentBlockIndex + 1} / ${blocksOrder.length}`}
             </div>
             <h3 className="text-xl font-bold text-black mb-4">{getBlockTitle(currentBlock, appLanguage)}</h3>
             <p className="text-gray-700 whitespace-pre-line mb-4">{getBlockExplanationText(currentBlock, appLanguage)}</p>
@@ -452,8 +450,8 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                   {appLanguage === 'ru' ? 'Подсказка:' : 'Hint:'}
                 </p>
                 <ul className="list-disc list-inside space-y-1">
-                  {currentBlock.hint.map((hint: string, index: number) => (
-                    <li key={index} className="text-sm" style={{ color: 'rgba(0, 0, 0, 1)', marginTop: '2px', marginBottom: '2px' }}>{hint}</li>
+                  {currentBlock.hint.map((hint: string | { ru?: string; en?: string }, index: number) => (
+                    <li key={index} className="text-sm" style={{ color: 'rgba(0, 0, 0, 1)', marginTop: '2px', marginBottom: '2px' }}>{getHintText(hint, appLanguage)}</li>
                   ))}
                 </ul>
               </div>
@@ -468,9 +466,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
             <div className="text-sm text-gray-500 mb-2">
               {appLanguage === 'ru' 
                 ? `Блок ${currentBlockIndex + 1} / ${blocksOrder.length}`
-                : appLanguage === 'en'
-                ? `Block ${currentBlockIndex + 1} / ${blocksOrder.length}`
-                : `Bloco ${currentBlockIndex + 1} / ${blocksOrder.length}`}
+                : `Block ${currentBlockIndex + 1} / ${blocksOrder.length}`}
             </div>
             <h3 className="text-xl font-bold text-black mb-4">{getBlockTitle(currentBlock, appLanguage)}</h3>
             
@@ -546,24 +542,20 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
             <div className="text-sm text-gray-500 mb-2">
               {appLanguage === 'ru' 
                 ? `Блок ${currentBlockIndex + 1} / ${blocksOrder.length}`
-                : appLanguage === 'en'
-                ? `Block ${currentBlockIndex + 1} / ${blocksOrder.length}`
-                : `Bloco ${currentBlockIndex + 1} / ${blocksOrder.length}`}
+                : `Block ${currentBlockIndex + 1} / ${blocksOrder.length}`}
             </div>
             
             {/* Block title */}
             <h2 className="text-xl font-bold text-black mb-4">
               {appLanguage === 'ru' 
                 ? 'Проверим, понятен ли смысл'
-                : appLanguage === 'en'
-                ? 'Let\'s check if the meaning is clear'
-                : 'Vamos verificar se o significado está claro'}
+                : 'Let\'s check if the meaning is clear'}
             </h2>
             
             {/* Task 1: Single Choice */}
             {currentBlock.task_1 && (
               <div className="space-y-4">
-                <p className="text-lg font-semibold text-black mb-4">{currentBlock.task_1.question}</p>
+                <p className="text-lg font-semibold text-black mb-4">{getQuestionText(currentBlock.task_1, appLanguage)}</p>
                 
                 {currentBlock.task_1.audio && (
                   <div className="flex items-center justify-center mb-4">
@@ -635,7 +627,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
             {/* Task 2: Situation to Phrase */}
             {currentBlock.task_2 && (
               <div className="space-y-4">
-                <p className="text-lg font-semibold text-black mb-2">{currentBlock.task_2.situation_text}</p>
+                <p className="text-lg font-semibold text-black mb-2">{getSituationText(currentBlock.task_2, appLanguage)}</p>
                 
           <div className="space-y-2">
                   {currentBlock.task_2.options?.map((option: any, index: number) => {
@@ -714,9 +706,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
             <div className="text-sm text-gray-500 mb-2">
               {appLanguage === 'ru' 
                 ? `Блок ${currentBlockIndex + 1} / ${blocksOrder.length}`
-                : appLanguage === 'en'
-                ? `Block ${currentBlockIndex + 1} / ${blocksOrder.length}`
-                : `Bloco ${currentBlockIndex + 1} / ${blocksOrder.length}`}
+                : `Block ${currentBlockIndex + 1} / ${blocksOrder.length}`}
             </div>
             <h3 className="text-xl font-bold text-black mb-4">{getBlockTitle(currentBlock, appLanguage)}</h3>
             <p 
@@ -751,7 +741,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
               }`}
             >
               {!speakOutLoudCompleted
-                ? (currentBlock.action_button?.text || (appLanguage === 'ru' ? '✔ Я сказал(а) вслух' : '✔ I said it out loud'))
+                ? (getTranslatedText(currentBlock.action_button?.text, appLanguage) || (appLanguage === 'ru' ? '✔ Я сказал(а) вслух' : '✔ I said it out loud'))
                 : (appLanguage === 'ru' ? 'Пройти заново' : 'Replay')}
             </button>
         </div>
@@ -865,7 +855,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                       5: '5. Попробуй сам'
                     };
                     return titles[taskId as keyof typeof titles] || `${taskId}. Задание`;
-                  } else if (appLanguage === 'en') {
+                  } else {
                     const titles = {
                       1: '1. Listen and repeat',
                       2: '2. Speak correctly',
@@ -874,15 +864,6 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                       5: '5. Try yourself'
                     };
                     return titles[taskId as keyof typeof titles] || `${taskId}. Task`;
-                  } else {
-                    const titles = {
-                      1: '1. Ouve e repete',
-                      2: '2. Fala corretamente',
-                      3: '3. Compreende o significado',
-                      4: '4. Escolhe a situação',
-                      5: '5. Tenta tu mesmo'
-                    };
-                    return titles[taskId as keyof typeof titles] || `${taskId}. Tarefa`;
                   }
                 })()}
               </p>

@@ -94,9 +94,41 @@ export function getBlockNote(block: any, language: AppLanguage): string {
 
 /**
  * Get instruction text with translation support
+ * Supports both block.instruction_text and instruction.text formats
  */
-export function getInstructionText(instruction: any, language: AppLanguage): string {
-  if (!instruction) return '';
-  return getTranslatedText(instruction.text || instruction, language);
+export function getInstructionText(blockOrInstruction: any, language: AppLanguage): string {
+  if (!blockOrInstruction) return '';
+  // For speak_out_loud blocks, instruction_text is at the block level
+  // For other blocks, it might be in instruction.text
+  let text = blockOrInstruction.instruction_text;
+  if (!text) {
+    text = blockOrInstruction.instruction?.text || blockOrInstruction.instruction || blockOrInstruction.text || blockOrInstruction;
+  }
+  return getTranslatedText(text, language);
+}
+
+/**
+ * Get hint text with translation support
+ * Hint can be a string or an array of strings, each can have translations
+ */
+export function getHintText(hint: string | { ru?: string; en?: string }, language: AppLanguage): string {
+  if (!hint) return '';
+  return getTranslatedText(hint, language);
+}
+
+/**
+ * Get question text with translation support (for reinforcement tasks)
+ */
+export function getQuestionText(task: any, language: AppLanguage): string {
+  if (!task || !task.question) return '';
+  return getTranslatedText(task.question, language);
+}
+
+/**
+ * Get situation text with translation support (for reinforcement tasks)
+ */
+export function getSituationText(task: any, language: AppLanguage): string {
+  if (!task || !task.situation_text) return '';
+  return getTranslatedText(task.situation_text, language);
 }
 

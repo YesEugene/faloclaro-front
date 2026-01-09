@@ -23,3 +23,7 @@ CREATE INDEX IF NOT EXISTS idx_phrases_cluster_type ON phrases(cluster_id, phras
 COMMENT ON COLUMN phrases.phrase_type IS 'Type of phrase: word, short_sentence, or long_sentence';
 
 
+
+
+
+

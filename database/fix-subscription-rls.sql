@@ -88,3 +88,7 @@ CREATE POLICY "Public update access for task_progress" ON task_progress
 -- we allow public access since we're using token-based authentication
 
 
+
+
+
+

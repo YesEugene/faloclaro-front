@@ -123,3 +123,7 @@ async function deleteShopsServicesPhrases() {
 deleteShopsServicesPhrases();
 
 
+
+
+
+

@@ -128,3 +128,7 @@ v=spf1 include:_spf.google.com include:resend.com ~all
 3. Проверьте логи в Resend Dashboard → Logs
 
 
+
+
+
+
