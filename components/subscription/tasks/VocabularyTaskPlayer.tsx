@@ -817,8 +817,8 @@ export default function VocabularyTaskPlayer({
         <button
           onClick={handlePlayPause}
           disabled={!currentAudioUrl}
-          className="p-4 rounded-full disabled:opacity-50 disabled:cursor-not-allowed shadow-lg flex items-center justify-center"
-          style={{ backgroundColor: clusterColor }}
+          className="p-4 rounded-full disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+          style={{ backgroundColor: clusterColor, width: '56px', height: '56px' }}
           aria-label={isPlaying ? 'Pause' : 'Play'}
         >
           {isPlaying ? (
@@ -836,12 +836,14 @@ export default function VocabularyTaskPlayer({
         {/* Settings Icon - Right of Play button */}
         <button
           onClick={() => setShowSettings(!showSettings)}
-          className="transition-opacity hover:opacity-80"
+          className="transition-opacity hover:opacity-80 rounded-full flex items-center justify-center"
           style={{ 
-            backgroundColor: 'transparent',
+            backgroundColor: '#F3F4F8',
             border: 'none',
             padding: 0,
-            cursor: 'pointer'
+            cursor: 'pointer',
+            width: '56px',
+            height: '56px'
           }}
           aria-label={t.settings}
         >
