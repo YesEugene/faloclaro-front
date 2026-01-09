@@ -410,9 +410,9 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
         <div className="max-w-md mx-auto pt-3 pb-3" style={{ paddingBottom: 'env(safe-area-inset-bottom, 12px)', height: '69px', color: 'rgba(0, 0, 0, 1)', paddingLeft: '16px', paddingRight: '16px' }}>
           <div className="flex items-center justify-between gap-4">
             {/* Previous Button - Left */}
-            {/* If task is completed: show previous task button, else: show previous item button */}
-            {localIsCompleted ? (
-              // Task completed - show previous task button
+            {/* If task is completed AND on last item: show previous task button, else: show previous item button */}
+            {localIsCompleted && currentItemIndex === items.length - 1 ? (
+              // Task completed AND on last item - show previous task button
               canGoPrevious && onPreviousTask ? (
                 <button
                   onClick={onPreviousTask}
@@ -427,7 +427,7 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
                 <div className="w-10 h-10"></div>
               )
             ) : (
-              // Task not completed - show previous item button
+              // Task not completed OR not on last item - show previous item button
               currentItemIndex > 0 ? (
                 <button
                   onClick={handlePreviousItem}
@@ -481,9 +481,9 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
             </div>
 
             {/* Next Button - Right */}
-            {/* If task is completed: show next task button (green), else: show next item button (blue) or complete button */}
-            {localIsCompleted ? (
-              // Task completed - show next task button (green, active)
+            {/* If task is completed AND on last item: show next task button (green), else: show next item button (blue) or complete button */}
+            {localIsCompleted && currentItemIndex === items.length - 1 ? (
+              // Task completed AND on last item - show next task button (green, active)
               canGoNext && onNextTask ? (
                 <button
                   onClick={onNextTask}
@@ -498,7 +498,7 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
                 <div className="w-10 h-10"></div>
               )
             ) : (
-              // Task not completed - show next item button (blue) or complete button (green) if on last item
+              // Task not completed OR not on last item - show next item button (blue) or complete button (green) if on last item
               currentItemIndex < items.length - 1 ? (
                 <button
                   onClick={handleNextItem}

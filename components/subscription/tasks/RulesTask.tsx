@@ -808,9 +808,9 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
         <div className="max-w-md mx-auto pt-3 pb-3" style={{ paddingBottom: 'env(safe-area-inset-bottom, 12px)', height: '69px', color: 'rgba(0, 0, 0, 1)', paddingLeft: '16px', paddingRight: '16px' }}>
           <div className="flex items-center justify-between gap-4">
             {/* Previous Button - Left */}
-            {/* If task is completed: show previous task button, else: show previous block button */}
-            {localIsCompleted ? (
-              // Task completed - show previous task button
+            {/* If task is completed AND on last block: show previous task button, else: show previous block button */}
+            {localIsCompleted && currentBlockIndex === blocksOrder.length - 1 ? (
+              // Task completed AND on last block - show previous task button
               canGoPrevious && onPreviousTask ? (
                 <button
                   onClick={onPreviousTask}
@@ -825,7 +825,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                 <div className="w-10 h-10"></div>
               )
             ) : (
-              // Task not completed - show previous block button
+              // Task not completed OR not on last block - show previous block button
               currentBlockIndex > 0 ? (
                 <button
                   onClick={handlePreviousBlock}
@@ -870,9 +870,9 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
             </div>
 
             {/* Next Button - Right */}
-            {/* If task is completed: show next task button (green), else: show next block button (blue) */}
-            {localIsCompleted ? (
-              // Task completed - show next task button (green, active)
+            {/* If task is completed AND on last block: show next task button (green), else: show next block button (blue) */}
+            {localIsCompleted && currentBlockIndex === blocksOrder.length - 1 ? (
+              // Task completed AND on last block - show next task button (green, active)
               canGoNext && onNextTask ? (
                 <button
                   onClick={onNextTask}
@@ -887,7 +887,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                 <div className="w-10 h-10"></div>
               )
             ) : (
-              // Task not completed - show next block button (blue, always active)
+              // Task not completed OR not on last block - show next block button (blue, always active)
               currentBlockIndex < blocksOrder.length - 1 ? (
                 <button
                   onClick={handleNextBlock}

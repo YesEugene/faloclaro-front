@@ -889,9 +889,9 @@ export default function VocabularyTaskPlayer({
         <div className="max-w-md mx-auto pt-3 pb-3" style={{ paddingBottom: 'env(safe-area-inset-bottom, 12px)', height: '69px', color: 'rgba(0, 0, 0, 1)', paddingLeft: '16px', paddingRight: '16px' }}>
           <div className="flex items-center justify-between gap-4">
             {/* Previous Button - Left */}
-            {/* If task is completed: show previous task button, else: show previous card button */}
-            {localIsCompleted ? (
-              // Task completed - show previous task button
+            {/* If task is completed AND on last card: show previous task button, else: show previous card button */}
+            {localIsCompleted && currentCardIndex === cards.length - 1 ? (
+              // Task completed AND on last card - show previous task button
               canGoPrevious && onPreviousTask ? (
                 <button
                   onClick={onPreviousTask}
@@ -906,7 +906,7 @@ export default function VocabularyTaskPlayer({
                 <div className="w-10 h-10"></div>
               )
             ) : (
-              // Task not completed - show previous card button
+              // Task not completed OR not on last card - show previous card button
               currentCardIndex > 0 ? (
                 <button
                   onClick={handlePreviousCard}
@@ -960,9 +960,9 @@ export default function VocabularyTaskPlayer({
             </div>
 
             {/* Next Button - Right */}
-            {/* If task is completed: show next task button (green), else: show next card button (blue) */}
-            {localIsCompleted ? (
-              // Task completed - show next task button (green, active)
+            {/* If task is completed AND on last card: show next task button (green), else: show next card button (blue) */}
+            {localIsCompleted && currentCardIndex === cards.length - 1 ? (
+              // Task completed AND on last card - show next task button (green, active)
               canGoNext && onNextTask ? (
                 <button
                   onClick={onNextTask}
@@ -977,7 +977,7 @@ export default function VocabularyTaskPlayer({
                 <div className="w-10 h-10"></div>
               )
             ) : (
-              // Task not completed - show next card button (blue, always active)
+              // Task not completed OR not on last card - show next card button (blue, always active)
               currentCardIndex < cards.length - 1 ? (
                 <button
                   onClick={handleNextCard}
