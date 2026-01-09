@@ -339,7 +339,8 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
   const currentAnswer = answers[currentItemIndex];
   const showResult = showResults[currentItemIndex];
   const correctOption = currentItem.options?.find((opt: any) => opt.correct);
-  const allAnswered = items.every((item: any, index: number) => showResults[index]);
+  // Check if all items are answered (either by showResults or by answers)
+  const allAnswered = items.every((item: any, index: number) => answers[index] !== undefined);
 
   return (
     <div className="space-y-6 w-full" style={{ paddingBottom: '140px' }}>
