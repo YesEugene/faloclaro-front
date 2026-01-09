@@ -260,7 +260,7 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
   const allAnswered = items.every((item: any, index: number) => showResults[index]);
 
   return (
-    <div className="space-y-6 w-full">
+    <div className="space-y-6 w-full" style={{ paddingBottom: '140px' }}>
       {/* Task Content - Full width - Always show, even if completed */}
       <div className="rounded-lg border-2 border-gray-200 p-6 w-full" style={{ backgroundColor: '#F4F5F8' }}>
         <div className="space-y-4">

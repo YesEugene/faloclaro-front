@@ -769,7 +769,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
   // No useEffect needed - user must manually click replay button
 
   return (
-    <div className="space-y-6 w-full">
+    <div className="space-y-6 w-full" style={{ paddingBottom: '140px' }}>
       {/* Block Content - Full width - Always show, even if completed */}
       <div className="rounded-lg border-2 border-gray-200 p-6 w-full" style={{ backgroundColor: '#F4F5F8' }}>
         {renderBlock()}
