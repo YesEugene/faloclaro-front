@@ -129,6 +129,7 @@ export default function TaskCard({
             language={language}
             onComplete={handleComplete}
             isCompleted={isCompleted}
+            savedAnswers={taskProgress?.completion_data?.answers}
             onNextTask={canGoNext ? onNext : undefined}
             onPreviousTask={canGoPrevious ? onPrevious : undefined}
             canGoNext={canGoNext}
@@ -144,6 +145,7 @@ export default function TaskCard({
             language={language}
             onComplete={handleComplete}
             isCompleted={isCompleted}
+            savedAnswers={taskProgress?.completion_data?.answers}
             onNextTask={canGoNext ? onNext : undefined}
             onPreviousTask={canGoPrevious ? onPrevious : undefined}
             canGoNext={canGoNext}

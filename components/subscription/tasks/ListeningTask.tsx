@@ -9,6 +9,7 @@ interface ListeningTaskProps {
   language: string;
   onComplete: (completionData?: any) => void;
   isCompleted: boolean;
+  savedAnswers?: { [key: number]: string };
   onNextTask?: () => void;
   onPreviousTask?: () => void;
   canGoNext?: boolean;
@@ -17,10 +18,10 @@ interface ListeningTaskProps {
   progressTotal?: number;
 }
 
-export default function ListeningTask({ task, language, onComplete, isCompleted, onNextTask, onPreviousTask, canGoNext = false, canGoPrevious = false, progressCompleted = 0, progressTotal = 5 }: ListeningTaskProps) {
+export default function ListeningTask({ task, language, onComplete, isCompleted, savedAnswers, onNextTask, onPreviousTask, canGoNext = false, canGoPrevious = false, progressCompleted = 0, progressTotal = 5 }: ListeningTaskProps) {
   const { language: appLanguage } = useAppLanguage();
   const [currentItemIndex, setCurrentItemIndex] = useState(0);
-  const [answers, setAnswers] = useState<{ [key: number]: string }>({});
+  const [answers, setAnswers] = useState<{ [key: number]: string }>(savedAnswers || {});
   const [showResults, setShowResults] = useState<{ [key: number]: boolean }>({});
   const [audioUrls, setAudioUrls] = useState<{ [key: string]: string }>({});
   const [isPlayingAudio, setIsPlayingAudio] = useState<{ [key: string]: boolean }>({});
@@ -54,6 +55,19 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
     }
   };
 
+  // Load saved answers from completion_data if task was already completed
+  useEffect(() => {
+    if (savedAnswers && Object.keys(savedAnswers).length > 0) {
+      setAnswers(savedAnswers);
+      // Mark all items as answered (show results)
+      const results: { [key: number]: boolean } = {};
+      Object.keys(savedAnswers).forEach(key => {
+        results[parseInt(key)] = true;
+      });
+      setShowResults(results);
+    }
+  }, [savedAnswers]);
+
   // Debug: Log task structure
   useEffect(() => {
     console.log('🔍 ListeningTask Debug:', {
@@ -63,9 +77,10 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
       hasItems: !!task?.items,
       itemsCount: task?.items?.length || 0,
       items: task?.items || [],
+      savedAnswers,
       fullTask: task
     });
-  }, [task]);
+  }, [task, savedAnswers]);
 
   // Get items from task - listening_comprehension uses items, not blocks
   const items = task.items || [];
@@ -210,8 +225,9 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
         return selectedAnswer === correctOption?.text;
       }).length;
 
+      // Always save answers in completion_data, even if task was already completed (for replay)
       onComplete({
-        answers,
+        answers, // Save all answers for replay
         correctCount,
         totalItems: items.length,
         completedAt: new Date().toISOString(),

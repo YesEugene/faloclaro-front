@@ -9,6 +9,7 @@ interface AttentionTaskProps {
   language: string;
   onComplete: (completionData?: any) => void;
   isCompleted: boolean;
+  savedAnswers?: { [key: number]: string };
   onNextTask?: () => void;
   onPreviousTask?: () => void;
   canGoNext?: boolean;
@@ -17,10 +18,10 @@ interface AttentionTaskProps {
   progressTotal?: number;
 }
 
-export default function AttentionTask({ task, language, onComplete, isCompleted, onNextTask, onPreviousTask, canGoNext = false, canGoPrevious = false, progressCompleted = 0, progressTotal = 5 }: AttentionTaskProps) {
+export default function AttentionTask({ task, language, onComplete, isCompleted, savedAnswers, onNextTask, onPreviousTask, canGoNext = false, canGoPrevious = false, progressCompleted = 0, progressTotal = 5 }: AttentionTaskProps) {
   const { language: appLanguage } = useAppLanguage();
   const [currentItemIndex, setCurrentItemIndex] = useState(0);
-  const [answers, setAnswers] = useState<{ [key: number]: string }>({});
+  const [answers, setAnswers] = useState<{ [key: number]: string }>(savedAnswers || {});
   const [showResults, setShowResults] = useState<{ [key: number]: boolean }>({});
   const [audioUrls, setAudioUrls] = useState<{ [key: string]: string }>({});
   const [isPlayingAudio, setIsPlayingAudio] = useState<{ [key: string]: boolean }>({});
@@ -197,8 +198,9 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
         return selectedAnswer === correctOption?.text;
       }).length;
 
+      // Always save answers in completion_data, even if task was already completed (for replay)
       onComplete({
-        answers,
+        answers, // Save all answers for replay
         correctCount,
         totalItems: items.length,
         completedAt: new Date().toISOString(),

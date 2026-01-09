@@ -31,9 +31,12 @@ export default function RulesTask({ task, language, onComplete, isCompleted, onN
   const audioRefs = useRef<{ [key: string]: HTMLAudioElement }>({});
   
   // Update local completion state when prop changes
+  // But don't reset if we're in replay mode
   useEffect(() => {
-    setLocalIsCompleted(isCompleted);
-  }, [isCompleted]);
+    if (!isReplaying) {
+      setLocalIsCompleted(isCompleted);
+    }
+  }, [isCompleted, isReplaying]);
 
   // Get progress message based on completed tasks
   const getProgressMessage = (completed: number, total: number) => {
