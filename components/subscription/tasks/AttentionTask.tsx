@@ -54,32 +54,6 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
     }
   };
 
-  // Get progress message based on completed tasks
-  const getProgressMessage = (completed: number, total: number) => {
-    if (appLanguage === 'ru') {
-      if (completed === 1) return `${completed} / ${total} выполнено. Назад дороги нет.`;
-      if (completed === 2) return `${completed} / ${total} выполнено. Поймали ритм.`;
-      if (completed === 3) return `${completed} / ${total} выполнено. Ты просто Вау!`;
-      if (completed === 4) return `${completed} / ${total} выполнено. Почти финиш.`;
-      if (completed === 5) return `${completed} / ${total} выполнено. Можно собой гордиться.`;
-      return `${completed} / ${total} выполнено`;
-    } else if (appLanguage === 'en') {
-      if (completed === 1) return `${completed} / ${total} completed. No turning back.`;
-      if (completed === 2) return `${completed} / ${total} completed. Catching the rhythm.`;
-      if (completed === 3) return `${completed} / ${total} completed. You're just Wow!`;
-      if (completed === 4) return `${completed} / ${total} completed. Almost finish.`;
-      if (completed === 5) return `${completed} / ${total} completed. You can be proud.`;
-      return `${completed} / ${total} completed`;
-    } else {
-      if (completed === 1) return `${completed} / ${total} concluído. Não há volta.`;
-      if (completed === 2) return `${completed} / ${total} concluído. Pegando o ritmo.`;
-      if (completed === 3) return `${completed} / ${total} concluído. Você é simplesmente Uau!`;
-      if (completed === 4) return `${completed} / ${total} concluído. Quase no fim.`;
-      if (completed === 5) return `${completed} / ${total} concluído. Pode se orgulhar.`;
-      return `${completed} / ${total} concluído`;
-    }
-  };
-
   // Get items from task - attention uses items, not blocks
   const items = task.items || [];
   const currentItem = items[currentItemIndex];
