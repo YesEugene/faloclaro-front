@@ -17,6 +17,9 @@ function OverviewPageContent() {
 
   const [lesson, setLesson] = useState<any>(null);
   const [userProgress, setUserProgress] = useState<any>(null);
+  const [allLessonsProgress, setAllLessonsProgress] = useState<Map<number, string>>(new Map()); // day_number -> status
+  const [userTokens, setUserTokens] = useState<Map<number, string>>(new Map()); // day_number -> token
+  const [subscription, setSubscription] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -337,8 +340,23 @@ function OverviewPageContent() {
         <div className="mb-4 overflow-x-auto -mx-4 px-4">
           <div className="flex gap-3" style={{ minWidth: 'max-content' }}>
             {Array.from({ length: 60 }, (_, i) => i + 1).map((lessonDay) => {
+              const isUnlocked = isLessonUnlocked(lessonDay);
+              const progressStatus = allLessonsProgress.get(lessonDay);
+              const isCompleted = progressStatus === 'completed';
               const isCurrent = lessonDay === day;
-              // Determine card style
+              
+              // Find first unlocked lesson that is not completed (for determining current lesson)
+              const firstUnlockedNotCompleted = Array.from({ length: 60 }, (_, i) => i + 1).find(d => 
+                isLessonUnlocked(d) && 
+                allLessonsProgress.get(d) !== 'completed'
+              );
+              
+              // Current lesson: in_progress OR first unlocked lesson that is not completed
+              const isCurrentLesson = isCurrent || 
+                (progressStatus === 'in_progress') ||
+                (!progressStatus && isUnlocked && !isCompleted && lessonDay === firstUnlockedNotCompleted);
+              
+              // Determine card style - priority: completed > current > unlocked > locked
               let cardStyle: React.CSSProperties = {
                 width: '85px',
                 height: '60px',
@@ -350,26 +368,53 @@ function OverviewPageContent() {
                 flexShrink: 0,
               };
 
-              if (isCurrent) {
+              if (isCompleted) {
+                // Green - completed (highest priority)
+                cardStyle.backgroundColor = '#BEF4C2';
+                cardStyle.border = 'none';
+              } else if (isCurrentLesson) {
                 // Blue - current
                 cardStyle.backgroundColor = '#CBE8FF';
                 cardStyle.border = 'none';
+              } else if (isUnlocked) {
+                // White with border - unlocked but not started
+                cardStyle.backgroundColor = 'white';
+                cardStyle.border = '1px solid #E5E7EB';
               } else {
-                // White with border - other lessons
+                // White with border and lock icon - locked
                 cardStyle.backgroundColor = 'white';
                 cardStyle.border = '1px solid #E5E7EB';
               }
 
+              // Determine content - show text if unlocked OR completed, show icon if locked
+              const showText = isUnlocked || isCompleted;
+              
+              // Get token for this lesson or use current token
+              const lessonToken = userTokens.get(lessonDay) || token;
+              const lessonUrl = isUnlocked || isCompleted
+                ? `/pt/lesson/${lessonDay}/${lessonToken}/overview`
+                : `/pt/payment?lesson=${lessonDay}${token ? `&token=${token}` : ''}`;
+
               return (
                 <Link
                   key={lessonDay}
-                  href={`/pt/lesson/${lessonDay}/${token}/overview`}
+                  href={lessonUrl}
                   style={cardStyle}
                   className="transition-all hover:opacity-80"
                 >
-                  <span className="text-sm font-medium text-gray-700 text-center">
-                    {lessonDay} {appLanguage === 'ru' ? 'Урок' : appLanguage === 'en' ? 'Lesson' : 'Lição'}
-                  </span>
+                  {showText ? (
+                    <span className="text-sm font-medium text-gray-700 text-center">
+                      {lessonDay} {appLanguage === 'ru' ? 'Урок' : appLanguage === 'en' ? 'Lesson' : 'Lição'}
+                    </span>
+                  ) : (
+                    <Image
+                      src="/Img/eye.svg"
+                      alt="Locked"
+                      width={24}
+                      height={24}
+                      className="w-6 h-6"
+                    />
+                  )}
                 </Link>
               );
             })}
