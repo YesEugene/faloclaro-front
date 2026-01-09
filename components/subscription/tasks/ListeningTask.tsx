@@ -253,24 +253,48 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
               <h3 className="text-xl font-bold text-black mb-4">
                 {appLanguage === 'ru' ? 'Прослушай фразу' : appLanguage === 'en' ? 'Listen to the phrase' : 'Ouça a frase'}
               </h3>
-              <div className="flex items-center justify-center mb-4">
-                <button
-                  onClick={() => playAudio(currentItem.audio)}
-                  disabled={isPlayingAudio[currentItem.audio]}
-                  className="p-4 rounded-full transition-colors"
-                  style={{ backgroundColor: '#F4F5F8' }}
-                >
-                {isPlayingAudio[currentItem.audio] ? (
-                  <svg className="w-10 h-10 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-                  </svg>
-                ) : (
-                  <svg className="w-10 h-10 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
-                  </svg>
-                )}
-              </button>
-            </div>
+              {/* White card with hidden text (stars) or revealed text after answer */}
+              <div 
+                className="p-4 mb-4"
+                style={{ 
+                  height: '50px',
+                  backgroundColor: 'rgba(255, 255, 255, 1)',
+                  borderRadius: '6px',
+                  border: 'none'
+                }}
+              >
+                <div className="flex items-center justify-between" style={{ height: '10px', marginTop: '3px', marginBottom: '3px' }}>
+                  <p className="text-black font-medium text-lg">
+                    {showResult ? currentItem.audio : '•'.repeat(currentItem.audio.length)}
+                  </p>
+                  <button
+                    onClick={() => playAudio(currentItem.audio)}
+                    disabled={isPlayingAudio[currentItem.audio]}
+                    className="flex-shrink-0 ml-3 transition-colors"
+                    style={{
+                      width: '30px',
+                      height: '30px',
+                      paddingTop: '0px',
+                      paddingBottom: '0px',
+                      paddingLeft: '11px',
+                      paddingRight: '11px',
+                      borderRadius: '0px',
+                      backgroundColor: 'transparent',
+                      color: 'rgba(255, 255, 255, 0.58)'
+                    }}
+                  >
+                    {isPlayingAudio[currentItem.audio] ? (
+                      <svg className="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                      </svg>
+                    ) : (
+                      <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" style={{ color: 'rgba(59, 130, 246, 1)' }}>
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
+              </div>
             </>
           )}
 
@@ -306,20 +330,6 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
             })}
           </div>
 
-          {/* Show text after answer */}
-          {showResult && currentItem.show_text_after_answer && currentItem.audio && (
-            <div 
-              className="rounded-lg p-4 mt-4"
-              style={{ 
-                borderWidth: '1px',
-                borderColor: 'rgba(194, 194, 194, 1)',
-                borderStyle: 'solid',
-                backgroundColor: '#F4F5F8'
-              }}
-            >
-              <p className="text-black font-medium">{currentItem.audio}</p>
-            </div>
-          )}
         </div>
       </div>
 
