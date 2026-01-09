@@ -566,20 +566,30 @@ export default function RulesTask({ task, language, onComplete, isCompleted, onN
               dangerouslySetInnerHTML={{ __html: processInstructionText(currentBlock.instruction_text) }}
             />
             
-            {!speakOutLoudCompleted ? (
-              <button
-                onClick={handleSpeakOutLoudComplete}
-                className="w-full bg-blue-600 text-white py-4 rounded-lg font-semibold text-lg hover:bg-blue-700 transition-colors"
-              >
-                {currentBlock.action_button?.text || (appLanguage === 'ru' ? '✔ Я сказал(а) вслух' : appLanguage === 'en' ? '✔ I said it out loud' : '✔ Disse em voz alta')}
-              </button>
-            ) : (
-              <div className="bg-green-50 border-2 border-green-500 rounded-lg p-4 text-center">
-                <p className="text-green-800 font-semibold">
-                  {appLanguage === 'ru' ? 'Отлично! Продолжайте.' : appLanguage === 'en' ? 'Great! Continue.' : 'Ótimo! Continue.'}
-                </p>
-            </div>
-          )}
+            <button
+              onClick={() => {
+                if (!speakOutLoudCompleted) {
+                  // First click: mark as completed
+                  handleSpeakOutLoudComplete();
+                } else {
+                  // Second click: replay (reset to first block)
+                  setCurrentBlockIndex(0);
+                  setSpeakOutLoudCompleted(false);
+                  setSelectedAnswers({});
+                  setShowResults({});
+                  setIsReplaying(true);
+                }
+              }}
+              className={`w-full py-4 rounded-lg font-semibold text-lg transition-colors ${
+                !speakOutLoudCompleted
+                  ? 'bg-blue-600 text-white hover:bg-blue-700'
+                  : 'bg-green-600 text-white hover:bg-green-700'
+              }`}
+            >
+              {!speakOutLoudCompleted
+                ? (currentBlock.action_button?.text || (appLanguage === 'ru' ? '✔ Я сказал(а) вслух' : appLanguage === 'en' ? '✔ I said it out loud' : '✔ Disse em voz alta'))
+                : (appLanguage === 'ru' ? 'Пройти заново' : appLanguage === 'en' ? 'Replay' : 'Repetir')}
+            </button>
         </div>
         );
 
@@ -633,35 +643,6 @@ export default function RulesTask({ task, language, onComplete, isCompleted, onN
             className="flex-1 bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
           >
             {appLanguage === 'ru' ? 'Далее' : appLanguage === 'en' ? 'Next' : 'Próximo'} →
-          </button>
-        )}
-
-        {/* Complete task button (only on last block if speak_out_loud is completed) */}
-        {/* Show button even if task is already completed - allows replay */}
-        {currentBlockIndex === blocksOrder.length - 1 && 
-         currentBlock.type === 'speak_out_loud' && 
-         (speakOutLoudCompleted || isCompleted) && (
-          <button
-            onClick={() => {
-              if (!isCompleted || isReplaying) {
-                onComplete({
-                  completedAt: new Date().toISOString(),
-                });
-                setIsReplaying(false);
-              } else {
-                // If already completed, allow replay by resetting to first block
-                setCurrentBlockIndex(0);
-                setSpeakOutLoudCompleted(false);
-                setSelectedAnswers({});
-                setShowResults({});
-                setIsReplaying(true);
-              }
-            }}
-            className="flex-1 bg-green-600 text-white py-3 rounded-lg font-medium hover:bg-green-700 transition-colors"
-          >
-            {isCompleted && !isReplaying
-              ? (appLanguage === 'ru' ? 'Пройти заново' : appLanguage === 'en' ? 'Replay' : 'Repetir')
-              : (appLanguage === 'ru' ? 'Завершить' : appLanguage === 'en' ? 'Complete' : 'Concluir')}
           </button>
         )}
       </div>
@@ -754,10 +735,20 @@ export default function RulesTask({ task, language, onComplete, isCompleted, onN
             {canGoNext && onNextTask ? (
               <button
                 onClick={onNextTask}
-                className="w-10 h-10 rounded-full bg-green-500 hover:bg-green-600 transition-colors flex items-center justify-center"
+                disabled={!isCompleted}
+                className={`w-10 h-10 rounded-full transition-colors flex items-center justify-center ${
+                  isCompleted
+                    ? 'bg-green-500 hover:bg-green-600'
+                    : 'bg-white border border-gray-300 cursor-not-allowed'
+                }`}
+                style={!isCompleted ? {
+                  backgroundColor: 'rgba(255, 255, 255, 1)',
+                  borderWidth: '1px',
+                  borderColor: 'rgba(176, 176, 176, 1)'
+                } : {}}
                 aria-label={appLanguage === 'ru' ? 'Следующее задание' : appLanguage === 'en' ? 'Next task' : 'Próxima tarefa'}
               >
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className={`w-6 h-6 ${isCompleted ? 'text-white' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
               </button>
