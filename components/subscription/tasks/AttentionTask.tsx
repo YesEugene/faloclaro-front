@@ -239,8 +239,14 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
     });
     
     // If all answered and this is the last item, mark as completed immediately
+    // IMPORTANT: Keep currentItemIndex on the last block - don't reset it
     if (allAnsweredNow && itemIndex === items.length - 1) {
       setLocalIsCompleted(true);
+      // Ensure we stay on the last block (itemIndex === items.length - 1)
+      // Don't reset currentItemIndex - user should see the replay button on the last block
+      if (currentItemIndex !== itemIndex) {
+        setCurrentItemIndex(itemIndex);
+      }
       const correctCount = items.filter((item: any, index: number) => {
         const selectedAnswer = newAnswers[index];
         const correctOption = item.options?.find((opt: any) => opt.correct);
