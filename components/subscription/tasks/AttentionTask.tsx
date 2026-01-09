@@ -232,6 +232,7 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
     setCurrentItemIndex(0);
     setLocalIsCompleted(false);
     setIsReplaying(true);
+    setHasLoadedSavedData(false); // Reset to allow fresh start
     
     // Clear saved data
     onComplete({
@@ -240,6 +241,11 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
       saved: true,
       replay: true,
     });
+    
+    // After a short delay, allow new data to load
+    setTimeout(() => {
+      setIsReplaying(false);
+    }, 100);
   };
 
   const handleComplete = () => {
@@ -397,11 +403,14 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
             </div>
           )}
 
-          {/* Replay Button - Show only when task is completed and all items are answered */}
+          {/* Replay Button - Show when task is completed (all items are answered) */}
           {localIsCompleted && allAnswered && (
             <button
-              onClick={handleReplay}
-              className="w-full px-4 py-3 rounded-lg font-medium transition-colors mt-4"
+              onClick={(e) => {
+                e.preventDefault();
+                handleReplay();
+              }}
+              className="w-full px-4 py-3 rounded-lg font-medium transition-colors mt-4 hover:opacity-90"
               style={{
                 backgroundColor: '#3B82F6',
                 color: 'white',

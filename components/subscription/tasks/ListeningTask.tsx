@@ -232,6 +232,7 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
     setCurrentItemIndex(0);
     setLocalIsCompleted(false);
     setIsReplaying(true);
+    setHasLoadedSavedData(false); // Reset to allow fresh start
     
     // Clear saved data
     onComplete({
@@ -240,6 +241,11 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
       saved: true,
       replay: true,
     });
+    
+    // After a short delay, allow new data to load
+    setTimeout(() => {
+      setIsReplaying(false);
+    }, 100);
   };
 
   const handleComplete = () => {
