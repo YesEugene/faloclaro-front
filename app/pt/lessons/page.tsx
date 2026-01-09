@@ -277,13 +277,18 @@ function LessonsPageContent() {
               const progressStatus = userProgress.get(lesson.day_number);
               const isCompleted = progressStatus === 'completed';
               
-              // Find first unlocked lesson that is not completed
+              // Find first unlocked lesson that is not completed (for determining current lesson)
               const firstUnlockedNotCompleted = lessons.find(l => 
                 isLessonUnlocked(l.day_number) && 
                 userProgress.get(l.day_number) !== 'completed'
               );
+              
+              // Current lesson: in_progress OR first unlocked lesson that is not completed
               const isCurrent = progressStatus === 'in_progress' || 
                 (!progressStatus && isUnlocked && !isCompleted && lesson.day_number === firstUnlockedNotCompleted?.day_number);
+              
+              // Locked lesson: not unlocked (no token for 1-3, or no payment for 4+)
+              const isLocked = !isUnlocked;
               
               // Determine card style
               let cardStyle: React.CSSProperties = {
@@ -327,11 +332,13 @@ function LessonsPageContent() {
                       {lesson.day_number} {appLanguage === 'ru' ? 'Урок' : appLanguage === 'en' ? 'Lesson' : 'Lição'}
                     </span>
                   ) : (
-                    <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 12h.01" />
-                    </svg>
+                    <Image
+                      src="/Img/eye.svg"
+                      alt="Locked"
+                      width={24}
+                      height={24}
+                      className="w-6 h-6"
+                    />
                   )}
                 </div>
               );
