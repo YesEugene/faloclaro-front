@@ -127,10 +127,21 @@ function LessonsPageContent() {
           .eq('user_id', userId)
           .order('created_at', { ascending: false })
           .limit(1)
-          .single();
+          .maybeSingle(); // Use maybeSingle instead of single to avoid errors if no subscription
 
-        if (!subError && subData) {
+        console.log('📊 Subscription data:', {
+          userId,
+          subData,
+          subError,
+          status: subData?.status,
+          hasSubscription: !!subData
+        });
+
+        if (subData) {
           setSubscription(subData);
+        } else {
+          // No subscription found - user is on free trial (lessons 1-3 only)
+          setSubscription(null);
         }
 
         // Get user progress for all lessons
@@ -171,11 +182,23 @@ function LessonsPageContent() {
   const isLessonUnlocked = (dayNumber: number): boolean => {
     // First 3 lessons are always unlocked (if user has token)
     if (dayNumber <= 3) {
-      return userTokens.has(dayNumber);
+      const unlocked = userTokens.has(dayNumber);
+      console.log(`🔓 Lesson ${dayNumber} (1-3):`, { unlocked, hasToken: userTokens.has(dayNumber) });
+      return unlocked;
     }
     // After 3, check if user has paid (only 'paid' status, not 'trial')
     // Also check if user has a token for this specific lesson (created after payment)
-    return subscription?.status === 'paid' || userTokens.has(dayNumber);
+    const hasToken = userTokens.has(dayNumber);
+    const hasPaid = subscription?.status === 'paid';
+    const unlocked = hasPaid || hasToken;
+    console.log(`🔒 Lesson ${dayNumber} (4+):`, { 
+      unlocked, 
+      hasToken, 
+      hasPaid, 
+      subscriptionStatus: subscription?.status,
+      hasSubscription: !!subscription
+    });
+    return unlocked;
   };
 
   const getLessonUrl = (dayNumber: number): string => {
