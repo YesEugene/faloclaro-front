@@ -463,117 +463,35 @@ function OverviewPageContent() {
 
       {/* Main Content */}
       <div className="max-w-md mx-auto px-4 py-6">
-        {/* Lessons Navigation - Horizontal Scroll */}
-        <div className="mb-4 overflow-x-auto -mx-4 px-4">
-          <div className="flex gap-3" style={{ minWidth: 'max-content' }}>
-            {Array.from({ length: 60 }, (_, i) => i + 1).map((lessonDay) => {
-              const isUnlocked = isLessonUnlocked(lessonDay);
-              const progressStatus = allLessonsProgress.get(lessonDay);
-              const isCompleted = progressStatus === 'completed';
-              const isCurrent = lessonDay === day;
-              
-              // Find first unlocked lesson that is not completed (for determining current lesson)
-              const firstUnlockedNotCompleted = Array.from({ length: 60 }, (_, i) => i + 1).find(d => 
-                isLessonUnlocked(d) && 
-                allLessonsProgress.get(d) !== 'completed'
-              );
-              
-              // Current lesson: in_progress OR first unlocked lesson that is not completed
-              const isCurrentLesson = isCurrent || 
-                (progressStatus === 'in_progress') ||
-                (!progressStatus && isUnlocked && !isCompleted && lessonDay === firstUnlockedNotCompleted);
-              
-              // Determine card style - priority: completed > current > unlocked > locked
-              let cardStyle: React.CSSProperties = {
-                width: '85px',
-                height: '60px',
-                borderRadius: '8px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                flexShrink: 0,
-              };
-
-              if (isCompleted) {
-                // Green - completed (highest priority)
-                cardStyle.backgroundColor = '#BEF4C2';
-                cardStyle.border = 'none';
-              } else if (isCurrentLesson) {
-                // Blue - current
-                cardStyle.backgroundColor = '#CBE8FF';
-                cardStyle.border = 'none';
-              } else if (isUnlocked) {
-                // White with border - unlocked but not started
-                cardStyle.backgroundColor = 'white';
-                cardStyle.border = '1px solid #E5E7EB';
-              } else {
-                // White with border and lock icon - locked
-                cardStyle.backgroundColor = 'white';
-                cardStyle.border = '1px solid #E5E7EB';
-              }
-
-              // Determine content - show text if unlocked OR completed, show icon if locked
-              const showText = isUnlocked || isCompleted;
-              
-              // Get token for this lesson or use current token
-              // For first 3 lessons, if unlocked but no token, use current token (they're free)
-              const lessonToken = userTokens.get(lessonDay) || (isUnlocked && lessonDay <= 3 ? token : null);
-              const lessonUrl = isUnlocked || isCompleted
-                ? `/pt/lesson/${lessonDay}/${lessonToken || token}/overview`
-                : `/pt/payment?lesson=${lessonDay}${token ? `&token=${token}` : ''}`;
-
-              return (
-                <Link
-                  key={lessonDay}
-                  href={lessonUrl}
-                  style={cardStyle}
-                  className="transition-all hover:opacity-80"
-                >
-                  {showText ? (
-                    <span className="text-sm font-medium text-gray-700 text-center">
-                      {lessonDay} {appLanguage === 'ru' ? 'Урок' : appLanguage === 'en' ? 'Lesson' : 'Lição'}
-                    </span>
-                  ) : (
-                    <Image
-                      src="/Img/eye.svg"
-                      alt="Locked"
-                      width={24}
-                      height={24}
-                      className="w-6 h-6"
-                    />
-                  )}
-                </Link>
-              );
-            })}
+        {/* Lesson Header - New Format */}
+        <div className="mb-6">
+          {/* УРОК X/60 (время) */}
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-lg font-bold text-black">
+              {appLanguage === 'ru' ? 'УРОК' : appLanguage === 'en' ? 'LESSON' : 'LIÇÃO'} {lesson.day_number}/60
+            </span>
+            {dayInfo.estimated_time && (
+              <span className="text-sm text-gray-600">
+                ({dayInfo.estimated_time} {t.estimatedTime})
+              </span>
+            )}
           </div>
+
+          {/* Заголовок урока */}
+          <h1 className="text-2xl font-bold text-black mb-3 text-left">
+            {getDayTitle(dayInfo, appLanguage)}
+          </h1>
+
+          {/* Описание урока */}
+          {getDaySubtitle(dayInfo, appLanguage) && (
+            <p className="text-gray-700 mb-6 text-left">
+              {getDaySubtitle(dayInfo, appLanguage)}
+            </p>
+          )}
         </div>
 
-        {/* Day Title */}
-        <h1 className="text-2xl font-bold text-black mb-2 text-left">
-          {lesson.day_number}/60: {getDayTitle(dayInfo, appLanguage)}
-        </h1>
-
-        {/* Estimated Time - Smaller (20% reduction) and more rounded */}
-        {dayInfo.estimated_time && (
-          <div className="mb-4">
-            <div className="inline-block bg-gray-100 rounded-2xl px-3 py-1.5" style={{ fontSize: '0.8em' }}>
-              <span className="text-gray-700 text-sm">
-                {dayInfo.estimated_time} {t.estimatedTime}
-              </span>
-            </div>
-          </div>
-        )}
-
-        {/* Subtitle/Description */}
-        {getDaySubtitle(dayInfo, appLanguage) && (
-          <p className="text-gray-700 mb-8 text-left">
-            {getDaySubtitle(dayInfo, appLanguage)}
-          </p>
-        )}
-
         {/* Tasks List - Always visible, even when all completed */}
-        <div className="mb-8" style={{ minHeight: '400px' }}>
+        <div className="mb-24" style={{ minHeight: '400px' }}>
           {tasks.length > 0 ? (
             <div className="space-y-3">
               {tasks.map((task: any, index: number) => {
@@ -665,6 +583,109 @@ function OverviewPageContent() {
               </p>
             </div>
           )}
+        </div>
+
+        {/* Lessons Navigation - Moved to Bottom - Square Cards with Icons */}
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-20" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+          <div className="max-w-md mx-auto px-4 py-3">
+            <div className="overflow-x-auto -mx-4 px-4">
+              <div className="flex gap-3" style={{ minWidth: 'max-content' }}>
+                {Array.from({ length: 60 }, (_, i) => i + 1).map((lessonDay) => {
+                  const isUnlocked = isLessonUnlocked(lessonDay);
+                  const progressStatus = allLessonsProgress.get(lessonDay);
+                  const isCompleted = progressStatus === 'completed';
+                  const isCurrent = lessonDay === day;
+                  
+                  // Find first unlocked lesson that is not completed (for determining current lesson)
+                  const firstUnlockedNotCompleted = Array.from({ length: 60 }, (_, i) => i + 1).find(d => 
+                    isLessonUnlocked(d) && 
+                    allLessonsProgress.get(d) !== 'completed'
+                  );
+                  
+                  // Current lesson: in_progress OR first unlocked lesson that is not completed
+                  const isCurrentLesson = isCurrent || 
+                    (progressStatus === 'in_progress') ||
+                    (!progressStatus && isUnlocked && !isCompleted && lessonDay === firstUnlockedNotCompleted);
+                  
+                  // Determine icon based on status
+                  let iconSrc = '/Img/eye.svg'; // default: locked
+                  if (isCompleted) {
+                    iconSrc = '/Img/done.svg';
+                  } else if (isCurrentLesson) {
+                    iconSrc = '/Img/Play.svg';
+                  } else if (isUnlocked) {
+                    iconSrc = '/Img/eyeopen.svg';
+                  }
+                  
+                  // Determine card style - priority: completed > current > unlocked > locked
+                  let cardStyle: React.CSSProperties = {
+                    width: '85px',
+                    height: '85px', // Square format
+                    borderRadius: '8px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    flexShrink: 0,
+                    gap: '4px',
+                  };
+
+                  if (isCompleted) {
+                    // Green - completed (highest priority)
+                    cardStyle.backgroundColor = '#BEF4C2';
+                    cardStyle.border = 'none';
+                  } else if (isCurrentLesson) {
+                    // Blue - current
+                    cardStyle.backgroundColor = '#CBE8FF';
+                    cardStyle.border = 'none';
+                  } else if (isUnlocked) {
+                    // White with border - unlocked but not started
+                    cardStyle.backgroundColor = 'white';
+                    cardStyle.border = '1px solid #E5E7EB';
+                  } else {
+                    // White with border - locked
+                    cardStyle.backgroundColor = 'white';
+                    cardStyle.border = '1px solid #E5E7EB';
+                  }
+                  
+                  // Get token for this lesson or use current token
+                  // For first 3 lessons, if unlocked but no token, use current token (they're free)
+                  const lessonToken = userTokens.get(lessonDay) || (isUnlocked && lessonDay <= 3 ? token : null);
+                  const lessonUrl = isUnlocked || isCompleted
+                    ? `/pt/lesson/${lessonDay}/${lessonToken || token}/overview`
+                    : `/pt/payment?lesson=${lessonDay}${token ? `&token=${token}` : ''}`;
+
+                  return (
+                    <Link
+                      key={lessonDay}
+                      href={lessonUrl}
+                      style={cardStyle}
+                      className="transition-all hover:opacity-80"
+                    >
+                      {/* Icon above number */}
+                      <div className="flex-shrink-0">
+                        <Image
+                          src={iconSrc}
+                          alt={isCompleted ? 'Completed' : isCurrentLesson ? 'Current' : isUnlocked ? 'Unlocked' : 'Locked'}
+                          width={24}
+                          height={24}
+                          className="w-6 h-6"
+                          style={{ 
+                            color: isCompleted ? '#10B981' : isCurrentLesson ? '#3B82F6' : isUnlocked ? '#6B7280' : '#9CA3AF'
+                          }}
+                        />
+                      </div>
+                      {/* Lesson number - positioned below middle */}
+                      <span className="text-sm font-medium text-gray-700 text-center" style={{ marginTop: 'auto', paddingBottom: '8px' }}>
+                        {lessonDay} {appLanguage === 'ru' ? 'Урок' : appLanguage === 'en' ? 'Lesson' : 'Lição'}
+                      </span>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
         </div>
 
       </div>
