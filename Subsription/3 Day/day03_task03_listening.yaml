@@ -1,0 +1,64 @@
+task:
+  task_id: 3
+  type: listening_comprehension
+  title:
+    ru: "Предложения и понимание"
+    en: "Sentences and understanding"
+  subtitle:
+    ru: "Слушай фразу и пойми, о чём она"
+    en: "Listen to the phrase and understand what it's about"
+  estimated_time: "≈5 минут"
+  show_timer: false
+  show_settings: false
+  completion_message:
+    ru: "Уровень прогресса: Понимание"
+    en: "Progress level: Understanding"
+
+ui_rules:
+  audio_plays_first: true
+  show_text_after_answer: true
+  one_clear_correct_answer: true
+
+items:
+  - item_id: 1
+    audio: "Bom dia, como está?"
+    text_hidden_before_answer: true
+    question:
+      ru: "Que horas são?"
+      en: "What time is it?"
+    options:
+      - text: "Manhã"
+        correct: true
+      - text: "Tarde"
+        correct: false
+      - text: "Noite"
+        correct: false
+
+  - item_id: 2
+    audio: "Boa tarde, tudo bem?"
+    text_hidden_before_answer: true
+    question:
+      ru: "Que horas são?"
+      en: "What time is it?"
+    options:
+      - text: "Tarde"
+        correct: true
+      - text: "Manhã"
+        correct: false
+      - text: "Noite"
+        correct: false
+
+  - item_id: 3
+    optional: true
+    audio: "Boa noite, até amanhã."
+    text_hidden_before_answer: true
+    question:
+      ru: "Que horas são?"
+      en: "What time is it?"
+    options:
+      - text: "Noite"
+        correct: true
+      - text: "Manhã"
+        correct: false
+      - text: "Tarde"
+        correct: false

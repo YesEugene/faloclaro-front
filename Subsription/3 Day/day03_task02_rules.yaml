@@ -1,0 +1,172 @@
+task:
+  task_id: 2
+  type: rules
+  title:
+    ru: "Как это сказать"
+    en: "How to say it"
+  subtitle:
+    ru: "Говорим о времени и распорядке дня"
+    en: "Talking about time and daily routine"
+  estimated_time: "≈5 минут"
+  show_timer: false
+  show_settings: false
+  completion_message:
+    ru: "Уровень прогресса: Разогрев"
+    en: "Progress level: Warm-up"
+
+structure:
+  blocks_order:
+    - block_1_greetings_time
+    - block_2_time_of_day
+    - block_3_equivalence
+    - block_4_reinforcement
+    - block_5_speak_out_loud
+
+blocks:
+  block_1_greetings_time:
+    type: explanation
+    title:
+      ru: "Как поздороваться в разное время"
+      en: "How to greet at different times"
+    explanation_text:
+      ru: |
+        В португальском приветствие зависит от времени суток:
+        Bom dia — утром (до полудня)
+        Boa tarde — днём (после полудня до вечера)
+        Boa noite — вечером и ночью
+      en: |
+        In Portuguese, the greeting depends on the time of day:
+        Bom dia — in the morning (until noon)
+        Boa tarde — in the afternoon (after noon until evening)
+        Boa noite — in the evening and at night
+    examples:
+      - text: "Bom dia, como está?"
+        audio: true
+        pause_after_audio_sec: 1.5
+      - text: "Boa tarde, tudo bem?"
+        audio: true
+        pause_after_audio_sec: 1.5
+      - text: "Boa noite, até amanhã."
+        audio: true
+        pause_after_audio_sec: 1.5
+    hint:
+      - ru: "Bom dia — «Доброе утро»"
+        en: "Bom dia means «Good morning»"
+      - ru: "Boa tarde — «Добрый день»"
+        en: "Boa tarde means «Good afternoon»"
+      - ru: "Boa noite — «Добрый вечер / ночь»"
+        en: "Boa noite means «Good evening / night»"
+
+  block_2_time_of_day:
+    type: explanation
+    title:
+      ru: "Как сказать, когда что происходит"
+      en: "How to say when something happens"
+    explanation_text:
+      ru: |
+        Чтобы сказать, когда что-то происходит, используют:
+        De manhã — утром
+        À tarde — днём
+        À noite — вечером
+      en: |
+        To say when something happens, they use:
+        De manhã — in the morning
+        À tarde — in the afternoon
+        À noite — in the evening
+    examples:
+      - text: "De manhã bebo café."
+        audio: true
+        pause_after_audio_sec: 1.5
+      - text: "À tarde trabalho."
+        audio: true
+        pause_after_audio_sec: 1.5
+      - text: "À noite descanso."
+        audio: true
+        pause_after_audio_sec: 1.5
+    hint:
+      - ru: "De manhã — «Утром»"
+        en: "De manhã means «In the morning»"
+      - ru: "À tarde — «Днём»"
+        en: "À tarde means «In the afternoon»"
+      - ru: "À noite — «Вечером»"
+        en: "À noite means «In the evening»"
+
+  block_3_equivalence:
+    type: comparison
+    title:
+      ru: "Время: сегодня, вчера, завтра"
+      en: "Time: today, yesterday, tomorrow"
+    comparison_card:
+      - text: "Hoje é segunda-feira."
+        audio: true
+      - text: "Ontem foi domingo."
+        audio: true
+      - text: "Amanhã será terça-feira."
+        audio: true
+    note:
+      ru: |
+        Hoje — сегодня
+        Ontem — вчера
+        Amanhã — завтра
+      en: |
+        Hoje — today
+        Ontem — yesterday
+        Amanhã — tomorrow
+
+  block_4_reinforcement:
+    type: reinforcement
+
+    task_1:
+      format: single_choice
+      audio: "Bom dia, como está?"
+      question:
+        ru: "В какое время так говорят?"
+        en: "What time of day is this said?"
+      options:
+        - text:
+            ru: "Утром"
+            en: "In the morning"
+          correct: true
+        - text:
+            ru: "Днём"
+            en: "In the afternoon"
+          correct: false
+        - text:
+            ru: "Вечером"
+            en: "In the evening"
+          correct: false
+
+    task_2:
+      format: situation_to_phrase
+      situation_text:
+        ru: "Ты хочешь сказать, что работаешь днём."
+        en: "You want to say that you work in the afternoon."
+      options:
+        - text: "À tarde trabalho."
+          correct: true
+        - text: "De manhã trabalho."
+          correct: false
+        - text: "À noite trabalho."
+          correct: false
+
+  block_5_speak_out_loud:
+    type: speak_out_loud
+    title:
+      ru: "Скажи вслух"
+      en: "Speak out loud"
+    instruction_text:
+      ru: |
+        Попробуй сказать о своём распорядке дня:
+        **De manhã bebo café.**
+        **À tarde trabalho.**
+        **À noite descanso.**
+      en: |
+        Try to say about your daily routine:
+        **De manhã bebo café.**
+        **À tarde trabalho.**
+        **À noite descanso.**
+    action_button:
+      text:
+        ru: "✔ Я сказал(а) вслух"
+        en: "✔ I said it out loud"
+      completes_task: true

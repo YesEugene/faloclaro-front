@@ -1,0 +1,83 @@
+task:
+  task_id: 4
+  type: attention
+  title:
+    ru: "Внимательность"
+    en: "Attention"
+  subtitle:
+    ru: "Пойми, что здесь происходит"
+    en: "Understand what is happening here"
+  estimated_time: "≈3–5 минут"
+  show_timer: false
+  show_settings: false
+  completion_message:
+    ru: "Уровень прогресса: Уверенность"
+    en: "Progress level: Confidence"
+
+ui_rules:
+  audio_plays_first: true
+  show_text_after_answer: true
+  only_known_words: true
+  no_similar_distractors: true
+
+items:
+  - item_id: 1
+    audio: "Bom dia, como está?"
+    question:
+      ru: "В какое время это говорят?"
+      en: "What time of day is this said?"
+    options:
+      - text:
+          ru: "Утром"
+          en: "In the morning"
+        correct: true
+        feedback:
+          ru: "Bom dia говорят утром."
+          en: "Bom dia is said in the morning."
+      - text:
+          ru: "Днём"
+          en: "In the afternoon"
+        correct: false
+      - text:
+          ru: "Вечером"
+          en: "In the evening"
+        correct: false
+
+  - item_id: 2
+    audio: "À tarde trabalho."
+    question:
+      ru: "Когда человек работает?"
+      en: "When does the person work?"
+    options:
+      - text:
+          ru: "Днём"
+          en: "In the afternoon"
+        correct: true
+      - text:
+          ru: "Утром"
+          en: "In the morning"
+        correct: false
+      - text:
+          ru: "Вечером"
+          en: "In the evening"
+        correct: false
+
+  - item_id: 3
+    optional: true
+    audio: "De manhã bebo café."
+    question:
+      ru: "Что делает человек утром?"
+      en: "What does the person do in the morning?"
+    options:
+      - text:
+          ru: "Пьёт кофе"
+          en: "Drinks coffee"
+        correct: true
+      - text:
+          ru: "Работает"
+          en: "Works"
+        correct: false
+      - text:
+          ru: "Отдыхает"
+          en: "Rests"
+        correct: false
