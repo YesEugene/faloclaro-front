@@ -656,12 +656,22 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
             />
             
             <button
-              onClick={() => {
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('🔘 Button clicked', {
+                  speakOutLoudCompleted,
+                  currentBlockIndex,
+                  blocksOrderLength: blocksOrder.length
+                });
                 if (!speakOutLoudCompleted) {
                   // First click: mark as completed (last action in last block)
+                  console.log('✅ First click - marking as completed');
                   handleSpeakOutLoudComplete();
+                  // DON'T call handleReplay here - just mark as completed
                 } else {
                   // Second click: replay (reset to first block)
+                  console.log('🔄 Second click - replaying');
                   handleReplay();
                 }
               }}
