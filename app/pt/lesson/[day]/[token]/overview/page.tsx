@@ -313,7 +313,12 @@ function OverviewPageContent() {
     allCompleted,
     tasksCompleted: userProgress.tasks_completed,
     totalTasks: userProgress.total_tasks,
-    taskProgress: userProgress.task_progress
+    taskProgress: userProgress.task_progress,
+    taskProgressDetails: userProgress.task_progress?.map((tp: any) => ({
+      taskId: tp.task_id,
+      status: tp.status,
+      completedAt: tp.completed_at
+    }))
   });
   
   // Ensure all tasks are always displayed - log if tasks array is empty
@@ -325,6 +330,21 @@ function OverviewPageContent() {
       yamlContentTasksIsArray: Array.isArray(yamlContent.tasks)
     });
   }
+  
+  // Log each task status to debug why tasks 3, 4, 5 might not be visible
+  tasks.forEach((task: any, index: number) => {
+    const status = getTaskStatus(task.task_id);
+    const taskProgress = userProgress.task_progress?.find((tp: any) => tp.task_id === task.task_id);
+    console.log(`📋 Task ${task.task_id} (index ${index}):`, {
+      taskId: task.task_id,
+      type: task.type,
+      title: task.title,
+      status,
+      hasProgress: !!taskProgress,
+      progressStatus: taskProgress?.status,
+      willBeDisplayed: true // All tasks should be displayed
+    });
+  });
 
   const translations = {
     ru: {
