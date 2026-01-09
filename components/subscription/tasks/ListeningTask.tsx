@@ -68,26 +68,26 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
   // Get progress message based on completed tasks
   const getProgressMessage = (completed: number, total: number) => {
     if (appLanguage === 'ru') {
-      if (completed === 1) return `${completed} / ${total} выполнено. Назад дороги нет.`;
-      if (completed === 2) return `${completed} / ${total} выполнено. Поймали ритм.`;
-      if (completed === 3) return `${completed} / ${total} выполнено. Ты просто Вау!`;
-      if (completed === 4) return `${completed} / ${total} выполнено. Почти финиш.`;
-      if (completed === 5) return `${completed} / ${total} выполнено. Можно собой гордиться.`;
-      return `${completed} / ${total} выполнено`;
+      if (completed === 1) return 'Назад дороги нет.';
+      if (completed === 2) return 'Поймали ритм.';
+      if (completed === 3) return 'Ты просто Вау!';
+      if (completed === 4) return 'Почти финиш.';
+      if (completed === 5) return 'Можно собой гордиться.';
+      return '';
     } else if (appLanguage === 'en') {
-      if (completed === 1) return `${completed} / ${total} completed. No turning back.`;
-      if (completed === 2) return `${completed} / ${total} completed. Catching the rhythm.`;
-      if (completed === 3) return `${completed} / ${total} completed. You're just Wow!`;
-      if (completed === 4) return `${completed} / ${total} completed. Almost finish.`;
-      if (completed === 5) return `${completed} / ${total} completed. You can be proud.`;
-      return `${completed} / ${total} completed`;
+      if (completed === 1) return 'No turning back.';
+      if (completed === 2) return 'Catching the rhythm.';
+      if (completed === 3) return "You're just Wow!";
+      if (completed === 4) return 'Almost finish.';
+      if (completed === 5) return 'You can be proud.';
+      return '';
     } else {
-      if (completed === 1) return `${completed} / ${total} concluído. Não há volta.`;
-      if (completed === 2) return `${completed} / ${total} concluído. Pegando o ritmo.`;
-      if (completed === 3) return `${completed} / ${total} concluído. Você é simplesmente Uau!`;
-      if (completed === 4) return `${completed} / ${total} concluído. Quase no fim.`;
-      if (completed === 5) return `${completed} / ${total} concluído. Pode se orgulhar.`;
-      return `${completed} / ${total} concluído`;
+      if (completed === 1) return 'Não há volta.';
+      if (completed === 2) return 'Pegando o ritmo.';
+      if (completed === 3) return 'Você é simplesmente Uau!';
+      if (completed === 4) return 'Quase no fim.';
+      if (completed === 5) return 'Pode se orgulhar.';
+      return '';
     }
   };
 
@@ -433,31 +433,31 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
                   const taskId = task?.task_id || 3;
                   if (appLanguage === 'ru') {
                     const titles = {
-                      1: '1. Слушай и повторяй',
-                      2: '2. Говорим правильно',
-                      3: '3. Пойми смысл',
-                      4: '4. Выбери ситуацию',
-                      5: '5. Попробуй сам'
+                      1: '1/5 Слушай и повторяй',
+                      2: '2/5 Говорим правильно',
+                      3: '3/5 Пойми смысл',
+                      4: '4/5 Выбери ситуацию',
+                      5: '5/5 Попробуй сам'
                     };
-                    return titles[taskId as keyof typeof titles] || `${taskId}. Задание`;
+                    return titles[taskId as keyof typeof titles] || `${taskId}/5 Задание`;
                   } else if (appLanguage === 'en') {
                     const titles = {
-                      1: '1. Listen and repeat',
-                      2: '2. Speak correctly',
-                      3: '3. Understand the meaning',
-                      4: '4. Choose the situation',
-                      5: '5. Try yourself'
+                      1: '1/5 Listen and repeat',
+                      2: '2/5 Speak correctly',
+                      3: '3/5 Understand the meaning',
+                      4: '4/5 Choose the situation',
+                      5: '5/5 Try yourself'
                     };
-                    return titles[taskId as keyof typeof titles] || `${taskId}. Task`;
+                    return titles[taskId as keyof typeof titles] || `${taskId}/5 Task`;
                   } else {
                     const titles = {
-                      1: '1. Ouve e repete',
-                      2: '2. Fala corretamente',
-                      3: '3. Compreende o significado',
-                      4: '4. Escolhe a situação',
-                      5: '5. Tenta tu mesmo'
+                      1: '1/5 Ouve e repete',
+                      2: '2/5 Fala corretamente',
+                      3: '3/5 Compreende o significado',
+                      4: '4/5 Escolhe a situação',
+                      5: '5/5 Tenta tu mesmo'
                     };
-                    return titles[taskId as keyof typeof titles] || `${taskId}. Tarefa`;
+                    return titles[taskId as keyof typeof titles] || `${taskId}/5 Tarefa`;
                   }
                 })()}
               </p>
