@@ -276,7 +276,14 @@ function LessonsPageContent() {
               const isUnlocked = isLessonUnlocked(lesson.day_number);
               const progressStatus = userProgress.get(lesson.day_number);
               const isCompleted = progressStatus === 'completed';
-              const isCurrent = progressStatus === 'in_progress' || (!progressStatus && isUnlocked && lesson.day_number === lessons.find(l => isLessonUnlocked(l.day_number) && !userProgress.get(l.day_number))?.day_number);
+              
+              // Find first unlocked lesson that is not completed
+              const firstUnlockedNotCompleted = lessons.find(l => 
+                isLessonUnlocked(l.day_number) && 
+                userProgress.get(l.day_number) !== 'completed'
+              );
+              const isCurrent = progressStatus === 'in_progress' || 
+                (!progressStatus && isUnlocked && !isCompleted && lesson.day_number === firstUnlockedNotCompleted?.day_number);
               
               // Determine card style
               let cardStyle: React.CSSProperties = {
