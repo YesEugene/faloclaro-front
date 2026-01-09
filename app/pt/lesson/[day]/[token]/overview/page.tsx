@@ -195,7 +195,8 @@ function OverviewPageContent() {
     const taskProgress = userProgress.task_progress.find((tp: any) => tp.task_id === taskId);
     const currentTaskIndex = tasks.findIndex((t: any) => t.task_id === taskId);
     
-    // If task is completed, it should always be accessible for replay
+    // IMPORTANT: If task is completed, it should ALWAYS be accessible for replay
+    // This ensures completed tasks (like 3, 4, 5) are always visible and clickable
     if (taskProgress?.status === 'completed') {
       console.log(`✅ Task ${taskId} is completed - returning 'completed' status`);
       return 'completed';
