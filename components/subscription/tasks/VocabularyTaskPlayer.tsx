@@ -962,69 +962,18 @@ export default function VocabularyTaskPlayer({
         />
       )}
 
-      {/* Completion Section - Always show after completion */}
-      {isCompleted && (
-        <div className="space-y-4">
-          {/* Progress for today */}
-          <div className="text-center">
-            <p className="text-gray-700 font-medium mb-3" style={{ height: '23px' }}>{t.progressToday}</p>
-            
-            {/* Stars - Number of filled stars equals task_id */}
-            <div className="flex justify-center gap-2 mb-3" style={{ height: '37px' }}>
-              {(() => {
-                const taskId = task?.task_id || 1;
-                const filledStars = taskId;
-                const totalStars = 5;
-                
-                return Array.from({ length: totalStars }, (_, i) => {
-                  const isFilled = i < filledStars;
-                  return (
-                    <img 
-                      key={i}
-                      src={isFilled ? "/Img/Star-1.svg" : "/Img/Star-2.svg"}
-                      alt={isFilled ? "Filled star" : "Empty star"}
-                      className="w-8 h-8"
-                      style={{ width: '2rem', height: '2rem' }}
-                    />
-                  );
-                });
-              })()}
-            </div>
-            
-            {/* Level - Different for each task */}
-            <p 
-              className="text-black font-bold mb-4"
-              style={{ 
-                fontSize: '30px', 
-                lineHeight: '45px', 
-                height: '51px' 
-              }}
-            >
-              {(() => {
-                const taskId = task?.task_id || 1;
-                if (appLanguage === 'ru') {
-                  return taskId === 1 ? 'Начало' : taskId === 2 ? 'Разогрев' : 'Начало';
-                } else if (appLanguage === 'en') {
-                  return taskId === 1 ? 'Start' : taskId === 2 ? 'Warm-up' : 'Start';
-                } else {
-                  return taskId === 1 ? 'Início' : taskId === 2 ? 'Aquecimento' : 'Início';
-                }
-              })()}
-            </p>
-            
-            {/* Next Task Button */}
-            {onNextTask && (
-              <button
-                onClick={onNextTask}
-                className="w-full bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-colors font-medium flex items-center justify-center gap-2"
-              >
-                <span>{t.nextTask}</span>
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
-            )}
-          </div>
+      {/* Next Task Button - Show after completion */}
+      {isCompleted && onNextTask && (
+        <div className="mt-6">
+          <button
+            onClick={onNextTask}
+            className="w-full bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-colors font-medium flex items-center justify-center gap-2"
+          >
+            <span>{t.nextTask}</span>
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
         </div>
       )}
     </div>

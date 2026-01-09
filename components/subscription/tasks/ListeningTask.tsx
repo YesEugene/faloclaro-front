@@ -330,60 +330,6 @@ export default function ListeningTask({ task, language, onComplete, isCompleted 
           : `Pergunta ${currentItemIndex + 1} de ${items.length}`}
       </div>
 
-      {/* Completion Section - Progress with stars (same as RulesTask) */}
-      {isCompleted && (
-        <div className="space-y-4 mt-6">
-          {/* Progress for today */}
-          <div className="text-center">
-            <p className="text-gray-700 font-medium mb-3" style={{ height: '23px' }}>
-              {appLanguage === 'ru' ? 'Прогресс на сегодня' : appLanguage === 'en' ? 'Progress for today' : 'Progresso de hoje'}
-            </p>
-            
-            {/* Stars - Number of filled stars equals task_id */}
-            <div className="flex justify-center gap-2 mb-3" style={{ height: '37px' }}>
-              {(() => {
-                const taskId = task?.task_id || 3;
-                const filledStars = taskId;
-                const totalStars = 5;
-                
-                return Array.from({ length: totalStars }, (_, i) => {
-                  const isFilled = i < filledStars;
-                  return (
-                    <img 
-                      key={i}
-                      src={isFilled ? "/Img/Star-1.svg" : "/Img/Star-2.svg"}
-                      alt={isFilled ? "Filled star" : "Empty star"}
-                      className="w-8 h-8"
-                      style={{ width: '2rem', height: '2rem' }}
-                    />
-                  );
-                });
-              })()}
-            </div>
-            
-            {/* Level - Different for each task */}
-            <p 
-              className="text-black font-bold mb-4"
-              style={{ 
-                fontSize: '30px', 
-                lineHeight: '45px', 
-                height: '51px' 
-              }}
-            >
-              {(() => {
-                const taskId = task?.task_id || 3;
-                if (appLanguage === 'ru') {
-                  return taskId === 1 ? 'Начало' : taskId === 2 ? 'Разогрев' : taskId === 3 ? 'Понимание' : 'Начало';
-                } else if (appLanguage === 'en') {
-                  return taskId === 1 ? 'Start' : taskId === 2 ? 'Warm-up' : taskId === 3 ? 'Understanding' : 'Start';
-                } else {
-                  return taskId === 1 ? 'Início' : taskId === 2 ? 'Aquecimento' : taskId === 3 ? 'Compreensão' : 'Início';
-                }
-              })()}
-            </p>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
