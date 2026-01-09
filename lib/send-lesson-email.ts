@@ -85,8 +85,12 @@ export async function sendLessonEmail(userId: string, lessonId: string, dayNumbe
       accessToken = tokenData.token;
     }
 
-    // Link to lessons page (with token) instead of specific lesson
-    const lessonsUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://www.faloclaro.com'}/pt/lessons?token=${accessToken}`;
+    // For registration email (first lesson), link directly to lesson 1 overview
+    // For other lessons, link to lessons page
+    const isRegistrationEmail = dayNumber === 1 && !lesson.yaml_content?.day?.title; // Registration email is for day 1 without specific day info
+    const lessonsUrl = isRegistrationEmail
+      ? `${process.env.NEXT_PUBLIC_APP_URL || 'https://www.faloclaro.com'}/pt/lesson/1/${accessToken}/overview`
+      : `${process.env.NEXT_PUBLIC_APP_URL || 'https://www.faloclaro.com'}/pt/lessons?token=${accessToken}`;
 
     // Send email via Resend
     if (!process.env.RESEND_API_KEY) {
