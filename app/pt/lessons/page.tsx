@@ -395,16 +395,23 @@ function LessonsPageContent() {
               const progressStatus = userProgress.get(lesson.day_number);
               const isCompleted = progressStatus === 'completed';
               
-              console.log(`\n🎨 Rendering lesson ${lesson.day_number}:`, {
-                isUnlocked,
-                progressStatus,
-                isCompleted,
-                progressStatusType: typeof progressStatus,
-                progressStatusComparison: progressStatus === 'completed',
-                willShowAsLocked: !isUnlocked,
-                willShowAsCompleted: isCompleted,
-                willShowAsCurrent: !isCompleted && isUnlocked && lesson.day_number === lessons.find(l => isLessonUnlocked(l.day_number) && userProgress.get(l.day_number) !== 'completed')?.day_number
-              });
+              // Debug logging for lessons 1 and 4 to understand the issue
+              if (lesson.day_number === 1 || lesson.day_number === 4) {
+                console.log(`\n🎨 Rendering lesson ${lesson.day_number}:`, {
+                  isUnlocked,
+                  progressStatus,
+                  isCompleted,
+                  progressStatusType: typeof progressStatus,
+                  progressStatusComparison: progressStatus === 'completed',
+                  willShowAsLocked: !isUnlocked,
+                  willShowAsCompleted: isCompleted,
+                  subscriptionStatus: subscription?.status,
+                  hasSubscription: !!subscription,
+                  userTokensSize: userTokens.size,
+                  userProgressSize: userProgress.size,
+                  userProgressEntries: Array.from(userProgress.entries())
+                });
+              }
               
               // Find first unlocked lesson that is not completed (for determining current lesson)
               const firstUnlockedNotCompleted = lessons.find(l => 
