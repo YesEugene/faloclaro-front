@@ -116,8 +116,14 @@ function LessonsPageContent() {
                 tokenMap.set(lesson.day_number, tokenData.token);
               }
             });
+            console.log('🔑 User tokens loaded:', {
+              tokensCount: tokenMap.size,
+              lessonNumbers: Array.from(tokenMap.keys())
+            });
             setUserTokens(tokenMap);
           }
+        } else {
+          console.log('⚠️ No tokens found for user:', { tokensError, tokensData });
         }
 
         // Get subscription to check if user has paid
