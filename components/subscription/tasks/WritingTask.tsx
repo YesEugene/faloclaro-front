@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useAppLanguage } from '@/lib/language-context';
 
 interface WritingTaskProps {
   task: any;
@@ -10,131 +11,278 @@ interface WritingTaskProps {
 }
 
 export default function WritingTask({ task, language, onComplete, isCompleted }: WritingTaskProps) {
+  const { language: appLanguage } = useAppLanguage();
   const [writtenText, setWrittenText] = useState('');
   const [speakOutLoud, setSpeakOutLoud] = useState(false);
+  const [showExample, setShowExample] = useState(false);
+  const [isReplaying, setIsReplaying] = useState(false);
+
+  // Reset state when replaying
+  useEffect(() => {
+    if (isCompleted && !isReplaying) {
+      // Allow replay by resetting state
+      setWrittenText('');
+      setSpeakOutLoud(false);
+      setShowExample(false);
+    }
+  }, [isCompleted, isReplaying]);
 
   const handleComplete = () => {
-    onComplete({
-      writtenText: speakOutLoud ? null : writtenText,
-      speakOutLoud,
-      completedAt: new Date().toISOString(),
-    });
+    if (speakOutLoud || writtenText.trim()) {
+      onComplete({
+        writtenText: speakOutLoud ? null : writtenText,
+        speakOutLoud,
+        completedAt: new Date().toISOString(),
+      });
+      setIsReplaying(false);
+    }
   };
 
-  if (isCompleted) {
+  // Don't hide task when completed - show it so user can replay
+  if (!task) {
     return (
-      <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
-        <p className="text-green-800 font-semibold">
-          {task.completion_message || 'Задание выполнено'}
-        </p>
+      <div className="text-center text-gray-500">
+        {appLanguage === 'ru' ? 'Задание не найдено' : appLanguage === 'en' ? 'Task not found' : 'Tarefa não encontrada'}
       </div>
     );
   }
 
-  const translations = {
-    ru: {
-      instruction: task.instruction || 'Можно написать от руки или просто сказать вслух',
-      writeHere: 'Напишите здесь...',
-      orSpeak: 'Или скажите вслух:',
-      phrase: task.alternative?.phrase || '',
-      complete: 'Завершить',
-    },
-    en: {
-      instruction: task.instruction || 'You can write by hand or just say it out loud',
-      writeHere: 'Write here...',
-      orSpeak: 'Or say out loud:',
-      phrase: task.alternative?.phrase || '',
-      complete: 'Complete',
-    },
-    pt: {
-      instruction: task.instruction || 'Podes escrever à mão ou apenas dizer em voz alta',
-      writeHere: 'Escreve aqui...',
-      orSpeak: 'Ou diz em voz alta:',
-      phrase: task.alternative?.phrase || '',
-      complete: 'Concluir',
-    },
-  };
-
-  const t = translations[language as keyof typeof translations] || translations.en;
+  const instructionText = task.instruction?.text || task.instruction || '';
+  const mainTask = task.main_task || {};
+  const template = mainTask.template || task.template || [];
+  const hints = mainTask.hints || task.hints || [];
+  const example = task.example || {};
+  const alternative = task.alternative || {};
+  const reflection = task.reflection || {};
 
   return (
-    <div className="space-y-4">
-      {/* Instruction */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <p className="text-blue-800 text-sm">{t.instruction}</p>
-      </div>
+    <div className="space-y-6 w-full" style={{ paddingBottom: '120px' }}>
+      {/* Task Content - Full width - Always show, even if completed */}
+      <div className="rounded-lg border-2 border-gray-200 p-6 w-full" style={{ backgroundColor: '#F4F5F8' }}>
+        <div className="space-y-4">
+          {/* Block indicator - Writing task is always block 1/1 */}
+          <div className="text-sm text-gray-500 mb-2">
+            {appLanguage === 'ru' 
+              ? `Блок 1 / 1`
+              : appLanguage === 'en'
+              ? `Block 1 / 1`
+              : `Bloco 1 / 1`}
+          </div>
+          
+          {/* Title */}
+          <h3 className="text-xl font-bold text-black mb-4">
+            {appLanguage === 'ru' 
+              ? 'Напиши от руки или проговори вслух'
+              : appLanguage === 'en'
+              ? 'Write by hand or say out loud'
+              : 'Escreva à mão ou diga em voz alta'}
+          </h3>
+          
+          {/* Instruction */}
+          {instructionText && (
+            <div 
+              className="rounded-lg p-4"
+              style={{ 
+                borderWidth: '1px',
+                borderColor: 'rgba(194, 194, 194, 1)',
+                borderStyle: 'solid',
+                backgroundColor: '#F4F5F8'
+              }}
+            >
+              <p className="text-black font-medium whitespace-pre-line">{instructionText}</p>
+            </div>
+          )}
 
-      {/* Template */}
-      {task.template && (
-        <div className="bg-gray-50 rounded-lg p-4">
-          <p className="text-sm text-gray-600 mb-2">
-            {language === 'ru' ? 'Шаблон:' : language === 'en' ? 'Template:' : 'Modelo:'}
-          </p>
-          {task.template.map((line: string, index: number) => (
-            <p key={index} className="text-black font-mono text-sm mb-1">
-              {line}
-            </p>
-          ))}
-        </div>
-      )}
+          {/* Template */}
+          {template.length > 0 && (
+            <div className="space-y-2">
+              <p className="text-sm font-semibold text-black mb-2">
+                {appLanguage === 'ru' ? 'Шаблон:' : appLanguage === 'en' ? 'Template:' : 'Modelo:'}
+              </p>
+              {template.map((line: string, index: number) => (
+                <div
+                  key={index}
+                  className="w-full px-4 rounded-lg flex items-center"
+                  style={{
+                    height: '55px',
+                    backgroundColor: 'white',
+                    border: 'none'
+                  }}
+                >
+                  <p className="text-black font-mono text-sm">{line}</p>
+                </div>
+              ))}
+            </div>
+          )}
 
-      {/* Writing Area */}
-      {!speakOutLoud && (
-        <div>
-          <textarea
-            value={writtenText}
-            onChange={(e) => setWrittenText(e.target.value)}
-            placeholder={t.writeHere}
-            className="w-full h-32 p-4 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none resize-none text-black"
-          />
-        </div>
-      )}
+          {/* Hints */}
+          {hints.length > 0 && (
+            <div 
+              className="rounded-lg p-4"
+              style={{ 
+                borderWidth: '1px',
+                borderColor: 'rgba(194, 194, 194, 1)',
+                borderStyle: 'solid',
+                backgroundColor: '#F4F5F8'
+              }}
+            >
+              <p className="text-sm font-semibold text-black mb-2">
+                {appLanguage === 'ru' ? 'Подсказки:' : appLanguage === 'en' ? 'Hints:' : 'Dicas:'}
+              </p>
+              <ul className="list-disc list-inside space-y-1">
+                {hints.map((hint: string, index: number) => (
+                  <li key={index} className="text-sm text-black" style={{ marginTop: '2px', marginBottom: '2px' }}>
+                    {hint}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
-      {/* Alternative: Speak Out Loud */}
-      {task.alternative?.speak_out_loud && (
-        <div className="bg-gray-50 rounded-lg p-4">
-          <label className="flex items-center space-x-2 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={speakOutLoud}
-              onChange={(e) => setSpeakOutLoud(e.target.checked)}
-              className="w-4 h-4"
-            />
-            <span className="text-gray-700">{t.orSpeak}</span>
-          </label>
-          {speakOutLoud && (
-            <div className="mt-2 p-3 bg-white rounded border border-gray-200">
-              <p className="text-black font-medium">{t.phrase}</p>
+          {/* Writing Area (if not using speak out loud alternative) */}
+          {!speakOutLoud && (
+            <div>
+              <textarea
+                value={writtenText}
+                onChange={(e) => setWrittenText(e.target.value)}
+                placeholder={appLanguage === 'ru' ? 'Напишите здесь...' : appLanguage === 'en' ? 'Write here...' : 'Escreve aqui...'}
+                className="w-full px-4 py-3 rounded-lg resize-none text-black"
+                style={{
+                  minHeight: '120px',
+                  backgroundColor: 'white',
+                  border: 'none'
+                }}
+              />
+            </div>
+          )}
+
+          {/* Example - Show by button */}
+          {example.show_by_button && example.content && (
+            <div className="space-y-2">
+              {!showExample && (
+                <button
+                  onClick={() => setShowExample(true)}
+                  className="w-full px-4 py-3 rounded-lg font-medium transition-colors"
+                  style={{
+                    backgroundColor: '#EDF3FF',
+                    color: 'rgb(55, 65, 81)',
+                    border: 'none'
+                  }}
+                >
+                  {example.button_text || (appLanguage === 'ru' ? 'Показать пример' : appLanguage === 'en' ? 'Show example' : 'Mostrar exemplo')}
+                </button>
+              )}
+              
+              {showExample && (
+                <div 
+                  className="rounded-lg p-4"
+                  style={{ 
+                    borderWidth: '1px',
+                    borderColor: 'rgba(194, 194, 194, 1)',
+                    borderStyle: 'solid',
+                    backgroundColor: '#F4F5F8'
+                  }}
+                >
+                  <p className="text-sm font-semibold text-black mb-2">
+                    {appLanguage === 'ru' ? 'Пример:' : appLanguage === 'en' ? 'Example:' : 'Exemplo:'}
+                  </p>
+                  {example.content.map((line: string, index: number) => (
+                    <p key={index} className="text-black font-medium mb-1">
+                      {line}
+                    </p>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Alternative: Speak Out Loud */}
+          {alternative.action_button && (
+            <div className="space-y-4">
+              {alternative.title && (
+                <p className="text-lg font-semibold text-black">{alternative.title}</p>
+              )}
+              
+              {alternative.instruction && (
+                <div 
+                  className="rounded-lg p-4"
+                  style={{ 
+                    borderWidth: '1px',
+                    borderColor: 'rgba(194, 194, 194, 1)',
+                    borderStyle: 'solid',
+                    backgroundColor: '#F4F5F8'
+                  }}
+                >
+                  <p className="text-black font-medium whitespace-pre-line">{alternative.instruction}</p>
+                </div>
+              )}
+
+              <button
+                onClick={() => {
+                  setSpeakOutLoud(true);
+                  if (alternative.action_button?.completes_task) {
+                    handleComplete();
+                  }
+                }}
+                disabled={speakOutLoud || isCompleted}
+                className="w-full px-4 py-3 rounded-lg font-medium transition-colors"
+                style={{
+                  height: '55px',
+                  backgroundColor: speakOutLoud || isCompleted ? 'rgb(34, 197, 94)' : 'rgb(237, 243, 255)',
+                  color: speakOutLoud || isCompleted ? 'white' : 'rgb(55, 65, 81)',
+                  border: 'none'
+                }}
+              >
+                {alternative.action_button?.text || (appLanguage === 'ru' ? '✔ Я сказал(а) вслух' : appLanguage === 'en' ? '✔ I said it out loud' : '✔ Disse em voz alta')}
+              </button>
+            </div>
+          )}
+
+          {/* Reflection (optional) */}
+          {reflection.text && reflection.optional && speakOutLoud && (
+            <div 
+              className="rounded-lg p-4 mt-4"
+              style={{ 
+                borderWidth: '1px',
+                borderColor: 'rgba(194, 194, 194, 1)',
+                borderStyle: 'solid',
+                backgroundColor: '#F4F5F8'
+              }}
+            >
+              <p className="text-black font-medium whitespace-pre-line">{reflection.text}</p>
             </div>
           )}
         </div>
-      )}
+      </div>
 
-      {/* Hints */}
-      {task.hints && task.hints.length > 0 && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <p className="text-sm text-yellow-800 mb-2">
-            {language === 'ru' ? 'Подсказки:' : language === 'en' ? 'Hints:' : 'Dicas:'}
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {task.hints.map((hint: string, index: number) => (
-              <span key={index} className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-sm">
-                {hint}
-              </span>
-            ))}
-          </div>
-        </div>
+      {/* Complete Button (if not using alternative speak out loud) */}
+      {!alternative.action_button && (
+        <button
+          onClick={() => {
+            if (!isCompleted || isReplaying) {
+              handleComplete();
+            } else {
+              // If already completed, allow replay by resetting
+              setWrittenText('');
+              setSpeakOutLoud(false);
+              setShowExample(false);
+              setIsReplaying(true);
+            }
+          }}
+          disabled={!speakOutLoud && !writtenText.trim() && !isCompleted}
+          className={`w-full py-3 rounded-lg font-medium transition-colors ${
+            isCompleted && !isReplaying
+              ? 'bg-green-600 text-white hover:bg-green-700'
+              : (!speakOutLoud && !writtenText.trim())
+              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              : 'bg-green-600 text-white hover:bg-green-700'
+          }`}
+        >
+          {isCompleted && !isReplaying
+            ? (appLanguage === 'ru' ? 'Пройти заново' : appLanguage === 'en' ? 'Replay' : 'Repetir')
+            : (appLanguage === 'ru' ? 'Завершить' : appLanguage === 'en' ? 'Complete' : 'Concluir')}
+        </button>
       )}
-
-      {/* Complete Button */}
-      <button
-        onClick={handleComplete}
-        disabled={!speakOutLoud && !writtenText.trim()}
-        className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        {t.complete}
-      </button>
     </div>
   );
 }
-
