@@ -75,6 +75,41 @@ tasks:
           sentence_translation_en: "I am Pedro."
           word_translation_ru: "Я есть / Я —"
 
+        - word: "Eu"
+          transcription: "[ew]"
+          example_sentence: "Eu sou Ana."
+          sentence_translation_ru: "Я — Ана."
+          sentence_translation_en: "I am Ana."
+          word_translation_ru: "Я"
+
+        - word: "Sou"
+          transcription: "[so]"
+          example_sentence: "Eu sou João."
+          sentence_translation_ru: "Я — Жоао."
+          sentence_translation_en: "I am João."
+          word_translation_ru: "Есть / Являюсь"
+
+        - word: "Nome"
+          transcription: "[ˈnomɨ]"
+          example_sentence: "O meu nome é Ana."
+          sentence_translation_ru: "Моё имя — Ана."
+          sentence_translation_en: "My name is Ana."
+          word_translation_ru: "Имя"
+
+        - word: "Prazer"
+          transcription: "[pɾɐˈzeɾ]"
+          example_sentence: "Prazer em conhecê-la."
+          sentence_translation_ru: "Приятно познакомиться."
+          sentence_translation_en: "Nice to meet you."
+          word_translation_ru: "Приятно / Удовольствие"
+
+        - word: "E você?"
+          transcription: "[i voˈse]"
+          example_sentence: "Olá, eu sou Ana. E você?"
+          sentence_translation_ru: "Привет, я — Ана. А вы?"
+          sentence_translation_en: "Hello, I am Ana. And you?"
+          word_translation_ru: "А вы? / А ты?"
+
     completion_message: "Уровень прогресса: Начало"
 
   - task_id: 2
