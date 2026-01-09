@@ -653,15 +653,8 @@ export default function RulesTask({ task, language, onComplete, isCompleted, onN
     );
   }
 
-  // If task is completed but user wants to replay, reset to first block
-  // But still show the task content, not just a completion message
-  useEffect(() => {
-    if (isCompleted && !isReplaying && currentBlockIndex === blocksOrder.length - 1) {
-      // When accessing a completed task, start from the beginning for replay
-      // But only if we're on the last block and not already replaying
-      // Don't auto-reset - let user click "Пройти заново" button
-    }
-  }, [isCompleted, isReplaying, currentBlockIndex, blocksOrder.length]);
+  // Don't auto-reset - let user explicitly click "Пройти заново" to reset
+  // No useEffect needed - user must manually click replay button
 
   return (
     <div className="space-y-6 w-full">
