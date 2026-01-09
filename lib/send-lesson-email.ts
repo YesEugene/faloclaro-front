@@ -214,7 +214,8 @@ function getEmailContent(lesson: any, language: string, lessonsUrl: string) {
       const t = translations[language as keyof typeof translations] || translations.en;
 
   // Update message for registration email (first 3 lessons unlocked)
-  const isRegistrationEmail = !lesson.yaml_content?.day?.title; // If no specific day info, it's registration
+  // Registration email is for day 1 - check if day_number is 1
+  const isRegistrationEmail = lesson.day_number === 1;
   const message = isRegistrationEmail 
     ? (language === 'ru' 
         ? 'Ты получил доступ к первым 3 урокам бесплатно. Остальные уроки доступны после оплаты.'
