@@ -54,8 +54,9 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
   }, [savedAnswers, savedShowResults, hasLoadedSavedData]);
   
   // Save answers to completion_data whenever they change (for persistence)
+  // But don't save if we're replaying (isReplaying is true)
   useEffect(() => {
-    if (hasLoadedSavedData && (Object.keys(answers).length > 0 || Object.keys(showResults).length > 0)) {
+    if (hasLoadedSavedData && !isReplaying && (Object.keys(answers).length > 0 || Object.keys(showResults).length > 0)) {
       // Save current state to completion_data without marking as completed
       onComplete({
         answers,
@@ -63,7 +64,7 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
         saved: true, // Flag to indicate this is just saving, not completing
       });
     }
-  }, [answers, showResults, hasLoadedSavedData]);
+  }, [answers, showResults, hasLoadedSavedData, isReplaying]);
 
   // Get progress message based on completed tasks
   const getProgressMessage = (completed: number, total: number) => {
