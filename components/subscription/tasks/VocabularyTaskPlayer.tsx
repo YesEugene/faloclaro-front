@@ -810,7 +810,7 @@ export default function VocabularyTaskPlayer({
         )}
       </div>
 
-      {/* Play/Pause Button - Center only (navigation moved to bottom panel) */}
+      {/* Play/Pause Button and Settings Icon - Center (navigation moved to bottom panel) */}
       <div className="flex items-center justify-center gap-4 mb-6">
         <div className="w-12 h-12"></div> {/* Spacer for left */}
         
@@ -833,11 +833,7 @@ export default function VocabularyTaskPlayer({
           )}
         </button>
 
-        <div className="w-12 h-12"></div> {/* Spacer for right */}
-      </div>
-
-      {/* Settings Icon - Under Play button */}
-      <div className="flex items-center justify-center mb-6">
+        {/* Settings Icon - Right of Play button */}
         <button
           onClick={() => setShowSettings(!showSettings)}
           className="transition-opacity hover:opacity-80"
@@ -852,9 +848,11 @@ export default function VocabularyTaskPlayer({
           <img 
             src="/Img/settings.svg" 
             alt={t.settings}
-            style={{ width: '50px', height: '50px' }}
+            style={{ width: '56px', height: '56px' }}
           />
         </button>
+
+        <div className="w-12 h-12"></div> {/* Spacer for right */}
       </div>
 
       {/* Progress Bar - Above navigation panel */}
