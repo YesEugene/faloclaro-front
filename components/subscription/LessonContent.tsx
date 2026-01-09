@@ -77,17 +77,18 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
         // Find task by task_id - allow accessing completed tasks for replay
         const taskIndex = yamlContent.tasks.findIndex((task: any) => task.task_id === parseInt(taskIdParam));
         if (taskIndex !== -1) {
-          // Only update if task changed or not initialized
-          if (!initializedRef.current || currentTaskIdRef.current !== parseInt(taskIdParam)) {
+          // Always respect URL - update if task changed
+          if (currentTaskIdRef.current !== parseInt(taskIdParam)) {
             setCurrentTaskIndex(taskIndex);
             currentTaskIdRef.current = parseInt(taskIdParam);
             initializedRef.current = true;
           }
-          return;
+          return; // Don't auto-select if URL has task param
         }
       }
       
       // Only auto-select task on initial load, not after completion or manual navigation
+      // If initializedRef is true, user has already navigated manually - don't override
       if (!initializedRef.current) {
         // Find first incomplete task
         // But if all tasks are completed, show first task for replay
