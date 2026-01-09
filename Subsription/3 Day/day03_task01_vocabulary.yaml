@@ -11,6 +11,14 @@ task:
   show_timer: true
   show_settings: true
   completion_rule: "auto_after_audio_10_min"
+  completion_message:
+    ru: "Уровень прогресса: Начало"
+    en: "Progress level: Beginning"
+
+ui:
+  show_audio_settings: true
+  show_timer: true
+  allow_repeat: true
 
 card_format:
   show_word: true
@@ -19,6 +27,7 @@ card_format:
   show_word_translation_ru: true
   show_sentence_translation_ru: true
   show_sentence_translation_en: true
+  show_word_translation_en: true
 
 content:
   cards:
@@ -28,6 +37,7 @@ content:
       sentence_translation_ru: "Сегодня я работаю."
       sentence_translation_en: "Today I work."
       word_translation_ru: "сегодня"
+      word_translation_en: "Today"
 
     - word: "Amanhã"
       transcription: "[ɐmɐˈɲɐ]"
@@ -35,6 +45,7 @@ content:
       sentence_translation_ru: "Завтра я отдыхаю."
       sentence_translation_en: "Tomorrow I rest."
       word_translation_ru: "завтра"
+      word_translation_en: "Tomorrow"
 
     - word: "Ontem"
       transcription: "[õˈtẽj̃]"
@@ -42,6 +53,7 @@ content:
       sentence_translation_ru: "Вчера я работал(а)."
       sentence_translation_en: "Yesterday I worked."
       word_translation_ru: "вчера"
+      word_translation_en: "Yesterday"
 
     - word: "Agora"
       transcription: "[ɐˈɡɔɾɐ]"
@@ -49,6 +61,7 @@ content:
       sentence_translation_ru: "Сейчас я отдыхаю."
       sentence_translation_en: "Now I rest."
       word_translation_ru: "сейчас"
+      word_translation_en: "Now"
 
     - word: "De manhã"
       transcription: "[dɨ mɐˈɲɐ]"
@@ -56,6 +69,7 @@ content:
       sentence_translation_ru: "Я работаю утром."
       sentence_translation_en: "I work in the morning."
       word_translation_ru: "утром"
+      word_translation_en: "In the morning"
 
     - word: "À tarde"
       transcription: "[a ˈtaɾdɨ]"
@@ -63,6 +77,7 @@ content:
       sentence_translation_ru: "Я отдыхаю днём."
       sentence_translation_en: "I rest in the afternoon."
       word_translation_ru: "днём"
+      word_translation_en: "In the afternoon"
 
     - word: "À noite"
       transcription: "[a ˈnojtɨ]"
@@ -70,6 +85,7 @@ content:
       sentence_translation_ru: "Я сплю ночью."
       sentence_translation_en: "I sleep at night."
       word_translation_ru: "вечером / ночью"
+      word_translation_en: "In the evening / at night"
 
     - word: "Hoje de manhã"
       transcription: "[ˈoʒɨ dɨ mɐˈɲɐ]"
@@ -77,6 +93,7 @@ content:
       sentence_translation_ru: "Сегодня утром я работаю."
       sentence_translation_en: "This morning I work."
       word_translation_ru: "сегодня утром"
+      word_translation_en: "This morning"
 
     - word: "Hoje à tarde"
       transcription: "[ˈoʒɨ a ˈtaɾdɨ]"
@@ -84,6 +101,7 @@ content:
       sentence_translation_ru: "Сегодня днём я отдыхаю."
       sentence_translation_en: "This afternoon I rest."
       word_translation_ru: "сегодня днём"
+      word_translation_en: "This afternoon"
 
     - word: "Agora à noite"
       transcription: "[ɐˈɡɔɾɐ a ˈnojtɨ]"
@@ -91,3 +109,4 @@ content:
       sentence_translation_ru: "Сегодня вечером я отдыхаю."
       sentence_translation_en: "Tonight I rest."
       word_translation_ru: "сегодня вечером"
+      word_translation_en: "Tonight"
