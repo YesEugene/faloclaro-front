@@ -393,9 +393,13 @@ function OverviewPageContent() {
                       {/* Icon */}
                       <div className="flex-shrink-0 mt-1">
                         {status === 'completed' ? (
-                          <svg className="w-6 h-6 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                          </svg>
+                          <Image
+                            src="/Img/Day completed.png"
+                            alt="Completed"
+                            width={24}
+                            height={24}
+                            className="w-6 h-6"
+                          />
                         ) : status === 'current' ? (
                           <svg className="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
@@ -449,18 +453,13 @@ function OverviewPageContent() {
         {/* Completion Icon - Show below tasks, not instead of them */}
         {allCompleted && (
           <div className="flex flex-col items-center justify-center py-4 mt-4">
-            <div className="relative">
-              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center">
-                <svg className="w-10 h-10 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-              </div>
-              <div className="absolute -top-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center border-3 border-white">
-                <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-              </div>
-            </div>
+            <Image
+              src="/Img/Day completed.png"
+              alt="Day completed"
+              width={80}
+              height={80}
+              className="w-20 h-20"
+            />
             <p className="mt-3 text-base font-semibold text-green-600 text-center">
               {appLanguage === 'ru' 
                 ? 'День завершён!' 
