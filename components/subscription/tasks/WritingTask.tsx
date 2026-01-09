@@ -310,7 +310,7 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
               >
                 {isCompleted && !isReplaying && speakOutLoud
                   ? (appLanguage === 'ru' ? 'Пройти заново' : appLanguage === 'en' ? 'Replay' : 'Repetir')
-                  : (alternative.action_button?.text || (appLanguage === 'ru' ? '✔ Я сказал(а) вслух' : appLanguage === 'en' ? '✔ I said it out loud' : '✔ Disse em voz alta'))}
+                  : (getTranslatedText(alternative.action_button?.text, appLanguage) || (appLanguage === 'ru' ? '✔ Я сказал(а) вслух' : appLanguage === 'en' ? '✔ I said it out loud' : '✔ Disse em voz alta'))}
               </button>
             </div>
           )}
@@ -326,7 +326,7 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
                 backgroundColor: '#F4F5F8'
               }}
             >
-              <p className="text-black font-medium whitespace-pre-line">{reflection.text}</p>
+              <p className="text-black font-medium whitespace-pre-line">{getTranslatedText(reflection.text, appLanguage)}</p>
             </div>
           )}
         </div>
