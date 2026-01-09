@@ -439,8 +439,9 @@ function LessonsPageContent() {
                 flexShrink: 0,
               };
 
+              // Determine card style - priority: completed > current > unlocked > locked
               if (isCompleted) {
-                // Green - completed
+                // Green - completed (highest priority)
                 cardStyle.backgroundColor = '#BEF4C2';
                 cardStyle.border = 'none';
               } else if (isCurrent) {
@@ -457,6 +458,9 @@ function LessonsPageContent() {
                 cardStyle.border = '1px solid #E5E7EB';
               }
 
+              // Determine content - show text if unlocked OR completed, show icon if locked
+              const showText = isUnlocked || isCompleted;
+
               return (
                 <div
                   key={lesson.id}
@@ -464,7 +468,7 @@ function LessonsPageContent() {
                   style={cardStyle}
                   className="transition-all hover:opacity-80"
                 >
-                  {isUnlocked ? (
+                  {showText ? (
                     <span className="text-sm font-medium text-gray-700 text-center">
                       {lesson.day_number} {appLanguage === 'ru' ? 'Урок' : appLanguage === 'en' ? 'Lesson' : 'Lição'}
                     </span>
