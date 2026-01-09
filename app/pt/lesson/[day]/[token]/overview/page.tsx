@@ -19,6 +19,7 @@ function OverviewPageContent() {
   const [userProgress, setUserProgress] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [imageError, setImageError] = useState(false);
 
   useEffect(() => {
     if (!day || !token) {
@@ -449,16 +450,28 @@ function OverviewPageContent() {
         {/* Completion Icon - Show below tasks, not instead of them */}
         {allCompleted && (
           <div className="flex flex-col items-center justify-center py-4 mt-4">
-            <img
-              src="/Img/thumbs-icon.jpg"
-              alt="Day completed"
-              className="w-20 h-20"
-              style={{ width: '80px', height: '80px', objectFit: 'contain' }}
-              onError={(e) => {
-                console.error('Failed to load thumbs-icon.jpg, trying fallback');
-                e.currentTarget.src = '/Img/Day completed.png';
-              }}
-            />
+            {!imageError ? (
+              <img
+                src="/Img/thumbs-icon.jpg"
+                alt="Day completed"
+                className="w-20 h-20"
+                style={{ width: '80px', height: '80px', objectFit: 'contain' }}
+                onError={(e) => {
+                  console.error('Failed to load thumbs-icon.jpg');
+                  setImageError(true);
+                  e.currentTarget.style.display = 'none';
+                }}
+                onLoad={() => {
+                  setImageError(false);
+                }}
+              />
+            ) : (
+              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center" style={{ width: '80px', height: '80px' }}>
+                <svg className="w-10 h-10 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+              </div>
+            )}
             <p className="mt-3 text-base font-semibold text-green-600 text-center">
               {appLanguage === 'ru' 
                 ? 'День завершён!' 
