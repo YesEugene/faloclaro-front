@@ -199,6 +199,11 @@ function LessonsPageContent() {
           .eq('user_id', userId);
 
         if (!progressError && progressData) {
+          console.log('📊 Raw progress data from DB:', {
+            progressCount: progressData.length,
+            progress: progressData.map(p => ({ lesson_id: p.lesson_id, status: p.status }))
+          });
+          
           // Get lesson day_numbers for progress
           const progressLessonIds = progressData.map(p => p.lesson_id);
           const { data: lessonsWithProgress, error: lessonsWithProgressError } = await supabase
@@ -206,16 +211,35 @@ function LessonsPageContent() {
             .select('id, day_number')
             .in('id', progressLessonIds);
 
+          console.log('📚 Lessons with progress:', {
+            lessonsCount: lessonsWithProgress?.length || 0,
+            lessons: lessonsWithProgress?.map(l => ({ id: l.id, day_number: l.day_number })) || []
+          });
+
           if (!lessonsWithProgressError && lessonsWithProgress) {
             const progressMap = new Map<number, string>();
             progressData.forEach(progress => {
               const lesson = lessonsWithProgress.find(l => l.id === progress.lesson_id);
               if (lesson) {
                 progressMap.set(lesson.day_number, progress.status);
+                console.log(`  ✓ Progress for lesson ${lesson.day_number}: status = ${progress.status}`);
+              } else {
+                console.warn(`  ⚠️ No lesson found for progress with lesson_id: ${progress.lesson_id}`);
               }
             });
+            console.log('📊 Final progress map:', {
+              progressCount: progressMap.size,
+              progress: Array.from(progressMap.entries()).map(([day, status]) => ({ day, status }))
+            });
             setUserProgress(progressMap);
+          } else {
+            console.error('❌ Error loading lessons with progress:', lessonsWithProgressError);
           }
+        } else {
+          console.log('⚠️ No progress data found:', { 
+            progressError: progressError?.message || progressError,
+            progressDataCount: (progressData as any)?.length || 0
+          });
         }
       }
 
@@ -375,16 +399,19 @@ function LessonsPageContent() {
         <div className="overflow-x-auto pb-4 -mx-4 px-4">
           <div className="flex gap-3" style={{ minWidth: 'max-content' }}>
             {lessons.map((lesson) => {
-              console.log(`\n🎨 Rendering lesson ${lesson.day_number}:`);
               const isUnlocked = isLessonUnlocked(lesson.day_number);
               const progressStatus = userProgress.get(lesson.day_number);
               const isCompleted = progressStatus === 'completed';
               
-              console.log(`  Status:`, {
+              console.log(`\n🎨 Rendering lesson ${lesson.day_number}:`, {
                 isUnlocked,
                 progressStatus,
                 isCompleted,
-                willShowAsLocked: !isUnlocked
+                progressStatusType: typeof progressStatus,
+                progressStatusComparison: progressStatus === 'completed',
+                willShowAsLocked: !isUnlocked,
+                willShowAsCompleted: isCompleted,
+                willShowAsCurrent: !isCompleted && isUnlocked && lesson.day_number === lessons.find(l => isLessonUnlocked(l.day_number) && userProgress.get(l.day_number) !== 'completed')?.day_number
               });
               
               // Find first unlocked lesson that is not completed (for determining current lesson)
