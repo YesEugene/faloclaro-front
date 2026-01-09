@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAppLanguage } from '@/lib/language-context';
+import { getTranslatedText } from '@/lib/lesson-translations';
 
 interface ListeningTaskProps {
   task: any;

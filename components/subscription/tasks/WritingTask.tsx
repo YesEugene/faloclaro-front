@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAppLanguage } from '@/lib/language-context';
+import { getTranslatedText } from '@/lib/lesson-translations';
 
 interface WritingTaskProps {
   task: any;
@@ -105,7 +106,7 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
     );
   }
 
-  const instructionText = task.instruction?.text || task.instruction || '';
+  const instructionText = getTranslatedText(task.instruction?.text || task.instruction, appLanguage);
   const mainTask = task.main_task || {};
   const template = mainTask.template || task.template || [];
   const hints = mainTask.hints || task.hints || [];
@@ -227,7 +228,7 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
                     border: 'none'
                   }}
                 >
-                  {example.button_text || (appLanguage === 'ru' ? 'Показать пример' : appLanguage === 'en' ? 'Show example' : 'Mostrar exemplo')}
+                  {getTranslatedText(example.button_text, appLanguage) || (appLanguage === 'ru' ? 'Показать пример' : appLanguage === 'en' ? 'Show example' : 'Mostrar exemplo')}
                 </button>
               )}
               
@@ -257,11 +258,11 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
           {/* Alternative: Speak Out Loud */}
           {alternative.action_button && (
             <div className="space-y-4">
-              {alternative.title && (
-                <p className="text-lg font-semibold text-black">{alternative.title}</p>
+              {getTranslatedText(alternative.title, appLanguage) && (
+                <p className="text-lg font-semibold text-black">{getTranslatedText(alternative.title, appLanguage)}</p>
               )}
               
-              {alternative.instruction && (
+              {getTranslatedText(alternative.instruction, appLanguage) && (
                 <div 
                   className="rounded-lg p-4"
                   style={{ 
@@ -271,7 +272,7 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
                     backgroundColor: '#F4F5F8'
                   }}
                 >
-                  <p className="text-black font-medium whitespace-pre-line">{alternative.instruction}</p>
+                  <p className="text-black font-medium whitespace-pre-line">{getTranslatedText(alternative.instruction, appLanguage)}</p>
                 </div>
               )}
 
