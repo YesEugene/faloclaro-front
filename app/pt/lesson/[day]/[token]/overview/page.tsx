@@ -449,12 +449,11 @@ function OverviewPageContent() {
         {/* Completion Icon - Show below tasks, not instead of them */}
         {allCompleted && (
           <div className="flex flex-col items-center justify-center py-4 mt-4">
-            <Image
+            <img
               src="/Img/thumbs-icon.jpg"
               alt="Day completed"
-              width={80}
-              height={80}
               className="w-20 h-20"
+              style={{ width: '80px', height: '80px' }}
             />
             <p className="mt-3 text-base font-semibold text-green-600 text-center">
               {appLanguage === 'ru' 
