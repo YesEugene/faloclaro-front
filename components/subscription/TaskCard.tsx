@@ -132,6 +132,12 @@ export default function TaskCard({
             language={language}
             onComplete={handleComplete}
             isCompleted={isCompleted}
+            onNextTask={canGoNext ? onNext : undefined}
+            onPreviousTask={canGoPrevious ? onPrevious : undefined}
+            canGoNext={canGoNext}
+            canGoPrevious={canGoPrevious}
+            progressCompleted={progressCompleted}
+            progressTotal={progressTotal}
           />
         );
       case 'attention':
@@ -141,6 +147,12 @@ export default function TaskCard({
             language={language}
             onComplete={handleComplete}
             isCompleted={isCompleted}
+            onNextTask={canGoNext ? onNext : undefined}
+            onPreviousTask={canGoPrevious ? onPrevious : undefined}
+            canGoNext={canGoNext}
+            canGoPrevious={canGoPrevious}
+            progressCompleted={progressCompleted}
+            progressTotal={progressTotal}
           />
         );
       case 'writing_optional':
@@ -150,6 +162,12 @@ export default function TaskCard({
             language={language}
             onComplete={handleComplete}
             isCompleted={isCompleted}
+            onNextTask={canGoNext ? onNext : undefined}
+            onPreviousTask={canGoPrevious ? onPrevious : undefined}
+            canGoNext={canGoNext}
+            canGoPrevious={canGoPrevious}
+            progressCompleted={progressCompleted}
+            progressTotal={progressTotal}
           />
         );
       default:
