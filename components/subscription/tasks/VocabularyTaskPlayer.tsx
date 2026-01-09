@@ -889,38 +889,41 @@ export default function VocabularyTaskPlayer({
         <div className="max-w-md mx-auto pt-3 pb-3" style={{ paddingBottom: 'env(safe-area-inset-bottom, 12px)', height: '69px', color: 'rgba(0, 0, 0, 1)', paddingLeft: '16px', paddingRight: '16px' }}>
           <div className="flex items-center justify-between gap-4">
             {/* Previous Button - Left */}
-            {/* If task is completed AND on last card: show previous task button, else: show previous card button */}
-            {localIsCompleted && currentCardIndex === cards.length - 1 ? (
-              // Task completed AND on last card - show previous task button
-              canGoPrevious && onPreviousTask ? (
-                <button
-                  onClick={onPreviousTask}
-                  className="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors flex items-center justify-center"
-                  aria-label={t.previousTask}
-                >
-                  <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
-                </button>
-              ) : (
-                <div className="w-10 h-10"></div>
-              )
-            ) : (
-              // Task not completed OR not on last card - show previous card button
-              currentCardIndex > 0 ? (
-                <button
-                  onClick={handlePreviousCard}
-                  className="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors flex items-center justify-center"
-                  aria-label={t.previous}
-                >
-                  <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
-                </button>
-              ) : (
-                <div className="w-10 h-10"></div>
-              )
-            )}
+            {/* Always show previous button if there's somewhere to go back */}
+            {(() => {
+              // If task is completed AND on last card AND can go to previous task - show previous task button
+              if (localIsCompleted && currentCardIndex === cards.length - 1 && canGoPrevious && onPreviousTask) {
+                return (
+                  <button
+                    onClick={onPreviousTask}
+                    className="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors flex items-center justify-center"
+                    aria-label={t.previousTask}
+                  >
+                    <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                  </button>
+                );
+              }
+              
+              // Otherwise, if we can go to previous card - show previous card button
+              if (currentCardIndex > 0) {
+                return (
+                  <button
+                    onClick={handlePreviousCard}
+                    className="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors flex items-center justify-center"
+                    aria-label={t.previous}
+                  >
+                    <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                  </button>
+                );
+              }
+              
+              // If nothing to go back to - show empty spacer to maintain layout
+              return <div className="w-10 h-10"></div>;
+            })()}
 
             {/* Task Title - Center */}
             <div className="flex-1 text-center">
