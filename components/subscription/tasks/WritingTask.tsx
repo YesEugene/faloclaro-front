@@ -101,6 +101,15 @@ export default function WritingTask({ task, language, onComplete, isCompleted, o
               : `Bloco 1 / 1`}
           </div>
           
+          {/* Title */}
+          <h3 className="text-xl font-bold text-black mb-4">
+            {appLanguage === 'ru' 
+              ? 'Напиши от руки или проговори вслух'
+              : appLanguage === 'en'
+              ? 'Write by hand or say out loud'
+              : 'Escreva à mão ou diga em voz alta'}
+          </h3>
+          
           {/* Instruction */}
           {instructionText && (
             <div 
