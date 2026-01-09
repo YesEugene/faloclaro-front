@@ -9,6 +9,8 @@ interface ListeningTaskProps {
   language: string;
   onComplete: (completionData?: any) => void;
   isCompleted: boolean;
+  savedAnswers?: { [key: number]: string };
+  savedShowResults?: { [key: number]: boolean };
   onNextTask?: () => void;
   onPreviousTask?: () => void;
   canGoNext?: boolean;
@@ -17,16 +19,42 @@ interface ListeningTaskProps {
   progressTotal?: number;
 }
 
-export default function ListeningTask({ task, language, onComplete, isCompleted, onNextTask, onPreviousTask, canGoNext = false, canGoPrevious = false, progressCompleted = 0, progressTotal = 5 }: ListeningTaskProps) {
+export default function ListeningTask({ task, language, onComplete, isCompleted, savedAnswers, savedShowResults, onNextTask, onPreviousTask, canGoNext = false, canGoPrevious = false, progressCompleted = 0, progressTotal = 5 }: ListeningTaskProps) {
   const { language: appLanguage } = useAppLanguage();
   const [currentItemIndex, setCurrentItemIndex] = useState(0);
-  const [answers, setAnswers] = useState<{ [key: number]: string }>({});
-  const [showResults, setShowResults] = useState<{ [key: number]: boolean }>({});
+  const [answers, setAnswers] = useState<{ [key: number]: string }>(savedAnswers || {});
+  const [showResults, setShowResults] = useState<{ [key: number]: boolean }>(savedShowResults || {});
   const [audioUrls, setAudioUrls] = useState<{ [key: string]: string }>({});
   const [isPlayingAudio, setIsPlayingAudio] = useState<{ [key: string]: boolean }>({});
   const [isReplaying, setIsReplaying] = useState(false);
   
   const audioRefs = useRef<{ [key: string]: HTMLAudioElement }>({});
+  
+  // Load saved answers on mount
+  const [hasLoadedSavedData, setHasLoadedSavedData] = useState(false);
+  useEffect(() => {
+    if (!hasLoadedSavedData) {
+      if (savedAnswers && Object.keys(savedAnswers).length > 0) {
+        setAnswers(savedAnswers);
+      }
+      if (savedShowResults && Object.keys(savedShowResults).length > 0) {
+        setShowResults(savedShowResults);
+      }
+      setHasLoadedSavedData(true);
+    }
+  }, [savedAnswers, savedShowResults, hasLoadedSavedData]);
+  
+  // Save answers to completion_data whenever they change (for persistence)
+  useEffect(() => {
+    if (hasLoadedSavedData && (Object.keys(answers).length > 0 || Object.keys(showResults).length > 0)) {
+      // Save current state to completion_data without marking as completed
+      onComplete({
+        answers,
+        showResults,
+        saved: true, // Flag to indicate this is just saving, not completing
+      });
+    }
+  }, [answers, showResults, hasLoadedSavedData]);
 
   // Get progress message based on completed tasks
   const getProgressMessage = (completed: number, total: number) => {
@@ -199,6 +227,7 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
 
       onComplete({
         answers,
+        showResults,
         correctCount,
         totalItems: items.length,
         completedAt: new Date().toISOString(),
@@ -352,6 +381,12 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
                 setAnswers({});
                 setShowResults({});
                 setIsReplaying(true);
+                // Clear saved data when replaying
+                onComplete({
+                  answers: {},
+                  showResults: {},
+                  replay: true,
+                });
               }
             }}
             className="flex-1 bg-green-600 text-white py-3 rounded-lg font-medium hover:bg-green-700 transition-colors"

@@ -8,6 +8,8 @@ interface WritingTaskProps {
   language: string;
   onComplete: (completionData?: any) => void;
   isCompleted: boolean;
+  savedWrittenText?: string | null;
+  savedSpeakOutLoud?: boolean;
   onNextTask?: () => void;
   onPreviousTask?: () => void;
   canGoNext?: boolean;
@@ -16,10 +18,10 @@ interface WritingTaskProps {
   progressTotal?: number;
 }
 
-export default function WritingTask({ task, language, onComplete, isCompleted, onNextTask, onPreviousTask, canGoNext = false, canGoPrevious = false, progressCompleted = 0, progressTotal = 5 }: WritingTaskProps) {
+export default function WritingTask({ task, language, onComplete, isCompleted, savedWrittenText, savedSpeakOutLoud, onNextTask, onPreviousTask, canGoNext = false, canGoPrevious = false, progressCompleted = 0, progressTotal = 5 }: WritingTaskProps) {
   const { language: appLanguage } = useAppLanguage();
-  const [writtenText, setWrittenText] = useState('');
-  const [speakOutLoud, setSpeakOutLoud] = useState(false);
+  const [writtenText, setWrittenText] = useState(savedWrittenText || '');
+  const [speakOutLoud, setSpeakOutLoud] = useState(savedSpeakOutLoud || false);
   const [showExample, setShowExample] = useState(false);
   const [isReplaying, setIsReplaying] = useState(false);
 
@@ -49,15 +51,31 @@ export default function WritingTask({ task, language, onComplete, isCompleted, o
     }
   };
 
-  // Reset state when replaying
+  // Load saved data on mount
+  const [hasLoadedSavedData, setHasLoadedSavedData] = useState(false);
   useEffect(() => {
-    if (isCompleted && !isReplaying) {
-      // Allow replay by resetting state
-      setWrittenText('');
-      setSpeakOutLoud(false);
-      setShowExample(false);
+    if (!hasLoadedSavedData) {
+      if (savedWrittenText !== undefined && savedWrittenText !== null) {
+        setWrittenText(savedWrittenText);
+      }
+      if (savedSpeakOutLoud !== undefined) {
+        setSpeakOutLoud(savedSpeakOutLoud);
+      }
+      setHasLoadedSavedData(true);
     }
-  }, [isCompleted, isReplaying]);
+  }, [savedWrittenText, savedSpeakOutLoud, hasLoadedSavedData]);
+  
+  // Save answers to completion_data whenever they change (for persistence)
+  useEffect(() => {
+    if (hasLoadedSavedData && (writtenText.trim() || speakOutLoud)) {
+      // Save current state to completion_data without marking as completed
+      onComplete({
+        writtenText: speakOutLoud ? null : writtenText,
+        speakOutLoud,
+        saved: true, // Flag to indicate this is just saving, not completing
+      });
+    }
+  }, [writtenText, speakOutLoud, hasLoadedSavedData]);
 
   const handleComplete = (forceSpeakOutLoud?: boolean) => {
     // Writing task is optional - can be completed with either text or speaking out loud
@@ -254,13 +272,28 @@ export default function WritingTask({ task, language, onComplete, isCompleted, o
 
               <button
                 onClick={() => {
-                  setSpeakOutLoud(true);
-                  // If button completes task, complete immediately with speakOutLoud flag
-                  if (alternative.action_button?.completes_task) {
-                    handleComplete(true); // Pass true to force completion with speakOutLoud
+                  if (isCompleted && !isReplaying && speakOutLoud) {
+                    // Replay mode - reset everything
+                    setWrittenText('');
+                    setSpeakOutLoud(false);
+                    setShowExample(false);
+                    setIsReplaying(true);
+                    // Clear saved data when replaying
+                    onComplete({
+                      writtenText: '',
+                      speakOutLoud: false,
+                      replay: true,
+                    });
+                  } else {
+                    // First click - mark as completed
+                    setSpeakOutLoud(true);
+                    // If button completes task, complete immediately with speakOutLoud flag
+                    if (alternative.action_button?.completes_task) {
+                      handleComplete(true); // Pass true to force completion with speakOutLoud
+                    }
                   }
                 }}
-                disabled={speakOutLoud || isCompleted}
+                disabled={false}
                 className="w-full px-4 py-3 rounded-lg font-medium transition-colors"
                 style={{
                   height: '55px',
@@ -269,7 +302,9 @@ export default function WritingTask({ task, language, onComplete, isCompleted, o
                   border: 'none'
                 }}
               >
-                {alternative.action_button?.text || (appLanguage === 'ru' ? '✔ Я сказал(а) вслух' : appLanguage === 'en' ? '✔ I said it out loud' : '✔ Disse em voz alta')}
+                {isCompleted && !isReplaying && speakOutLoud
+                  ? (appLanguage === 'ru' ? 'Пройти заново' : appLanguage === 'en' ? 'Replay' : 'Repetir')
+                  : (alternative.action_button?.text || (appLanguage === 'ru' ? '✔ Я сказал(а) вслух' : appLanguage === 'en' ? '✔ I said it out loud' : '✔ Disse em voz alta'))}
               </button>
             </div>
           )}
@@ -303,6 +338,12 @@ export default function WritingTask({ task, language, onComplete, isCompleted, o
               setSpeakOutLoud(false);
               setShowExample(false);
               setIsReplaying(true);
+              // Clear saved data when replaying
+              onComplete({
+                writtenText: '',
+                speakOutLoud: false,
+                replay: true,
+              });
             }
           }}
           disabled={isCompleted && !isReplaying}

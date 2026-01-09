@@ -111,7 +111,63 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
 
   const handleTaskComplete = async (taskId: number, completionData?: any) => {
     try {
-      // Update task progress
+      // If this is just saving (not completing), update completion_data only
+      if (completionData?.saved && !completionData?.replay) {
+        const taskProgress = userProgress.task_progress?.find((tp: any) => tp.task_id === taskId);
+        if (taskProgress) {
+          // Update completion_data without changing status
+          await supabase
+            .from('task_progress')
+            .update({
+              completion_data: completionData,
+            })
+            .eq('id', taskProgress.id);
+        } else {
+          // Create new task_progress entry with in_progress status
+          const task = tasks.find(t => t.task_id === taskId);
+          await supabase
+            .from('task_progress')
+            .insert({
+              user_progress_id: userProgress.id,
+              task_id: taskId,
+              task_type: task?.type || 'unknown',
+              status: 'in_progress',
+              completion_data: completionData,
+            });
+        }
+        // Update local state
+        const updatedTaskProgress = userProgress.task_progress?.map((tp: any) => 
+          tp.task_id === taskId ? { ...tp, completion_data: completionData } : tp
+        ) || [];
+        if (!userProgress.task_progress?.some((tp: any) => tp.task_id === taskId)) {
+          updatedTaskProgress.push({
+            task_id: taskId,
+            status: 'in_progress',
+            completion_data: completionData,
+          });
+        }
+        setUserProgress({
+          ...userProgress,
+          task_progress: updatedTaskProgress,
+        });
+        return; // Don't mark as completed, just save data
+      }
+      
+      // If replaying, clear completion_data
+      if (completionData?.replay) {
+        const taskProgress = userProgress.task_progress?.find((tp: any) => tp.task_id === taskId);
+        if (taskProgress) {
+          await supabase
+            .from('task_progress')
+            .update({
+              completion_data: completionData,
+            })
+            .eq('id', taskProgress.id);
+        }
+        return; // Don't change completion status on replay
+      }
+      
+      // Update task progress - mark as completed
       const taskProgress = userProgress.task_progress?.find((tp: any) => tp.task_id === taskId);
       const wasAlreadyCompleted = taskProgress?.status === 'completed';
       
@@ -187,10 +243,31 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
         });
       }
       
-      setUserProgress({
-        ...userProgress,
-        task_progress: updatedTaskProgress,
-        tasks_completed: completedTasks,
+      // Update local state immediately to reflect completion
+      // This ensures isCompleted is set correctly in TaskCard
+      // But DON'T trigger task switch - user should stay on current task
+      setUserProgress((prev: any) => {
+        const updatedTaskProgress = prev.task_progress?.map((tp: any) => 
+          tp.task_id === taskId ? { ...tp, status: 'completed', completed_at: new Date().toISOString(), completion_data: completionData } : tp
+        ) || [];
+        
+        // If task progress didn't exist, add it
+        if (!prev.task_progress?.some((tp: any) => tp.task_id === taskId)) {
+          updatedTaskProgress.push({
+            task_id: taskId,
+            status: 'completed',
+            completed_at: new Date().toISOString(),
+            completion_data: completionData,
+          });
+        }
+        
+        return {
+          ...prev,
+          task_progress: updatedTaskProgress,
+          tasks_completed: completedTasks,
+          status: allCompleted ? 'completed' : 'in_progress',
+          completed_at: allCompleted ? new Date().toISOString() : null,
+        };
       });
       
       // Reload progress in background - don't wait for it

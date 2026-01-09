@@ -132,6 +132,8 @@ export default function TaskCard({
             language={language}
             onComplete={handleComplete}
             isCompleted={isCompleted}
+            savedAnswers={taskProgress?.completion_data?.answers}
+            savedShowResults={taskProgress?.completion_data?.showResults}
             onNextTask={canGoNext ? onNext : undefined}
             onPreviousTask={canGoPrevious ? onPrevious : undefined}
             canGoNext={canGoNext}
@@ -147,6 +149,8 @@ export default function TaskCard({
             language={language}
             onComplete={handleComplete}
             isCompleted={isCompleted}
+            savedAnswers={taskProgress?.completion_data?.answers}
+            savedShowResults={taskProgress?.completion_data?.showResults}
             onNextTask={canGoNext ? onNext : undefined}
             onPreviousTask={canGoPrevious ? onPrevious : undefined}
             canGoNext={canGoNext}
@@ -162,6 +166,8 @@ export default function TaskCard({
             language={language}
             onComplete={handleComplete}
             isCompleted={isCompleted}
+            savedWrittenText={taskProgress?.completion_data?.writtenText}
+            savedSpeakOutLoud={taskProgress?.completion_data?.speakOutLoud}
             onNextTask={canGoNext ? onNext : undefined}
             onPreviousTask={canGoPrevious ? onPrevious : undefined}
             canGoNext={canGoNext}
