@@ -8,9 +8,13 @@ interface WritingTaskProps {
   language: string;
   onComplete: (completionData?: any) => void;
   isCompleted: boolean;
+  onNextTask?: () => void;
+  onPreviousTask?: () => void;
+  canGoNext?: boolean;
+  canGoPrevious?: boolean;
 }
 
-export default function WritingTask({ task, language, onComplete, isCompleted }: WritingTaskProps) {
+export default function WritingTask({ task, language, onComplete, isCompleted, onNextTask, onPreviousTask, canGoNext = false, canGoPrevious = false }: WritingTaskProps) {
   const { language: appLanguage } = useAppLanguage();
   const [writtenText, setWrittenText] = useState('');
   const [speakOutLoud, setSpeakOutLoud] = useState(false);
