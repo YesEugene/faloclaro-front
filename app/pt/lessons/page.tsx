@@ -134,7 +134,7 @@ function LessonsPageContent() {
       return userTokens.has(dayNumber);
     }
     // After 3, check if user has paid
-    return subscription?.status === 'active' || subscription?.status === 'paid';
+    return subscription?.status === 'active' || subscription?.status === 'paid' || userTokens.has(dayNumber);
   };
 
   const getLessonUrl = (dayNumber: number): string => {
