@@ -225,6 +225,23 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
     }
   };
 
+  const handleReplay = () => {
+    // Reset all answers and results
+    setAnswers({});
+    setShowResults({});
+    setCurrentItemIndex(0);
+    setLocalIsCompleted(false);
+    setIsReplaying(true);
+    
+    // Clear saved data
+    onComplete({
+      answers: {},
+      showResults: {},
+      saved: true,
+      replay: true,
+    });
+  };
+
   const handleComplete = () => {
     const allAnswered = items.every((item: any, index: number) => answers[index]);
     if (allAnswered) {

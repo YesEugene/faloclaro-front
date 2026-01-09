@@ -225,6 +225,23 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
     }
   };
 
+  const handleReplay = () => {
+    // Reset all answers and results
+    setAnswers({});
+    setShowResults({});
+    setCurrentItemIndex(0);
+    setLocalIsCompleted(false);
+    setIsReplaying(true);
+    
+    // Clear saved data
+    onComplete({
+      answers: {},
+      showResults: {},
+      saved: true,
+      replay: true,
+    });
+  };
+
   const handleComplete = () => {
     const allAnswered = items.every((item: any, index: number) => answers[index]);
     if (allAnswered) {
@@ -355,6 +372,21 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
               );
             })}
           </div>
+
+          {/* Replay Button - Show only when task is completed and all items are answered */}
+          {localIsCompleted && allAnswered && (
+            <button
+              onClick={handleReplay}
+              className="w-full px-4 py-3 rounded-lg font-medium transition-colors mt-4"
+              style={{
+                backgroundColor: '#3B82F6',
+                color: 'white',
+                border: 'none',
+              }}
+            >
+              {appLanguage === 'ru' ? 'Пройти снова' : appLanguage === 'en' ? 'Replay' : 'Repetir'}
+            </button>
+          )}
         </div>
       </div>
 
