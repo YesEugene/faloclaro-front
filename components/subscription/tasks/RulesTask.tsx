@@ -773,26 +773,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
         {renderBlock()}
       </div>
 
-      {/* Navigation */}
-      <div className="flex gap-4" style={{ paddingBottom: '120px' }}>
-        {currentBlockIndex > 0 && (
-          <button
-            onClick={handlePreviousBlock}
-            className="flex-1 bg-gray-200 text-gray-700 py-3 rounded-lg font-medium hover:bg-gray-300 transition-colors"
-          >
-            ← {appLanguage === 'ru' ? 'Назад' : 'Back'}
-          </button>
-        )}
-        
-        {currentBlockIndex < blocksOrder.length - 1 && (
-          <button
-            onClick={handleNextBlock}
-            className="flex-1 bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
-          >
-            {appLanguage === 'ru' ? 'Далее' : 'Next'} →
-          </button>
-        )}
-      </div>
+      {/* Navigation buttons removed - now handled by bottom panel */}
 
 
       {/* Progress Bar - Above navigation panel */}
@@ -822,23 +803,42 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
         </div>
       </div>
 
-      {/* Navigation Panel - Fixed at bottom (Cross-task navigation) */}
+      {/* Navigation Panel - Fixed at bottom (Unified navigation: blocks within task OR tasks) */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-30" style={{ borderRadius: '0px', borderTopLeftRadius: '0px', borderTopRightRadius: '0px', borderBottomRightRadius: '0px', borderBottomLeftRadius: '0px', height: '69px', verticalAlign: 'bottom', marginBottom: '0px', opacity: 1, color: 'rgba(0, 0, 0, 1)' }}>
         <div className="max-w-md mx-auto pt-3 pb-3" style={{ paddingBottom: 'env(safe-area-inset-bottom, 12px)', height: '69px', color: 'rgba(0, 0, 0, 1)', paddingLeft: '16px', paddingRight: '16px' }}>
           <div className="flex items-center justify-between gap-4">
             {/* Previous Button - Left */}
-            {canGoPrevious && onPreviousTask ? (
-              <button
-                onClick={onPreviousTask}
-                className="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors flex items-center justify-center"
-                aria-label={appLanguage === 'ru' ? 'Предыдущее задание' : 'Previous task'}
-              >
-                <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
+            {/* If task is completed: show previous task button, else: show previous block button */}
+            {localIsCompleted ? (
+              // Task completed - show previous task button
+              canGoPrevious && onPreviousTask ? (
+                <button
+                  onClick={onPreviousTask}
+                  className="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors flex items-center justify-center"
+                  aria-label={appLanguage === 'ru' ? 'Предыдущее задание' : 'Previous task'}
+                >
+                  <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+              ) : (
+                <div className="w-10 h-10"></div>
+              )
             ) : (
-              <div className="w-10 h-10"></div>
+              // Task not completed - show previous block button
+              currentBlockIndex > 0 ? (
+                <button
+                  onClick={handlePreviousBlock}
+                  className="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors flex items-center justify-center"
+                  aria-label={appLanguage === 'ru' ? 'Предыдущий блок' : 'Previous block'}
+                >
+                  <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+              ) : (
+                <div className="w-10 h-10"></div>
+              )
             )}
 
             {/* Task Title - Center */}
@@ -870,28 +870,37 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
             </div>
 
             {/* Next Button - Right */}
-            {canGoNext && onNextTask ? (
-              <button
-                onClick={onNextTask}
-                disabled={!localIsCompleted}
-                className={`w-10 h-10 rounded-full transition-colors flex items-center justify-center ${
-                  localIsCompleted
-                    ? 'bg-green-500 hover:bg-green-600'
-                    : 'bg-white border border-gray-300 cursor-not-allowed'
-                }`}
-                style={!localIsCompleted ? {
-                  backgroundColor: 'rgba(255, 255, 255, 1)',
-                  borderWidth: '1px',
-                  borderColor: 'rgba(176, 176, 176, 1)'
-                } : {}}
-                aria-label={appLanguage === 'ru' ? 'Следующее задание' : 'Next task'}
-              >
-                <svg className={`w-6 h-6 ${localIsCompleted ? 'text-white' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
+            {/* If task is completed: show next task button (green), else: show next block button (blue) */}
+            {localIsCompleted ? (
+              // Task completed - show next task button (green, active)
+              canGoNext && onNextTask ? (
+                <button
+                  onClick={onNextTask}
+                  className="w-10 h-10 rounded-full bg-green-500 hover:bg-green-600 transition-colors flex items-center justify-center"
+                  aria-label={appLanguage === 'ru' ? 'Следующее задание' : 'Next task'}
+                >
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              ) : (
+                <div className="w-10 h-10"></div>
+              )
             ) : (
-              <div className="w-10 h-10"></div>
+              // Task not completed - show next block button (blue, always active)
+              currentBlockIndex < blocksOrder.length - 1 ? (
+                <button
+                  onClick={handleNextBlock}
+                  className="w-10 h-10 rounded-full bg-blue-600 hover:bg-blue-700 transition-colors flex items-center justify-center"
+                  aria-label={appLanguage === 'ru' ? 'Следующий блок' : 'Next block'}
+                >
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              ) : (
+                <div className="w-10 h-10"></div>
+              )
             )}
           </div>
         </div>

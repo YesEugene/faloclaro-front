@@ -349,55 +349,8 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
         </div>
       </div>
 
-      {/* Navigation */}
-      <div className="flex gap-4" style={{ paddingBottom: '120px' }}>
-        {currentItemIndex > 0 && (
-          <button
-            onClick={handlePreviousItem}
-            className="flex-1 bg-gray-200 text-gray-700 py-3 rounded-lg font-medium hover:bg-gray-300 transition-colors"
-          >
-            ← {appLanguage === 'ru' ? 'Назад' : appLanguage === 'en' ? 'Back' : 'Voltar'}
-          </button>
-        )}
-        
-        {currentItemIndex < items.length - 1 && (
-          <button
-            onClick={handleNextItem}
-            className="flex-1 bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
-          >
-            {appLanguage === 'ru' ? 'Далее' : appLanguage === 'en' ? 'Next' : 'Próximo'} →
-          </button>
-        )}
-
-        {/* Complete Button */}
-        {allAnswered && currentItemIndex === items.length - 1 && (
-          <button
-            onClick={() => {
-              if (!isCompleted || isReplaying) {
-                handleComplete();
-                setIsReplaying(false);
-              } else {
-                // If already completed, allow replay by resetting
-                setCurrentItemIndex(0);
-                setAnswers({});
-                setShowResults({});
-                setIsReplaying(true);
-                // Clear saved data when replaying
-                onComplete({
-                  answers: {},
-                  showResults: {},
-                  replay: true,
-                });
-              }
-            }}
-            className="flex-1 bg-green-600 text-white py-3 rounded-lg font-medium hover:bg-green-700 transition-colors"
-          >
-            {isCompleted && !isReplaying
-              ? (appLanguage === 'ru' ? 'Пройти заново' : appLanguage === 'en' ? 'Replay' : 'Repetir')
-              : (appLanguage === 'ru' ? 'Завершить' : appLanguage === 'en' ? 'Complete' : 'Concluir')}
-          </button>
-        )}
-      </div>
+      {/* Navigation buttons removed - now handled by bottom panel */}
+      {/* Complete button is now integrated into the bottom panel logic */}
 
       {/* Progress Bar - Above navigation panel */}
       <div className="fixed bottom-[69px] left-0 right-0 bg-white z-30" style={{ marginBottom: '0px', borderRadius: '0px', borderTopLeftRadius: '0px', borderTopRightRadius: '0px', borderBottomRightRadius: '0px', borderBottomLeftRadius: '0px', opacity: 1, color: 'rgba(23, 23, 23, 1)', verticalAlign: 'bottom', height: '33px' }}>
@@ -426,23 +379,42 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
         </div>
       </div>
 
-      {/* Navigation Panel - Fixed at bottom (Cross-task navigation) */}
+      {/* Navigation Panel - Fixed at bottom (Unified navigation: items within task OR tasks) */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-30" style={{ borderRadius: '0px', borderTopLeftRadius: '0px', borderTopRightRadius: '0px', borderBottomRightRadius: '0px', borderBottomLeftRadius: '0px', height: '69px', verticalAlign: 'bottom', marginBottom: '0px', opacity: 1, color: 'rgba(0, 0, 0, 1)' }}>
         <div className="max-w-md mx-auto pt-3 pb-3" style={{ paddingBottom: 'env(safe-area-inset-bottom, 12px)', height: '69px', color: 'rgba(0, 0, 0, 1)', paddingLeft: '16px', paddingRight: '16px' }}>
           <div className="flex items-center justify-between gap-4">
             {/* Previous Button - Left */}
-            {canGoPrevious && onPreviousTask ? (
-              <button
-                onClick={onPreviousTask}
-                className="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors flex items-center justify-center"
-                aria-label={appLanguage === 'ru' ? 'Предыдущее задание' : appLanguage === 'en' ? 'Previous task' : 'Tarefa anterior'}
-              >
-                <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
+            {/* If task is completed: show previous task button, else: show previous item button */}
+            {isCompleted ? (
+              // Task completed - show previous task button
+              canGoPrevious && onPreviousTask ? (
+                <button
+                  onClick={onPreviousTask}
+                  className="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors flex items-center justify-center"
+                  aria-label={appLanguage === 'ru' ? 'Предыдущее задание' : appLanguage === 'en' ? 'Previous task' : 'Tarefa anterior'}
+                >
+                  <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+              ) : (
+                <div className="w-10 h-10"></div>
+              )
             ) : (
-              <div className="w-10 h-10"></div>
+              // Task not completed - show previous item button
+              currentItemIndex > 0 ? (
+                <button
+                  onClick={handlePreviousItem}
+                  className="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors flex items-center justify-center"
+                  aria-label={appLanguage === 'ru' ? 'Предыдущий блок' : appLanguage === 'en' ? 'Previous item' : 'Item anterior'}
+                >
+                  <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+              ) : (
+                <div className="w-10 h-10"></div>
+              )
             )}
 
             {/* Task Title - Center */}
@@ -483,18 +455,51 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
             </div>
 
             {/* Next Button - Right */}
-            {canGoNext && onNextTask ? (
-              <button
-                onClick={onNextTask}
-                className="w-10 h-10 rounded-full bg-green-500 hover:bg-green-600 transition-colors flex items-center justify-center"
-                aria-label={appLanguage === 'ru' ? 'Следующее задание' : appLanguage === 'en' ? 'Next task' : 'Próxima tarefa'}
-              >
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
+            {/* If task is completed: show next task button (green), else: show next item button (blue) or complete button */}
+            {isCompleted ? (
+              // Task completed - show next task button (green, active)
+              canGoNext && onNextTask ? (
+                <button
+                  onClick={onNextTask}
+                  className="w-10 h-10 rounded-full bg-green-500 hover:bg-green-600 transition-colors flex items-center justify-center"
+                  aria-label={appLanguage === 'ru' ? 'Следующее задание' : appLanguage === 'en' ? 'Next task' : 'Próxima tarefa'}
+                >
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              ) : (
+                <div className="w-10 h-10"></div>
+              )
             ) : (
-              <div className="w-10 h-10"></div>
+              // Task not completed - show next item button (blue) or complete button (green) if on last item
+              currentItemIndex < items.length - 1 ? (
+                <button
+                  onClick={handleNextItem}
+                  className="w-10 h-10 rounded-full bg-blue-600 hover:bg-blue-700 transition-colors flex items-center justify-center"
+                  aria-label={appLanguage === 'ru' ? 'Следующий блок' : appLanguage === 'en' ? 'Next item' : 'Próximo item'}
+                >
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              ) : allAnswered ? (
+                // Last item and all answered - show complete button (green)
+                <button
+                  onClick={() => {
+                    handleComplete();
+                    setIsReplaying(false);
+                  }}
+                  className="w-10 h-10 rounded-full bg-green-500 hover:bg-green-600 transition-colors flex items-center justify-center"
+                  aria-label={appLanguage === 'ru' ? 'Завершить' : appLanguage === 'en' ? 'Complete' : 'Concluir'}
+                >
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </button>
+              ) : (
+                <div className="w-10 h-10"></div>
+              )
             )}
           </div>
         </div>

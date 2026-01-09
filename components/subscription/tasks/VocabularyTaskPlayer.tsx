@@ -803,19 +803,10 @@ export default function VocabularyTaskPlayer({
         )}
       </div>
 
-      {/* Navigation Buttons - Using existing player design */}
+      {/* Play/Pause Button - Center only (navigation moved to bottom panel) */}
       <div className="flex items-center justify-center gap-4 mb-6">
-        <button
-          onClick={handlePreviousCard}
-          disabled={currentCardIndex === 0}
-          className="p-3 rounded-full bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
-          aria-label={t.previous}
-        >
-          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M8.445 14.832A1 1 0 0010 14v-2.798l5.445 3.63A1 1 0 0017 14V6a1 1 0 00-1.555-.832L10 8.798V6a1 1 0 00-1.555-.832l-6 4a1 1 0 000 1.664l6 4z" />
-          </svg>
-        </button>
-
+        <div className="w-12 h-12"></div> {/* Spacer for left */}
+        
         <button
           onClick={handlePlayPause}
           disabled={!currentAudioUrl}
@@ -835,16 +826,7 @@ export default function VocabularyTaskPlayer({
           )}
         </button>
 
-        <button
-          onClick={handleNextCard}
-          disabled={currentCardIndex === cards.length - 1}
-          className="p-3 rounded-full bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
-          aria-label={t.next}
-        >
-          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0011 6v2.798l-5.445-3.63z" />
-          </svg>
-        </button>
+        <div className="w-12 h-12"></div> {/* Spacer for right */}
       </div>
 
       {/* Settings Icon - Under Play button */}
@@ -900,18 +882,37 @@ export default function VocabularyTaskPlayer({
         <div className="max-w-md mx-auto pt-3 pb-3" style={{ paddingBottom: 'env(safe-area-inset-bottom, 12px)', height: '69px', color: 'rgba(0, 0, 0, 1)', paddingLeft: '16px', paddingRight: '16px' }}>
           <div className="flex items-center justify-between gap-4">
             {/* Previous Button - Left */}
-            {canGoPrevious && onPreviousTask ? (
-              <button
-                onClick={onPreviousTask}
-                className="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors flex items-center justify-center"
-                aria-label={t.previousTask}
-              >
-                <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
+            {/* If task is completed: show previous task button, else: show previous card button */}
+            {isCompleted ? (
+              // Task completed - show previous task button
+              canGoPrevious && onPreviousTask ? (
+                <button
+                  onClick={onPreviousTask}
+                  className="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors flex items-center justify-center"
+                  aria-label={t.previousTask}
+                >
+                  <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+              ) : (
+                <div className="w-10 h-10"></div>
+              )
             ) : (
-              <div className="w-10 h-10"></div>
+              // Task not completed - show previous card button
+              currentCardIndex > 0 ? (
+                <button
+                  onClick={handlePreviousCard}
+                  className="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors flex items-center justify-center"
+                  aria-label={t.previous}
+                >
+                  <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+              ) : (
+                <div className="w-10 h-10"></div>
+              )
             )}
 
             {/* Task Title - Center */}
@@ -952,18 +953,37 @@ export default function VocabularyTaskPlayer({
             </div>
 
             {/* Next Button - Right */}
-            {canGoNext && onNextTask ? (
-              <button
-                onClick={onNextTask}
-                className="w-10 h-10 rounded-full bg-green-500 hover:bg-green-600 transition-colors flex items-center justify-center"
-                aria-label={t.nextTask}
-              >
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
+            {/* If task is completed: show next task button (green), else: show next card button (blue) */}
+            {isCompleted ? (
+              // Task completed - show next task button (green, active)
+              canGoNext && onNextTask ? (
+                <button
+                  onClick={onNextTask}
+                  className="w-10 h-10 rounded-full bg-green-500 hover:bg-green-600 transition-colors flex items-center justify-center"
+                  aria-label={t.nextTask}
+                >
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              ) : (
+                <div className="w-10 h-10"></div>
+              )
             ) : (
-              <div className="w-10 h-10"></div>
+              // Task not completed - show next card button (blue, always active)
+              currentCardIndex < cards.length - 1 ? (
+                <button
+                  onClick={handleNextCard}
+                  className="w-10 h-10 rounded-full bg-blue-600 hover:bg-blue-700 transition-colors flex items-center justify-center"
+                  aria-label={t.next}
+                >
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              ) : (
+                <div className="w-10 h-10"></div>
+              )
             )}
           </div>
         </div>
