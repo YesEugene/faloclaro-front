@@ -465,8 +465,8 @@ function OverviewPageContent() {
       <div className="max-w-md mx-auto px-4 py-6">
         {/* Lesson Header - New Format */}
         <div className="mb-6">
-          {/* УРОК X/60 (время) */}
-          <div className="flex items-center gap-2 mb-3">
+          {/* УРОК X/60 (время) - поднят выше на 5px */}
+          <div className="flex items-center gap-2 mb-3" style={{ marginTop: '-5px' }}>
             <span className="text-lg font-bold text-black">
               {appLanguage === 'ru' ? 'УРОК' : appLanguage === 'en' ? 'LESSON' : 'LIÇÃO'} {lesson.day_number}/60
             </span>
@@ -477,14 +477,14 @@ function OverviewPageContent() {
             )}
           </div>
 
-          {/* Заголовок урока */}
-          <h1 className="text-2xl font-bold text-black mb-3 text-left">
+          {/* Заголовок урока - увеличен на 5 кеглей */}
+          <h1 className="font-bold text-black mb-2 text-left" style={{ fontSize: '29px' }}>
             {getDayTitle(dayInfo, appLanguage)}
           </h1>
 
-          {/* Описание урока */}
+          {/* Описание урока - поднят ближе к заголовку на 10px */}
           {getDaySubtitle(dayInfo, appLanguage) && (
-            <p className="text-gray-700 mb-6 text-left">
+            <p className="text-gray-700 mb-6 text-left" style={{ marginTop: '-10px' }}>
               {getDaySubtitle(dayInfo, appLanguage)}
             </p>
           )}
