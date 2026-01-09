@@ -89,9 +89,25 @@ export async function sendLessonEmail(userId: string, lessonId: string, dayNumbe
     // This page shows the overview of lesson 1 with navigation to all lessons (first 3 unlocked)
     // For other lessons, link to specific lesson overview
     const isRegistrationEmail = dayNumber === 1; // Registration email is always for day 1
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.faloclaro.com';
     const lessonsUrl = isRegistrationEmail
-      ? `${process.env.NEXT_PUBLIC_APP_URL || 'https://www.faloclaro.com'}/pt/lesson/1/${accessToken}/overview`
-      : `${process.env.NEXT_PUBLIC_APP_URL || 'https://www.faloclaro.com'}/pt/lesson/${dayNumber}/${accessToken}/overview`;
+      ? `${baseUrl}/pt/lesson/1/${accessToken}/overview`
+      : `${baseUrl}/pt/lesson/${dayNumber}/${accessToken}/overview`;
+
+    console.log('📧 Email link generation:', {
+      isRegistrationEmail,
+      dayNumber,
+      lessonDayNumber: lesson.day_number,
+      accessToken: accessToken ? `${accessToken.substring(0, 8)}...` : 'MISSING',
+      lessonsUrl,
+      baseUrl,
+    });
+
+    // Validate token exists
+    if (!accessToken || accessToken.length < 10) {
+      console.error('❌ Invalid access token:', { accessToken, tokenLength: accessToken?.length });
+      return { success: false, error: 'Invalid access token' };
+    }
 
     // Send email via Resend
     if (!process.env.RESEND_API_KEY) {
@@ -103,9 +119,11 @@ export async function sendLessonEmail(userId: string, lessonId: string, dayNumbe
       userId,
       lessonId,
       dayNumber,
+      lessonDayNumber: lesson.day_number,
       userEmail: user.email,
       hasResendKey: !!process.env.RESEND_API_KEY,
       resendKeyPrefix: process.env.RESEND_API_KEY?.substring(0, 5) + '...',
+      lessonsUrl,
     });
 
     try {
