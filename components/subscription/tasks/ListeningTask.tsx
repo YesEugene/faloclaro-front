@@ -39,10 +39,10 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
     }
   }, [isCompleted, isReplaying]);
   
-  // Load saved answers on mount
+  // Load saved answers on mount (but skip if replaying)
   const [hasLoadedSavedData, setHasLoadedSavedData] = useState(false);
   useEffect(() => {
-    if (!hasLoadedSavedData) {
+    if (!hasLoadedSavedData && !isReplaying) {
       if (savedAnswers && Object.keys(savedAnswers).length > 0) {
         setAnswers(savedAnswers);
       }
@@ -51,7 +51,7 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
       }
       setHasLoadedSavedData(true);
     }
-  }, [savedAnswers, savedShowResults, hasLoadedSavedData]);
+  }, [savedAnswers, savedShowResults, hasLoadedSavedData, isReplaying]);
   
   // Save answers to completion_data whenever they change (for persistence)
   // But don't save if we're replaying (isReplaying is true)
