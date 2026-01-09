@@ -450,7 +450,7 @@ function OverviewPageContent() {
         {allCompleted && (
           <div className="flex flex-col items-center justify-center py-4 mt-4">
             <Image
-              src="/Img/Day completed.png"
+              src="/Img/thumbs-icon.jpg"
               alt="Day completed"
               width={80}
               height={80}
