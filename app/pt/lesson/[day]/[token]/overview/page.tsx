@@ -4,6 +4,7 @@ import { useEffect, useState, Suspense } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { useAppLanguage } from '@/lib/language-context';
+import { getDayTitle, getDaySubtitle, getTaskTitle, getTaskSubtitle } from '@/lib/lesson-translations';
 import { LanguageSelector } from '@/components/LanguageSelector';
 import Link from 'next/link';
 import Image from 'next/image';
