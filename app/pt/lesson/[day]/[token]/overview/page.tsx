@@ -192,16 +192,6 @@ function OverviewPageContent() {
     }
   };
 
-  const isLessonUnlocked = (dayNumber: number): boolean => {
-    // First 3 lessons: unlocked if user has token
-    if (dayNumber <= 3) {
-      return userTokens.has(dayNumber);
-    }
-    
-    // Lessons 4+: ONLY unlocked if user has PAID subscription
-    return subscription?.status === 'paid';
-  };
-
   const getTaskStatus = (taskId: number) => {
     // Parse yaml_content to get tasks
     let yamlContent: any = {};
@@ -261,6 +251,16 @@ function OverviewPageContent() {
     if (status === 'locked') return;
     
     router.push(`/pt/lesson/${day}/${token}?task=${taskId}`);
+  };
+
+  const isLessonUnlocked = (dayNumber: number): boolean => {
+    // First 3 lessons: unlocked if user has token
+    if (dayNumber <= 3) {
+      return userTokens.has(dayNumber);
+    }
+    
+    // Lessons 4+: ONLY unlocked if user has PAID subscription
+    return subscription?.status === 'paid';
   };
 
   if (loading) {
