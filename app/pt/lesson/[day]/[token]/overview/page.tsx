@@ -553,7 +553,7 @@ function OverviewPageContent() {
         )}
 
         {/* Tasks List - Always visible, even when all completed */}
-        <div className="mb-8">
+        <div className="mb-8" style={{ minHeight: '400px' }}>
           {tasks.length > 0 ? (
             <div className="space-y-3">
               {tasks.map((task: any, index: number) => {
@@ -570,9 +570,11 @@ function OverviewPageContent() {
                   willRender: true
                 });
                 
+                // CRITICAL: Always render all tasks, regardless of status
+                // Completed tasks should be visible for replay
                 return (
                   <div
-                    key={task.task_id || index}
+                    key={`task-${task.task_id}-${index}`}
                     onClick={() => handleTaskClick(task.task_id)}
                     className={`rounded-lg p-4 border-2 transition-all ${
                       status === 'current'
@@ -581,7 +583,12 @@ function OverviewPageContent() {
                         ? 'border-green-500 bg-green-50 cursor-pointer hover:bg-green-100'
                         : 'border-gray-300 bg-gray-100 opacity-60 cursor-not-allowed'
                     }`}
-                    style={{ display: 'block', visibility: 'visible' }}
+                    style={{ 
+                      display: 'block', 
+                      visibility: 'visible',
+                      opacity: status === 'locked' ? 0.6 : 1,
+                      minHeight: '80px'
+                    }}
                   >
                     <div className="flex items-start gap-3">
                       {/* Icon */}
