@@ -316,7 +316,7 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
           )}
 
           {/* Question */}
-          <p className="text-lg font-semibold text-black mb-4">{currentItem.question}</p>
+          <p className="text-lg font-semibold text-black mb-4">{getTranslatedText(currentItem.question, appLanguage)}</p>
 
           {/* Options */}
           <div className="space-y-2">
