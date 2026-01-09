@@ -34,17 +34,25 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
   const audioRefs = useRef<{ [key: string]: HTMLAudioElement }>({});
   
   // Load saved answers and state from completion_data if task was already completed
+  // Only load once on mount, not on every prop change
+  const [hasLoadedSavedData, setHasLoadedSavedData] = useState(false);
   useEffect(() => {
-    if (savedAnswers && Object.keys(savedAnswers).length > 0) {
-      setSelectedAnswers(savedAnswers);
+    if (!hasLoadedSavedData) {
+      if (savedAnswers && Object.keys(savedAnswers).length > 0) {
+        console.log('📥 Loading saved answers:', savedAnswers);
+        setSelectedAnswers(savedAnswers);
+      }
+      if (savedShowResults && Object.keys(savedShowResults).length > 0) {
+        console.log('📥 Loading saved showResults:', savedShowResults);
+        setShowResults(savedShowResults);
+      }
+      if (savedSpeakOutLoudCompleted) {
+        console.log('📥 Loading saved speakOutLoudCompleted: true');
+        setSpeakOutLoudCompleted(true);
+      }
+      setHasLoadedSavedData(true);
     }
-    if (savedShowResults && Object.keys(savedShowResults).length > 0) {
-      setShowResults(savedShowResults);
-    }
-    if (savedSpeakOutLoudCompleted) {
-      setSpeakOutLoudCompleted(true);
-    }
-  }, [savedAnswers, savedShowResults, savedSpeakOutLoudCompleted]);
+  }, [savedAnswers, savedShowResults, savedSpeakOutLoudCompleted, hasLoadedSavedData]);
 
   // Update local completion state when prop changes
   // But don't reset if we're in replay mode
