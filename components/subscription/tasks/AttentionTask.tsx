@@ -239,15 +239,19 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
     // If all answered and this is the last item, mark as completed immediately
     if (allAnsweredNow && itemIndex === items.length - 1) {
       setLocalIsCompleted(true);
+      const correctCount = items.filter((item: any, index: number) => {
+        const selectedAnswer = newAnswers[index];
+        const correctOption = item.options?.find((opt: any) => opt.correct);
+        if (!correctOption) return false;
+        // Check both translated and original text
+        const optText = getTranslatedText(correctOption.text, appLanguage);
+        return selectedAnswer === correctOption.text || selectedAnswer === optText;
+      }).length;
+      
       onComplete({
         answers: newAnswers,
         showResults: newShowResults,
-        correctCount: items.filter((item: any, index: number) => {
-          const selectedAnswer = newAnswers[index];
-          const correctOption = item.options?.find((opt: any) => opt.correct);
-          const optText = getTranslatedText(opt.text, appLanguage);
-          return selectedAnswer === correctOption?.text || selectedAnswer === optText;
-        }).length,
+        correctCount,
         totalItems: items.length,
         completedAt: new Date().toISOString(),
       });
@@ -612,21 +616,8 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </button>
-              ) : allAnswered ? (
-                // Last item and all answered - show complete button (green)
-                <button
-                  onClick={() => {
-                    handleComplete();
-                    setIsReplaying(false);
-                  }}
-                  className="w-10 h-10 rounded-full bg-green-500 hover:bg-green-600 transition-colors flex items-center justify-center"
-                  aria-label={appLanguage === 'ru' ? 'Завершить' : appLanguage === 'en' ? 'Complete' : 'Concluir'}
-                >
-                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                </button>
               ) : (
+                // Last item but not all answered - show disabled placeholder
                 <div className="w-10 h-10"></div>
               )
             )}
