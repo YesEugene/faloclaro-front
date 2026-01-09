@@ -26,8 +26,14 @@ export default function RulesTask({ task, language, onComplete, isCompleted, onN
   const [showResults, setShowResults] = useState<{ [key: string]: boolean }>({});
   const [speakOutLoudCompleted, setSpeakOutLoudCompleted] = useState(false);
   const [isReplaying, setIsReplaying] = useState(false);
+  const [localIsCompleted, setLocalIsCompleted] = useState(isCompleted);
   
   const audioRefs = useRef<{ [key: string]: HTMLAudioElement }>({});
+  
+  // Update local completion state when prop changes
+  useEffect(() => {
+    setLocalIsCompleted(isCompleted);
+  }, [isCompleted]);
 
   // Get progress message based on completed tasks
   const getProgressMessage = (completed: number, total: number) => {
@@ -250,9 +256,10 @@ export default function RulesTask({ task, language, onComplete, isCompleted, onN
     setSpeakOutLoudCompleted(true);
     // Auto-complete task if this is the last block
     if (currentBlockIndex === blocksOrder.length - 1) {
-    onComplete({
-      completedAt: new Date().toISOString(),
-    });
+      setLocalIsCompleted(true); // Update local state immediately
+      onComplete({
+        completedAt: new Date().toISOString(),
+      });
     }
   };
 
@@ -735,20 +742,20 @@ export default function RulesTask({ task, language, onComplete, isCompleted, onN
             {canGoNext && onNextTask ? (
               <button
                 onClick={onNextTask}
-                disabled={!isCompleted}
+                disabled={!localIsCompleted}
                 className={`w-10 h-10 rounded-full transition-colors flex items-center justify-center ${
-                  isCompleted
+                  localIsCompleted
                     ? 'bg-green-500 hover:bg-green-600'
                     : 'bg-white border border-gray-300 cursor-not-allowed'
                 }`}
-                style={!isCompleted ? {
+                style={!localIsCompleted ? {
                   backgroundColor: 'rgba(255, 255, 255, 1)',
                   borderWidth: '1px',
                   borderColor: 'rgba(176, 176, 176, 1)'
                 } : {}}
                 aria-label={appLanguage === 'ru' ? 'Следующее задание' : appLanguage === 'en' ? 'Next task' : 'Próxima tarefa'}
               >
-                <svg className={`w-6 h-6 ${isCompleted ? 'text-white' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className={`w-6 h-6 ${localIsCompleted ? 'text-white' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
               </button>
