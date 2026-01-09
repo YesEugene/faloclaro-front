@@ -22,7 +22,14 @@ interface AttentionTaskProps {
 
 export default function AttentionTask({ task, language, onComplete, isCompleted, savedAnswers, savedShowResults, onNextTask, onPreviousTask, canGoNext = false, canGoPrevious = false, progressCompleted = 0, progressTotal = 5 }: AttentionTaskProps) {
   const { language: appLanguage } = useAppLanguage();
+  // Use ref to persist currentItemIndex across re-renders and prevent auto-reset
+  const currentItemIndexRef = useRef(0);
   const [currentItemIndex, setCurrentItemIndex] = useState(0);
+  
+  // Sync ref with state
+  useEffect(() => {
+    currentItemIndexRef.current = currentItemIndex;
+  }, [currentItemIndex]);
   const [answers, setAnswers] = useState<{ [key: number]: string }>(savedAnswers || {});
   const [showResults, setShowResults] = useState<{ [key: number]: boolean }>(savedShowResults || {});
   const [audioUrls, setAudioUrls] = useState<{ [key: string]: string }>({});
@@ -33,9 +40,11 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
   const audioRefs = useRef<{ [key: string]: HTMLAudioElement }>({});
   
   // Update local completion state when prop changes (but not during replay)
+  // IMPORTANT: Don't reset currentItemIndex when task completes - user should stay on last block
   useEffect(() => {
     if (!isReplaying) {
       setLocalIsCompleted(isCompleted);
+      // DO NOT reset currentItemIndex here - keep user on the block they completed
     }
   }, [isCompleted, isReplaying]);
   
