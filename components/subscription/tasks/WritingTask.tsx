@@ -300,8 +300,8 @@ export default function WritingTask({ task, language, onComplete, isCompleted, o
       </div>
 
       {/* Navigation Panel - Fixed at bottom (Cross-task navigation) */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-30" style={{ borderRadius: '183px', borderTopLeftRadius: '183px', borderTopRightRadius: '183px', borderBottomRightRadius: '0px', borderBottomLeftRadius: '0px', height: '69px', verticalAlign: 'bottom', marginBottom: '0px' }}>
-        <div className="max-w-md mx-auto px-4 pt-3 pb-3" style={{ paddingBottom: 'env(safe-area-inset-bottom, 12px)', height: '69px', color: 'rgba(0, 0, 0, 1)' }}>
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-30" style={{ borderRadius: '0px', borderTopLeftRadius: '0px', borderTopRightRadius: '0px', borderBottomRightRadius: '0px', borderBottomLeftRadius: '0px', height: '69px', verticalAlign: 'bottom', marginBottom: '0px', opacity: 1, color: 'rgba(0, 0, 0, 1)' }}>
+        <div className="max-w-md mx-auto pt-3 pb-3" style={{ paddingBottom: 'env(safe-area-inset-bottom, 12px)', height: '69px', color: 'rgba(0, 0, 0, 1)', paddingLeft: '0px', paddingRight: '16px' }}>
           <div className="flex items-center justify-between gap-4">
             {/* Previous Button - Left */}
             {canGoPrevious && onPreviousTask ? (
