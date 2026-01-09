@@ -28,8 +28,16 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
   const [audioUrls, setAudioUrls] = useState<{ [key: string]: string }>({});
   const [isPlayingAudio, setIsPlayingAudio] = useState<{ [key: string]: boolean }>({});
   const [isReplaying, setIsReplaying] = useState(false);
+  const [localIsCompleted, setLocalIsCompleted] = useState(isCompleted);
   
   const audioRefs = useRef<{ [key: string]: HTMLAudioElement }>({});
+  
+  // Update local completion state when prop changes (but not during replay)
+  useEffect(() => {
+    if (!isReplaying) {
+      setLocalIsCompleted(isCompleted);
+    }
+  }, [isCompleted, isReplaying]);
   
   // Load saved answers on mount
   const [hasLoadedSavedData, setHasLoadedSavedData] = useState(false);
@@ -226,6 +234,7 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
         return selectedAnswer === correctOption?.text;
       }).length;
 
+      setLocalIsCompleted(true); // Update local state immediately
       onComplete({
         answers,
         showResults,
@@ -402,7 +411,7 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
           <div className="flex items-center justify-between gap-4">
             {/* Previous Button - Left */}
             {/* If task is completed: show previous task button, else: show previous item button */}
-            {isCompleted ? (
+            {localIsCompleted ? (
               // Task completed - show previous task button
               canGoPrevious && onPreviousTask ? (
                 <button
@@ -473,7 +482,7 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
 
             {/* Next Button - Right */}
             {/* If task is completed: show next task button (green), else: show next item button (blue) or complete button */}
-            {isCompleted ? (
+            {localIsCompleted ? (
               // Task completed - show next task button (green, active)
               canGoNext && onNextTask ? (
                 <button
