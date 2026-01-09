@@ -173,8 +173,9 @@ function LessonsPageContent() {
     if (dayNumber <= 3) {
       return userTokens.has(dayNumber);
     }
-    // After 3, check if user has paid
-    return subscription?.status === 'active' || subscription?.status === 'paid' || userTokens.has(dayNumber);
+    // After 3, check if user has paid (only 'paid' status, not 'trial')
+    // Also check if user has a token for this specific lesson (created after payment)
+    return subscription?.status === 'paid' || userTokens.has(dayNumber);
   };
 
   const getLessonUrl = (dayNumber: number): string => {
@@ -184,7 +185,7 @@ function LessonsPageContent() {
     }
     // If no token but unlocked (paid), try to use any available token
     const anyToken = Array.from(userTokens.values())[0] || localStorage.getItem('accessToken');
-    if (anyToken && subscription?.status === 'active') {
+    if (anyToken && subscription?.status === 'paid') {
       // User has paid, create token for this lesson on the fly or use existing token
       return `/pt/lesson/${dayNumber}/${anyToken}/overview`;
     }
