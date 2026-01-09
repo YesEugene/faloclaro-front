@@ -8,7 +8,6 @@ import { LanguageSelector } from '@/components/LanguageSelector';
 import Link from 'next/link';
 import Image from 'next/image';
 import TaskCard from './TaskCard';
-import ProgressBar from './ProgressBar';
 
 interface LessonContentProps {
   lesson: any;
@@ -341,16 +340,7 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
           </div>
         )}
 
-        {/* Progress Bar - After buttons for vocabulary task, or standalone for other tasks */}
-        <div className="max-w-md mx-auto px-4 pb-4 relative">
-          <ProgressBar
-            completed={userProgress.tasks_completed}
-            total={userProgress.total_tasks}
-            tasks={tasks}
-            getTaskProgress={getTaskProgress}
-          />
-          
-        </div>
+        {/* Progress Bar is now in each task component (above navigation panel) */}
       </div>
 
       {/* Tasks List (Collapsed View) */}
