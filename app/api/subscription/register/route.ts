@@ -125,33 +125,55 @@ export async function POST(request: NextRequest) {
       const token = crypto.randomBytes(32).toString('hex');
       tokens.push(token);
 
-      const { error: tokenError } = await supabase
+      const { data: insertedToken, error: tokenError } = await supabase
         .from('lesson_access_tokens')
         .insert({
           user_id: user.id,
           lesson_id: lesson.id,
           token,
           expires_at: expiresAt.toISOString(),
-        });
+        })
+        .select()
+        .single();
 
       if (tokenError) {
-        console.error(`Error creating token for lesson ${lesson.day_number}:`, tokenError);
+        console.error(`❌ Error creating token for lesson ${lesson.day_number}:`, tokenError);
         // Continue with other lessons even if one fails
+      } else {
+        console.log(`✅ Token created for lesson ${lesson.day_number}:`, {
+          tokenId: insertedToken?.id,
+          token: insertedToken?.token?.substring(0, 8) + '...',
+          lessonId: lesson.id,
+          dayNumber: lesson.day_number,
+        });
       }
+    }
+
+    // Validate that at least first token was created
+    if (tokens.length === 0 || !tokens[0]) {
+      console.error('❌ No tokens created for lessons');
+      return NextResponse.json(
+        { error: 'Failed to create access tokens' },
+        { status: 500 }
+      );
     }
 
     // Send email with link to lessons page
     // IMPORTANT: In Vercel Serverless Functions, we need to await the email
     // Otherwise the function may terminate before email is sent
     const firstToken = tokens[0]; // Use first token for email link
-    console.log('About to send email:', {
+    console.log('📧 About to send email:', {
       userId: user.id,
+      userEmail: user.email,
       lessonIds: lessons.map(l => l.id),
       dayNumbers: lessons.map(l => l.day_number),
+      firstToken: firstToken?.substring(0, 8) + '...',
+      tokenCount: tokens.length,
     });
     
     try {
       // Send email with link to lessons page
+      // Use dayNumber = 1 for registration email
       const emailResult = await sendLessonEmail(user.id, lessons[0].id, 1, firstToken);
       
       console.log('Email send completed:', {
