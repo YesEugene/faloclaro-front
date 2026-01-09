@@ -324,7 +324,7 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
       </div>
 
       {/* Navigation */}
-      <div className="flex gap-4">
+      <div className="flex gap-4" style={{ paddingBottom: '120px' }}>
         {currentItemIndex > 0 && (
           <button
             onClick={handlePreviousItem}
@@ -367,14 +367,6 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
         )}
       </div>
 
-      {/* Progress indicator */}
-      <div className="text-center text-sm text-gray-500">
-        {appLanguage === 'ru' 
-          ? `Вопрос ${currentItemIndex + 1} из ${items.length}`
-          : appLanguage === 'en'
-          ? `Question ${currentItemIndex + 1} of ${items.length}`
-          : `Pergunta ${currentItemIndex + 1} de ${items.length}`}
-      </div>
 
       {/* Progress Bar - Above navigation panel */}
       <div className="fixed bottom-[69px] left-0 right-0 bg-white z-30" style={{ marginBottom: '0px', borderRadius: '0px', borderTopLeftRadius: '0px', borderTopRightRadius: '0px', borderBottomRightRadius: '0px', borderBottomLeftRadius: '0px', opacity: 1, color: 'rgba(23, 23, 23, 1)', verticalAlign: 'bottom', height: '33px' }}>

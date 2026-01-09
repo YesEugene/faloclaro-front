@@ -607,7 +607,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted, onN
       </div>
 
       {/* Navigation */}
-      <div className="flex gap-4">
+      <div className="flex gap-4" style={{ paddingBottom: '120px' }}>
         {currentBlockIndex > 0 && (
           <button
             onClick={handlePreviousBlock}
