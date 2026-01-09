@@ -334,33 +334,52 @@ function OverviewPageContent() {
 
       {/* Main Content */}
       <div className="max-w-md mx-auto px-4 py-6">
-        {/* Lessons Navigation - Buttons for lessons 1-5 (or more) */}
-        <div className="mb-4 flex flex-wrap gap-2">
-          {[1, 2, 3, 4, 5].map((lessonDay) => {
-            const isCurrent = lessonDay === day;
-            return (
-              <Link
-                key={lessonDay}
-                href={`/pt/lesson/${lessonDay}/${token}/overview`}
-                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                  isCurrent
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                {lessonDay}
-              </Link>
-            );
-          })}
-          {/* Show "..." if there are more lessons */}
-          {day > 5 && (
-            <span className="px-3 py-1.5 text-gray-500">...</span>
-          )}
+        {/* Lessons Navigation - Horizontal Scroll */}
+        <div className="mb-4 overflow-x-auto -mx-4 px-4">
+          <div className="flex gap-3" style={{ minWidth: 'max-content' }}>
+            {Array.from({ length: 60 }, (_, i) => i + 1).map((lessonDay) => {
+              const isCurrent = lessonDay === day;
+              // Determine card style
+              let cardStyle: React.CSSProperties = {
+                width: '85px',
+                height: '60px',
+                borderRadius: '8px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                flexShrink: 0,
+              };
+
+              if (isCurrent) {
+                // Blue - current
+                cardStyle.backgroundColor = '#CBE8FF';
+                cardStyle.border = 'none';
+              } else {
+                // White with border - other lessons
+                cardStyle.backgroundColor = 'white';
+                cardStyle.border = '1px solid #E5E7EB';
+              }
+
+              return (
+                <Link
+                  key={lessonDay}
+                  href={`/pt/lesson/${lessonDay}/${token}/overview`}
+                  style={cardStyle}
+                  className="transition-all hover:opacity-80"
+                >
+                  <span className="text-sm font-medium text-gray-700 text-center">
+                    {lessonDay} {appLanguage === 'ru' ? 'Урок' : appLanguage === 'en' ? 'Lesson' : 'Lição'}
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
         </div>
 
         {/* Day Title */}
         <h1 className="text-2xl font-bold text-black mb-2 text-left">
-          {t.day} {lesson.day_number}/60: {appLanguage === 'ru' ? dayInfo.title : appLanguage === 'en' ? dayInfo.title_en : dayInfo.title_pt}
+          {lesson.day_number}/60: {appLanguage === 'ru' ? dayInfo.title : appLanguage === 'en' ? dayInfo.title_en : dayInfo.title_pt}
         </h1>
 
         {/* Estimated Time - Smaller (20% reduction) and more rounded */}

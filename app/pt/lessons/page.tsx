@@ -14,6 +14,7 @@ function LessonsPageContent() {
   const { language: appLanguage } = useAppLanguage();
   const [lessons, setLessons] = useState<any[]>([]);
   const [userTokens, setUserTokens] = useState<Map<number, string>>(new Map());
+  const [userProgress, setUserProgress] = useState<Map<number, string>>(new Map()); // day_number -> status
   const [subscription, setSubscription] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -117,6 +118,32 @@ function LessonsPageContent() {
 
         if (!subError && subData) {
           setSubscription(subData);
+        }
+
+        // Get user progress for all lessons
+        const { data: progressData, error: progressError } = await supabase
+          .from('user_progress')
+          .select('lesson_id, status')
+          .eq('user_id', userId);
+
+        if (!progressError && progressData) {
+          // Get lesson day_numbers for progress
+          const progressLessonIds = progressData.map(p => p.lesson_id);
+          const { data: lessonsWithProgress, error: lessonsWithProgressError } = await supabase
+            .from('lessons')
+            .select('id, day_number')
+            .in('id', progressLessonIds);
+
+          if (!lessonsWithProgressError && lessonsWithProgress) {
+            const progressMap = new Map<number, string>();
+            progressData.forEach(progress => {
+              const lesson = lessonsWithProgress.find(l => l.id === progress.lesson_id);
+              if (lesson) {
+                progressMap.set(lesson.day_number, progress.status);
+              }
+            });
+            setUserProgress(progressMap);
+          }
         }
       }
 
@@ -242,67 +269,67 @@ function LessonsPageContent() {
           {t.subtitle}
         </p>
 
-        {/* Lessons List */}
-        <div className="space-y-3">
-          {lessons.map((lesson) => {
-            const isUnlocked = isLessonUnlocked(lesson.day_number);
-            const dayInfo = lesson.yaml_content?.day_info || {};
-            const title = appLanguage === 'ru' 
-              ? dayInfo.title || lesson.title_ru
-              : appLanguage === 'en'
-              ? dayInfo.title_en || lesson.title_en
-              : dayInfo.title_pt || lesson.title_pt;
+        {/* Lessons List - Horizontal Scroll */}
+        <div className="overflow-x-auto pb-4 -mx-4 px-4">
+          <div className="flex gap-3" style={{ minWidth: 'max-content' }}>
+            {lessons.map((lesson) => {
+              const isUnlocked = isLessonUnlocked(lesson.day_number);
+              const progressStatus = userProgress.get(lesson.day_number);
+              const isCompleted = progressStatus === 'completed';
+              const isCurrent = progressStatus === 'in_progress' || (!progressStatus && isUnlocked && lesson.day_number === lessons.find(l => isLessonUnlocked(l.day_number) && !userProgress.get(l.day_number))?.day_number);
+              
+              // Determine card style
+              let cardStyle: React.CSSProperties = {
+                width: '85px',
+                height: '60px',
+                borderRadius: '8px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: isUnlocked ? 'pointer' : 'pointer',
+                flexShrink: 0,
+              };
 
-            return (
-              <div
-                key={lesson.id}
-                onClick={() => handleLessonClick(lesson.day_number)}
-                className={`rounded-lg p-4 border-2 transition-all cursor-pointer ${
-                  isUnlocked
-                    ? 'border-green-500 bg-green-50 hover:bg-green-100'
-                    : 'border-gray-300 bg-gray-100 opacity-60 hover:opacity-80'
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-sm font-medium text-gray-600">
-                        {t.day} {lesson.day_number}/60
-                      </span>
-                      {isUnlocked ? (
-                        <span className="text-xs text-green-600 font-medium">
-                          {t.unlocked}
-                        </span>
-                      ) : (
-                        <span className="text-xs text-gray-500 font-medium">
-                          {t.locked}
-                        </span>
-                      )}
-                    </div>
-                    <h3 className="text-lg font-bold text-black">
-                      {title}
-                    </h3>
-                    {dayInfo.estimated_time && (
-                      <p className="text-sm text-gray-600 mt-1">
-                        {dayInfo.estimated_time}
-                      </p>
-                    )}
-                  </div>
-                  <div className="ml-4">
-                    {isUnlocked ? (
-                      <svg className="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    ) : (
-                      <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                      </svg>
-                    )}
-                  </div>
+              if (isCompleted) {
+                // Green - completed
+                cardStyle.backgroundColor = '#BEF4C2';
+                cardStyle.border = 'none';
+              } else if (isCurrent) {
+                // Blue - current
+                cardStyle.backgroundColor = '#CBE8FF';
+                cardStyle.border = 'none';
+              } else if (isUnlocked) {
+                // White with border - unlocked but not started
+                cardStyle.backgroundColor = 'white';
+                cardStyle.border = '1px solid #E5E7EB';
+              } else {
+                // White with border and lock icon - locked
+                cardStyle.backgroundColor = 'white';
+                cardStyle.border = '1px solid #E5E7EB';
+              }
+
+              return (
+                <div
+                  key={lesson.id}
+                  onClick={() => handleLessonClick(lesson.day_number)}
+                  style={cardStyle}
+                  className="transition-all hover:opacity-80"
+                >
+                  {isUnlocked ? (
+                    <span className="text-sm font-medium text-gray-700 text-center">
+                      {lesson.day_number} {appLanguage === 'ru' ? 'Урок' : appLanguage === 'en' ? 'Lesson' : 'Lição'}
+                    </span>
+                  ) : (
+                    <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 12h.01" />
+                    </svg>
+                  )}
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>
