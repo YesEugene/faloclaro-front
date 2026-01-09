@@ -340,11 +340,11 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
               )}
             </div>
             {/* Timer - below buttons for vocabulary task */}
-            {currentTask?.type === 'vocabulary' && currentTask?.ui?.show_timer && timerData && timerData.required > 0 && (
+            {currentTask?.type === 'vocabulary' && currentTask?.ui?.show_timer && (
               <div className="max-w-md mx-auto px-4 mb-4">
                 <div className="bg-white rounded-full py-1.5 shadow-sm inline-flex items-center" style={{ paddingLeft: '16px', paddingRight: '16px' }}>
                   <span className="text-xs font-medium text-gray-700 whitespace-nowrap" style={{ height: '12px', fontSize: '12px' }}>
-                    {formatTime(timerData.elapsed)} / {formatTime(timerData.required)}
+                    {timerData ? `${formatTime(timerData.elapsed)} / ${formatTime(timerData.required)}` : '0:00 / 10:00'}
                   </span>
                 </div>
               </div>
