@@ -25,14 +25,23 @@ function LessonsPageContent() {
     // Reload lessons when page becomes visible (e.g., after completing a lesson)
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
+        console.log('👁️ Page became visible, reloading lessons...');
         loadLessons();
       }
     };
     
+    // Also reload when window gets focus (e.g., returning from another tab)
+    const handleFocus = () => {
+      console.log('🎯 Window got focus, reloading lessons...');
+      loadLessons();
+    };
+    
     document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', handleFocus);
     
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', handleFocus);
     };
   }, []);
 
