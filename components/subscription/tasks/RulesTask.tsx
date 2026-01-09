@@ -67,16 +67,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted, onN
   const blocksOrder = structure.blocks_order || [];
   const blocks = task.blocks || {}; // Blocks are at root level
 
-  // Reset to first block when task is completed and user wants to replay
-  useEffect(() => {
-    // If task is completed but we're not in replay mode, allow starting from beginning
-    if (isCompleted && !isReplaying && currentBlockIndex === 0 && speakOutLoudCompleted) {
-      // Task is completed, but allow replay by resetting state
-      setSpeakOutLoudCompleted(false);
-      setSelectedAnswers({});
-      setShowResults({});
-    }
-  }, [isCompleted, isReplaying, currentBlockIndex, speakOutLoudCompleted]);
+  // Don't auto-reset - let user explicitly click "Пройти заново" to reset
 
   // Debug: Log task structure
   useEffect(() => {
@@ -254,13 +245,24 @@ export default function RulesTask({ task, language, onComplete, isCompleted, onN
   // Handle speak out loud completion
   const handleSpeakOutLoudComplete = () => {
     setSpeakOutLoudCompleted(true);
-    // Auto-complete task if this is the last block
+    // Mark task as completed if this is the last block and last action
     if (currentBlockIndex === blocksOrder.length - 1) {
       setLocalIsCompleted(true); // Update local state immediately
+      // Complete the task - this saves progress but doesn't reset anything
       onComplete({
         completedAt: new Date().toISOString(),
       });
     }
+  };
+  
+  // Handle replay - reset all progress and go to first block
+  const handleReplay = () => {
+    setCurrentBlockIndex(0);
+    setSpeakOutLoudCompleted(false);
+    setSelectedAnswers({});
+    setShowResults({});
+    setIsReplaying(true);
+    setLocalIsCompleted(false); // Reset local completion state
   };
 
   // Render block based on type
@@ -576,15 +578,11 @@ export default function RulesTask({ task, language, onComplete, isCompleted, onN
             <button
               onClick={() => {
                 if (!speakOutLoudCompleted) {
-                  // First click: mark as completed
+                  // First click: mark as completed (last action in last block)
                   handleSpeakOutLoudComplete();
                 } else {
                   // Second click: replay (reset to first block)
-                  setCurrentBlockIndex(0);
-                  setSpeakOutLoudCompleted(false);
-                  setSelectedAnswers({});
-                  setShowResults({});
-                  setIsReplaying(true);
+                  handleReplay();
                 }
               }}
               className={`w-full py-4 rounded-lg font-semibold text-lg transition-colors ${
