@@ -100,7 +100,7 @@ function LessonsPageContent() {
           .select('token, lesson_id')
           .eq('user_id', userId);
 
-        if (!tokensError && tokensData) {
+        if (!tokensError && tokensData && Array.isArray(tokensData)) {
           console.log('🔑 Raw tokens data from DB:', {
             tokensCount: tokensData.length,
             tokens: tokensData.map(t => ({ lesson_id: t.lesson_id, token: t.token.substring(0, 10) + '...' }))
@@ -139,10 +139,11 @@ function LessonsPageContent() {
             console.error('❌ Error loading lessons with tokens:', lessonsWithTokensError);
           }
         } else {
+          const tokensDataCount = Array.isArray(tokensData) ? tokensData.length : 0;
           console.log('⚠️ No tokens found for user:', { 
             tokensError: tokensError?.message || tokensError,
             tokensErrorCode: tokensError?.code,
-            tokensDataCount: (tokensData as any)?.length || 0
+            tokensDataCount
           });
         }
 
