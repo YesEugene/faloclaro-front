@@ -214,11 +214,32 @@ function OverviewPageContent() {
       return 'completed';
     }
     
+    // Tasks should unlock sequentially: after completing task N, task N+1 becomes available
+    // So if current task is the first incomplete, it's 'current'
+    // If it's before the first incomplete, it's 'completed' (shouldn't happen, but handle it)
+    // If it's the next task after the first incomplete, it should also be 'current' (unlocked)
     if (currentTaskIndex === firstIncompleteIndex) return 'current';
     if (currentTaskIndex < firstIncompleteIndex) {
       console.log(`✅ Task ${taskId} is before incomplete task - returning 'completed' status`);
       return 'completed';
     }
+    
+    // For tasks after the first incomplete: check if previous task is completed
+    // If previous task is completed, this task should be 'current' (unlocked)
+    if (currentTaskIndex > firstIncompleteIndex) {
+      const previousTask = tasks[currentTaskIndex - 1];
+      if (previousTask) {
+        const previousTaskProgress = userProgress.task_progress?.find((tp: any) => tp.task_id === previousTask.task_id);
+        if (previousTaskProgress?.status === 'completed') {
+          // Previous task is completed, so this task is unlocked and should be 'current'
+          // But only if it's the immediate next task
+          if (currentTaskIndex === firstIncompleteIndex + 1) {
+            return 'current';
+          }
+        }
+      }
+    }
+    
     return 'locked';
   };
 
