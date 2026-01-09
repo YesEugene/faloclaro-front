@@ -62,7 +62,17 @@ export default function TaskCard({
   }, [taskProgress, task?.task_id]);
 
   const handleComplete = (completionData?: any) => {
-    setIsCompleted(true);
+    // If replaying, don't set as completed - keep current status
+    if (completionData?.replay) {
+      setIsCompleted(false);
+      onComplete(completionData);
+      return;
+    }
+    
+    // Only set as completed if not just saving and not replaying
+    if (!completionData?.saved) {
+      setIsCompleted(true);
+    }
     onComplete(completionData);
   };
 
@@ -129,14 +139,22 @@ export default function TaskCard({
           />
         );
       case 'listening_comprehension':
+        // If completion_data is empty (replay was called), don't pass saved data
+        const listeningSavedAnswers = taskProgress?.completion_data?.answers && Object.keys(taskProgress.completion_data.answers).length > 0
+          ? taskProgress.completion_data.answers
+          : undefined;
+        const listeningSavedShowResults = taskProgress?.completion_data?.showResults && Object.keys(taskProgress.completion_data.showResults).length > 0
+          ? taskProgress.completion_data.showResults
+          : undefined;
+        
         return (
           <ListeningTask
             task={task}
             language={language}
             onComplete={handleComplete}
             isCompleted={isCompleted}
-            savedAnswers={taskProgress?.completion_data?.answers}
-            savedShowResults={taskProgress?.completion_data?.showResults}
+            savedAnswers={listeningSavedAnswers}
+            savedShowResults={listeningSavedShowResults}
             onNextTask={canGoNext ? onNext : undefined}
             onPreviousTask={canGoPrevious ? onPrevious : undefined}
             canGoNext={canGoNext}
@@ -146,14 +164,22 @@ export default function TaskCard({
           />
         );
       case 'attention':
+        // If completion_data is empty (replay was called), don't pass saved data
+        const attentionSavedAnswers = taskProgress?.completion_data?.answers && Object.keys(taskProgress.completion_data.answers).length > 0
+          ? taskProgress.completion_data.answers
+          : undefined;
+        const attentionSavedShowResults = taskProgress?.completion_data?.showResults && Object.keys(taskProgress.completion_data.showResults).length > 0
+          ? taskProgress.completion_data.showResults
+          : undefined;
+        
         return (
           <AttentionTask
             task={task}
             language={language}
             onComplete={handleComplete}
             isCompleted={isCompleted}
-            savedAnswers={taskProgress?.completion_data?.answers}
-            savedShowResults={taskProgress?.completion_data?.showResults}
+            savedAnswers={attentionSavedAnswers}
+            savedShowResults={attentionSavedShowResults}
             onNextTask={canGoNext ? onNext : undefined}
             onPreviousTask={canGoPrevious ? onPrevious : undefined}
             canGoNext={canGoNext}
