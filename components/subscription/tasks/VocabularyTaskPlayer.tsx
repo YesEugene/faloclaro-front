@@ -725,7 +725,7 @@ export default function VocabularyTaskPlayer({
           border: '2px solid white',
         }}
       >
-        {/* Timer - On the blue card, top right, but below white button bar */}
+        {/* Timer - On the blue card, top right, positioned to not overlap white button bar */}
         {task.ui?.show_timer && requiredTime > 0 && (
           <div 
             className="absolute right-4 bg-white rounded-full py-1.5 shadow-sm" 
@@ -733,7 +733,7 @@ export default function VocabularyTaskPlayer({
               top: '16px',
               paddingLeft: '16px',
               paddingRight: '16px',
-              zIndex: 1
+              zIndex: 0
             }}
           >
             <span className="text-xs font-medium text-gray-700 whitespace-nowrap" style={{ height: '12px', fontSize: '12px' }}>

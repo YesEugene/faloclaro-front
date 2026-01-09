@@ -409,7 +409,7 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
   return (
     <div className="min-h-screen bg-white">
       {/* Header with Logo and Language Selector */}
-      <div className="sticky top-0 bg-white z-10" style={{ borderBottomWidth: '0px', borderWidth: '0px' }}>
+      <div className="sticky top-0 bg-white z-20" style={{ borderBottomWidth: '0px', borderWidth: '0px' }}>
         <div className="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
           {/* Logo */}
           <Link href="/pt" className="flex items-center cursor-pointer">
@@ -432,7 +432,7 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
         {/* Back button - for all tasks */}
         {currentTask && (
           <>
-            <div className="max-w-md mx-auto px-4 mb-[10px] flex gap-[10px]" style={{ paddingBottom: '10px' }}>
+            <div className="max-w-md mx-auto px-4 mb-[10px] flex gap-[10px]" style={{ paddingBottom: '10px', position: 'relative', zIndex: 20 }}>
               <button
                 onClick={() => router.push(`/pt/lesson/${lesson.day_number}/${token}/overview`)}
                 className="px-4 py-2 rounded-[10px] transition-colors text-center"
