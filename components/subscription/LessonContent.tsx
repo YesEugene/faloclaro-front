@@ -303,7 +303,7 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
         {/* Back button - for all tasks */}
         {currentTask && (
           <>
-            <div className="max-w-md mx-auto px-4 mb-[20px] flex gap-[10px]">
+            <div className="max-w-md mx-auto px-4 mb-[10px] flex gap-[10px]" style={{ paddingBottom: '10px' }}>
               <button
                 onClick={() => router.push(`/pt/lesson/${lesson.day_number}/${token}/overview`)}
                 className="px-4 py-2 rounded-[10px] transition-colors text-center"
