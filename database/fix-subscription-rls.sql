@@ -87,3 +87,4 @@ CREATE POLICY "Public update access for task_progress" ON task_progress
 -- that check user_id matches the authenticated user, but for now
 -- we allow public access since we're using token-based authentication
 
+

@@ -18,3 +18,4 @@ WHERE cluster_id IN (
   SELECT id FROM clusters WHERE name = 'Beginner'
 );
 
+

@@ -26,3 +26,4 @@ CREATE POLICY "Allow update for clusters" ON clusters
   FOR UPDATE USING (true) WITH CHECK (true);
 
 
+

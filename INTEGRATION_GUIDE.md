@@ -134,3 +134,4 @@ NEXT_PUBLIC_APP_URL=https://www.faloclaro.com
 - [ ] Add payment prompt UI after trial expires
 - [ ] Test complete user flow
 
+

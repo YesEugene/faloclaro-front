@@ -146,3 +146,4 @@ WHERE portuguese_text = 'Não.';
 - Проверьте консоль браузера на ошибки CORS
 
 
+

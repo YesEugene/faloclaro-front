@@ -167,3 +167,4 @@ clusterResults.forEach(result => {
 console.log(`\n✅ Готово! SQL файл: ${sqlFile}`);
 
 
+

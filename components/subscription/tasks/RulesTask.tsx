@@ -22,7 +22,16 @@ interface RulesTaskProps {
 
 export default function RulesTask({ task, language, onComplete, isCompleted, savedAnswers, savedShowResults, savedSpeakOutLoudCompleted, onNextTask, onPreviousTask, canGoNext = false, canGoPrevious = false, progressCompleted = 0, progressTotal = 5 }: RulesTaskProps) {
   const { language: appLanguage } = useAppLanguage();
-  const [currentBlockIndex, setCurrentBlockIndex] = useState(0);
+  // Initialize with saved block index if available, otherwise start from last block if task is completed
+  const [currentBlockIndex, setCurrentBlockIndex] = useState(() => {
+    // If task is completed and we have saved data, try to restore the last block index
+    if (isCompleted && savedSpeakOutLoudCompleted) {
+      // If speak out loud was completed, we were on the last block
+      const blocksOrder = task?.structure?.blocks_order || [];
+      return blocksOrder.length > 0 ? blocksOrder.length - 1 : 0;
+    }
+    return 0;
+  });
   const [audioUrls, setAudioUrls] = useState<{ [key: string]: string }>({});
   const [isPlayingAudio, setIsPlayingAudio] = useState<{ [key: string]: boolean }>({});
   const [selectedAnswers, setSelectedAnswers] = useState<{ [key: string]: string | null }>(savedAnswers || {});
@@ -60,6 +69,8 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
     if (!isReplaying) {
       setLocalIsCompleted(isCompleted);
     }
+    // Don't reset currentBlockIndex when isCompleted changes
+    // User should stay on the current block after completing
   }, [isCompleted, isReplaying]);
 
   // Get progress message based on completed tasks
@@ -325,6 +336,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
   // Handle replay - reset all progress and go to first block
   const handleReplay = () => {
     console.log('🔄 handleReplay called - resetting task');
+    setHasUserInteracted(true); // Mark that user explicitly clicked replay
     setCurrentBlockIndex(0);
     setSpeakOutLoudCompleted(false);
     setSelectedAnswers({});
@@ -567,9 +579,25 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                               ? 'bg-green-100 border-2 border-green-500'
                               : isSelected && !isCorrect
                               ? 'bg-red-100 border-2 border-red-500'
-                              : 'bg-gray-100 border-2 border-gray-300'
-                            : 'bg-white border-0 hover:border-0'
+                              : 'bg-white border-0' // Невыбранные варианты остаются белыми
+                            : 'bg-white border-0'
                         }`}
+                        style={{
+                          backgroundColor: showResult
+                            ? (isCorrect 
+                                ? 'rgb(220 252 231)' 
+                                : (isSelected && !isCorrect 
+                                    ? 'rgb(254 226 226)' 
+                                    : 'white')) // Невыбранные варианты остаются белыми
+                            : 'white',
+                          border: showResult
+                            ? (isCorrect 
+                                ? '2px solid rgb(34 197 94)' 
+                                : (isSelected && !isCorrect 
+                                    ? '2px solid rgb(239 68 68)' 
+                                    : 'none'))
+                            : 'none'
+                        }}
                       >
                         {option.text}
                       </button>
@@ -602,9 +630,25 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                       ? 'bg-green-100 border-2 border-green-500'
                               : isSelected && !isCorrect
                       ? 'bg-red-100 border-2 border-red-500'
-                      : 'bg-gray-100 border-2 border-gray-300'
-                    : 'bg-white border-0 hover:border-0'
+                      : 'bg-white border-0' // Невыбранные варианты остаются белыми
+                    : 'bg-white border-0'
                 }`}
+                style={{
+                  backgroundColor: showResult
+                    ? (isCorrect 
+                        ? 'rgb(220 252 231)' 
+                        : (isSelected && !isCorrect 
+                            ? 'rgb(254 226 226)' 
+                            : 'white')) // Невыбранные варианты остаются белыми
+                    : 'white',
+                  border: showResult
+                    ? (isCorrect 
+                        ? '2px solid rgb(34 197 94)' 
+                        : (isSelected && !isCorrect 
+                            ? '2px solid rgb(239 68 68)' 
+                            : 'none'))
+                    : 'none'
+                }}
               >
                 {option.text}
               </button>

@@ -61,3 +61,4 @@ UPDATE phrases SET ipa_transcription = 'nɐ̃w ˈtẽɲu ɐ sɨɾˈtezɐ sɨ kõ
 - Все фразы имеют транскрипции
 
 
+

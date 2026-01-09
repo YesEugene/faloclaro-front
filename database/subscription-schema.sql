@@ -137,3 +137,4 @@ CREATE POLICY "Users read own task progress" ON task_progress
 -- Service role can insert/update (for API routes)
 -- Note: API routes should use service role key for writes
 
+

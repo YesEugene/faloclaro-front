@@ -106,3 +106,4 @@ ALTER TABLE phrases DROP COLUMN IF EXISTS phrase_type;
 -- (требуется восстановление из бэкапа)
 ```
 
+

@@ -121,3 +121,4 @@ curl -X POST http://localhost:3000/api/subscription/send-lesson-email \
 v=spf1 include:_spf.google.com include:resend.com ~all
 ```
 
+

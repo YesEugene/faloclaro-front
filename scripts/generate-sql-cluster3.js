@@ -46,3 +46,4 @@ console.log(`✅ SQL файл создан: ${outputFile}`);
 console.log(`📊 Совпадений: ${matched}/${jsonData.phrases.length}`);
 
 
+

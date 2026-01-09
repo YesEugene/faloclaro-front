@@ -74,3 +74,4 @@ NEXT_PUBLIC_BASE_URL=https://www.faloclaro.com
 2. Убедитесь, что `NEXT_PUBLIC_BASE_URL` указывает на правильный домен
 3. Проверьте консоль браузера и сервера на наличие ошибок
 
+

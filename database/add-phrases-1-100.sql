@@ -114,3 +114,4 @@ UNION ALL SELECT id, 'Fora de horas.', 24 FROM clusters WHERE name = 'Movement, 
 UNION ALL SELECT id, 'Está perto.', 25 FROM clusters WHERE name = 'Movement, Time, Pauses' LIMIT 1;
 
 
+

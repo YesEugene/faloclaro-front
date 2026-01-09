@@ -127,3 +127,4 @@ v=spf1 include:_spf.google.com include:resend.com ~all
 2. Проверьте, что используете правильный email адрес: `noreply@faloclaro.com`
 3. Проверьте логи в Resend Dashboard → Logs
 
+

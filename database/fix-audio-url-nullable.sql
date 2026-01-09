@@ -8,3 +8,4 @@ ALTER COLUMN audio_url DROP NOT NULL;
 -- ALTER TABLE phrases ALTER COLUMN audio_url SET NOT NULL;
 
 
+
