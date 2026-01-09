@@ -828,7 +828,13 @@ export default function VocabularyTaskPlayer({
       <div className="flex items-center justify-center mb-6">
         <button
           onClick={() => setShowSettings(!showSettings)}
-          className="p-3 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+          className="p-3 rounded-full transition-colors"
+          style={{ 
+            backgroundColor: 'rgba(255, 255, 255, 1)',
+            borderWidth: '1px',
+            borderColor: 'rgba(176, 176, 176, 1)',
+            borderStyle: 'solid'
+          }}
           aria-label={t.settings}
         >
           <img 
