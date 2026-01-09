@@ -22,16 +22,43 @@ interface RulesTaskProps {
 
 export default function RulesTask({ task, language, onComplete, isCompleted, savedAnswers, savedShowResults, savedSpeakOutLoudCompleted, onNextTask, onPreviousTask, canGoNext = false, canGoPrevious = false, progressCompleted = 0, progressTotal = 5 }: RulesTaskProps) {
   const { language: appLanguage } = useAppLanguage();
+  // Use ref to track if we've initialized to prevent reset on re-render
+  const initializedRef = useRef(false);
+  const lastBlockIndexRef = useRef<number | null>(null);
+  
   // Initialize with saved block index if available, otherwise start from last block if task is completed
   const [currentBlockIndex, setCurrentBlockIndex] = useState(() => {
     // If task is completed and we have saved data, try to restore the last block index
     if (isCompleted && savedSpeakOutLoudCompleted) {
       // If speak out loud was completed, we were on the last block
       const blocksOrder = task?.structure?.blocks_order || [];
-      return blocksOrder.length > 0 ? blocksOrder.length - 1 : 0;
+      const lastIndex = blocksOrder.length > 0 ? blocksOrder.length - 1 : 0;
+      lastBlockIndexRef.current = lastIndex;
+      initializedRef.current = true;
+      return lastIndex;
     }
+    initializedRef.current = true;
     return 0;
   });
+  
+  // Prevent reset of currentBlockIndex when isCompleted changes after user interaction
+  useEffect(() => {
+    // If we've already initialized and user is on a block, don't reset
+    if (initializedRef.current && lastBlockIndexRef.current !== null && currentBlockIndex === lastBlockIndexRef.current) {
+      // User is on the last block, keep them there even if isCompleted changes
+      return;
+    }
+    // Only update if we haven't initialized yet and task is completed
+    if (!initializedRef.current && isCompleted && savedSpeakOutLoudCompleted) {
+      const blocksOrder = task?.structure?.blocks_order || [];
+      if (blocksOrder.length > 0) {
+        const lastIndex = blocksOrder.length - 1;
+        setCurrentBlockIndex(lastIndex);
+        lastBlockIndexRef.current = lastIndex;
+        initializedRef.current = true;
+      }
+    }
+  }, [isCompleted, savedSpeakOutLoudCompleted, task?.structure?.blocks_order, currentBlockIndex]);
   const [audioUrls, setAudioUrls] = useState<{ [key: string]: string }>({});
   const [isPlayingAudio, setIsPlayingAudio] = useState<{ [key: string]: boolean }>({});
   const [selectedAnswers, setSelectedAnswers] = useState<{ [key: string]: string | null }>(savedAnswers || {});
@@ -297,7 +324,9 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
   // Handle next block
   const handleNextBlock = () => {
     if (currentBlockIndex < blocksOrder.length - 1) {
-      setCurrentBlockIndex(prev => prev + 1);
+      const nextIndex = currentBlockIndex + 1;
+      setCurrentBlockIndex(nextIndex);
+      lastBlockIndexRef.current = nextIndex; // Track the last block user was on
     }
   };
 
@@ -338,6 +367,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
     console.log('🔄 handleReplay called - resetting task');
     setHasUserInteracted(true); // Mark that user explicitly clicked replay
     setCurrentBlockIndex(0);
+    lastBlockIndexRef.current = 0; // Reset tracked block index
     setSpeakOutLoudCompleted(false);
     setSelectedAnswers({});
     setShowResults({});
