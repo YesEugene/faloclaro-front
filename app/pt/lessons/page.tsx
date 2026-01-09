@@ -199,8 +199,10 @@ function LessonsPageContent() {
       const url = getLessonUrl(dayNumber);
       router.push(url);
     } else {
-      // Redirect to payment page
-      router.push(`/pt/payment?lesson=${dayNumber}`);
+      // Redirect to payment page with token if available
+      const currentToken = localStorage.getItem('accessToken') || searchParams.get('token');
+      const paymentUrl = `/pt/payment?lesson=${dayNumber}${currentToken ? `&token=${currentToken}` : ''}`;
+      router.push(paymentUrl);
     }
   };
 
