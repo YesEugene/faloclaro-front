@@ -225,15 +225,28 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
       {/* Task Content - Full width - Always show, even if completed */}
       <div className="rounded-lg border-2 border-gray-200 p-6 w-full" style={{ backgroundColor: '#F4F5F8' }}>
         <div className="space-y-4">
-          {/* Audio Player */}
+          {/* Item indicator - above title */}
+          <div className="text-sm text-gray-500 mb-2">
+            {appLanguage === 'ru' 
+              ? `Блок ${currentItemIndex + 1} / ${items.length}`
+              : appLanguage === 'en'
+              ? `Block ${currentItemIndex + 1} / ${items.length}`
+              : `Bloco ${currentItemIndex + 1} / ${items.length}`}
+          </div>
+          
+          {/* Audio Player with title */}
           {currentItem.audio && (
-            <div className="flex items-center justify-center mb-4">
-              <button
-                onClick={() => playAudio(currentItem.audio)}
-                disabled={isPlayingAudio[currentItem.audio]}
-                className="p-4 rounded-full transition-colors"
-                style={{ backgroundColor: '#F4F5F8' }}
-              >
+            <>
+              <h3 className="text-xl font-bold text-black mb-4">
+                {appLanguage === 'ru' ? 'Прослушай фразу' : appLanguage === 'en' ? 'Listen to the phrase' : 'Ouça a frase'}
+              </h3>
+              <div className="flex items-center justify-center mb-4">
+                <button
+                  onClick={() => playAudio(currentItem.audio)}
+                  disabled={isPlayingAudio[currentItem.audio]}
+                  className="p-4 rounded-full transition-colors"
+                  style={{ backgroundColor: '#F4F5F8' }}
+                >
                 {isPlayingAudio[currentItem.audio] ? (
                   <svg className="w-10 h-10 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
@@ -245,6 +258,7 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
                 )}
               </button>
             </div>
+            </>
           )}
 
           {/* Question */}

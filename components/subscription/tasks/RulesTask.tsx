@@ -264,6 +264,14 @@ export default function RulesTask({ task, language, onComplete, isCompleted, onN
       case 'explanation':
     return (
           <div className="space-y-4">
+            {/* Block indicator - above title */}
+            <div className="text-sm text-gray-500 mb-2">
+              {appLanguage === 'ru' 
+                ? `Блок ${currentBlockIndex + 1} / ${blocksOrder.length}`
+                : appLanguage === 'en'
+                ? `Block ${currentBlockIndex + 1} / ${blocksOrder.length}`
+                : `Bloco ${currentBlockIndex + 1} / ${blocksOrder.length}`}
+            </div>
             <h3 className="text-xl font-bold text-black mb-4">{currentBlock.title}</h3>
             <p className="text-gray-700 whitespace-pre-line mb-4">{currentBlock.explanation_text}</p>
             
@@ -342,6 +350,14 @@ export default function RulesTask({ task, language, onComplete, isCompleted, onN
       case 'comparison':
         return (
           <div className="space-y-4">
+            {/* Block indicator - above title */}
+            <div className="text-sm text-gray-500 mb-2">
+              {appLanguage === 'ru' 
+                ? `Блок ${currentBlockIndex + 1} / ${blocksOrder.length}`
+                : appLanguage === 'en'
+                ? `Block ${currentBlockIndex + 1} / ${blocksOrder.length}`
+                : `Bloco ${currentBlockIndex + 1} / ${blocksOrder.length}`}
+            </div>
             <h3 className="text-xl font-bold text-black mb-4">{currentBlock.title}</h3>
             
             {currentBlock.comparison_card && (
@@ -412,6 +428,14 @@ export default function RulesTask({ task, language, onComplete, isCompleted, onN
       case 'reinforcement':
   return (
     <div className="space-y-6">
+            {/* Block indicator - above title */}
+            <div className="text-sm text-gray-500 mb-2">
+              {appLanguage === 'ru' 
+                ? `Блок ${currentBlockIndex + 1} / ${blocksOrder.length}`
+                : appLanguage === 'en'
+                ? `Block ${currentBlockIndex + 1} / ${blocksOrder.length}`
+                : `Bloco ${currentBlockIndex + 1} / ${blocksOrder.length}`}
+            </div>
             {/* Task 1: Single Choice */}
             {currentBlock.task_1 && (
               <div className="space-y-4">
@@ -518,6 +542,14 @@ export default function RulesTask({ task, language, onComplete, isCompleted, onN
         
         return (
           <div className="space-y-4">
+            {/* Block indicator - above title */}
+            <div className="text-sm text-gray-500 mb-2">
+              {appLanguage === 'ru' 
+                ? `Блок ${currentBlockIndex + 1} / ${blocksOrder.length}`
+                : appLanguage === 'en'
+                ? `Block ${currentBlockIndex + 1} / ${blocksOrder.length}`
+                : `Bloco ${currentBlockIndex + 1} / ${blocksOrder.length}`}
+            </div>
             <h3 className="text-xl font-bold text-black mb-4">{currentBlock.title}</h3>
             <p 
               className="text-gray-700 whitespace-pre-line mb-6"
@@ -624,14 +656,6 @@ export default function RulesTask({ task, language, onComplete, isCompleted, onN
         )}
       </div>
 
-      {/* Progress indicator */}
-      <div className="text-center text-sm text-gray-500">
-        {appLanguage === 'ru' 
-          ? `Блок ${currentBlockIndex + 1} из ${blocksOrder.length}`
-          : appLanguage === 'en'
-          ? `Block ${currentBlockIndex + 1} of ${blocksOrder.length}`
-          : `Bloco ${currentBlockIndex + 1} de ${blocksOrder.length}`}
-      </div>
 
       {/* Progress Bar - Above navigation panel */}
       <div className="fixed bottom-[69px] left-0 right-0 bg-white z-30" style={{ marginBottom: '0px', borderRadius: '0px', borderTopLeftRadius: '0px', borderTopRightRadius: '0px', borderBottomRightRadius: '0px', borderBottomLeftRadius: '0px', opacity: 1, color: 'rgba(23, 23, 23, 1)', verticalAlign: 'bottom', height: '33px' }}>

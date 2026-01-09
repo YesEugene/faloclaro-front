@@ -92,6 +92,15 @@ export default function WritingTask({ task, language, onComplete, isCompleted, o
       {/* Task Content - Full width - Always show, even if completed */}
       <div className="rounded-lg border-2 border-gray-200 p-6 w-full" style={{ backgroundColor: '#F4F5F8' }}>
         <div className="space-y-4">
+          {/* Block indicator - Writing task is always block 1/1 */}
+          <div className="text-sm text-gray-500 mb-2">
+            {appLanguage === 'ru' 
+              ? `Блок 1 / 1`
+              : appLanguage === 'en'
+              ? `Block 1 / 1`
+              : `Bloco 1 / 1`}
+          </div>
+          
           {/* Instruction */}
           {instructionText && (
             <div 
