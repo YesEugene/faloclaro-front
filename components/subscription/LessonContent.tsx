@@ -442,7 +442,7 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
                 }}
               >
                 <span className="text-gray-700">
-                  {appLanguage === 'ru' ? '← Назад к заданиям' : appLanguage === 'en' ? '← Back to tasks' : '← Voltar às tarefas'}
+                  {appLanguage === 'ru' ? '← Меню курса' : appLanguage === 'en' ? '← Course menu' : '← Menu do curso'}
                 </span>
               </button>
               {/* Dictionary button - only for vocabulary task */}
