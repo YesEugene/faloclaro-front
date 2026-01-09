@@ -228,55 +228,40 @@ function LessonsPageContent() {
   };
 
   const isLessonUnlocked = (dayNumber: number): boolean => {
-    console.log(`\n🔍 Checking lesson ${dayNumber}:`, {
-      dayNumber,
-      isFirstThree: dayNumber <= 3,
-      userTokensSize: userTokens.size,
-      userTokensKeys: Array.from(userTokens.keys()),
-      subscriptionStatus: subscription?.status,
-      hasSubscription: !!subscription,
-      subscriptionObject: subscription
-    });
-
-    // First 3 lessons are always unlocked (if user has token)
+    // First 3 lessons: unlocked if user has token
     if (dayNumber <= 3) {
       const hasToken = userTokens.has(dayNumber);
-      const unlocked = hasToken;
-      console.log(`✅ Lesson ${dayNumber} (1-3):`, { 
-        unlocked, 
+      console.log(`🔓 Lesson ${dayNumber} (1-3):`, { 
+        unlocked: hasToken, 
         hasToken,
-        tokenValue: userTokens.get(dayNumber) ? 'exists' : 'missing'
+        tokenExists: userTokens.get(dayNumber) ? 'yes' : 'no'
       });
-      return unlocked;
+      return hasToken;
     }
     
-    // After 3, check if user has paid (only 'paid' status, not 'trial')
-    // Also check if user has a token for this specific lesson (created after payment)
-    const hasToken = userTokens.has(dayNumber);
+    // Lessons 4+: ONLY unlocked if user has PAID subscription
+    // Token check is removed - tokens for 4+ are only created AFTER payment
     const hasPaid = subscription?.status === 'paid';
-    const unlocked = hasPaid || hasToken;
     
-    console.log(`❌ Lesson ${dayNumber} (4+):`, { 
-      unlocked, 
-      hasToken,
+    console.log(`🔒 Lesson ${dayNumber} (4+):`, { 
+      unlocked: hasPaid, 
       hasPaid,
       subscriptionStatus: subscription?.status,
       subscriptionStatusType: typeof subscription?.status,
-      subscriptionStatusComparison: subscription?.status === 'paid',
+      statusIsPaid: subscription?.status === 'paid',
+      statusIsTrial: subscription?.status === 'trial',
+      statusIsActive: subscription?.status === 'active',
       hasSubscription: !!subscription,
-      subscriptionId: subscription?.id,
-      allSubscriptionFields: subscription ? Object.keys(subscription) : null
+      subscriptionId: subscription?.id
     });
     
-    if (unlocked && !hasPaid) {
-      console.warn(`⚠️ WARNING: Lesson ${dayNumber} is unlocked but user hasn't paid!`, {
-        hasToken,
-        hasPaid,
-        subscriptionStatus: subscription?.status
-      });
+    if (hasPaid) {
+      console.log(`✅ Lesson ${dayNumber} is unlocked because user has paid subscription`);
+    } else {
+      console.log(`❌ Lesson ${dayNumber} is LOCKED - user has not paid (status: ${subscription?.status || 'no subscription'})`);
     }
     
-    return unlocked;
+    return hasPaid;
   };
 
   const getLessonUrl = (dayNumber: number): string => {
