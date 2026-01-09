@@ -23,10 +23,25 @@ interface ListeningTaskProps {
 export default function ListeningTask({ task, language, onComplete, isCompleted, savedAnswers, savedShowResults, onNextTask, onPreviousTask, canGoNext = false, canGoPrevious = false, progressCompleted = 0, progressTotal = 5 }: ListeningTaskProps) {
   const { language: appLanguage } = useAppLanguage();
   // Use ref to persist currentItemIndex across re-renders and prevent auto-reset
+  // This is critical: when task completes, component may remount, but ref persists
   const currentItemIndexRef = useRef(0);
-  const [currentItemIndex, setCurrentItemIndex] = useState(0);
   
-  // Sync ref with state
+  // Initialize state from ref to preserve value across remounts
+  // Only reset to 0 if ref is also 0 (initial mount)
+  const [currentItemIndex, setCurrentItemIndex] = useState(() => {
+    // On initial mount, try to restore from saved data if available
+    if (savedAnswers && Object.keys(savedAnswers).length > 0) {
+      const items = task.items || [];
+      const lastAnsweredIndex = Math.max(...Object.keys(savedAnswers).map(k => parseInt(k)), -1);
+      if (lastAnsweredIndex >= 0 && lastAnsweredIndex < items.length) {
+        currentItemIndexRef.current = lastAnsweredIndex;
+        return lastAnsweredIndex;
+      }
+    }
+    return currentItemIndexRef.current;
+  });
+  
+  // Always sync ref with state - this ensures ref persists even if component remounts
   useEffect(() => {
     currentItemIndexRef.current = currentItemIndex;
   }, [currentItemIndex]);
@@ -40,13 +55,23 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
   const audioRefs = useRef<{ [key: string]: HTMLAudioElement }>({});
   
   // Update local completion state when prop changes (but not during replay)
-  // IMPORTANT: Don't reset currentItemIndex when task completes - user should stay on last block
+  // CRITICAL: When task completes, component may remount. Use ref to preserve currentItemIndex.
   useEffect(() => {
     if (!isReplaying) {
       setLocalIsCompleted(isCompleted);
-      // DO NOT reset currentItemIndex here - keep user on the block they completed
+      // CRITICAL: If component remounted and currentItemIndex was reset to 0,
+      // restore it from ref if we have saved answers (meaning we were on a later block)
+      if (isCompleted && currentItemIndex === 0 && savedAnswers && Object.keys(savedAnswers).length > 0) {
+        const items = task.items || [];
+        const lastAnsweredIndex = Math.max(...Object.keys(savedAnswers).map(k => parseInt(k)), -1);
+        if (lastAnsweredIndex >= 0 && lastAnsweredIndex < items.length && lastAnsweredIndex > 0) {
+          // Restore to last answered block
+          currentItemIndexRef.current = lastAnsweredIndex;
+          setCurrentItemIndex(lastAnsweredIndex);
+        }
+      }
     }
-  }, [isCompleted, isReplaying]);
+  }, [isCompleted, isReplaying, currentItemIndex, savedAnswers, task]);
   
   // Load saved answers on mount (but skip if replaying or if saved data is empty)
   const [hasLoadedSavedData, setHasLoadedSavedData] = useState(false);
