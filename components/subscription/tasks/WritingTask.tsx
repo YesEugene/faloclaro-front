@@ -82,6 +82,11 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
     // If user clicked "I said it out loud" button, complete immediately
     const shouldComplete = forceSpeakOutLoud || speakOutLoud || writtenText.trim();
     if (shouldComplete) {
+      // Update local state first to show "Пройти заново" button immediately
+      if (forceSpeakOutLoud) {
+        setSpeakOutLoud(true);
+      }
+      
       onComplete({
         writtenText: (forceSpeakOutLoud || speakOutLoud) ? null : writtenText,
         speakOutLoud: forceSpeakOutLoud || speakOutLoud,
