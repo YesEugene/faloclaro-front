@@ -78,8 +78,10 @@ function loadLessonFiles(dayNumber) {
     });
   }
 
-  // Load task files (tasks 2-5)
+  // Load task files (tasks 1-5)
+  // Task 1 vocabulary file is optional - if it exists, it will merge content with task 1 from day_XX.yaml
   const taskFiles = [
+    `day${String(dayNumber).padStart(2, '0')}_task01_vocabulary.yaml`,
     `day${String(dayNumber).padStart(2, '0')}_task02_rules.yaml`,
     `day${String(dayNumber).padStart(2, '0')}_task03_listening.yaml`,
     `day${String(dayNumber).padStart(2, '0')}_task04_attention.yaml`,
@@ -144,8 +146,34 @@ function loadLessonFiles(dayNumber) {
         // Find and replace existing task or add new one
         const existingIndex = dayData.tasks.findIndex(t => t.task_id === taskItem.task_id);
         if (existingIndex >= 0) {
-          dayData.tasks[existingIndex] = taskItem;
-          console.log(`  ✅ Updated task ${taskItem.task_id} (${taskItem.type})`);
+          // For task 1 (vocabulary), merge content instead of replacing
+          if (taskItem.task_id === 1 && taskItem.type === 'vocabulary') {
+            const existingTask = dayData.tasks[existingIndex];
+            // Merge vocabulary-specific content (ui, card_format, content)
+            if (taskData.ui) {
+              existingTask.ui = taskData.ui;
+            }
+            if (taskData.card_format) {
+              existingTask.card_format = taskData.card_format;
+            }
+            if (taskData.content && taskData.content.cards) {
+              existingTask.content = taskData.content;
+            }
+            // Merge other properties
+            if (taskData.task.estimated_time) {
+              existingTask.estimated_time = taskData.task.estimated_time;
+            }
+            if (taskData.task.show_timer !== undefined) {
+              existingTask.show_timer = taskData.task.show_timer;
+            }
+            if (taskData.task.show_settings !== undefined) {
+              existingTask.show_settings = taskData.task.show_settings;
+            }
+            console.log(`  ✅ Merged vocabulary content into task ${taskItem.task_id}`);
+          } else {
+            dayData.tasks[existingIndex] = taskItem;
+            console.log(`  ✅ Updated task ${taskItem.task_id} (${taskItem.type})`);
+          }
         } else {
           dayData.tasks.push(taskItem);
           console.log(`  ✅ Added task ${taskItem.task_id} (${taskItem.type})`);
