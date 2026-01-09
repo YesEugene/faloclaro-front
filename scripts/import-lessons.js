@@ -73,6 +73,7 @@ function loadLessonFiles(dayNumber) {
   for (const taskFile of taskFiles) {
     const taskFilePath = path.join(dayDir, taskFile);
     if (fs.existsSync(taskFilePath)) {
+      console.log(`  📄 Loading task file: ${taskFile}`);
       const taskData = parseYAMLFile(taskFilePath);
       if (taskData && taskData.task) {
         // Convert task object to array item format
@@ -122,10 +123,16 @@ function loadLessonFiles(dayNumber) {
         const existingIndex = dayData.tasks.findIndex(t => t.task_id === taskItem.task_id);
         if (existingIndex >= 0) {
           dayData.tasks[existingIndex] = taskItem;
+          console.log(`  ✅ Updated task ${taskItem.task_id} (${taskItem.type})`);
         } else {
           dayData.tasks.push(taskItem);
+          console.log(`  ✅ Added task ${taskItem.task_id} (${taskItem.type})`);
         }
+      } else {
+        console.log(`  ⚠️  Task file ${taskFile} has no task data`);
       }
+    } else {
+      console.log(`  ⚠️  Task file not found: ${taskFile}`);
     }
   }
 
