@@ -142,7 +142,7 @@ function LessonsPageContent() {
           console.log('⚠️ No tokens found for user:', { 
             tokensError: tokensError?.message || tokensError,
             tokensErrorCode: tokensError?.code,
-            tokensDataCount: tokensData?.length || 0
+            tokensDataCount: (tokensData as any)?.length || 0
           });
         }
 
