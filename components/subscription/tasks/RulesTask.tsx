@@ -436,9 +436,21 @@ export default function RulesTask({ task, language, onComplete, isCompleted, onN
                 ? `Block ${currentBlockIndex + 1} / ${blocksOrder.length}`
                 : `Bloco ${currentBlockIndex + 1} / ${blocksOrder.length}`}
             </div>
+            
+            {/* Block title */}
+            <h2 className="text-xl font-bold text-black mb-4">
+              {appLanguage === 'ru' 
+                ? 'Проверим, понятен ли смысл'
+                : appLanguage === 'en'
+                ? 'Let\'s check if the meaning is clear'
+                : 'Vamos verificar se o significado está claro'}
+            </h2>
+            
             {/* Task 1: Single Choice */}
             {currentBlock.task_1 && (
               <div className="space-y-4">
+                <p className="text-lg font-semibold text-black mb-4">{currentBlock.task_1.question}</p>
+                
                 {currentBlock.task_1.audio && (
                   <div className="flex items-center justify-center mb-4">
                     <button
@@ -459,8 +471,6 @@ export default function RulesTask({ task, language, onComplete, isCompleted, onN
                     </button>
                   </div>
                 )}
-                
-                <p className="text-lg font-semibold text-black mb-4">{currentBlock.task_1.question}</p>
                 
             <div className="space-y-2">
                   {currentBlock.task_1.options?.map((option: any, index: number) => {
