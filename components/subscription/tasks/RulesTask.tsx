@@ -633,14 +633,15 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
           <div className="space-y-2">
                   {currentBlock.task_2.options?.map((option: any, index: number) => {
                     const taskKey = 'task_2';
-                    const isSelected = selectedAnswers[taskKey] === option.text;
+                    const optionText = typeof option.text === 'string' ? option.text : option.text; // Task 2 options are Portuguese phrases, not translated
+                    const isSelected = selectedAnswers[taskKey] === optionText;
                     const isCorrect = option.correct;
                     const showResult = showResults[taskKey];
                     
                     return (
               <button
                 key={index}
-                        onClick={() => handleAnswerSelect(taskKey, option.text)}
+                        onClick={() => handleAnswerSelect(taskKey, optionText)}
                 disabled={showResult}
                         className={`w-full text-left p-4 rounded-lg transition-colors ${
                   showResult
@@ -668,7 +669,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                     : 'none'
                 }}
               >
-                {option.text}
+                {optionText}
               </button>
                     );
                   })}

@@ -330,14 +330,15 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
           {/* Options */}
           <div className="space-y-2">
             {currentItem.options?.map((option: any, index: number) => {
-              const isSelected = currentAnswer === option.text;
+              const optionText = getTranslatedText(option.text, appLanguage);
+              const isSelected = currentAnswer === optionText || currentAnswer === option.text;
               const isCorrect = option.correct;
               const showResultForOption = showResult;
 
               return (
                 <button
                   key={index}
-                  onClick={() => handleAnswerSelect(currentItemIndex, option.text)}
+                  onClick={() => handleAnswerSelect(currentItemIndex, optionText)}
                   disabled={showResultForOption}
                   className="w-full text-left px-4 rounded-lg transition-colors flex items-center"
                   style={{
@@ -350,14 +351,17 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
                       : 'none'
                   }}
                 >
-                  {option.text}
+                  {optionText}
                 </button>
               );
             })}
           </div>
 
           {/* Show feedback if available */}
-          {showResult && currentItem.options?.find((opt: any) => opt.text === currentAnswer && opt.feedback) && (
+          {showResult && currentItem.options?.find((opt: any) => {
+            const optText = getTranslatedText(opt.text, appLanguage);
+            return (optText === currentAnswer || opt.text === currentAnswer) && opt.feedback;
+          }) && (
             <div 
               className="rounded-lg p-4 mt-4"
               style={{ 
@@ -368,7 +372,10 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
               }}
             >
               <p className="text-black font-medium">
-                {currentItem.options.find((opt: any) => opt.text === currentAnswer)?.feedback}
+                {getTranslatedText(currentItem.options.find((opt: any) => {
+                  const optText = getTranslatedText(opt.text, appLanguage);
+                  return (optText === currentAnswer || opt.text === currentAnswer) && opt.feedback;
+                })?.feedback, appLanguage)}
               </p>
             </div>
           )}
