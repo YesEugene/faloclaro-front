@@ -405,11 +405,13 @@ function OverviewPageContent() {
   const getTaskDisplayName = (task: any, index: number) => {
     // Fixed names based on task order (1-5)
     const taskNames = [t.task1, t.task2, t.task3, t.task4, t.task5];
-    return taskNames[index] || task.title || 'Task';
+    const translatedTitle = getTaskTitle(task, appLanguage);
+    return taskNames[index] || translatedTitle || 'Task';
   };
 
   const getTaskDescription = (task: any) => {
-    if (task.subtitle) return task.subtitle;
+    const translatedSubtitle = getTaskSubtitle(task, appLanguage);
+    if (translatedSubtitle) return translatedSubtitle;
     switch (task.type) {
       case 'vocabulary':
         return t.playListenRepeat;
