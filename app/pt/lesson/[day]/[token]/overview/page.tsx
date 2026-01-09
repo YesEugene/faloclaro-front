@@ -307,12 +307,27 @@ function OverviewPageContent() {
     yamlContentType: typeof lesson?.yaml_content,
     parsedYamlContent: yamlContent,
     tasksCount: tasks.length,
-    tasks: tasks.map((t: any) => ({ id: t.task_id, type: t.type, title: t.title })),
+    tasks: tasks.map((t: any) => ({ 
+      id: t.task_id, 
+      type: t.type, 
+      title: t.title,
+      status: getTaskStatus(t.task_id)
+    })),
     allCompleted,
     tasksCompleted: userProgress.tasks_completed,
     totalTasks: userProgress.total_tasks,
     taskProgress: userProgress.task_progress
   });
+  
+  // Ensure all tasks are always displayed - log if tasks array is empty
+  if (tasks.length === 0) {
+    console.error('⚠️ WARNING: tasks array is empty!', {
+      yamlContent,
+      yamlContentTasks: yamlContent.tasks,
+      yamlContentTasksType: typeof yamlContent.tasks,
+      yamlContentTasksIsArray: Array.isArray(yamlContent.tasks)
+    });
+  }
 
   const translations = {
     ru: {
