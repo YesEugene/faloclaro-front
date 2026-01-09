@@ -1,0 +1,133 @@
+day:
+  number: 2
+  title:
+    ru: "Где я и откуда"
+    en: "Where I live and where I'm from"
+  subtitle:
+    ru: "Говорим о месте и начинаем понимать бытовые вопросы"
+    en: "Talking about places and understanding simple questions"
+  estimated_time: "15–25 минут"
+
+email:
+  subject:
+    ru: "День 2 из 60 — где ты и откуда"
+    en: "Day 2 of 60 — where you are and where you're from"
+  preview:
+    ru: "Говорим о месте и понимаем бытовые вопросы"
+    en: "Talking about places and understanding simple questions"
+  summary:
+    ru:
+      - "Где я живу"
+      - "Откуда я"
+      - "Бытовые вопросы"
+    en:
+      - "Where I live"
+      - "Where I'm from"
+      - "Everyday questions"
+
+progress:
+  day_progress_text: "2 / 60"
+  completion_message:
+    ru: "День завершён. Ты уже говоришь о месте."
+    en: "Day completed. You're already talking about places."
+
+tasks:
+  - task_id: 1
+    type: "vocabulary"
+    title:
+      ru: "Слова и фразы"
+      en: "Words and phrases"
+    subtitle:
+      ru: "Слушай, повторяй и привыкай к звучанию языка"
+      en: "Listen, repeat and get used to the sound of the language"
+    recommended_time: "10 минут"
+    completion_rule: "auto_after_audio_10_min"
+
+    ui:
+      show_audio_settings: true
+      show_timer: true
+      allow_repeat: true
+
+    card_format:
+      show_word: true
+      show_transcription: true
+      show_example_sentence: true
+      show_word_translation_ru: true
+      show_sentence_translation_ru: true
+      show_sentence_translation_en: true
+
+    content:
+      cards:
+        - word: "De onde"
+          transcription: "[dɨ ˈõdɨ]"
+          example_sentence: "De onde és?"
+          sentence_translation_ru: "Откуда ты?"
+          sentence_translation_en: "Where are you from?"
+          word_translation_ru: "Откуда"
+
+        - word: "Sou de"
+          transcription: "[so dɨ]"
+          example_sentence: "Sou de Lisboa."
+          sentence_translation_ru: "Я из Лиссабона."
+          sentence_translation_en: "I'm from Lisbon."
+          word_translation_ru: "Я из"
+
+        - word: "Vivo em"
+          transcription: "[ˈvivw ɐ̃j̃]"
+          example_sentence: "Vivo em Porto."
+          sentence_translation_ru: "Я живу в Порту."
+          sentence_translation_en: "I live in Porto."
+          word_translation_ru: "Я живу в"
+
+        - word: "Moro em"
+          transcription: "[ˈmoɾu ɐ̃j̃]"
+          example_sentence: "Moro em Coimbra."
+          sentence_translation_ru: "Я живу в Коимбре."
+          sentence_translation_en: "I live in Coimbra."
+          word_translation_ru: "Я живу в"
+
+        - word: "És de"
+          transcription: "[ɛʃ dɨ]"
+          example_sentence: "És de onde?"
+          sentence_translation_ru: "Ты откуда?"
+          sentence_translation_en: "Where are you from?"
+          word_translation_ru: "Ты из"
+
+        - word: "Venho de"
+          transcription: "[ˈvɐɲu dɨ]"
+          example_sentence: "Venho de Braga."
+          sentence_translation_ru: "Я из Браги."
+          sentence_translation_en: "I'm from Braga."
+          word_translation_ru: "Я из"
+
+        - word: "Aqui"
+          transcription: "[ɐˈki]"
+          example_sentence: "Estou aqui."
+          sentence_translation_ru: "Я здесь."
+          sentence_translation_en: "I'm here."
+          word_translation_ru: "Здесь"
+
+        - word: "Agora"
+          transcription: "[ɐˈɡoɾɐ]"
+          example_sentence: "Agora vivo aqui."
+          sentence_translation_ru: "Сейчас я живу здесь."
+          sentence_translation_en: "Now I live here."
+          word_translation_ru: "Сейчас"
+
+        - word: "Cidade"
+          transcription: "[siˈdadɨ]"
+          example_sentence: "Lisboa é uma cidade."
+          sentence_translation_ru: "Лиссабон — это город."
+          sentence_translation_en: "Lisbon is a city."
+          word_translation_ru: "Город"
+
+        - word: "País"
+          transcription: "[pɐˈiʃ]"
+          example_sentence: "Portugal é um país."
+          sentence_translation_ru: "Португалия — это страна."
+          sentence_translation_en: "Portugal is a country."
+          word_translation_ru: "Страна"
+
+    completion_message:
+      ru: "Уровень прогресса: Начало"
+      en: "Progress level: Beginning"

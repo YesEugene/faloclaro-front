@@ -1,0 +1,64 @@
+task:
+  task_id: 3
+  type: listening_comprehension
+  title:
+    ru: "Предложения и понимание"
+    en: "Sentences and understanding"
+  subtitle:
+    ru: "Слушай фразу и пойми, о чём она"
+    en: "Listen to the phrase and understand what it's about"
+  estimated_time: "≈5 минут"
+  show_timer: false
+  show_settings: false
+  completion_message:
+    ru: "Уровень прогресса: Понимание"
+    en: "Progress level: Understanding"
+
+ui_rules:
+  audio_plays_first: true
+  show_text_after_answer: true
+  one_clear_correct_answer: true
+
+items:
+  - item_id: 1
+    audio: "Sou de Lisboa."
+    text_hidden_before_answer: true
+    question:
+      ru: "De onde é a pessoa?"
+      en: "Where is the person from?"
+    options:
+      - text: "Lisboa"
+        correct: true
+      - text: "Porto"
+        correct: false
+      - text: "Não sabemos"
+        correct: false
+
+  - item_id: 2
+    audio: "Vivo em Porto."
+    text_hidden_before_answer: true
+    question:
+      ru: "Onde mora a pessoa?"
+      en: "Where does the person live?"
+    options:
+      - text: "Porto"
+        correct: true
+      - text: "Lisboa"
+        correct: false
+      - text: "Coimbra"
+        correct: false
+
+  - item_id: 3
+    optional: true
+    audio: "Venho de Braga."
+    text_hidden_before_answer: true
+    question:
+      ru: "De onde vem a pessoa?"
+      en: "Where does the person come from?"
+    options:
+      - text: "Braga"
+        correct: true
+      - text: "Lisboa"
+        correct: false
+      - text: "Porto"
+        correct: false

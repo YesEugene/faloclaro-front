@@ -1,0 +1,65 @@
+task:
+  task_id: 4
+  type: attention
+  title:
+    ru: "Внимательность"
+    en: "Attention"
+  subtitle:
+    ru: "Пойми, что здесь происходит"
+    en: "Understand what is happening here"
+  estimated_time: "≈3–5 минут"
+  show_timer: false
+  show_settings: false
+  completion_message:
+    ru: "Уровень прогресса: Уверенность"
+    en: "Progress level: Confidence"
+
+ui_rules:
+  audio_plays_first: true
+  show_text_after_answer: true
+  only_known_words: true
+  no_similar_distractors: true
+
+items:
+  - item_id: 1
+    audio: "Sou de Lisboa."
+    question:
+      ru: "О чём говорит человек?"
+      en: "What is the person talking about?"
+    options:
+      - text: "Откуда он"
+        correct: true
+        feedback:
+          ru: "Эта фраза говорит о происхождении."
+          en: "This phrase talks about origin."
+      - text: "Где он живёт"
+        correct: false
+      - text: "Кто он"
+        correct: false
+
+  - item_id: 2
+    audio: "Vivo em Porto."
+    question:
+      ru: "О чём говорит человек?"
+      en: "What is the person talking about?"
+    options:
+      - text: "Где он живёт"
+        correct: true
+      - text: "Откуда он"
+        correct: false
+      - text: "Кто он"
+        correct: false
+
+  - item_id: 3
+    optional: true
+    audio: "Moro em Coimbra."
+    question:
+      ru: "Что делает человек?"
+      en: "What is the person doing?"
+    options:
+      - text: "Говорит, где живёт"
+        correct: true
+      - text: "Говорит, откуда он"
+        correct: false
+      - text: "Представляется"
+        correct: false

@@ -1,0 +1,156 @@
+task:
+  task_id: 2
+  type: rules
+  title:
+    ru: "Как это сказать"
+    en: "How to say it"
+  subtitle:
+    ru: "Говорим о месте и происхождении"
+    en: "Talking about place and origin"
+  estimated_time: "≈5 минут"
+  show_timer: false
+  show_settings: false
+  completion_message:
+    ru: "Уровень прогресса: Разогрев"
+    en: "Progress level: Warm-up"
+
+structure:
+  blocks_order:
+    - block_1_origin
+    - block_2_living_place
+    - block_3_equivalence
+    - block_4_reinforcement
+    - block_5_speak_out_loud
+
+blocks:
+  block_1_origin:
+    type: explanation
+    title:
+      ru: "Как сказать, откуда ты"
+      en: "How to say where you're from"
+    explanation_text:
+      ru: |
+        Чтобы сказать, откуда ты, в португальском говорят:
+        Sou de + место
+        или
+        Venho de + место
+      en: |
+        To say where you're from in Portuguese, they say:
+        Sou de + place
+        or
+        Venho de + place
+    examples:
+      - text: "Sou de Lisboa."
+        audio: true
+        pause_after_audio_sec: 1.5
+      - text: "Venho de Porto."
+        audio: true
+        pause_after_audio_sec: 1.5
+    hint:
+      - ru: "Sou de — «Я из…»"
+        en: "Sou de means «I'm from…»"
+      - ru: "Venho de — «Я приехал из…»"
+        en: "Venho de means «I come from…»"
+
+  block_2_living_place:
+    type: explanation
+    title:
+      ru: "Как сказать, где ты живёшь"
+      en: "How to say where you live"
+    explanation_text:
+      ru: |
+        Чтобы сказать, где ты живёшь, говорят:
+        Vivo em + место
+        или
+        Moro em + место
+      en: |
+        To say where you live, they say:
+        Vivo em + place
+        or
+        Moro em + place
+    examples:
+      - text: "Vivo em Lisboa."
+        audio: true
+        pause_after_audio_sec: 1.5
+      - text: "Moro em Porto."
+        audio: true
+        pause_after_audio_sec: 1.5
+    hint:
+      - ru: "Vivo em — «Я живу в…»"
+        en: "Vivo em means «I live in…»"
+      - ru: "Moro em — тоже «Я живу в…»"
+        en: "Moro em also means «I live in…»"
+
+  block_3_equivalence:
+    type: comparison
+    title:
+      ru: "Два варианта — один смысл"
+      en: "Two options — one meaning"
+    comparison_card:
+      - text: "Sou de Lisboa."
+        audio: true
+      - text: "Venho de Lisboa."
+        audio: true
+    note:
+      ru: |
+        Оба варианта говорят об одном и том же.
+        Можно использовать любой.
+      en: |
+        Both options say the same thing.
+        You can use either one.
+
+  block_4_reinforcement:
+    type: reinforcement
+
+    task_1:
+      format: single_choice
+      audio: "Sou de Porto."
+      question:
+        ru: "О чём говорит человек?"
+        en: "What is the person saying?"
+      options:
+        - text: "Откуда он"
+          correct: true
+        - text: "Где он живёт"
+          correct: false
+        - text: "Кто он"
+          correct: false
+
+    task_2:
+      format: situation_to_phrase
+      situation_text:
+        ru: "Ты хочешь сказать, что живёшь в Лиссабоне."
+        en: "You want to say that you live in Lisbon."
+      options:
+        - text: "Vivo em Lisboa."
+          correct: true
+        - text: "Sou de Lisboa."
+          correct: false
+        - text: "Olá."
+          correct: false
+
+  block_5_speak_out_loud:
+    type: speak_out_loud
+    title:
+      ru: "Скажи вслух"
+      en: "Speak out loud"
+    instruction_text:
+      ru: |
+        Попробуй сказать о себе:
+        Sou de …
+        Vivo em …
+        или
+        Venho de …
+        Moro em …
+      en: |
+        Try to say about yourself:
+        Sou de …
+        Vivo em …
+        or
+        Venho de …
+        Moro em …
+    action_button:
+      text:
+        ru: "✔ Я сказал(а) вслух"
+        en: "✔ I said it out loud"
+      completes_task: true
