@@ -21,7 +21,7 @@ if (!supabaseUrl || !supabaseKey) {
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-const LESSONS_DIR = path.join(__dirname, '../Subsription/1 Day');
+const LESSONS_BASE_DIR = path.join(__dirname, '../Subsription');
 
 // Parse YAML file
 function parseYAMLFile(filePath) {
@@ -35,10 +35,119 @@ function parseYAMLFile(filePath) {
   }
 }
 
+// Load and merge lesson files
+function loadLessonFiles(dayNumber) {
+  const dayDir = path.join(LESSONS_BASE_DIR, `${dayNumber} Day`);
+  
+  if (!fs.existsSync(dayDir)) {
+    console.error(`❌ Directory not found: ${dayDir}`);
+    return null;
+  }
+
+  // Load main day file
+  const dayFile = path.join(dayDir, `day_${String(dayNumber).padStart(2, '0')}.yaml`);
+  if (!fs.existsSync(dayFile)) {
+    console.error(`❌ Day file not found: ${dayFile}`);
+    return null;
+  }
+
+  const dayData = parseYAMLFile(dayFile);
+  if (!dayData) {
+    return null;
+  }
+
+  // Load task files (tasks 2-5)
+  const taskFiles = [
+    `day${String(dayNumber).padStart(2, '0')}_task02_rules.yaml`,
+    `day${String(dayNumber).padStart(2, '0')}_task03_listening.yaml`,
+    `day${String(dayNumber).padStart(2, '0')}_task04_attention.yaml`,
+    `day${String(dayNumber).padStart(2, '0')}_task05_writing.yaml`,
+  ];
+
+  // Merge task files into tasks array
+  if (!dayData.tasks) {
+    dayData.tasks = [];
+  }
+
+  // Task 1 is already in day_XX.yaml, so we start from task 2
+  for (const taskFile of taskFiles) {
+    const taskFilePath = path.join(dayDir, taskFile);
+    if (fs.existsSync(taskFilePath)) {
+      const taskData = parseYAMLFile(taskFilePath);
+      if (taskData && taskData.task) {
+        // Convert task object to array item format
+        const taskItem = {
+          task_id: taskData.task.task_id,
+          type: taskData.task.type,
+          title: taskData.task.title,
+          subtitle: taskData.task.subtitle,
+          estimated_time: taskData.task.estimated_time,
+          show_timer: taskData.task.show_timer,
+          show_settings: taskData.task.show_settings,
+          completion_message: taskData.task.completion_message,
+          optional: taskData.task.optional,
+          ...taskData.task, // Include all other properties
+        };
+        
+        // If task has structure and blocks, include them
+        if (taskData.structure) {
+          taskItem.structure = taskData.structure;
+        }
+        if (taskData.blocks) {
+          taskItem.blocks = taskData.blocks;
+        }
+        if (taskData.ui_rules) {
+          taskItem.ui_rules = taskData.ui_rules;
+        }
+        if (taskData.items) {
+          taskItem.items = taskData.items;
+        }
+        if (taskData.instruction) {
+          taskItem.instruction = taskData.instruction;
+        }
+        if (taskData.main_task) {
+          taskItem.main_task = taskData.main_task;
+        }
+        if (taskData.example) {
+          taskItem.example = taskData.example;
+        }
+        if (taskData.alternative) {
+          taskItem.alternative = taskData.alternative;
+        }
+        if (taskData.reflection) {
+          taskItem.reflection = taskData.reflection;
+        }
+
+        // Find and replace existing task or add new one
+        const existingIndex = dayData.tasks.findIndex(t => t.task_id === taskItem.task_id);
+        if (existingIndex >= 0) {
+          dayData.tasks[existingIndex] = taskItem;
+        } else {
+          dayData.tasks.push(taskItem);
+        }
+      }
+    }
+  }
+
+  // Sort tasks by task_id
+  dayData.tasks.sort((a, b) => (a.task_id || 0) - (b.task_id || 0));
+
+  return dayData;
+}
+
 // Import single lesson
 async function importLesson(dayNumber, yamlData) {
   try {
     const dayInfo = yamlData.day || {};
+    
+    // Handle title and subtitle - can be string or object with ru/en
+    const titleRu = typeof dayInfo.title === 'string' ? dayInfo.title : (dayInfo.title?.ru || '');
+    const titleEn = typeof dayInfo.title === 'string' ? (dayInfo.title_en || dayInfo.title || '') : (dayInfo.title?.en || titleRu);
+    const titlePt = typeof dayInfo.title === 'string' ? (dayInfo.title_pt || dayInfo.title || '') : (dayInfo.title?.pt || titleRu);
+    
+    const subtitleRu = typeof dayInfo.subtitle === 'string' ? dayInfo.subtitle : (dayInfo.subtitle?.ru || null);
+    const subtitleEn = typeof dayInfo.subtitle === 'string' ? (dayInfo.subtitle_en || dayInfo.subtitle || null) : (dayInfo.subtitle?.en || subtitleRu);
+    const subtitlePt = typeof dayInfo.subtitle === 'string' ? (dayInfo.subtitle_pt || dayInfo.subtitle || null) : (dayInfo.subtitle?.pt || subtitleRu);
     
     // Check if lesson already exists
     const { data: existing, error: checkError } = await supabase
@@ -52,12 +161,12 @@ async function importLesson(dayNumber, yamlData) {
       const { error: updateError } = await supabase
         .from('lessons')
         .update({
-          title_ru: dayInfo.title || '',
-          title_en: dayInfo.title_en || dayInfo.title || '',
-          title_pt: dayInfo.title_pt || dayInfo.title || '',
-          subtitle_ru: dayInfo.subtitle || null,
-          subtitle_en: dayInfo.subtitle_en || dayInfo.subtitle || null,
-          subtitle_pt: dayInfo.subtitle_pt || dayInfo.subtitle || null,
+          title_ru: titleRu,
+          title_en: titleEn,
+          title_pt: titlePt,
+          subtitle_ru: subtitleRu,
+          subtitle_en: subtitleEn,
+          subtitle_pt: subtitlePt,
           estimated_time: dayInfo.estimated_time || null,
           yaml_content: yamlData,
         })
@@ -76,12 +185,12 @@ async function importLesson(dayNumber, yamlData) {
         .from('lessons')
         .insert({
           day_number: dayNumber,
-          title_ru: dayInfo.title || '',
-          title_en: dayInfo.title_en || dayInfo.title || '',
-          title_pt: dayInfo.title_pt || dayInfo.title || '',
-          subtitle_ru: dayInfo.subtitle || null,
-          subtitle_en: dayInfo.subtitle_en || dayInfo.subtitle || null,
-          subtitle_pt: dayInfo.subtitle_pt || dayInfo.subtitle || null,
+          title_ru: titleRu,
+          title_en: titleEn,
+          title_pt: titlePt,
+          subtitle_ru: subtitleRu,
+          subtitle_en: subtitleEn,
+          subtitle_pt: subtitlePt,
           estimated_time: dayInfo.estimated_time || null,
           yaml_content: yamlData,
         });
@@ -104,32 +213,60 @@ async function importLesson(dayNumber, yamlData) {
 async function main() {
   console.log('🚀 Starting lesson import...\n');
 
-  // Read all YAML files in lessons directory
-  const files = fs.readdirSync(LESSONS_DIR).filter(file => file.endsWith('.yaml') || file.endsWith('.yml'));
+  // Get day number from command line argument or import all
+  const dayNumberArg = process.argv[2];
   
-  if (files.length === 0) {
-    console.error(`❌ No YAML files found in ${LESSONS_DIR}`);
+  let dayNumbers = [];
+  if (dayNumberArg) {
+    const dayNum = parseInt(dayNumberArg);
+    if (isNaN(dayNum)) {
+      console.error(`❌ Invalid day number: ${dayNumberArg}`);
+      process.exit(1);
+    }
+    dayNumbers = [dayNum];
+  } else {
+    // Import all lessons found in Subsription directory
+    const subsDir = LESSONS_BASE_DIR;
+    if (!fs.existsSync(subsDir)) {
+      console.error(`❌ Directory not found: ${subsDir}`);
+      process.exit(1);
+    }
+    
+    const dirs = fs.readdirSync(subsDir, { withFileTypes: true })
+      .filter(dirent => dirent.isDirectory() && /^\d+ Day$/.test(dirent.name))
+      .map(dirent => {
+        const match = dirent.name.match(/^(\d+) Day$/);
+        return match ? parseInt(match[1]) : null;
+      })
+      .filter(num => num !== null)
+      .sort((a, b) => a - b);
+    
+    dayNumbers = dirs;
+  }
+
+  if (dayNumbers.length === 0) {
+    console.error(`❌ No lesson directories found in ${LESSONS_BASE_DIR}`);
     process.exit(1);
   }
 
-  console.log(`📁 Found ${files.length} lesson file(s)\n`);
+  console.log(`📁 Found ${dayNumbers.length} lesson(s) to import\n`);
 
   let imported = 0;
   let errors = 0;
 
-  for (const file of files) {
-    const filePath = path.join(LESSONS_DIR, file);
-    const yamlData = parseYAMLFile(filePath);
+  for (const dayNumber of dayNumbers) {
+    console.log(`📖 Processing lesson ${dayNumber}...`);
+    
+    const yamlData = loadLessonFiles(dayNumber);
 
     if (!yamlData) {
-      console.error(`❌ Failed to parse ${file}`);
+      console.error(`❌ Failed to load lesson ${dayNumber}`);
       errors++;
       continue;
     }
 
-    const dayNumber = yamlData.day?.number;
-    if (!dayNumber) {
-      console.error(`❌ No day number found in ${file}`);
+    if (!yamlData.day?.number) {
+      console.error(`❌ No day number found in lesson ${dayNumber}`);
       errors++;
       continue;
     }
@@ -137,6 +274,7 @@ async function main() {
     const success = await importLesson(dayNumber, yamlData);
     if (success) {
       imported++;
+      console.log(`   Tasks: ${yamlData.tasks?.length || 0}\n`);
     } else {
       errors++;
     }
