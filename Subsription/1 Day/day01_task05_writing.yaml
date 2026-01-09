@@ -1,9 +1,13 @@
 task:
   task_id: 5
   type: writing_optional
-  title: "Письмо"
-  subtitle: "Можно написать от руки или просто проговорить вслух"
-  estimated_time: "≈3–5 минут"
+  title:
+    ru: "Письмо"
+    en: "Writing"
+  subtitle:
+    ru: "Можно написать от руки или просто проговорить вслух"
+    en: "You can write by hand or just say it out loud"
+  estimated_time: "≈3–5"
   show_timer: false
   show_settings: false
   optional: true

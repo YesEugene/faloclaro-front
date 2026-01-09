@@ -1,9 +1,13 @@
 task:
   task_id: 4
   type: attention
-  title: "Внимательность"
-  subtitle: "Пойми, что здесь происходит"
-  estimated_time: "≈3–5 минут"
+  title:
+    ru: "Внимательность"
+    en: "Attention"
+  subtitle:
+    ru: "Пойми, что здесь происходит"
+    en: "Understand what is happening here"
+  estimated_time: "≈3–5"
   show_timer: false
   show_settings: false
   completion_message: "Уровень прогресса: Уверенность"

@@ -358,7 +358,7 @@ function OverviewPageContent() {
   const translations = {
     ru: {
       day: 'День',
-      estimatedTime: 'мин',
+      estimatedTime: 'мин.',
       task1: 'Слушай и повторяй',
       task2: 'Говорим правильно',
       task3: 'Пойми смысл',
@@ -372,7 +372,7 @@ function OverviewPageContent() {
     },
     en: {
       day: 'Day',
-      estimatedTime: 'min',
+      estimatedTime: 'min.',
       task1: 'Listen and repeat',
       task2: 'Speak correctly',
       task3: 'Understand the meaning',

@@ -1,8 +1,12 @@
 day:
   number: 1
-  title: "Знакомство"
-  subtitle: "Первые фразы, чтобы услышать язык и начать говорить"
-  estimated_time: "15–25 минут"
+  title:
+    ru: "Знакомство"
+    en: "Acquaintance"
+  subtitle:
+    ru: "Первые фразы, чтобы услышать язык и начать говорить"
+    en: "First phrases to hear the language and start speaking"
+  estimated_time: "15–25"
 
 email:
   subject: "День 1 из 60 — первый шаг в португальском"
@@ -19,9 +23,13 @@ progress:
 tasks:
   - task_id: 1
     type: "vocabulary"
-    title: "Слова и фразы"
-    subtitle: "Слушай, повторяй и привыкай к звучанию языка"
-    recommended_time: "10 минут"
+    title:
+      ru: "Слова и фразы"
+      en: "Words and phrases"
+    subtitle:
+      ru: "Слушай, повторяй и привыкай к звучанию языка"
+      en: "Listen, repeat and get used to the sound of the language"
+    recommended_time: "10"
     completion_rule: "auto_after_audio_10_min"
 
     ui:

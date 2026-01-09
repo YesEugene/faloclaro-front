@@ -1,9 +1,13 @@
 task:
   task_id: 3
   type: listening_comprehension
-  title: "Предложения и понимание"
-  subtitle: "Слушай фразу и пойми, о чём она"
-  estimated_time: "≈5 минут"
+  title:
+    ru: "Предложения и понимание"
+    en: "Sentences and understanding"
+  subtitle:
+    ru: "Слушай фразу и пойми, о чём она"
+    en: "Listen to the phrase and understand what it's about"
+  estimated_time: "≈5"
   show_timer: false
   show_settings: false
   completion_message: "Уровень прогресса: Понимание"

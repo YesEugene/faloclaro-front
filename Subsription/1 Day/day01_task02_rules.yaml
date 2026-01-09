@@ -7,7 +7,7 @@ task:
   subtitle:
     ru: "Соединяем знакомые слова в смысл"
     en: "Connecting familiar words into meaning"
-  estimated_time: "≈5 минут"
+  estimated_time: "≈5"
   show_timer: false
   show_settings: false
   completion_message:
