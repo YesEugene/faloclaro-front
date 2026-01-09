@@ -7,6 +7,8 @@ import RulesTask from './tasks/RulesTask';
 import ListeningTask from './tasks/ListeningTask';
 import AttentionTask from './tasks/AttentionTask';
 import WritingTask from './tasks/WritingTask';
+import { getTaskTitle, getTaskSubtitle } from '@/lib/lesson-translations';
+import { useAppLanguage } from '@/lib/language-context';
 
 interface TaskCardProps {
   task: any;
@@ -45,6 +47,7 @@ export default function TaskCard({
   progressCompleted = 0,
   progressTotal = 5,
 }: TaskCardProps) {
+  const { language: appLanguage } = useAppLanguage();
   const [isCompleted, setIsCompleted] = useState(taskProgress?.status === 'completed');
 
   useEffect(() => {
@@ -217,9 +220,9 @@ export default function TaskCard({
       {task.type !== 'rules' && task.type !== 'listening_comprehension' && task.type !== 'attention' && task.type !== 'writing_optional' && (
         <div className="bg-white rounded-lg border-2 border-gray-200 p-6">
           <div className="mb-4">
-            <h2 className="text-xl font-bold text-black mb-2">{task.title}</h2>
-            {task.subtitle && (
-              <p className="text-gray-600 text-sm">{task.subtitle}</p>
+            <h2 className="text-xl font-bold text-black mb-2">{getTaskTitle(task, appLanguage)}</h2>
+            {getTaskSubtitle(task, appLanguage) && (
+              <p className="text-gray-600 text-sm">{getTaskSubtitle(task, appLanguage)}</p>
             )}
             {task.recommended_time && (
               <p className="text-gray-500 text-xs mt-1">
