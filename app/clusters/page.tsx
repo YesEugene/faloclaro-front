@@ -190,11 +190,6 @@ export default function ClustersPage() {
                     Все<br />
                     тематики
                   </>
-                ) : language === 'pt' ? (
-                  <>
-                    Todos os<br />
-                    Clusters
-                  </>
                 ) : (
                   <>
                     All<br />
@@ -290,11 +285,6 @@ export default function ClustersPage() {
                     <>
                       Культовые<br />
                       фразы
-                    </>
-                  ) : language === 'pt' ? (
-                    <>
-                      Frases<br />
-                      Cult
                     </>
                   ) : (
                     <>
