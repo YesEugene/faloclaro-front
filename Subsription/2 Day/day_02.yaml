@@ -64,6 +64,7 @@ tasks:
           sentence_translation_ru: "Откуда ты?"
           sentence_translation_en: "Where are you from?"
           word_translation_ru: "Откуда"
+          word_translation_en: "From where"
 
         - word: "Sou de"
           transcription: "[so dɨ]"
@@ -71,6 +72,7 @@ tasks:
           sentence_translation_ru: "Я из Лиссабона."
           sentence_translation_en: "I'm from Lisbon."
           word_translation_ru: "Я из"
+          word_translation_en: "I'm from"
 
         - word: "Vivo em"
           transcription: "[ˈvivw ɐ̃j̃]"
@@ -78,6 +80,7 @@ tasks:
           sentence_translation_ru: "Я живу в Порту."
           sentence_translation_en: "I live in Porto."
           word_translation_ru: "Я живу в"
+          word_translation_en: "I live in"
 
         - word: "Moro em"
           transcription: "[ˈmoɾu ɐ̃j̃]"
@@ -85,6 +88,7 @@ tasks:
           sentence_translation_ru: "Я живу в Коимбре."
           sentence_translation_en: "I live in Coimbra."
           word_translation_ru: "Я живу в"
+          word_translation_en: "I live in"
 
         - word: "És de"
           transcription: "[ɛʃ dɨ]"
@@ -92,6 +96,7 @@ tasks:
           sentence_translation_ru: "Ты откуда?"
           sentence_translation_en: "Where are you from?"
           word_translation_ru: "Ты из"
+          word_translation_en: "You are from"
 
         - word: "Venho de"
           transcription: "[ˈvɐɲu dɨ]"
@@ -99,6 +104,7 @@ tasks:
           sentence_translation_ru: "Я из Браги."
           sentence_translation_en: "I'm from Braga."
           word_translation_ru: "Я из"
+          word_translation_en: "I come from"
 
         - word: "Aqui"
           transcription: "[ɐˈki]"
@@ -106,6 +112,7 @@ tasks:
           sentence_translation_ru: "Я здесь."
           sentence_translation_en: "I'm here."
           word_translation_ru: "Здесь"
+          word_translation_en: "Here"
 
         - word: "Agora"
           transcription: "[ɐˈɡoɾɐ]"
@@ -113,6 +120,7 @@ tasks:
           sentence_translation_ru: "Сейчас я живу здесь."
           sentence_translation_en: "Now I live here."
           word_translation_ru: "Сейчас"
+          word_translation_en: "Now"
 
         - word: "Cidade"
           transcription: "[siˈdadɨ]"
@@ -120,6 +128,7 @@ tasks:
           sentence_translation_ru: "Лиссабон — это город."
           sentence_translation_en: "Lisbon is a city."
           word_translation_ru: "Город"
+          word_translation_en: "City"
 
         - word: "País"
           transcription: "[pɐˈiʃ]"
@@ -127,6 +136,7 @@ tasks:
           sentence_translation_ru: "Португалия — это страна."
           sentence_translation_en: "Portugal is a country."
           word_translation_ru: "Страна"
+          word_translation_en: "Country"
 
     completion_message:
       ru: "Уровень прогресса: Начало"
