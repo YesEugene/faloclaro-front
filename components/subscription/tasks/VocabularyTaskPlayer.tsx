@@ -772,23 +772,16 @@ export default function VocabularyTaskPlayer({
             {currentCard.sentence_translation_en}
           </div>
         )}
-        {appLanguage === 'pt' && currentCard.sentence_translation_ru && (
-          <div className="text-base text-center mb-4 text-black">
-            {currentCard.sentence_translation_ru}
-          </div>
-        )}
 
         {/* Word translation in white card */}
         {task.card_format?.show_word_translation_ru && (
           <div className="mt-auto mx-[10px] mb-3">
             {(appLanguage === 'ru' && currentCard.word_translation_ru) || 
-             (appLanguage === 'en' && currentCard.word_translation_en) ||
-             (appLanguage === 'pt' && (currentCard.word_translation_ru || currentCard.word_translation_en)) ? (
+             (appLanguage === 'en' && currentCard.word_translation_en) ? (
               <div className="bg-white rounded-[20px] p-4 text-center">
                 <div className="text-xl text-gray-900 font-semibold">
                   {appLanguage === 'ru' && currentCard.word_translation_ru}
                   {appLanguage === 'en' && currentCard.word_translation_en}
-                  {appLanguage === 'pt' && (currentCard.word_translation_ru || currentCard.word_translation_en)}
                 </div>
               </div>
             ) : null}
