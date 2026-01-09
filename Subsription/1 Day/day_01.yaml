@@ -61,6 +61,13 @@ tasks:
           sentence_translation_en: "Good morning, I am João."
           word_translation_ru: "Доброе утро"
 
+        - word: "Boa noite"
+          transcription: "[ˈboɐ ˈnoitɨ]"
+          example_sentence: "Boa noite, chamo-me Maria."
+          sentence_translation_ru: "Добрый вечер, меня зовут Мария."
+          sentence_translation_en: "Good evening, my name is Maria."
+          word_translation_ru: "Добрый вечер"
+
         - word: "Chamo-me"
           transcription: "[ˈʃɐmu mi]"
           example_sentence: "Chamo-me Maria."
