@@ -393,13 +393,9 @@ function OverviewPageContent() {
                       {/* Icon */}
                       <div className="flex-shrink-0 mt-1">
                         {status === 'completed' ? (
-                          <Image
-                            src="/Img/Day completed.png"
-                            alt="Completed"
-                            width={24}
-                            height={24}
-                            className="w-6 h-6"
-                          />
+                          <svg className="w-6 h-6 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          </svg>
                         ) : status === 'current' ? (
                           <svg className="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
