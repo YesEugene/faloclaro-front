@@ -56,6 +56,19 @@ function loadLessonFiles(dayNumber) {
     return null;
   }
 
+  // Ensure tasks array exists - tasks can be at top level or inside day
+  if (!dayData.tasks) {
+    dayData.tasks = [];
+  }
+  
+  // If tasks are inside day object, move them to top level
+  if (dayData.day && dayData.day.tasks && Array.isArray(dayData.day.tasks)) {
+    console.log(`  📋 Found ${dayData.day.tasks.length} tasks inside day object, moving to top level`);
+    dayData.tasks = [...dayData.day.tasks, ...dayData.tasks];
+    // Remove tasks from day object to avoid duplication
+    delete dayData.day.tasks;
+  }
+
   // Load task files (tasks 2-5)
   const taskFiles = [
     `day${String(dayNumber).padStart(2, '0')}_task02_rules.yaml`,

@@ -295,7 +295,13 @@ function OverviewPageContent() {
   }
 
   const dayInfo = (yamlContent.day || {}) as any;
-  const tasks = Array.isArray(yamlContent.tasks) ? yamlContent.tasks : [];
+  // Tasks can be at top level (yamlContent.tasks) or inside day (yamlContent.day.tasks)
+  // After import, they should be at top level, but check both locations
+  const tasks = Array.isArray(yamlContent.tasks) 
+    ? yamlContent.tasks 
+    : Array.isArray(yamlContent.day?.tasks) 
+    ? yamlContent.day.tasks 
+    : [];
   const allCompleted = userProgress.tasks_completed >= userProgress.total_tasks;
 
   // Debug: Log tasks and completion status
@@ -402,12 +408,14 @@ function OverviewPageContent() {
 
   const t = translations[appLanguage] || translations.ru;
 
-  // Map task types to fixed display names based on index
-  const getTaskDisplayName = (task: any, index: number) => {
-    // Fixed names based on task order (1-5)
+  // Map task types to fixed display names based on task_id (not index!)
+  const getTaskDisplayName = (task: any) => {
+    // Fixed names based on task_id (1-5), not array index
+    const taskId = task.task_id || 0;
     const taskNames = [t.task1, t.task2, t.task3, t.task4, t.task5];
     const translatedTitle = getTaskTitle(task, appLanguage);
-    return taskNames[index] || translatedTitle || 'Task';
+    // Use task_id - 1 as index (task_id is 1-5, array index is 0-4)
+    return taskNames[taskId - 1] || translatedTitle || 'Task';
   };
 
   const getTaskDescription = (task: any) => {
@@ -626,7 +634,7 @@ function OverviewPageContent() {
                         <h3 className={`font-bold mb-1 ${
                           status === 'current' ? 'text-black' : status === 'completed' ? 'text-black' : 'text-gray-500'
                         }`}>
-                          {getTaskDisplayName(task, index)}
+                          {getTaskDisplayName(task)}
                         </h3>
                         <p className={`text-sm ${
                           status === 'current' ? 'text-gray-700' : status === 'completed' ? 'text-gray-600' : 'text-gray-400'
