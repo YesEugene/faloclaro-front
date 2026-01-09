@@ -226,6 +226,15 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
   };
 
   const handleReplay = () => {
+    // Stop all audio playback
+    Object.values(audioRefs.current).forEach(audio => {
+      if (audio) {
+        audio.pause();
+        audio.currentTime = 0;
+      }
+    });
+    setIsPlayingAudio({});
+    
     // Reset all answers and results
     setAnswers({});
     setShowResults({});
@@ -379,11 +388,14 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
             })}
           </div>
 
-          {/* Replay Button - Show only when task is completed and all items are answered */}
-          {localIsCompleted && allAnswered && (
+          {/* Replay Button - Show only on the last block when task is completed and all items are answered */}
+          {localIsCompleted && allAnswered && currentItemIndex === items.length - 1 && (
             <button
-              onClick={handleReplay}
-              className="w-full px-4 py-3 rounded-lg font-medium transition-colors mt-4"
+              onClick={(e) => {
+                e.preventDefault();
+                handleReplay();
+              }}
+              className="w-full px-4 py-3 rounded-lg font-medium transition-colors mt-4 hover:opacity-90"
               style={{
                 backgroundColor: '#3B82F6',
                 color: 'white',

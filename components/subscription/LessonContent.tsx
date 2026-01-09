@@ -164,18 +164,38 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
         return; // Don't mark as completed, just save data
       }
       
-      // If replaying, clear completion_data
+      // If replaying, clear completion_data and reset status to in_progress
       if (completionData?.replay) {
         const taskProgress = userProgress.task_progress?.find((tp: any) => tp.task_id === taskId);
         if (taskProgress) {
           await supabase
             .from('task_progress')
             .update({
-              completion_data: completionData,
+              status: 'in_progress',
+              completion_data: completionData, // Empty answers and showResults
+              completed_at: null,
             })
             .eq('id', taskProgress.id);
         }
-        return; // Don't change completion status on replay
+        
+        // Update local state to reflect replay
+        setUserProgress((prev: any) => {
+          const updatedTaskProgress = prev.task_progress?.map((tp: any) => 
+            tp.task_id === taskId ? { ...tp, status: 'in_progress', completion_data: completionData, completed_at: null } : tp
+          ) || [];
+          
+          // Recalculate tasks_completed (exclude this task if it was completed)
+          const tasksCompleted = updatedTaskProgress.filter((tp: any) => tp.status === 'completed').length;
+          
+          return {
+            ...prev,
+            task_progress: updatedTaskProgress,
+            tasks_completed: tasksCompleted,
+            status: tasksCompleted >= prev.total_tasks ? 'completed' : 'in_progress',
+          };
+        });
+        
+        return; // Don't continue with completion logic on replay
       }
       
       // Update task progress - mark as completed

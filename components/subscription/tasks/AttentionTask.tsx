@@ -54,8 +54,9 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
   }, [savedAnswers, savedShowResults, hasLoadedSavedData]);
   
   // Save answers to completion_data whenever they change (for persistence)
+  // But don't save if we're replaying (isReplaying is true)
   useEffect(() => {
-    if (hasLoadedSavedData && (Object.keys(answers).length > 0 || Object.keys(showResults).length > 0)) {
+    if (hasLoadedSavedData && !isReplaying && (Object.keys(answers).length > 0 || Object.keys(showResults).length > 0)) {
       // Save current state to completion_data without marking as completed
       onComplete({
         answers,
@@ -63,7 +64,7 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
         saved: true, // Flag to indicate this is just saving, not completing
       });
     }
-  }, [answers, showResults, hasLoadedSavedData]);
+  }, [answers, showResults, hasLoadedSavedData, isReplaying]);
 
   // Get progress message based on completed tasks
   const getProgressMessage = (completed: number, total: number) => {
@@ -226,6 +227,15 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
   };
 
   const handleReplay = () => {
+    // Stop all audio playback
+    Object.values(audioRefs.current).forEach(audio => {
+      if (audio) {
+        audio.pause();
+        audio.currentTime = 0;
+      }
+    });
+    setIsPlayingAudio({});
+    
     // Reset all answers and results
     setAnswers({});
     setShowResults({});
@@ -403,8 +413,8 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
             </div>
           )}
 
-          {/* Replay Button - Show when task is completed (all items are answered) */}
-          {localIsCompleted && allAnswered && (
+          {/* Replay Button - Show only on the last block when task is completed and all items are answered */}
+          {localIsCompleted && allAnswered && currentItemIndex === items.length - 1 && (
             <button
               onClick={(e) => {
                 e.preventDefault();
