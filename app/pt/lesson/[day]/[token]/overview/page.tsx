@@ -334,16 +334,28 @@ function OverviewPageContent() {
 
       {/* Main Content */}
       <div className="max-w-md mx-auto px-4 py-6">
-        {/* Day Tag - Clickable button */}
-        <div className="mb-4">
-          <Link 
-            href="/pt"
-            className="inline-block bg-gray-100 rounded-lg px-4 py-2 hover:bg-gray-200 transition-colors cursor-pointer"
-          >
-            <span className="text-gray-700 text-sm">
-              {appLanguage === 'ru' ? 'Португальский язык за 60 дней' : appLanguage === 'en' ? 'Portuguese in 60 days' : 'Português em 60 dias'}
-            </span>
-          </Link>
+        {/* Lessons Navigation - Buttons for lessons 1-5 (or more) */}
+        <div className="mb-4 flex flex-wrap gap-2">
+          {[1, 2, 3, 4, 5].map((lessonDay) => {
+            const isCurrent = lessonDay === day;
+            return (
+              <Link
+                key={lessonDay}
+                href={`/pt/lesson/${lessonDay}/${token}/overview`}
+                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                  isCurrent
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                {lessonDay}
+              </Link>
+            );
+          })}
+          {/* Show "..." if there are more lessons */}
+          {day > 5 && (
+            <span className="px-3 py-1.5 text-gray-500">...</span>
+          )}
         </div>
 
         {/* Day Title */}

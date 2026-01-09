@@ -101,54 +101,58 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get first lesson (day 1)
-    const { data: lesson, error: lessonError } = await supabase
+    // Get first 3 lessons (days 1, 2, 3) - free access
+    const { data: lessons, error: lessonsError } = await supabase
       .from('lessons')
       .select('*')
-      .eq('day_number', 1)
-      .single();
+      .in('day_number', [1, 2, 3])
+      .order('day_number', { ascending: true });
 
-    if (lessonError || !lesson) {
-      console.error('Error fetching lesson:', lessonError);
+    if (lessonsError || !lessons || lessons.length === 0) {
+      console.error('Error fetching lessons:', lessonsError);
       return NextResponse.json(
-        { error: 'Lesson not found' },
+        { error: 'Lessons not found' },
         { status: 500 }
       );
     }
 
-    // Create access token for first lesson
-    const token = crypto.randomBytes(32).toString('hex');
+    // Create access tokens for first 3 lessons
+    const tokens: string[] = [];
     const expiresAt = new Date();
-    expiresAt.setDate(expiresAt.getDate() + 30); // Token valid for 30 days
+    expiresAt.setDate(expiresAt.getDate() + 365); // Token valid for 1 year
 
-    const { error: tokenError } = await supabase
-      .from('lesson_access_tokens')
-      .insert({
-        user_id: user.id,
-        lesson_id: lesson.id,
-        token,
-        expires_at: expiresAt.toISOString(),
-      });
+    for (const lesson of lessons) {
+      const token = crypto.randomBytes(32).toString('hex');
+      tokens.push(token);
 
-    if (tokenError) {
-      console.error('Error creating token:', tokenError);
-      return NextResponse.json(
-        { error: 'Failed to create access token' },
-        { status: 500 }
-      );
+      const { error: tokenError } = await supabase
+        .from('lesson_access_tokens')
+        .insert({
+          user_id: user.id,
+          lesson_id: lesson.id,
+          token,
+          expires_at: expiresAt.toISOString(),
+        });
+
+      if (tokenError) {
+        console.error(`Error creating token for lesson ${lesson.day_number}:`, tokenError);
+        // Continue with other lessons even if one fails
+      }
     }
 
-    // Send email with lesson link
+    // Send email with link to lessons page
     // IMPORTANT: In Vercel Serverless Functions, we need to await the email
     // Otherwise the function may terminate before email is sent
+    const firstToken = tokens[0]; // Use first token for email link
     console.log('About to send email:', {
       userId: user.id,
-      lessonId: lesson.id,
-      dayNumber: 1,
+      lessonIds: lessons.map(l => l.id),
+      dayNumbers: lessons.map(l => l.day_number),
     });
     
     try {
-      const emailResult = await sendLessonEmail(user.id, lesson.id, 1);
+      // Send email with link to lessons page
+      const emailResult = await sendLessonEmail(user.id, lessons[0].id, 1, firstToken);
       
       console.log('Email send completed:', {
         success: emailResult.success,
@@ -170,7 +174,7 @@ export async function POST(request: NextRequest) {
       .from('email_logs')
       .insert({
         user_id: user.id,
-        lesson_id: lesson.id,
+        lesson_id: lessons[0].id,
         day_number: 1,
         email_type: 'lesson',
       });
@@ -179,7 +183,10 @@ export async function POST(request: NextRequest) {
       success: true,
       message: 'Registration successful',
       // In development, return token for testing
-      ...(process.env.NODE_ENV === 'development' && { token, lessonUrl: `/pt/lesson/1/${token}` }),
+      ...(process.env.NODE_ENV === 'development' && { 
+        token: firstToken, 
+        lessonsUrl: `/pt/lessons?token=${firstToken}` 
+      }),
     });
   } catch (error) {
     console.error('Registration error:', error);

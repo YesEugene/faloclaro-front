@@ -6,7 +6,7 @@
 import { supabase } from './supabase';
 import crypto from 'crypto';
 
-export async function sendLessonEmail(userId: string, lessonId: string, dayNumber: number) {
+export async function sendLessonEmail(userId: string, lessonId: string, dayNumber: number, token?: string) {
   console.log('=== sendLessonEmail CALLED ===', {
     userId,
     lessonId,
@@ -39,44 +39,54 @@ export async function sendLessonEmail(userId: string, lessonId: string, dayNumbe
       return { success: false, error: 'Lesson not found' };
     }
 
-    // Create or get access token
-    let { data: tokenData, error: tokenError } = await supabase
-      .from('lesson_access_tokens')
-      .select('token')
-      .eq('user_id', userId)
-      .eq('lesson_id', lessonId)
-      .single();
-
-    if (tokenError && tokenError.code === 'PGRST116') {
-      // Create new token
-      const token = crypto.randomBytes(32).toString('hex');
-      const expiresAt = new Date();
-      expiresAt.setDate(expiresAt.getDate() + 30);
-
-      const { error: createError } = await supabase
+    // Use provided token or get/create access token
+    let accessToken: string;
+    
+    if (token) {
+      // Use provided token (for registration with multiple lessons)
+      accessToken = token;
+    } else {
+      // Create or get access token for this specific lesson
+      let { data: tokenData, error: tokenError } = await supabase
         .from('lesson_access_tokens')
-        .insert({
-          user_id: userId,
-          lesson_id: lessonId,
-          token,
-          expires_at: expiresAt.toISOString(),
-        });
+        .select('token')
+        .eq('user_id', userId)
+        .eq('lesson_id', lessonId)
+        .single();
 
-      if (createError) {
-        throw createError;
+      if (tokenError && tokenError.code === 'PGRST116') {
+        // Create new token
+        const newToken = crypto.randomBytes(32).toString('hex');
+        const expiresAt = new Date();
+        expiresAt.setDate(expiresAt.getDate() + 365); // 1 year
+
+        const { error: createError } = await supabase
+          .from('lesson_access_tokens')
+          .insert({
+            user_id: userId,
+            lesson_id: lessonId,
+            token: newToken,
+            expires_at: expiresAt.toISOString(),
+          });
+
+        if (createError) {
+          throw createError;
+        }
+
+        tokenData = { token: newToken };
+      } else if (tokenError) {
+        throw tokenError;
       }
 
-      tokenData = { token };
-    } else if (tokenError) {
-      throw tokenError;
+      if (!tokenData || !tokenData.token) {
+        return { success: false, error: 'Failed to create access token' };
+      }
+
+      accessToken = tokenData.token;
     }
 
-    if (!tokenData || !tokenData.token) {
-      return { success: false, error: 'Failed to create access token' };
-    }
-
-    // Link to overview page, not directly to lesson
-    const lessonUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://www.faloclaro.com'}/pt/lesson/${dayNumber}/${tokenData.token}/overview`;
+    // Link to lessons page (with token) instead of specific lesson
+    const lessonsUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://www.faloclaro.com'}/pt/lessons?token=${accessToken}`;
 
     // Send email via Resend
     if (!process.env.RESEND_API_KEY) {
@@ -97,7 +107,7 @@ export async function sendLessonEmail(userId: string, lessonId: string, dayNumbe
       const { Resend } = require('resend');
       const resend = new Resend(process.env.RESEND_API_KEY);
 
-      const emailContent = getEmailContent(lesson, user.language_preference, lessonUrl);
+      const emailContent = getEmailContent(lesson, user.language_preference, lessonsUrl);
       
       const fromEmail = process.env.RESEND_FROM_EMAIL || 'FaloClaro <noreply@faloclaro.com>';
       
@@ -105,7 +115,7 @@ export async function sendLessonEmail(userId: string, lessonId: string, dayNumbe
         from: fromEmail,
         to: user.email,
         subject: emailContent.subject,
-        lessonUrl,
+        lessonsUrl,
       });
       
       const { data, error } = await resend.emails.send({
@@ -146,7 +156,7 @@ export async function sendLessonEmail(userId: string, lessonId: string, dayNumbe
         console.error('Error logging email:', logError);
       }
 
-      return { success: true, emailId: data?.id, lessonUrl };
+      return { success: true, emailId: data?.id, lessonsUrl };
     } catch (err) {
       console.error('Exception sending email:', {
         error: err,
@@ -165,7 +175,7 @@ export async function sendLessonEmail(userId: string, lessonId: string, dayNumbe
 /**
  * Generate email content based on language
  */
-function getEmailContent(lesson: any, language: string, lessonUrl: string) {
+function getEmailContent(lesson: any, language: string, lessonsUrl: string) {
   const dayInfo = lesson.yaml_content?.day || {};
   const emailInfo = lesson.yaml_content?.email || {};
 
@@ -196,7 +206,17 @@ function getEmailContent(lesson: any, language: string, lessonUrl: string) {
     },
   };
 
-  const t = translations[language as keyof typeof translations] || translations.en;
+      const t = translations[language as keyof typeof translations] || translations.en;
+
+  // Update message for registration email (first 3 lessons unlocked)
+  const isRegistrationEmail = !lesson.yaml_content?.day?.title; // If no specific day info, it's registration
+  const message = isRegistrationEmail 
+    ? (language === 'ru' 
+        ? 'Ты получил доступ к первым 3 урокам бесплатно. Остальные уроки доступны после оплаты.'
+        : language === 'en'
+        ? 'You got access to the first 3 lessons for free. The rest of the lessons are available after payment.'
+        : 'Tens acesso às primeiras 3 lições grátis. O resto das lições está disponível após pagamento.')
+    : t.message;
 
   const html = `
     <!DOCTYPE html>
@@ -207,10 +227,10 @@ function getEmailContent(lesson: any, language: string, lessonUrl: string) {
       </head>
       <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
         <h1 style="color: #2563eb;">${t.greeting}</h1>
-        <p>${t.message}</p>
+        <p>${message}</p>
         <p style="color: #666;">${t.preview}</p>
         <div style="margin: 30px 0;">
-          <a href="${lessonUrl}" style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
+          <a href="${lessonsUrl}" style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
             ${t.cta}
           </a>
         </div>
@@ -222,11 +242,11 @@ function getEmailContent(lesson: any, language: string, lessonUrl: string) {
   const text = `
 ${t.greeting}
 
-${t.message}
+${message}
 
 ${t.preview}
 
-${t.cta}: ${lessonUrl}
+${t.cta}: ${lessonsUrl}
 
 ${t.footer}
   `;
