@@ -569,6 +569,18 @@ export default function RulesTask({ task, language, onComplete, isCompleted, onN
                 </div>
               </div>
             )}
+            
+            {/* Show "Пройти заново" button if this is the last block and all tasks are completed */}
+            {currentBlockIndex === blocksOrder.length - 1 && 
+             currentBlock.type === 'reinforcement' && 
+             checkAllReinforcementTasksCompleted() && (
+              <button
+                onClick={handleReplay}
+                className="w-full bg-green-600 text-white py-4 rounded-lg font-semibold text-lg hover:bg-green-700 transition-colors mt-4"
+              >
+                {appLanguage === 'ru' ? 'Пройти заново' : appLanguage === 'en' ? 'Replay' : 'Repetir'}
+              </button>
+            )}
           </div>
         );
 
