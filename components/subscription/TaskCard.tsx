@@ -213,27 +213,7 @@ export default function TaskCard({
       {/* Task Content for rules, listening_comprehension, attention, and writing_optional - without header wrapper */}
       {(task.type === 'rules' || task.type === 'listening_comprehension' || task.type === 'attention' || task.type === 'writing_optional') && renderTask()}
 
-      {/* Navigation */}
-      {isCompleted && (
-        <div className="flex gap-4">
-          {canGoPrevious && (
-            <button
-              onClick={onPrevious}
-              className="flex-1 bg-gray-200 text-gray-700 py-3 rounded-lg font-medium hover:bg-gray-300 transition-colors"
-            >
-              ← {t.previous}
-            </button>
-          )}
-          {canGoNext && (
-            <button
-              onClick={onNext}
-              className="flex-1 bg-green-500 text-white py-3 rounded-lg font-medium hover:bg-green-600 transition-colors"
-            >
-              {t.next} →
-            </button>
-          )}
-        </div>
-      )}
+      {/* Navigation is now handled inside each task component (cross-task navigation panel) */}
     </div>
   );
 }
