@@ -396,6 +396,21 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
               </p>
             </div>
           )}
+
+          {/* Replay Button - Show only when task is completed and all items are answered */}
+          {localIsCompleted && allAnswered && (
+            <button
+              onClick={handleReplay}
+              className="w-full px-4 py-3 rounded-lg font-medium transition-colors mt-4"
+              style={{
+                backgroundColor: '#3B82F6',
+                color: 'white',
+                border: 'none',
+              }}
+            >
+              {appLanguage === 'ru' ? 'Пройти снова' : appLanguage === 'en' ? 'Replay' : 'Repetir'}
+            </button>
+          )}
         </div>
       </div>
 
