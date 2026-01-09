@@ -55,17 +55,10 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
   }, [savedAnswers, savedShowResults, hasLoadedSavedData, isReplaying]);
   
   // Reset hasLoadedSavedData when saved data becomes empty (replay was called)
+  // Only reset if we're explicitly replaying, not just because saved data is empty
   useEffect(() => {
-    if ((!savedAnswers || Object.keys(savedAnswers).length === 0) && 
-        (!savedShowResults || Object.keys(savedShowResults).length === 0) && 
-        hasLoadedSavedData && !isReplaying) {
-      // Saved data was cleared (replay), reset everything
-      setAnswers({});
-      setShowResults({});
-      setCurrentItemIndex(0);
-      setLocalIsCompleted(false);
-      setHasLoadedSavedData(false);
-    }
+    // Don't auto-reset on empty saved data - only reset when explicitly replaying
+    // The handleReplay function will handle the reset
   }, [savedAnswers, savedShowResults, hasLoadedSavedData, isReplaying]);
   
   // Save answers to completion_data whenever they change (for persistence)
