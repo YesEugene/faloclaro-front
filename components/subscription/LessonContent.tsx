@@ -195,7 +195,12 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
       
       // Reload progress in background - don't wait for it
       // This updates the database but won't cause immediate re-render that switches tasks
-      onProgressUpdate().catch(err => console.error('Error in background progress update:', err));
+      // Call onProgressUpdate without await to avoid blocking
+      try {
+        onProgressUpdate();
+      } catch (err) {
+        console.error('Error in background progress update:', err);
+      }
     } catch (error) {
       console.error('Error updating progress:', error);
     }
