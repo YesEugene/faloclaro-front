@@ -21,6 +21,19 @@ function LessonsPageContent() {
 
   useEffect(() => {
     loadLessons();
+    
+    // Reload lessons when page becomes visible (e.g., after completing a lesson)
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        loadLessons();
+      }
+    };
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, []);
 
   const loadLessons = async () => {
