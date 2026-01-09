@@ -1140,7 +1140,7 @@ function PlayerContent() {
                   {wordTranslations.enSentence}
                 </div>
               )}
-              {appLanguage === 'pt' && wordTranslations.ruSentence && (
+              {false && wordTranslations.ruSentence && (
                 <div className="text-base text-center mb-4 text-black">
                   {wordTranslations.ruSentence}
                 </div>
@@ -1148,7 +1148,7 @@ function PlayerContent() {
 
               {/* Word translation in white card - based on interface language */}
               <div className="mt-auto mx-[10px] mb-3">
-                {(appLanguage === 'ru' && wordTranslations.ru) || (appLanguage === 'en' && wordTranslations.en) || (appLanguage === 'pt' && (wordTranslations.ru || wordTranslations.en)) ? (
+                {(appLanguage === 'ru' && wordTranslations.ru) || (appLanguage === 'en' && wordTranslations.en) ? (
                   <div className="bg-white rounded-[20px] p-4 text-center">
                     {appLanguage === 'ru' && wordTranslations.ru && (
                       <div className="text-xl text-gray-900 font-semibold">
@@ -1160,7 +1160,7 @@ function PlayerContent() {
                         {wordTranslations.en}
                       </div>
                     )}
-                    {appLanguage === 'pt' && (wordTranslations.ru || wordTranslations.en) && (
+                    {false && (wordTranslations.ru || wordTranslations.en) && (
                       <div className="text-xl text-gray-900 font-semibold">
                         {wordTranslations.ru || wordTranslations.en}
                       </div>

@@ -122,8 +122,6 @@ function PhrasesContent() {
                 translationsMap[phraseId] = card.word_translation_ru;
               } else if (language === 'en' && card.word_translation_en) {
                 translationsMap[phraseId] = card.word_translation_en;
-              } else if (language === 'pt' && (card.word_translation_ru || card.word_translation_en)) {
-                translationsMap[phraseId] = card.word_translation_ru || card.word_translation_en;
               }
             }
           }
