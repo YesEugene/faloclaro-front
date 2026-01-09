@@ -275,46 +275,93 @@ tasks:
   - task_id: 4
     type: "attention"
     title: "Внимательность"
+    subtitle: "Пойми, что здесь происходит"
+    estimated_time: "≈3–5 минут"
+    show_timer: false
+    show_settings: false
+    completion_message: "Уровень прогресса: Уверенность"
 
     items:
-      - audio: "Olá, chamo-me Ana"
+      - item_id: 1
+        audio: "Olá, chamo-me Ana."
+        show_text_after_answer: true
         question: "В какой ситуации это говорят?"
         options:
           - text: "Знакомство"
             correct: true
+            feedback: "Эта фраза используется, когда люди знакомятся."
           - text: "Прощание"
             correct: false
           - text: "Просьба"
             correct: false
 
-      - audio: "Prazer em conhecê-la"
+      - item_id: 2
+        audio: "Bom dia. Eu sou João."
+        show_text_after_answer: true
+        question: "Что делает человек?"
+        options:
+          - text: "Представляется"
+            correct: true
+          - text: "Благодарит"
+            correct: false
+          - text: "Извиняется"
+            correct: false
+
+      - item_id: 3
+        optional: true
+        audio: "Prazer em conhecê-la."
+        show_text_after_answer: true
         question: "Когда так говорят?"
         options:
           - text: "При знакомстве"
             correct: true
-          - text: "Когда уходят"
-            correct: false
           - text: "Когда просят помощи"
             correct: false
-
-    completion_message: "Уровень прогресса: Уверенность"
+          - text: "Когда уходят"
+            correct: false
 
   - task_id: 5
     type: "writing_optional"
     title: "Письмо"
+    subtitle: "Можно написать от руки или просто проговорить вслух"
+    estimated_time: "≈3–5 минут"
+    show_timer: false
+    show_settings: false
+    optional: true
+    completion_message: "Уровень прогресса: Закреплено"
 
-    instruction: "Можно написать от руки или просто сказать вслух"
+    instruction:
+      text: |
+        Используй слова и фразы из сегодняшнего урока.
+        Можно просто сказать вслух — это тоже считается.
 
-    template:
-      - "Olá, ___-me ___."
-      - "Eu ___ ___."
+    main_task:
+      format: template_fill_or_speak
+      template:
+        - "Olá, ___-me ___."
+        - "Eu ___ ___."
+      hints:
+        - "chamo-me"
+        - "sou"
 
-    hints:
-      - "chamo-me"
-      - "sou"
+    example:
+      show_by_button: true
+      button_text: "Показать пример"
+      content:
+        - "Olá, chamo-me Ana."
+        - "Eu sou Ana."
 
     alternative:
-      speak_out_loud: true
-      phrase: "Olá, chamo-me … Eu sou …"
+      title: "Не хочешь писать?"
+      instruction: |
+        Просто скажи вслух:
+        Olá, chamo-me … Eu sou …
+      action_button:
+        text: "✔ Я сказал(а) вслух"
+        completes_task: true
 
-    completion_message: "Уровень прогресса: Закреплено"
+    reflection:
+      optional: true
+      text: |
+        Это уже португальский 🙂
+        Даже если с ошибками — это нормально.

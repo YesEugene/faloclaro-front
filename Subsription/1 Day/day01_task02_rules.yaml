@@ -1,0 +1,101 @@
+task:
+  task_id: 2
+  type: rules
+  title: "Как это сказать"
+  subtitle: "Соединяем знакомые слова в смысл"
+  estimated_time: "≈5 минут"
+  show_timer: false
+  show_settings: false
+  completion_message: "Уровень прогресса: Разогрев"
+
+structure:
+  blocks_order:
+    - block_1_identity
+    - block_2_name
+    - block_3_equivalence
+    - block_4_reinforcement
+    - block_5_speak_out_loud
+
+blocks:
+  block_1_identity:
+    type: explanation
+    title: "Как сказать, кто ты"
+    explanation_text: |
+      Чтобы сказать, кто ты, в португальском говорят:
+      Eu sou + имя
+    examples:
+      - text: "Eu sou Ana."
+        audio: true
+        pause_after_audio_sec: 1.5
+      - text: "Eu sou João."
+        audio: true
+        pause_after_audio_sec: 1.5
+    hint:
+      - "Eu — это «я»"
+      - "sou — «есть / являюсь»"
+
+  block_2_name:
+    type: explanation
+    title: "Как сказать, как тебя зовут"
+    explanation_text: |
+      Чтобы сказать своё имя, часто говорят:
+      Chamo-me + имя
+    examples:
+      - text: "Chamo-me Ana."
+        audio: true
+        pause_after_audio_sec: 1.5
+      - text: "Chamo-me João."
+        audio: true
+        pause_after_audio_sec: 1.5
+    hint:
+      - "Это буквально значит: «Меня зовут…»"
+
+  block_3_equivalence:
+    type: comparison
+    title: "Два варианта — один смысл"
+    comparison_card:
+      - text: "Eu sou Ana."
+        audio: true
+      - text: "Chamo-me Ana."
+        audio: true
+    note: |
+      Оба варианта — нормальные и правильные.
+      Можно использовать любой.
+
+  block_4_reinforcement:
+    type: reinforcement
+
+    task_1:
+      format: single_choice
+      audio: "Chamo-me Maria."
+      question: "О чём говорит человек?"
+      options:
+        - text: "Как её зовут"
+          correct: true
+        - text: "Где она живёт"
+          correct: false
+        - text: "Сколько ей лет"
+          correct: false
+
+    task_2:
+      format: situation_to_phrase
+      situation_text: "Ты хочешь сказать своё имя."
+      options:
+        - text: "Eu sou Ana."
+          correct: true
+        - text: "Bom dia."
+          correct: false
+        - text: "Obrigado."
+          correct: false
+
+  block_5_speak_out_loud:
+    type: speak_out_loud
+    title: "Скажи вслух"
+    instruction_text: |
+      Попробуй сказать о себе:
+      Olá. Eu sou …
+      или
+      Olá. Chamo-me …
+    action_button:
+      text: "✔ Я сказал(а) вслух"
+      completes_task: true

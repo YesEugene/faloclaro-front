@@ -1,0 +1,51 @@
+task:
+  task_id: 4
+  type: attention
+  title: "Внимательность"
+  subtitle: "Пойми, что здесь происходит"
+  estimated_time: "≈3–5 минут"
+  show_timer: false
+  show_settings: false
+  completion_message: "Уровень прогресса: Уверенность"
+
+ui_rules:
+  audio_plays_first: true
+  show_text_after_answer: true
+  only_known_words: true
+  no_similar_distractors: true
+
+items:
+  - item_id: 1
+    audio: "Olá, chamo-me Ana."
+    question: "В какой ситуации это говорят?"
+    options:
+      - text: "Знакомство"
+        correct: true
+        feedback: "Эта фраза используется, когда люди знакомятся."
+      - text: "Прощание"
+        correct: false
+      - text: "Просьба"
+        correct: false
+
+  - item_id: 2
+    audio: "Bom dia. Eu sou João."
+    question: "Что делает человек?"
+    options:
+      - text: "Представляется"
+        correct: true
+      - text: "Благодарит"
+        correct: false
+      - text: "Извиняется"
+        correct: false
+
+  - item_id: 3
+    optional: true
+    audio: "Prazer em conhecê-la."
+    question: "Когда так говорят?"
+    options:
+      - text: "При знакомстве"
+        correct: true
+      - text: "Когда просят помощи"
+        correct: false
+      - text: "Когда уходят"
+        correct: false

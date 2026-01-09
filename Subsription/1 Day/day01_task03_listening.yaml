@@ -1,0 +1,54 @@
+task:
+  task_id: 3
+  type: listening_comprehension
+  title: "Предложения и понимание"
+  subtitle: "Слушай фразу и пойми, о чём она"
+  estimated_time: "≈5 минут"
+  show_timer: false
+  show_settings: false
+  completion_message: "Уровень прогресса: Понимание"
+
+
+
+ui_rules:
+  audio_plays_first: true
+  show_text_after_answer: true
+  one_clear_correct_answer: true
+
+items:
+  - item_id: 1
+    audio: "Olá, chamo-me Ana."
+    text_hidden_before_answer: true
+    question: "Como se chama a pessoa?"
+    options:
+      - text: "Ana"
+        correct: true
+      - text: "João"
+        correct: false
+      - text: "Maria"
+        correct: false
+
+  - item_id: 2
+    audio: "Bom dia. Eu sou João."
+    text_hidden_before_answer: true
+    question: "Quem é?"
+    options:
+      - text: "João"
+        correct: true
+      - text: "Ana"
+        correct: false
+      - text: "Não sabemos"
+        correct: false
+
+  - item_id: 3
+    optional: true
+    audio: "Olá, eu sou Maria."
+    text_hidden_before_answer: true
+    question: "O que a pessoa faz?"
+    options:
+      - text: "Apresenta-se"
+        correct: true
+      - text: "Despede-se"
+        correct: false
+      - text: "Pede ajuda"
+        correct: false
