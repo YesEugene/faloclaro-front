@@ -226,6 +226,30 @@ export default function RulesTask({ task, language, onComplete, isCompleted, onN
   const handleAnswerSelect = (taskKey: string, answer: string) => {
     setSelectedAnswers(prev => ({ ...prev, [taskKey]: answer }));
     setShowResults(prev => ({ ...prev, [taskKey]: true }));
+    
+    // If this is the last block and all tasks are completed, mark task as completed
+    if (currentBlockIndex === blocksOrder.length - 1 && currentBlock.type === 'reinforcement') {
+      const allTasksCompleted = checkAllReinforcementTasksCompleted();
+      if (allTasksCompleted) {
+        setLocalIsCompleted(true);
+        onComplete({
+          completedAt: new Date().toISOString(),
+        });
+      }
+    }
+  };
+  
+  // Check if all reinforcement tasks are completed
+  const checkAllReinforcementTasksCompleted = (): boolean => {
+    if (currentBlock.type !== 'reinforcement') return false;
+    
+    const hasTask1 = !!currentBlock.task_1;
+    const hasTask2 = !!currentBlock.task_2;
+    
+    if (hasTask1 && !showResults['task_1']) return false;
+    if (hasTask2 && !showResults['task_2']) return false;
+    
+    return true;
   };
 
   // Handle next block
