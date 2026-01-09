@@ -12,9 +12,11 @@ interface WritingTaskProps {
   onPreviousTask?: () => void;
   canGoNext?: boolean;
   canGoPrevious?: boolean;
+  progressCompleted?: number;
+  progressTotal?: number;
 }
 
-export default function WritingTask({ task, language, onComplete, isCompleted, onNextTask, onPreviousTask, canGoNext = false, canGoPrevious = false }: WritingTaskProps) {
+export default function WritingTask({ task, language, onComplete, isCompleted, onNextTask, onPreviousTask, canGoNext = false, canGoPrevious = false, progressCompleted = 0, progressTotal = 5 }: WritingTaskProps) {
   const { language: appLanguage } = useAppLanguage();
   const [writtenText, setWrittenText] = useState('');
   const [speakOutLoud, setSpeakOutLoud] = useState(false);
@@ -270,28 +272,102 @@ export default function WritingTask({ task, language, onComplete, isCompleted, o
         </button>
       )}
 
+      {/* Progress Bar - Above navigation panel */}
+      <div className="fixed bottom-[70px] left-0 right-0 bg-white z-30">
+        <div className="max-w-md mx-auto px-4 pt-3 pb-2">
+          <div className="space-y-2">
+            {/* Progress Text */}
+            <div className="flex justify-between items-center" style={{ fontSize: '10px' }}>
+              <span className="text-gray-600">
+                {progressCompleted} / {progressTotal} {appLanguage === 'ru' ? 'выполнено' : appLanguage === 'en' ? 'completed' : 'concluídos'}
+              </span>
+              <span className="text-gray-600">{Math.round((progressCompleted / progressTotal) * 100)}%</span>
+            </div>
+
+            {/* Progress Bar - Green, 4px thick */}
+            <div className="w-full bg-gray-200 rounded-full" style={{ height: '4px' }}>
+              <div
+                className="rounded-full transition-all duration-300"
+                style={{ 
+                  width: `${(progressCompleted / progressTotal) * 100}%`, 
+                  height: '4px',
+                  backgroundColor: '#2FCD29'
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Navigation Panel - Fixed at bottom (Cross-task navigation) */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-30">
-        <div className="max-w-md mx-auto px-4 pt-[10px] pb-3" style={{ height: '70px' }}>
-          <div className="flex gap-3">
-            {canGoPrevious && onPreviousTask && (
+        <div className="max-w-md mx-auto px-4 pt-3 pb-3">
+          <div className="flex items-center justify-between gap-4">
+            {/* Previous Button - Left */}
+            {canGoPrevious && onPreviousTask ? (
               <button
                 onClick={onPreviousTask}
-                className="flex-1 px-4 py-3 rounded-[10px] bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors text-center font-medium"
+                className="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors flex items-center justify-center"
+                aria-label={appLanguage === 'ru' ? 'Предыдущее задание' : appLanguage === 'en' ? 'Previous task' : 'Tarefa anterior'}
               >
-                ← {appLanguage === 'ru' ? 'Предыдущее задание' : appLanguage === 'en' ? 'Previous task' : 'Tarefa anterior'}
+                <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
               </button>
+            ) : (
+              <div className="w-10 h-10"></div>
             )}
-            {canGoNext && onNextTask && (
+
+            {/* Task Title - Center */}
+            <div className="flex-1 text-center">
+              <p className="text-sm font-medium text-gray-900">
+                {(() => {
+                  const taskId = task?.task_id || 5;
+                  if (appLanguage === 'ru') {
+                    const titles = {
+                      1: '1. Слушай и повторяй',
+                      2: '2. Говорим правильно',
+                      3: '3. Пойми смысл',
+                      4: '4. Выбери ситуацию',
+                      5: '5. Попробуй сам'
+                    };
+                    return titles[taskId as keyof typeof titles] || `${taskId}. Задание`;
+                  } else if (appLanguage === 'en') {
+                    const titles = {
+                      1: '1. Listen and repeat',
+                      2: '2. Speak correctly',
+                      3: '3. Understand the meaning',
+                      4: '4. Choose the situation',
+                      5: '5. Try yourself'
+                    };
+                    return titles[taskId as keyof typeof titles] || `${taskId}. Task`;
+                  } else {
+                    const titles = {
+                      1: '1. Ouve e repete',
+                      2: '2. Fala corretamente',
+                      3: '3. Compreende o significado',
+                      4: '4. Escolhe a situação',
+                      5: '5. Tenta tu mesmo'
+                    };
+                    return titles[taskId as keyof typeof titles] || `${taskId}. Tarefa`;
+                  }
+                })()}
+              </p>
+            </div>
+
+            {/* Next Button - Right */}
+            {canGoNext && onNextTask ? (
               <button
                 onClick={onNextTask}
-                className={`${canGoPrevious && onPreviousTask ? 'flex-1' : 'w-full'} px-4 py-3 rounded-[10px] bg-green-500 text-white hover:bg-green-600 transition-colors text-center font-medium`}
+                className="w-10 h-10 rounded-full bg-green-500 hover:bg-green-600 transition-colors flex items-center justify-center"
+                aria-label={appLanguage === 'ru' ? 'Следующее задание' : appLanguage === 'en' ? 'Next task' : 'Próxima tarefa'}
               >
-                {appLanguage === 'ru' ? 'Следующее задание' : appLanguage === 'en' ? 'Next task' : 'Próxima tarefa'} →
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
               </button>
-            )}
-            {!canGoPrevious && !canGoNext && (
-              <div className="flex-1"></div>
+            ) : (
+              <div className="w-10 h-10"></div>
             )}
           </div>
         </div>

@@ -23,6 +23,8 @@ interface TaskCardProps {
   dayNumber?: number;
   token?: string;
   onTimerUpdate?: (time: { elapsed: number; required: number }) => void;
+  progressCompleted?: number;
+  progressTotal?: number;
 }
 
 export default function TaskCard({
@@ -40,6 +42,8 @@ export default function TaskCard({
   dayNumber,
   token,
   onTimerUpdate,
+  progressCompleted = 0,
+  progressTotal = 5,
 }: TaskCardProps) {
   const [isCompleted, setIsCompleted] = useState(taskProgress?.status === 'completed');
 
@@ -99,6 +103,8 @@ export default function TaskCard({
             token={token}
             initialCardIndex={initialCardIndex}
             onTimerUpdate={task.type === 'vocabulary' ? onTimerUpdate : undefined}
+            progressCompleted={progressCompleted}
+            progressTotal={progressTotal}
           />
         );
       case 'rules':
@@ -112,6 +118,8 @@ export default function TaskCard({
             onPreviousTask={canGoPrevious ? onPrevious : undefined}
             canGoNext={canGoNext}
             canGoPrevious={canGoPrevious}
+            progressCompleted={progressCompleted}
+            progressTotal={progressTotal}
           />
         );
       case 'listening_comprehension':
@@ -125,6 +133,8 @@ export default function TaskCard({
             onPreviousTask={canGoPrevious ? onPrevious : undefined}
             canGoNext={canGoNext}
             canGoPrevious={canGoPrevious}
+            progressCompleted={progressCompleted}
+            progressTotal={progressTotal}
           />
         );
       case 'attention':
@@ -138,6 +148,8 @@ export default function TaskCard({
             onPreviousTask={canGoPrevious ? onPrevious : undefined}
             canGoNext={canGoNext}
             canGoPrevious={canGoPrevious}
+            progressCompleted={progressCompleted}
+            progressTotal={progressTotal}
           />
         );
       case 'writing_optional':
@@ -151,6 +163,8 @@ export default function TaskCard({
             onPreviousTask={canGoPrevious ? onPrevious : undefined}
             canGoNext={canGoNext}
             canGoPrevious={canGoPrevious}
+            progressCompleted={progressCompleted}
+            progressTotal={progressTotal}
           />
         );
       default:

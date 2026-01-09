@@ -401,6 +401,8 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
             dayNumber={lesson.day_number}
             token={token}
             onTimerUpdate={currentTask?.type === 'vocabulary' ? handleTimerUpdate : undefined}
+            progressCompleted={userProgress.tasks_completed || 0}
+            progressTotal={userProgress.total_tasks || 5}
           />
         </div>
       )}
