@@ -453,7 +453,11 @@ function OverviewPageContent() {
               src="/Img/thumbs-icon.jpg"
               alt="Day completed"
               className="w-20 h-20"
-              style={{ width: '80px', height: '80px' }}
+              style={{ width: '80px', height: '80px', objectFit: 'contain' }}
+              onError={(e) => {
+                console.error('Failed to load thumbs-icon.jpg, trying fallback');
+                e.currentTarget.src = '/Img/Day completed.png';
+              }}
             />
             <p className="mt-3 text-base font-semibold text-green-600 text-center">
               {appLanguage === 'ru' 
