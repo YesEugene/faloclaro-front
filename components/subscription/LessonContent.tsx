@@ -344,18 +344,6 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
       </div>
 
       {/* Tasks List (Collapsed View) */}
-      {allTasksCompleted && (
-        <div className="max-w-md mx-auto px-4 mb-4">
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-            <p className="text-green-800 font-semibold text-center">
-              {t.allCompleted}
-            </p>
-            <p className="text-green-700 text-sm text-center mt-2">
-              {t.completionMessage}
-            </p>
-          </div>
-        </div>
-      )}
 
       {/* Current Task */}
       {currentTask && (
