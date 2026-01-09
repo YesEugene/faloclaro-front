@@ -74,39 +74,41 @@ function PhrasesContent() {
           return;
         }
 
-        // Load phrases from task cards
+        // Load phrases from task cards ONLY - don't search in database
+        // This ensures we only show words from the current lesson
         const cards = vocabularyTask.content.cards;
         const phrasesList: Phrase[] = [];
         
         for (let i = 0; i < cards.length; i++) {
           const card = cards[i];
           if (card.word) {
-            // Try to find existing phrase in database by portuguese text
-            const { data: existingPhrase } = await supabase
+            // Try to find audio URL for the word from database (optional)
+            let audioUrl: string | null = null;
+            const { data: phraseWithAudio } = await supabase
               .from('phrases')
-              .select('*')
+              .select('audio_url')
               .eq('portuguese_text', card.word)
               .eq('phrase_type', 'word')
               .single();
-
-            if (existingPhrase) {
-              phrasesList.push(existingPhrase);
-            } else {
-              // Create a virtual phrase from card data
-              const virtualPhrase: Phrase = {
-                id: `lesson-${lessonDay}-task-${taskId}-word-${i}`,
-                cluster_id: '',
-                portuguese_text: card.word,
-                ipa_transcription: card.transcription || '',
-                phrase_type: 'word',
-                order_index: i,
-                audio_url: null,
-                movie_title: null,
-                movie_character: null,
-                movie_year: null,
-              };
-              phrasesList.push(virtualPhrase);
+            
+            if (phraseWithAudio?.audio_url) {
+              audioUrl = phraseWithAudio.audio_url;
             }
+            
+            // Always create phrase from card data to ensure we only show lesson words
+            const phraseFromCard: Phrase = {
+              id: `lesson-${lessonDay}-task-${taskId}-word-${i}`,
+              cluster_id: '',
+              portuguese_text: card.word,
+              ipa_transcription: card.transcription || '',
+              phrase_type: 'word',
+              order_index: i,
+              audio_url: audioUrl,
+              movie_title: null,
+              movie_character: null,
+              movie_year: null,
+            };
+            phrasesList.push(phraseFromCard);
           }
         }
 
@@ -128,34 +130,8 @@ function PhrasesContent() {
         });
         setTranslations(translationsMap);
         
-        // Also try to load audio URLs for cards with example sentences
-        const audioUrlsMap: Record<string, string> = {};
-        for (const card of cards) {
-          if (card.example_sentence) {
-            const { data: phraseWithAudio } = await supabase
-              .from('phrases')
-              .select('audio_url')
-              .eq('portuguese_text', card.example_sentence)
-              .single();
-            
-            if (phraseWithAudio?.audio_url) {
-              const phraseId = phrasesList.find(p => p.portuguese_text === card.word)?.id;
-              if (phraseId) {
-                audioUrlsMap[phraseId] = phraseWithAudio.audio_url;
-              }
-            }
-          }
-        }
-        
-        // Update phrases with audio URLs
-        if (Object.keys(audioUrlsMap).length > 0) {
-          setPhrases(prevPhrases => 
-            prevPhrases.map(p => ({
-              ...p,
-              audio_url: audioUrlsMap[p.id] || p.audio_url
-            }))
-          );
-        }
+        // Audio URLs are already loaded in the loop above
+        // No need for additional audio URL loading
         
         setLoading(false);
         return;
