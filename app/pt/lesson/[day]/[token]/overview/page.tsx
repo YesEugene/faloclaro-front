@@ -132,11 +132,24 @@ function OverviewPageContent() {
         .select('token, lesson_id')
         .eq('user_id', userId);
 
+      console.log('🔑 Loading tokens:', {
+        userId,
+        tokensCount: tokensData?.length || 0,
+        tokensData: tokensData?.map(t => ({ lesson_id: t.lesson_id, token: t.token?.substring(0, 10) + '...' })) || [],
+        tokensError: tokensError?.message
+      });
+
       if (!tokensError && tokensData) {
         const { data: lessonsWithTokens, error: lessonsError } = await supabase
           .from('lessons')
           .select('id, day_number')
           .in('id', tokensData.map(t => t.lesson_id));
+
+        console.log('📚 Lessons with tokens:', {
+          lessonsCount: lessonsWithTokens?.length || 0,
+          lessons: lessonsWithTokens?.map(l => ({ id: l.id, day_number: l.day_number })) || [],
+          lessonsError: lessonsError?.message
+        });
 
         if (!lessonsError && lessonsWithTokens) {
           const tokensMap = new Map<number, string>();
@@ -144,10 +157,19 @@ function OverviewPageContent() {
             const lesson = lessonsWithTokens.find(l => l.id === tokenData.lesson_id);
             if (lesson) {
               tokensMap.set(lesson.day_number, tokenData.token);
+              console.log(`  ✓ Token for lesson ${lesson.day_number}: ${tokenData.token.substring(0, 10)}...`);
+            } else {
+              console.warn(`  ⚠️ No lesson found for token with lesson_id: ${tokenData.lesson_id}`);
             }
+          });
+          console.log('📊 Final tokens map:', {
+            tokensCount: tokensMap.size,
+            tokens: Array.from(tokensMap.entries()).map(([day, token]) => ({ day, token: token.substring(0, 10) + '...' }))
           });
           setUserTokens(tokensMap);
         }
+      } else {
+        console.warn('⚠️ No tokens found or error:', { tokensError: tokensError?.message });
       }
 
       // Get subscription
@@ -255,8 +277,24 @@ function OverviewPageContent() {
 
   const isLessonUnlocked = (dayNumber: number): boolean => {
     // First 3 lessons: unlocked if user has token
+    // For lessons 1-3, if user has ANY token (e.g., for lesson 1), all 3 are unlocked
     if (dayNumber <= 3) {
-      return userTokens.has(dayNumber);
+      const hasToken = userTokens.has(dayNumber);
+      // Fallback: if user has token for lesson 1, lessons 2 and 3 are also unlocked
+      const hasAnyToken = userTokens.size > 0;
+      const result = hasToken || (hasAnyToken && dayNumber <= 3);
+      
+      if (dayNumber <= 3) {
+        console.log(`🔓 Lesson ${dayNumber} unlock check:`, {
+          hasToken,
+          hasAnyToken,
+          userTokensSize: userTokens.size,
+          userTokensKeys: Array.from(userTokens.keys()),
+          result
+        });
+      }
+      
+      return result;
     }
     
     // Lessons 4+: ONLY unlocked if user has PAID subscription
