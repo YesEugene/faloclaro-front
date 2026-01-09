@@ -236,15 +236,10 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
     });
     setIsPlayingAudio({});
     
-    // Reset all answers and results
-    setAnswers({});
-    setShowResults({});
-    setCurrentItemIndex(0);
-    setLocalIsCompleted(false);
+    // Set replaying flag first to prevent saving during reset
     setIsReplaying(true);
-    setHasLoadedSavedData(false); // Reset to allow fresh start
     
-    // Clear saved data
+    // Clear saved data first (before resetting state)
     onComplete({
       answers: {},
       showResults: {},
@@ -252,9 +247,19 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
       replay: true,
     });
     
-    // After a short delay, allow new data to load
+    // Reset all answers and results after a short delay to ensure onComplete is called first
     setTimeout(() => {
-      setIsReplaying(false);
+      setAnswers({});
+      setShowResults({});
+      setCurrentItemIndex(0);
+      setLocalIsCompleted(false);
+      setHasLoadedSavedData(false); // Reset to allow fresh start
+      
+      // After reset, allow new data to be saved
+      setTimeout(() => {
+        setIsReplaying(false);
+        setHasLoadedSavedData(true); // Re-enable saving after reset
+      }, 200);
     }, 100);
   };
 
