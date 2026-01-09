@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     // Get or create user
     let { data: user, error: userError } = await supabase
       .from('subscription_users')
-      .select('id')
+      .select('id, email')
       .eq('email', normalizedEmail)
       .single();
 
