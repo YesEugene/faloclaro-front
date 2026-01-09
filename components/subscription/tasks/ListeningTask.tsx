@@ -225,8 +225,32 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
   }, [audioUrls]);
 
   const handleAnswerSelect = (itemIndex: number, optionText: string) => {
-    setAnswers({ ...answers, [itemIndex]: optionText });
-    setShowResults({ ...showResults, [itemIndex]: true });
+    const newAnswers = { ...answers, [itemIndex]: optionText };
+    const newShowResults = { ...showResults, [itemIndex]: true };
+    setAnswers(newAnswers);
+    setShowResults(newShowResults);
+    
+    // Check if all items are answered after this answer
+    const allAnsweredNow = items.every((item: any, index: number) => {
+      if (index === itemIndex) return true; // Current item is now answered
+      return newAnswers[index] !== undefined;
+    });
+    
+    // If all answered and this is the last item, mark as completed immediately
+    if (allAnsweredNow && itemIndex === items.length - 1) {
+      setLocalIsCompleted(true);
+      onComplete({
+        answers: newAnswers,
+        showResults: newShowResults,
+        correctCount: items.filter((item: any, index: number) => {
+          const selectedAnswer = newAnswers[index];
+          const correctOption = item.options?.find((opt: any) => opt.correct);
+          return selectedAnswer === correctOption?.text;
+        }).length,
+        totalItems: items.length,
+        completedAt: new Date().toISOString(),
+      });
+    }
   };
 
   const handleNextItem = () => {
