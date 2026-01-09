@@ -113,12 +113,93 @@ function OverviewPageContent() {
 
       setLesson(lessonData);
       setUserProgress(progressData);
+
+      // Load all lessons progress, tokens, and subscription for navigation panel
+      await loadAllLessonsData(tokenData.user_id);
     } catch (err) {
       console.error('Error loading lesson:', err);
       setError(err instanceof Error ? err.message : 'Failed to load lesson');
     } finally {
       setLoading(false);
     }
+  };
+
+  const loadAllLessonsData = async (userId: string) => {
+    try {
+      // Get all user tokens
+      const { data: tokensData, error: tokensError } = await supabase
+        .from('lesson_access_tokens')
+        .select('token, lesson_id')
+        .eq('user_id', userId);
+
+      if (!tokensError && tokensData) {
+        const { data: lessonsWithTokens, error: lessonsError } = await supabase
+          .from('lessons')
+          .select('id, day_number')
+          .in('id', tokensData.map(t => t.lesson_id));
+
+        if (!lessonsError && lessonsWithTokens) {
+          const tokensMap = new Map<number, string>();
+          tokensData.forEach(tokenData => {
+            const lesson = lessonsWithTokens.find(l => l.id === tokenData.lesson_id);
+            if (lesson) {
+              tokensMap.set(lesson.day_number, tokenData.token);
+            }
+          });
+          setUserTokens(tokensMap);
+        }
+      }
+
+      // Get subscription
+      const { data: subData } = await supabase
+        .from('subscriptions')
+        .select('*')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (subData) {
+        setSubscription(subData);
+      }
+
+      // Get all user progress
+      const { data: progressData, error: progressError } = await supabase
+        .from('user_progress')
+        .select('lesson_id, status')
+        .eq('user_id', userId);
+
+      if (!progressError && progressData) {
+        const progressLessonIds = progressData.map(p => p.lesson_id);
+        const { data: lessonsWithProgress, error: lessonsWithProgressError } = await supabase
+          .from('lessons')
+          .select('id, day_number')
+          .in('id', progressLessonIds);
+
+        if (!lessonsWithProgressError && lessonsWithProgress) {
+          const progressMap = new Map<number, string>();
+          progressData.forEach(progress => {
+            const lesson = lessonsWithProgress.find(l => l.id === progress.lesson_id);
+            if (lesson) {
+              progressMap.set(lesson.day_number, progress.status);
+            }
+          });
+          setAllLessonsProgress(progressMap);
+        }
+      }
+    } catch (err) {
+      console.error('Error loading all lessons data:', err);
+    }
+  };
+
+  const isLessonUnlocked = (dayNumber: number): boolean => {
+    // First 3 lessons: unlocked if user has token
+    if (dayNumber <= 3) {
+      return userTokens.has(dayNumber);
+    }
+    
+    // Lessons 4+: ONLY unlocked if user has PAID subscription
+    return subscription?.status === 'paid';
   };
 
   const getTaskStatus = (taskId: number) => {
