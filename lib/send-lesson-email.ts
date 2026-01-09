@@ -87,12 +87,14 @@ export async function sendLessonEmail(userId: string, lessonId: string, dayNumbe
 
     // For registration email (first lesson with dayNumber === 1), link directly to lesson 1 overview
     // This page shows the overview of lesson 1 with navigation to all lessons (first 3 unlocked)
-    // For other lessons, link to specific lesson overview
+    // IMPORTANT: Use lesson.day_number from database, not dayNumber parameter (which might be incorrect)
     const isRegistrationEmail = dayNumber === 1; // Registration email is always for day 1
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.faloclaro.com';
+    // Use lesson.day_number from database to ensure correct URL
+    const lessonDayNumber = lesson.day_number || dayNumber;
     const lessonsUrl = isRegistrationEmail
-      ? `${baseUrl}/pt/lesson/1/${accessToken}/overview`
-      : `${baseUrl}/pt/lesson/${dayNumber}/${accessToken}/overview`;
+      ? `${baseUrl}/pt/lesson/${lessonDayNumber}/${accessToken}/overview`
+      : `${baseUrl}/pt/lesson/${lessonDayNumber}/${accessToken}/overview`;
 
     console.log('📧 Email link generation:', {
       isRegistrationEmail,
