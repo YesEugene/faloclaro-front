@@ -101,12 +101,12 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
       const wasAlreadyCompleted = taskProgress?.status === 'completed';
       
       if (taskProgress) {
-        // Update existing
+        // Update existing - always update completion_data even if task was already completed (for replay)
         await supabase
           .from('task_progress')
           .update({
             status: 'completed',
-            completion_data: completionData,
+            completion_data: completionData, // Always update with latest answers/progress
             completed_at: new Date().toISOString(),
           })
           .eq('id', taskProgress.id);
