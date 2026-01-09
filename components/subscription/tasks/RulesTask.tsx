@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAppLanguage } from '@/lib/language-context';
+import { getBlockTitle, getBlockExplanationText, getBlockNote, getInstructionText } from '@/lib/lesson-translations';
 
 interface RulesTaskProps {
   task: any;
@@ -110,20 +111,13 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
       if (completed === 4) return `${completed} / ${total} выполнено. Почти финиш.`;
       if (completed === 5) return `${completed} / ${total} выполнено. Можно собой гордиться.`;
       return `${completed} / ${total} выполнено`;
-    } else if (appLanguage === 'en') {
+    } else {
       if (completed === 1) return `${completed} / ${total} completed. No turning back.`;
       if (completed === 2) return `${completed} / ${total} completed. Catching the rhythm.`;
       if (completed === 3) return `${completed} / ${total} completed. You're just Wow!`;
       if (completed === 4) return `${completed} / ${total} completed. Almost finish.`;
       if (completed === 5) return `${completed} / ${total} completed. You can be proud.`;
       return `${completed} / ${total} completed`;
-    } else {
-      if (completed === 1) return `${completed} / ${total} concluído. Não há volta.`;
-      if (completed === 2) return `${completed} / ${total} concluído. Pegando o ritmo.`;
-      if (completed === 3) return `${completed} / ${total} concluído. Você é simplesmente Uau!`;
-      if (completed === 4) return `${completed} / ${total} concluído. Quase no fim.`;
-      if (completed === 5) return `${completed} / ${total} concluído. Pode se orgulhar.`;
-      return `${completed} / ${total} concluído`;
     }
   };
 
@@ -392,8 +386,8 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                 ? `Block ${currentBlockIndex + 1} / ${blocksOrder.length}`
                 : `Bloco ${currentBlockIndex + 1} / ${blocksOrder.length}`}
             </div>
-            <h3 className="text-xl font-bold text-black mb-4">{currentBlock.title}</h3>
-            <p className="text-gray-700 whitespace-pre-line mb-4">{currentBlock.explanation_text}</p>
+            <h3 className="text-xl font-bold text-black mb-4">{getBlockTitle(currentBlock, appLanguage)}</h3>
+            <p className="text-gray-700 whitespace-pre-line mb-4">{getBlockExplanationText(currentBlock, appLanguage)}</p>
             
             {currentBlock.examples && currentBlock.examples.length > 0 && (
               <div className="space-y-3">
@@ -455,7 +449,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                 }}
               >
                 <p className="text-sm font-semibold mb-2" style={{ color: 'rgba(0, 0, 0, 1)', backgroundClip: 'unset', WebkitBackgroundClip: 'unset' }}>
-                  {appLanguage === 'ru' ? 'Подсказка:' : appLanguage === 'en' ? 'Hint:' : 'Dica:'}
+                  {appLanguage === 'ru' ? 'Подсказка:' : 'Hint:'}
                 </p>
                 <ul className="list-disc list-inside space-y-1">
                   {currentBlock.hint.map((hint: string, index: number) => (
@@ -478,7 +472,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                 ? `Block ${currentBlockIndex + 1} / ${blocksOrder.length}`
                 : `Bloco ${currentBlockIndex + 1} / ${blocksOrder.length}`}
             </div>
-            <h3 className="text-xl font-bold text-black mb-4">{currentBlock.title}</h3>
+            <h3 className="text-xl font-bold text-black mb-4">{getBlockTitle(currentBlock, appLanguage)}</h3>
             
             {currentBlock.comparison_card && (
               <div className="grid grid-cols-1 gap-4">
@@ -539,7 +533,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                   backgroundColor: '#F4F5F8'
                 }}
               >
-                <p className="text-sm text-gray-700 whitespace-pre-line">{currentBlock.note}</p>
+                <p className="text-sm text-gray-700 whitespace-pre-line">{getBlockNote(currentBlock, appLanguage)}</p>
               </div>
             )}
           </div>
@@ -697,7 +691,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                 onClick={handleReplay}
                 className="w-full bg-green-600 text-white py-4 rounded-lg font-semibold text-lg hover:bg-green-700 transition-colors mt-4"
               >
-                {appLanguage === 'ru' ? 'Пройти заново' : appLanguage === 'en' ? 'Replay' : 'Repetir'}
+                {appLanguage === 'ru' ? 'Пройти заново' : 'Replay'}
               </button>
             )}
           </div>
@@ -724,10 +718,10 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                 ? `Block ${currentBlockIndex + 1} / ${blocksOrder.length}`
                 : `Bloco ${currentBlockIndex + 1} / ${blocksOrder.length}`}
             </div>
-            <h3 className="text-xl font-bold text-black mb-4">{currentBlock.title}</h3>
+            <h3 className="text-xl font-bold text-black mb-4">{getBlockTitle(currentBlock, appLanguage)}</h3>
             <p 
               className="text-gray-700 whitespace-pre-line mb-6"
-              dangerouslySetInnerHTML={{ __html: processInstructionText(currentBlock.instruction_text) }}
+              dangerouslySetInnerHTML={{ __html: processInstructionText(getInstructionText(currentBlock, appLanguage)) }}
             />
             
             <button
@@ -757,8 +751,8 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
               }`}
             >
               {!speakOutLoudCompleted
-                ? (currentBlock.action_button?.text || (appLanguage === 'ru' ? '✔ Я сказал(а) вслух' : appLanguage === 'en' ? '✔ I said it out loud' : '✔ Disse em voz alta'))
-                : (appLanguage === 'ru' ? 'Пройти заново' : appLanguage === 'en' ? 'Replay' : 'Repetir')}
+                ? (currentBlock.action_button?.text || (appLanguage === 'ru' ? '✔ Я сказал(а) вслух' : '✔ I said it out loud'))
+                : (appLanguage === 'ru' ? 'Пройти заново' : 'Replay')}
             </button>
         </div>
         );
@@ -774,7 +768,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
   if (!currentBlock) {
     return (
       <div className="text-center text-gray-500">
-        {appLanguage === 'ru' ? 'Задание не найдено' : appLanguage === 'en' ? 'Task not found' : 'Tarefa não encontrada'}
+        {appLanguage === 'ru' ? 'Задание не найдено' : 'Task not found'}
       </div>
     );
   }
@@ -796,7 +790,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
             onClick={handlePreviousBlock}
             className="flex-1 bg-gray-200 text-gray-700 py-3 rounded-lg font-medium hover:bg-gray-300 transition-colors"
           >
-            ← {appLanguage === 'ru' ? 'Назад' : appLanguage === 'en' ? 'Back' : 'Voltar'}
+            ← {appLanguage === 'ru' ? 'Назад' : 'Back'}
           </button>
         )}
         
@@ -805,7 +799,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
             onClick={handleNextBlock}
             className="flex-1 bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
           >
-            {appLanguage === 'ru' ? 'Далее' : appLanguage === 'en' ? 'Next' : 'Próximo'} →
+            {appLanguage === 'ru' ? 'Далее' : 'Next'} →
           </button>
         )}
       </div>
@@ -847,7 +841,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
               <button
                 onClick={onPreviousTask}
                 className="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors flex items-center justify-center"
-                aria-label={appLanguage === 'ru' ? 'Предыдущее задание' : appLanguage === 'en' ? 'Previous task' : 'Tarefa anterior'}
+                aria-label={appLanguage === 'ru' ? 'Предыдущее задание' : 'Previous task'}
               >
                 <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -909,7 +903,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                   borderWidth: '1px',
                   borderColor: 'rgba(176, 176, 176, 1)'
                 } : {}}
-                aria-label={appLanguage === 'ru' ? 'Следующее задание' : appLanguage === 'en' ? 'Next task' : 'Próxima tarefa'}
+                aria-label={appLanguage === 'ru' ? 'Следующее задание' : 'Next task'}
               >
                 <svg className={`w-6 h-6 ${localIsCompleted ? 'text-white' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />

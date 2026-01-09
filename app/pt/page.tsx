@@ -144,9 +144,7 @@ export default function SubscriptionLandingPage() {
           <p className="text-gray-600">
             {appLanguage === 'ru' 
               ? 'Проверь почту и перейди по ссылке в письме.'
-              : appLanguage === 'en'
-              ? 'Check your email and click the link in the message.'
-              : 'Verifica o email e clica no link na mensagem.'}
+              : 'Check your email and click the link in the message.'}
           </p>
         </div>
       </div>
@@ -207,9 +205,7 @@ export default function SubscriptionLandingPage() {
             <p className="text-gray-600 mb-2">
               {appLanguage === 'ru' 
                 ? 'В каждом уроке:'
-                : appLanguage === 'en'
-                ? 'In each lesson:'
-                : 'Em cada lição:'}
+                : 'In each lesson:'}
             </p>
             <ul className="space-y-2">
               {t.formatItems.map((item, index) => (
@@ -263,5 +259,9 @@ export default function SubscriptionLandingPage() {
     </div>
   );
 }
+
+
+
+
 
 
