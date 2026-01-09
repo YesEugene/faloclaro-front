@@ -717,23 +717,6 @@ export default function VocabularyTaskPlayer({
 
   return (
     <div className="space-y-4 pb-24">
-      {/* Timer - Below white button bar */}
-      {task.ui?.show_timer && requiredTime > 0 && (
-        <div className="max-w-md mx-auto px-4 mb-2 flex justify-end">
-          <div 
-            className="bg-white rounded-full py-1.5 shadow-sm" 
-            style={{ 
-              paddingLeft: '16px',
-              paddingRight: '16px',
-            }}
-          >
-            <span className="text-xs font-medium text-gray-700 whitespace-nowrap" style={{ height: '12px', fontSize: '12px' }}>
-              {formatTime(displayTime)} / {formatTime(requiredTime)}
-            </span>
-          </div>
-        </div>
-      )}
-
       {/* Card - Using existing player design */}
       <div
         className="rounded-[30px] p-4 mb-6 relative touch-none select-none aspect-square shadow-lg flex flex-col"
@@ -742,6 +725,22 @@ export default function VocabularyTaskPlayer({
           border: '2px solid white',
         }}
       >
+        {/* Timer - On the blue card, top right, but below white button bar */}
+        {task.ui?.show_timer && requiredTime > 0 && (
+          <div 
+            className="absolute right-4 bg-white rounded-full py-1.5 shadow-sm" 
+            style={{ 
+              top: '16px',
+              paddingLeft: '16px',
+              paddingRight: '16px',
+              zIndex: 1
+            }}
+          >
+            <span className="text-xs font-medium text-gray-700 whitespace-nowrap" style={{ height: '12px', fontSize: '12px' }}>
+              {formatTime(displayTime)} / {formatTime(requiredTime)}
+            </span>
+          </div>
+        )}
 
         {/* Progress Indicator */}
         <div className="text-black text-center mt-5 mb-5 font-medium">
