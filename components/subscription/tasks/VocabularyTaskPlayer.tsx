@@ -72,11 +72,17 @@ export default function VocabularyTaskPlayer({
   const [currentRepeat, setCurrentRepeat] = useState(0);
   const [showSettings, setShowSettings] = useState(false);
   const [isRandomMode, setIsRandomMode] = useState(false);
+  const [localIsCompleted, setLocalIsCompleted] = useState(isCompleted);
   
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const repeatTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isRepeatingRef = useRef(false);
+  
+  // Update local completion state when prop changes
+  useEffect(() => {
+    setLocalIsCompleted(isCompleted);
+  }, [isCompleted]);
   const currentIndexRef = useRef(0);
 
   const cards = task.content?.cards || [];
@@ -565,6 +571,7 @@ export default function VocabularyTaskPlayer({
     if (audioRef.current && !audioRef.current.paused) {
       audioRef.current.pause();
     }
+    setLocalIsCompleted(true); // Update local state immediately
     onComplete({
       elapsedTime,
       cardsViewed: currentCardIndex + 1,
@@ -883,7 +890,7 @@ export default function VocabularyTaskPlayer({
           <div className="flex items-center justify-between gap-4">
             {/* Previous Button - Left */}
             {/* If task is completed: show previous task button, else: show previous card button */}
-            {isCompleted ? (
+            {localIsCompleted ? (
               // Task completed - show previous task button
               canGoPrevious && onPreviousTask ? (
                 <button
@@ -954,7 +961,7 @@ export default function VocabularyTaskPlayer({
 
             {/* Next Button - Right */}
             {/* If task is completed: show next task button (green), else: show next card button (blue) */}
-            {isCompleted ? (
+            {localIsCompleted ? (
               // Task completed - show next task button (green, active)
               canGoNext && onNextTask ? (
                 <button
