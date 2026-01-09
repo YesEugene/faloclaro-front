@@ -193,6 +193,7 @@ function OverviewPageContent() {
     }
     
     const taskProgress = userProgress.task_progress.find((tp: any) => tp.task_id === taskId);
+    const currentTaskIndex = tasks.findIndex((t: any) => t.task_id === taskId);
     
     // If task is completed, it should always be accessible for replay
     if (taskProgress?.status === 'completed') {
@@ -206,18 +207,13 @@ function OverviewPageContent() {
       return !tp || tp.status !== 'completed';
     });
     
-    const currentTaskIndex = tasks.findIndex((t: any) => t.task_id === taskId);
-    
     // If all tasks are completed, mark all as completed (accessible for replay)
     if (firstIncompleteIndex === -1) {
       console.log(`✅ All tasks completed - Task ${taskId} returning 'completed' status`);
       return 'completed';
     }
     
-    // Tasks should unlock sequentially: after completing task N, task N+1 becomes available
-    // So if current task is the first incomplete, it's 'current'
-    // If it's before the first incomplete, it's 'completed' (shouldn't happen, but handle it)
-    // If it's the next task after the first incomplete, it should also be 'current' (unlocked)
+    // Tasks unlock sequentially: after completing task N, task N+1 becomes available
     if (currentTaskIndex === firstIncompleteIndex) return 'current';
     if (currentTaskIndex < firstIncompleteIndex) {
       console.log(`✅ Task ${taskId} is before incomplete task - returning 'completed' status`);
@@ -225,7 +221,7 @@ function OverviewPageContent() {
     }
     
     // For tasks after the first incomplete: check if ALL previous tasks are completed
-    // Tasks unlock sequentially - if all previous tasks are completed, this task is unlocked
+    // If all previous tasks are completed, this task is unlocked (current)
     if (currentTaskIndex > firstIncompleteIndex) {
       // Check if all tasks before this one are completed
       let allPreviousCompleted = true;
