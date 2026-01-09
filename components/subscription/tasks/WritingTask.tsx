@@ -23,6 +23,32 @@ export default function WritingTask({ task, language, onComplete, isCompleted, o
   const [showExample, setShowExample] = useState(false);
   const [isReplaying, setIsReplaying] = useState(false);
 
+  // Get progress message based on completed tasks
+  const getProgressMessage = (completed: number, total: number) => {
+    if (appLanguage === 'ru') {
+      if (completed === 1) return `${completed} / ${total} выполнено. Назад дороги нет.`;
+      if (completed === 2) return `${completed} / ${total} выполнено. Поймали ритм.`;
+      if (completed === 3) return `${completed} / ${total} выполнено. Ты просто Вау!`;
+      if (completed === 4) return `${completed} / ${total} выполнено. Почти финиш.`;
+      if (completed === 5) return `${completed} / ${total} выполнено. Можно собой гордиться.`;
+      return `${completed} / ${total} выполнено`;
+    } else if (appLanguage === 'en') {
+      if (completed === 1) return `${completed} / ${total} completed. No turning back.`;
+      if (completed === 2) return `${completed} / ${total} completed. Catching the rhythm.`;
+      if (completed === 3) return `${completed} / ${total} completed. You're just Wow!`;
+      if (completed === 4) return `${completed} / ${total} completed. Almost finish.`;
+      if (completed === 5) return `${completed} / ${total} completed. You can be proud.`;
+      return `${completed} / ${total} completed`;
+    } else {
+      if (completed === 1) return `${completed} / ${total} concluído. Não há volta.`;
+      if (completed === 2) return `${completed} / ${total} concluído. Pegando o ritmo.`;
+      if (completed === 3) return `${completed} / ${total} concluído. Você é simplesmente Uau!`;
+      if (completed === 4) return `${completed} / ${total} concluído. Quase no fim.`;
+      if (completed === 5) return `${completed} / ${total} concluído. Pode se orgulhar.`;
+      return `${completed} / ${total} concluído`;
+    }
+  };
+
   // Reset state when replaying
   useEffect(() => {
     if (isCompleted && !isReplaying) {
@@ -279,7 +305,7 @@ export default function WritingTask({ task, language, onComplete, isCompleted, o
             {/* Progress Text */}
             <div className="flex justify-between items-center" style={{ fontSize: '10px', color: 'rgba(23, 23, 23, 1)' }}>
               <span className="text-gray-600" style={{ color: 'rgba(23, 23, 23, 1)' }}>
-                {progressCompleted} / {progressTotal} {appLanguage === 'ru' ? 'выполнено' : appLanguage === 'en' ? 'completed' : 'concluídos'}
+                {getProgressMessage(progressCompleted, progressTotal)}
               </span>
               <span className="text-gray-600" style={{ color: 'rgba(23, 23, 23, 1)' }}>{Math.round((progressCompleted / progressTotal) * 100)}%</span>
             </div>
