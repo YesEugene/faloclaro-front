@@ -39,10 +39,11 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
     }
   }, [isCompleted, isReplaying]);
   
-  // Load saved answers on mount (but skip if replaying)
+  // Load saved answers on mount (but skip if replaying or if saved data is empty)
   const [hasLoadedSavedData, setHasLoadedSavedData] = useState(false);
   useEffect(() => {
     if (!hasLoadedSavedData && !isReplaying) {
+      // Only load if saved data exists and is not empty (empty means replay was called)
       if (savedAnswers && Object.keys(savedAnswers).length > 0) {
         setAnswers(savedAnswers);
       }
@@ -50,6 +51,20 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
         setShowResults(savedShowResults);
       }
       setHasLoadedSavedData(true);
+    }
+  }, [savedAnswers, savedShowResults, hasLoadedSavedData, isReplaying]);
+  
+  // Reset hasLoadedSavedData when saved data becomes empty (replay was called)
+  useEffect(() => {
+    if ((!savedAnswers || Object.keys(savedAnswers).length === 0) && 
+        (!savedShowResults || Object.keys(savedShowResults).length === 0) && 
+        hasLoadedSavedData && !isReplaying) {
+      // Saved data was cleared (replay), reset everything
+      setAnswers({});
+      setShowResults({});
+      setCurrentItemIndex(0);
+      setLocalIsCompleted(false);
+      setHasLoadedSavedData(false);
     }
   }, [savedAnswers, savedShowResults, hasLoadedSavedData, isReplaying]);
   
