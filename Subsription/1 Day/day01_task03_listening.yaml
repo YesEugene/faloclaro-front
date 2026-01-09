@@ -23,7 +23,9 @@ items:
   - item_id: 1
     audio: "Olá, chamo-me Ana."
     text_hidden_before_answer: true
-    question: "Como se chama a pessoa?"
+    question:
+      ru: "Как зовут человека?"
+      en: "What is the person's name?"
     options:
       - text: "Ana"
         correct: true
@@ -35,7 +37,9 @@ items:
   - item_id: 2
     audio: "Bom dia. Eu sou João."
     text_hidden_before_answer: true
-    question: "Quem é?"
+    question:
+      ru: "Кто это?"
+      en: "Who is it?"
     options:
       - text: "João"
         correct: true
@@ -48,7 +52,9 @@ items:
     optional: true
     audio: "Olá, eu sou Maria."
     text_hidden_before_answer: true
-    question: "O que a pessoa faz?"
+    question:
+      ru: "Что делает человек?"
+      en: "What does the person do?"
     options:
       - text: "Apresenta-se"
         correct: true

@@ -24,8 +24,8 @@ items:
     audio: "Bom dia, como está?"
     text_hidden_before_answer: true
     question:
-      ru: "Que horas são?"
-      en: "What time is it?"
+      ru: "Какое время суток?"
+      en: "What time of day is it?"
     options:
       - text: "Manhã"
         correct: true
@@ -38,8 +38,8 @@ items:
     audio: "Boa tarde, tudo bem?"
     text_hidden_before_answer: true
     question:
-      ru: "Que horas são?"
-      en: "What time is it?"
+      ru: "Какое время суток?"
+      en: "What time of day is it?"
     options:
       - text: "Tarde"
         correct: true
@@ -53,8 +53,8 @@ items:
     audio: "Boa noite, até amanhã."
     text_hidden_before_answer: true
     question:
-      ru: "Que horas são?"
-      en: "What time is it?"
+      ru: "Какое время суток?"
+      en: "What time of day is it?"
     options:
       - text: "Noite"
         correct: true

@@ -24,7 +24,7 @@ items:
     audio: "Sou de Lisboa."
     text_hidden_before_answer: true
     question:
-      ru: "De onde é a pessoa?"
+      ru: "Откуда человек?"
       en: "Where is the person from?"
     options:
       - text: "Lisboa"
@@ -38,7 +38,7 @@ items:
     audio: "Vivo em Porto."
     text_hidden_before_answer: true
     question:
-      ru: "Onde mora a pessoa?"
+      ru: "Где живёт человек?"
       en: "Where does the person live?"
     options:
       - text: "Porto"
@@ -53,7 +53,7 @@ items:
     audio: "Venho de Braga."
     text_hidden_before_answer: true
     question:
-      ru: "De onde vem a pessoa?"
+      ru: "Откуда приехал человек?"
       en: "Where does the person come from?"
     options:
       - text: "Braga"
