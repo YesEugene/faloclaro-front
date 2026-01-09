@@ -55,6 +55,19 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
     }
   };
 
+  // Load saved answers from completion_data if task was already completed
+  useEffect(() => {
+    if (savedAnswers && Object.keys(savedAnswers).length > 0) {
+      setAnswers(savedAnswers);
+      // Mark all items as answered (show results)
+      const results: { [key: number]: boolean } = {};
+      Object.keys(savedAnswers).forEach(key => {
+        results[parseInt(key)] = true;
+      });
+      setShowResults(results);
+    }
+  }, [savedAnswers]);
+
   // Get items from task - attention uses items, not blocks
   const items = task.items || [];
   const currentItem = items[currentItemIndex];
