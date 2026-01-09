@@ -53,6 +53,7 @@ tasks:
           sentence_translation_ru: "Привет, меня зовут Ана."
           sentence_translation_en: "Hello, my name is Ana."
           word_translation_ru: "Привет"
+          word_translation_en: "Hello"
 
         - word: "Bom dia"
           transcription: "[bõ ˈdiɐ]"
@@ -60,6 +61,7 @@ tasks:
           sentence_translation_ru: "Доброе утро, я Жоао."
           sentence_translation_en: "Good morning, I am João."
           word_translation_ru: "Доброе утро"
+          word_translation_en: "Good morning"
 
         - word: "Boa noite"
           transcription: "[ˈboɐ ˈnoitɨ]"
@@ -67,6 +69,7 @@ tasks:
           sentence_translation_ru: "Добрый вечер, меня зовут Мария."
           sentence_translation_en: "Good evening, my name is Maria."
           word_translation_ru: "Добрый вечер"
+          word_translation_en: "Good evening"
 
         - word: "Chamo-me"
           transcription: "[ˈʃɐmu mi]"
@@ -74,6 +77,7 @@ tasks:
           sentence_translation_ru: "Меня зовут Мария."
           sentence_translation_en: "My name is Maria."
           word_translation_ru: "Меня зовут"
+          word_translation_en: "My name is"
 
         - word: "Eu sou"
           transcription: "[ew so]"
@@ -81,6 +85,7 @@ tasks:
           sentence_translation_ru: "Я — Педру."
           sentence_translation_en: "I am Pedro."
           word_translation_ru: "Я есть / Я —"
+          word_translation_en: "I am"
 
         - word: "Eu"
           transcription: "[ew]"
@@ -88,6 +93,7 @@ tasks:
           sentence_translation_ru: "Я — Ана."
           sentence_translation_en: "I am Ana."
           word_translation_ru: "Я"
+          word_translation_en: "I"
 
         - word: "Sou"
           transcription: "[so]"
@@ -95,6 +101,7 @@ tasks:
           sentence_translation_ru: "Я — Жоао."
           sentence_translation_en: "I am João."
           word_translation_ru: "Есть / Являюсь"
+          word_translation_en: "Am / Is"
 
         - word: "Nome"
           transcription: "[ˈnomɨ]"
@@ -102,6 +109,7 @@ tasks:
           sentence_translation_ru: "Моё имя — Ана."
           sentence_translation_en: "My name is Ana."
           word_translation_ru: "Имя"
+          word_translation_en: "Name"
 
         - word: "Prazer"
           transcription: "[pɾɐˈzeɾ]"
@@ -109,6 +117,7 @@ tasks:
           sentence_translation_ru: "Приятно познакомиться."
           sentence_translation_en: "Nice to meet you."
           word_translation_ru: "Приятно / Удовольствие"
+          word_translation_en: "Pleasure / Nice"
 
         - word: "E você?"
           transcription: "[i voˈse]"
@@ -116,6 +125,7 @@ tasks:
           sentence_translation_ru: "Привет, я — Ана. А вы?"
           sentence_translation_en: "Hello, I am Ana. And you?"
           word_translation_ru: "А вы? / А ты?"
+          word_translation_en: "And you?"
 
     completion_message: "Уровень прогресса: Начало"
 
