@@ -99,9 +99,104 @@ export default function TaskCard({
         const indexParam = urlParams.get('index');
         const initialCardIndex = indexParam ? parseInt(indexParam) : undefined;
         
+        // CRITICAL: Transform task structure if needed - support multiple formats
+        // VocabularyTaskPlayer expects task.content.cards, but import may use different structure
+        let vocabularyTask = task;
+        
+        // Debug: Log original task structure for troubleshooting
+        console.log('📋 VocabularyTask original structure:', {
+          hasContent: !!task.content,
+          hasCards: !!task.content?.cards,
+          cardsCount: task.content?.cards?.length || 0,
+          hasBlocks: !!task.blocks,
+          blocksIsArray: Array.isArray(task.blocks),
+          blocksCount: Array.isArray(task.blocks) ? task.blocks.length : (typeof task.blocks === 'object' && task.blocks ? Object.keys(task.blocks).length : 0),
+          blocksType: typeof task.blocks,
+          blocksKeys: typeof task.blocks === 'object' && task.blocks && !Array.isArray(task.blocks) ? Object.keys(task.blocks) : [],
+          hasStructure: !!task.structure,
+          structureBlocksOrder: task.structure?.blocks_order,
+          taskKeys: Object.keys(task),
+        });
+        
+        // If no content.cards, try to extract from various structures
+        if (!task.content?.cards || (Array.isArray(task.content.cards) && task.content.cards.length === 0)) {
+          const cards: any[] = [];
+          
+          // Try 1: Extract from blocks array (if blocks is an array)
+          if (task.blocks && Array.isArray(task.blocks)) {
+            task.blocks.forEach((block: any) => {
+              if (block.block_type === 'vocabulary_card' || block.type === 'vocabulary_card' || block.content?.word) {
+                if (block.content?.cards && Array.isArray(block.content.cards)) {
+                  cards.push(...block.content.cards);
+                } else if (block.content?.word) {
+                  cards.push(block.content);
+                }
+              }
+            });
+          }
+          
+          // Try 2: Extract from blocks object (if blocks is an object with keys)
+          if (cards.length === 0 && task.blocks && typeof task.blocks === 'object' && !Array.isArray(task.blocks)) {
+            Object.values(task.blocks).forEach((block: any) => {
+              if (block && (block.block_type === 'vocabulary_card' || block.type === 'vocabulary_card' || block.content?.word)) {
+                if (block.content?.cards && Array.isArray(block.content.cards)) {
+                  cards.push(...block.content.cards);
+                } else if (block.content?.word) {
+                  cards.push(block.content);
+                }
+              }
+            });
+          }
+          
+          // Try 3: Extract from structure.blocks_order (if structure exists)
+          if (cards.length === 0 && task.structure?.blocks_order && Array.isArray(task.structure.blocks_order)) {
+            task.structure.blocks_order.forEach((blockKey: string) => {
+              const block = task.blocks && typeof task.blocks === 'object' && !Array.isArray(task.blocks) 
+                ? task.blocks[blockKey]
+                : null;
+              if (block && (block.block_type === 'vocabulary_card' || block.type === 'vocabulary_card' || block.content?.word)) {
+                if (block.content?.cards && Array.isArray(block.content.cards)) {
+                  cards.push(...block.content.cards);
+                } else if (block.content?.word) {
+                  cards.push(block.content);
+                }
+              }
+            });
+          }
+          
+          // Try 4: If task has direct cards array (fallback)
+          if (cards.length === 0 && task.cards && Array.isArray(task.cards)) {
+            cards.push(...task.cards);
+          }
+          
+          // If cards were found, create transformed task
+          if (cards.length > 0) {
+            vocabularyTask = {
+              ...task,
+              content: {
+                ...task.content,
+                cards: cards,
+              },
+            };
+            console.log('✅ Transformed vocabulary task - extracted', cards.length, 'cards');
+          } else {
+            console.warn('⚠️ No cards found in vocabulary task - task structure may be incorrect');
+          }
+        } else {
+          console.log('✅ Vocabulary task already has content.cards - using as-is');
+        }
+        
+        // Final check: ensure content.cards exists and is an array
+        if (!vocabularyTask.content) {
+          vocabularyTask = { ...vocabularyTask, content: {} };
+        }
+        if (!vocabularyTask.content.cards || !Array.isArray(vocabularyTask.content.cards)) {
+          vocabularyTask.content.cards = [];
+        }
+        
         return (
           <VocabularyTaskPlayer
-            task={task}
+            task={vocabularyTask}
             language={language}
             onComplete={handleComplete}
             isCompleted={isCompleted}
