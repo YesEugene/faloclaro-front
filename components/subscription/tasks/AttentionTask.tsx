@@ -260,7 +260,7 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
     // Check if all items are answered after this answer
     const allAnsweredNow = items.every((item: any, index: number) => {
       if (index === itemIndex) return true; // Current item is now answered
-      return newAnswers[index] !== undefined;
+      return newAnswers[index] !== undefined && newAnswers[index] !== null && newAnswers[index] !== '';
     });
     
     // If all answered and this is the last item, mark as completed immediately
@@ -271,6 +271,7 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
       // Don't reset currentItemIndex - user should see the replay button on the last block
       if (currentItemIndex !== itemIndex) {
         setCurrentItemIndex(itemIndex);
+        currentItemIndexRef.current = itemIndex;
       }
       const correctCount = items.filter((item: any, index: number) => {
         const selectedAnswer = newAnswers[index];
@@ -278,7 +279,10 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
         if (!correctOption) return false;
         // Check both translated and original text
         const optText = getTranslatedText(correctOption.text, appLanguage);
-        return selectedAnswer === correctOption.text || selectedAnswer === optText;
+        const correctOptionText = typeof correctOption.text === 'string' 
+          ? correctOption.text 
+          : getTranslatedText(correctOption.text, appLanguage);
+        return selectedAnswer === correctOptionText || selectedAnswer === optText || selectedAnswer === correctOption.text;
       }).length;
       
       onComplete({
@@ -373,7 +377,8 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
   const showResult = showResults[currentItemIndex];
   const correctOption = currentItem.options?.find((opt: any) => opt.correct);
   // Check if all items are answered (either by showResults or by answers)
-  const allAnswered = items.every((item: any, index: number) => answers[index] !== undefined);
+  // If task is completed locally, all items are considered answered
+  const allAnswered = localIsCompleted || items.every((item: any, index: number) => answers[index] !== undefined);
 
   return (
     <div className="space-y-6 w-full" style={{ paddingBottom: '140px' }}>
@@ -496,8 +501,9 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
             </div>
           )}
 
-          {/* Replay Button - Show only on the last block when task is completed and all items are answered */}
-          {localIsCompleted && allAnswered && currentItemIndex === items.length - 1 && (
+          {/* Replay Button - Show when task is completed (even if not all items answered, because task was completed) */}
+          {/* Always show on last item if task is completed */}
+          {localIsCompleted && currentItemIndex === items.length - 1 && (
             <button
               onClick={(e) => {
                 e.preventDefault();
@@ -510,7 +516,7 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
                 border: 'none',
               }}
             >
-              {appLanguage === 'ru' ? 'Пройти снова' : appLanguage === 'en' ? 'Replay' : 'Repetir'}
+              {appLanguage === 'ru' ? 'Пройти заново' : appLanguage === 'en' ? 'Try again' : 'Repetir'}
             </button>
           )}
         </div>
@@ -644,14 +650,25 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
             {/* Next Button - Right */}
             {/* If task is completed AND on last item: show next task button (green), else: show next item button (blue) or complete button */}
             {localIsCompleted && currentItemIndex === items.length - 1 ? (
-              // Task completed AND on last item - show next task button (green, active)
-              canGoNext && onNextTask ? (
+              // Task completed AND on last item - show next task button (green, active) if available, otherwise empty
+              onNextTask ? (
                 <button
                   onClick={onNextTask}
                   className="w-10 h-10 rounded-full bg-green-500 hover:bg-green-600 transition-colors flex items-center justify-center"
                   aria-label={appLanguage === 'ru' ? 'Следующее задание' : appLanguage === 'en' ? 'Next task' : 'Próxima tarefa'}
                 >
                   <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              ) : canGoNext ? (
+                // If canGoNext is true but onNextTask is not provided, still show button but disabled
+                <button
+                  disabled
+                  className="w-10 h-10 rounded-full bg-gray-300 transition-colors flex items-center justify-center cursor-not-allowed"
+                  aria-label={appLanguage === 'ru' ? 'Следующее задание заблокировано' : appLanguage === 'en' ? 'Next task locked' : 'Próxima tarefa bloqueada'}
+                >
+                  <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </button>

@@ -235,9 +235,18 @@ export default function AttentionTaskEditor({ task, onChange, lessonDay }: Atten
                       </p>
                     )}
                     {item.options && (
-                      <p className="text-sm text-gray-600">
-                        Вариантов ответа: {item.options.length}
-                      </p>
+                      <div className="text-sm text-gray-600 space-y-1">
+                        <p>Вариантов ответа: {item.options.length}</p>
+                        {item.options.map((opt: any, optIdx: number) => {
+                          const optText = typeof opt.text === 'string' ? opt.text : (opt.text?.ru || opt.text?.en || '');
+                          return (
+                            <div key={optIdx} className="flex items-center gap-2">
+                              {opt.correct && <span className="text-green-600">✓</span>}
+                              <span>{optText}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
                     )}
                   </div>
                   <div className="flex gap-2">
@@ -559,7 +568,20 @@ function AttentionItemEditorModal({ item, lessonDay, onSave, onCancel }: {
                               Правильный
                             </span>
                           )}
-                          <span className="font-medium text-gray-900">{option.text}</span>
+                          <div className="flex flex-col gap-1">
+                            {typeof option.text === 'string' ? (
+                              <span className="font-medium text-gray-900">{option.text}</span>
+                            ) : (
+                              <>
+                                {option.text?.ru && (
+                                  <span className="font-medium text-gray-900">RU: {option.text.ru}</span>
+                                )}
+                                {option.text?.en && (
+                                  <span className="font-medium text-gray-900">EN: {option.text.en}</span>
+                                )}
+                              </>
+                            )}
+                          </div>
                         </div>
                       </div>
                       <div className="flex gap-2">
@@ -637,25 +659,75 @@ function AttentionItemEditorModal({ item, lessonDay, onSave, onCancel }: {
                 </div>
               </div>
               <div className="p-6 space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Текст варианта (PT) *
-                  </label>
-                  <input
-                    type="text"
-                    value={editingOptionIndex !== null && editingOptionIndex < options.length ? options[editingOptionIndex]?.text || '' : ''}
-                    onChange={(e) => {
-                      const newOptions = [...options];
-                      if (editingOptionIndex !== null && editingOptionIndex < options.length) {
-                        newOptions[editingOptionIndex] = { ...newOptions[editingOptionIndex], text: e.target.value };
-                      } else {
-                        newOptions.push({ text: e.target.value, correct: false });
-                      }
-                      setOptions(newOptions);
-                    }}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                    placeholder="Просит о помощи"
-                  />
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Текст варианта (RU) *
+                    </label>
+                    <input
+                      type="text"
+                      value={editingOptionIndex !== null && editingOptionIndex < options.length 
+                        ? (typeof options[editingOptionIndex]?.text === 'string' 
+                            ? '' 
+                            : options[editingOptionIndex]?.text?.ru || '')
+                        : ''}
+                      onChange={(e) => {
+                        const newOptions = [...options];
+                        if (editingOptionIndex !== null && editingOptionIndex < options.length) {
+                          const existingOption = newOptions[editingOptionIndex];
+                          newOptions[editingOptionIndex] = {
+                            ...existingOption,
+                            text: {
+                              ...(typeof existingOption?.text === 'object' ? existingOption.text : {}),
+                              ru: e.target.value,
+                            },
+                          };
+                        } else {
+                          newOptions.push({ 
+                            text: { ru: e.target.value, en: '' }, 
+                            correct: false 
+                          });
+                        }
+                        setOptions(newOptions);
+                      }}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                      placeholder="Просит о помощи"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Текст варианта (EN) *
+                    </label>
+                    <input
+                      type="text"
+                      value={editingOptionIndex !== null && editingOptionIndex < options.length 
+                        ? (typeof options[editingOptionIndex]?.text === 'string' 
+                            ? '' 
+                            : options[editingOptionIndex]?.text?.en || '')
+                        : ''}
+                      onChange={(e) => {
+                        const newOptions = [...options];
+                        if (editingOptionIndex !== null && editingOptionIndex < options.length) {
+                          const existingOption = newOptions[editingOptionIndex];
+                          newOptions[editingOptionIndex] = {
+                            ...existingOption,
+                            text: {
+                              ...(typeof existingOption?.text === 'object' ? existingOption.text : {}),
+                              en: e.target.value,
+                            },
+                          };
+                        } else {
+                          newOptions.push({ 
+                            text: { ru: '', en: e.target.value }, 
+                            correct: false 
+                          });
+                        }
+                        setOptions(newOptions);
+                      }}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                      placeholder="Asks for help"
+                    />
+                  </div>
                 </div>
                 <div>
                   <label className="flex items-center gap-2">
@@ -683,15 +755,40 @@ function AttentionItemEditorModal({ item, lessonDay, onSave, onCancel }: {
                   </button>
                   <button
                     onClick={() => {
+                      // Get values from inputs
+                      const ruInputs = document.querySelectorAll('input[placeholder="Просит о помощи"]') as NodeListOf<HTMLInputElement>;
+                      const enInputs = document.querySelectorAll('input[placeholder="Asks for help"]') as NodeListOf<HTMLInputElement>;
+                      const ruInput = ruInputs[ruInputs.length - 1]; // Get last input (in modal)
+                      const enInput = enInputs[enInputs.length - 1]; // Get last input (in modal)
+                      const textRu = ruInput?.value?.trim() || '';
+                      const textEn = enInput?.value?.trim() || '';
+                      
+                      if (!textRu && !textEn) {
+                        alert('Пожалуйста, введите текст варианта хотя бы на одном языке');
+                        return;
+                      }
+                      
+                      // Get correct status from checkbox
+                      const checkboxInputs = document.querySelectorAll('input[type="checkbox"]') as NodeListOf<HTMLInputElement>;
+                      const correctCheckbox = Array.from(checkboxInputs).find(cb => 
+                        cb.nextElementSibling?.textContent?.includes('Правильный ответ')
+                      );
+                      const isCorrect = correctCheckbox?.checked || false;
+                      
                       if (editingOptionIndex !== null && editingOptionIndex < options.length) {
-                        handleSaveOption(options[editingOptionIndex]);
+                        // Update existing option
+                        const updatedOption = {
+                          ...options[editingOptionIndex],
+                          text: { ru: textRu, en: textEn },
+                          correct: isCorrect,
+                        };
+                        handleSaveOption(updatedOption);
                       } else {
-                        const text = (document.querySelector('input[placeholder="Просит о помощи"]') as HTMLInputElement)?.value || '';
-                        if (!text.trim()) {
-                          alert('Пожалуйста, введите текст варианта');
-                          return;
-                        }
-                        handleSaveOption({ text: text.trim(), correct: false });
+                        // Create new option
+                        handleSaveOption({ 
+                          text: { ru: textRu, en: textEn }, 
+                          correct: isCorrect 
+                        });
                       }
                     }}
                     className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"

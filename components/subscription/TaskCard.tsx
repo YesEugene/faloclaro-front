@@ -106,8 +106,8 @@ export default function TaskCard({
             onComplete={handleComplete}
             isCompleted={isCompleted}
             clusterColor="#94B7F2" // Default color for subscription course
-            onNextTask={canGoNext ? onNext : undefined}
-            onPreviousTask={canGoPrevious ? onPrevious : undefined}
+            onNextTask={onNext}
+            onPreviousTask={onPrevious}
             canGoNext={canGoNext}
             canGoPrevious={canGoPrevious}
             onBackToTasks={onBackToTasks}
@@ -130,8 +130,8 @@ export default function TaskCard({
             savedAnswers={taskProgress?.completion_data?.selectedAnswers}
             savedShowResults={taskProgress?.completion_data?.showResults}
             savedSpeakOutLoudCompleted={taskProgress?.completion_data?.speakOutLoudCompleted}
-            onNextTask={canGoNext ? onNext : undefined}
-            onPreviousTask={canGoPrevious ? onPrevious : undefined}
+            onNextTask={onNext}
+            onPreviousTask={onPrevious}
             canGoNext={canGoNext}
             canGoPrevious={canGoPrevious}
             progressCompleted={progressCompleted}
@@ -155,8 +155,8 @@ export default function TaskCard({
             isCompleted={isCompleted}
             savedAnswers={listeningSavedAnswers}
             savedShowResults={listeningSavedShowResults}
-            onNextTask={canGoNext ? onNext : undefined}
-            onPreviousTask={canGoPrevious ? onPrevious : undefined}
+            onNextTask={onNext}
+            onPreviousTask={onPrevious}
             canGoNext={canGoNext}
             canGoPrevious={canGoPrevious}
             progressCompleted={progressCompleted}
@@ -180,8 +180,8 @@ export default function TaskCard({
             isCompleted={isCompleted}
             savedAnswers={attentionSavedAnswers}
             savedShowResults={attentionSavedShowResults}
-            onNextTask={canGoNext ? onNext : undefined}
-            onPreviousTask={canGoPrevious ? onPrevious : undefined}
+            onNextTask={onNext}
+            onPreviousTask={onPrevious}
             canGoNext={canGoNext}
             canGoPrevious={canGoPrevious}
             progressCompleted={progressCompleted}
@@ -197,8 +197,8 @@ export default function TaskCard({
             isCompleted={isCompleted}
             savedWrittenText={taskProgress?.completion_data?.writtenText}
             savedSpeakOutLoud={taskProgress?.completion_data?.speakOutLoud}
-            onNextTask={canGoNext ? onNext : undefined}
-            onPreviousTask={canGoPrevious ? onPrevious : undefined}
+            onNextTask={onNext}
+            onPreviousTask={onPrevious}
             canGoNext={canGoNext}
             canGoPrevious={canGoPrevious}
             progressCompleted={progressCompleted}
