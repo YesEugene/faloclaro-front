@@ -87,6 +87,8 @@ export default function VocabularyTaskPlayer({
 
   const cards = task.content?.cards || [];
   const currentCard = cards[currentCardIndex];
+  // Check show_timer from task.ui or task.show_timer (fallback for backwards compatibility)
+  const showTimer = task.ui?.show_timer !== undefined ? task.ui.show_timer : (task.show_timer !== undefined ? task.show_timer : true);
   const requiredTime = task.completion_rule === 'auto_after_audio_10_min' ? 10 * 60 * 1000 : 0; // 10 minutes in ms
 
   // Get progress message based on completed tasks
@@ -726,7 +728,7 @@ export default function VocabularyTaskPlayer({
         }}
       >
         {/* Timer - On the blue card, top right, positioned to not overlap white button bar */}
-        {task.ui?.show_timer && requiredTime > 0 && (
+        {showTimer && requiredTime > 0 && (
           <div 
             className="absolute right-4 bg-white rounded-full py-1.5 shadow-sm" 
             style={{ 

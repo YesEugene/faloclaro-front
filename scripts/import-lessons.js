@@ -110,6 +110,7 @@ function loadLessonFiles(dayNumber) {
           show_timer: taskData.task.show_timer,
           show_settings: taskData.task.show_settings,
           completion_message: taskData.task.completion_message,
+          completion_rule: taskData.task.completion_rule, // Explicitly include completion_rule
           optional: taskData.task.optional,
           ...taskData.task, // Include all other properties
         };
@@ -162,6 +163,13 @@ function loadLessonFiles(dayNumber) {
             // Merge vocabulary-specific content (ui, card_format, content)
             if (taskData.ui) {
               existingTask.ui = taskData.ui;
+            } else {
+              // If ui is not defined in task file, create it from task properties
+              existingTask.ui = {
+                show_audio_settings: taskData.task.show_settings !== undefined ? taskData.task.show_settings : true,
+                show_timer: taskData.task.show_timer !== undefined ? taskData.task.show_timer : true,
+                allow_repeat: true,
+              };
             }
             if (taskData.card_format) {
               existingTask.card_format = taskData.card_format;
@@ -175,9 +183,23 @@ function loadLessonFiles(dayNumber) {
             }
             if (taskData.task.show_timer !== undefined) {
               existingTask.show_timer = taskData.task.show_timer;
+              // Also update ui.show_timer
+              if (!existingTask.ui) {
+                existingTask.ui = {};
+              }
+              existingTask.ui.show_timer = taskData.task.show_timer;
             }
             if (taskData.task.show_settings !== undefined) {
               existingTask.show_settings = taskData.task.show_settings;
+              // Also update ui.show_audio_settings
+              if (!existingTask.ui) {
+                existingTask.ui = {};
+              }
+              existingTask.ui.show_audio_settings = taskData.task.show_settings;
+            }
+            // Merge completion_rule
+            if (taskData.task.completion_rule) {
+              existingTask.completion_rule = taskData.task.completion_rule;
             }
             console.log(`  ✅ Merged vocabulary content into task ${taskItem.task_id}`);
           } else {
@@ -186,6 +208,20 @@ function loadLessonFiles(dayNumber) {
             console.log(`  ✅ Updated task ${taskItem.task_id} (${taskItem.type})`);
           }
         } else {
+          // Task doesn't exist, add it - but ensure ui object is created for vocabulary tasks
+          if (taskItem.task_id === 1 && taskItem.type === 'vocabulary') {
+            if (!taskItem.ui) {
+              taskItem.ui = {
+                show_audio_settings: taskData.task.show_settings !== undefined ? taskData.task.show_settings : true,
+                show_timer: taskData.task.show_timer !== undefined ? taskData.task.show_timer : true,
+                allow_repeat: true,
+              };
+            }
+            // Ensure completion_rule is set
+            if (taskData.task.completion_rule) {
+              taskItem.completion_rule = taskData.task.completion_rule;
+            }
+          }
           dayData.tasks.push(taskItem);
           console.log(`  ✅ Added task ${taskItem.task_id} (${taskItem.type})`);
         }

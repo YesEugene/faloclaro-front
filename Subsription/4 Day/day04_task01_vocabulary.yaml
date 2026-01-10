@@ -7,9 +7,18 @@ task:
   subtitle:
     ru: "Просьбы и ответы"
     en: "Requests and responses"
+  estimated_time: "≈10"
   show_timer: true
   show_settings: true
   completion_rule: "auto_after_audio_10_min"
+  completion_message:
+    ru: "Уровень прогресса: Начало"
+    en: "Progress level: Beginning"
+
+ui:
+  show_audio_settings: true
+  show_timer: true
+  allow_repeat: true
 
 card_format:
   show_word: true
