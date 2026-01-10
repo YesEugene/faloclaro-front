@@ -86,10 +86,46 @@ export default function VocabularyTaskPlayer({
   const currentIndexRef = useRef(0);
 
   const cards = task.content?.cards || [];
-  const currentCard = cards[currentCardIndex];
+  const currentCard = cards[currentCardIndex] || cards[0] || null;
+  
+  // Debug: Log card structure for troubleshooting
+  useEffect(() => {
+    console.log('📋 VocabularyTaskPlayer Debug:', {
+      cardsCount: cards.length,
+      currentCardIndex,
+      cardsArray: cards,
+      hasCurrentCard: !!currentCard,
+      currentCard: currentCard,
+      currentCardKeys: currentCard ? Object.keys(currentCard) : [],
+      currentCardWord: currentCard?.word,
+      hasCardFormat: !!task.card_format,
+      cardFormat: task.card_format,
+      showWord: task.card_format?.show_word,
+      taskKeys: Object.keys(task),
+      taskContentKeys: task.content ? Object.keys(task.content) : [],
+      taskContent: task.content,
+    });
+  }, [cards, currentCardIndex, currentCard, task]);
+  
   // Check show_timer from task.ui or task.show_timer (fallback for backwards compatibility)
   const showTimer = task.ui?.show_timer !== undefined ? task.ui.show_timer : (task.show_timer !== undefined ? task.show_timer : true);
   const requiredTime = task.completion_rule === 'auto_after_audio_10_min' ? 10 * 60 * 1000 : 0; // 10 minutes in ms
+  
+  // CRITICAL: Default card_format if not present (for imported lessons)
+  // If card_format is missing, enable all fields by default so content is visible
+  const cardFormat = task.card_format || {
+    show_word: true,
+    show_transcription: true,
+    show_example_sentence: true,
+    show_word_translation_ru: true,
+    show_sentence_translation_ru: true,
+    show_sentence_translation_en: true,
+  };
+  
+  // CRITICAL: Ensure show_word is true by default if not explicitly set to false
+  if (cardFormat.show_word === undefined) {
+    cardFormat.show_word = true;
+  }
 
   // Get progress message based on completed tasks
   const getProgressMessage = (completed: number, total: number) => {
@@ -683,8 +719,28 @@ export default function VocabularyTaskPlayer({
 
   const t = translations[appLanguage as keyof typeof translations] || translations.en;
 
-  if (!currentCard) {
-    return <div>No cards available</div>;
+  // CRITICAL: If no current card but cards exist, try to use first card
+  if (!currentCard && cards.length > 0) {
+    console.warn('⚠️ Current card is undefined, but cards exist. Using first card.');
+    setCurrentCardIndex(0);
+    return null; // Will re-render with first card
+  }
+  
+  if (!currentCard || cards.length === 0) {
+    return (
+      <div className="text-center p-8">
+        <p className="text-gray-600">
+          {appLanguage === 'ru' 
+            ? 'Нет доступных карточек' 
+            : appLanguage === 'en'
+            ? 'No cards available'
+            : 'Nenhum cartão disponível'}
+        </p>
+        <p className="text-sm text-gray-500 mt-2">
+          Cards: {cards.length}, Current Index: {currentCardIndex}
+        </p>
+      </div>
+    );
   }
 
   // Use word as key for audio URL (not example_sentence)
@@ -749,48 +805,49 @@ export default function VocabularyTaskPlayer({
           {currentCardIndex + 1} / {cards.length}
         </div>
 
-        {/* Word (large) */}
-        {task.card_format?.show_word && currentCard.word && (
+        {/* Word (large) - CRITICAL: Always show word if it exists, card_format is optional */}
+        {/* Show word if it exists in any form (word, text, portuguese_text) */}
+        {(currentCard?.word || currentCard?.text || currentCard?.portuguese_text) && (cardFormat.show_word !== false) && (
           <div className="text-5xl font-bold mb-4 text-center text-black">
-            {currentCard.word}
+            {currentCard?.word || currentCard?.text || currentCard?.portuguese_text}
           </div>
         )}
 
         {/* IPA Transcription */}
-        {task.card_format?.show_transcription && currentCard.transcription && (
+        {currentCard?.transcription && (cardFormat.show_transcription !== false) && (
           <div className="text-lg text-center mb-3 font-mono text-black">
             {currentCard.transcription}
           </div>
         )}
 
         {/* PT sentence (example usage) */}
-        {task.card_format?.show_example_sentence && currentCard.example_sentence && (
+        {currentCard?.example_sentence && (cardFormat.show_example_sentence !== false) && (
           <div className="text-base text-center mb-2 text-black">
             {currentCard.example_sentence}
           </div>
         )}
 
         {/* Sentence translation - based on interface language */}
-        {task.card_format?.show_sentence_translation_ru && appLanguage === 'ru' && currentCard.sentence_translation_ru && (
+        {appLanguage === 'ru' && currentCard?.sentence_translation_ru && (cardFormat.show_sentence_translation_ru !== false) && (
           <div className="text-base text-center mb-2 text-black">
             {currentCard.sentence_translation_ru}
           </div>
         )}
-        {task.card_format?.show_sentence_translation_en && appLanguage === 'en' && currentCard.sentence_translation_en && (
+        {appLanguage === 'en' && currentCard?.sentence_translation_en && (cardFormat.show_sentence_translation_en !== false) && (
           <div className="text-base text-center mb-4 text-black">
             {currentCard.sentence_translation_en}
           </div>
         )}
 
         {/* Word translation in white card */}
-        {task.card_format?.show_word_translation_ru && (
+        {(cardFormat.show_word_translation_ru !== false) && (
           <div className="mt-auto mx-[10px] mb-3">
-            {(appLanguage === 'ru' && currentCard.word_translation_ru) || 
-             (appLanguage === 'en' && currentCard.word_translation_en) ? (
+            {(appLanguage === 'ru' && currentCard?.word_translation_ru) || 
+             (appLanguage === 'en' && currentCard?.word_translation_en) ? (
               <div className="bg-white rounded-[20px] p-4 text-center">
                 <div className="text-xl text-gray-900 font-semibold">
-                  {appLanguage === 'ru' && currentCard.word_translation_ru}
-                  {appLanguage === 'en' && currentCard.word_translation_en}
+                  {appLanguage === 'ru' && currentCard?.word_translation_ru}
+                  {appLanguage === 'en' && currentCard?.word_translation_en}
                 </div>
               </div>
             ) : null}
