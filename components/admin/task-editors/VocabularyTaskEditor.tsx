@@ -151,7 +151,6 @@ export default function VocabularyTaskEditor({ task, onChange, lessonDay }: Voca
         };
         setCards(newCards);
         updateTask(newCards);
-        alert('Аудио успешно сгенерировано!');
       } else {
         alert('Ошибка при генерации аудио: ' + (data.error || 'Unknown error'));
       }
@@ -753,8 +752,6 @@ function CardEditorModal({ card, lessonDay, onSave, onCancel }: {
                           setAudioExists(true);
                         }
                       }, 1000);
-                      
-                      alert('Аудио успешно сгенерировано! Теперь вы можете прослушать его, нажав кнопку Play.');
                     } else {
                       alert('Ошибка при генерации аудио: ' + (data.error || 'Unknown error'));
                     }
@@ -801,7 +798,6 @@ function CardEditorModal({ card, lessonDay, onSave, onCancel }: {
                         // Update form data with audio URL
                         setFormData(prev => ({ ...prev, audioUrl: data.audioUrl }));
                         setAudioExists(true);
-                        alert('Аудио успешно загружено! Теперь вы можете прослушать его, нажав кнопку Play.');
                       } else {
                         alert('Ошибка при загрузке аудио: ' + (data.error || 'Unknown error'));
                       }

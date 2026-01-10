@@ -366,7 +366,7 @@ function ReinforcementTaskEditor({ task, taskNumber, lessonDay, onSave, onCancel
 
                       const data = await response.json();
                       if (data.success) {
-                        alert('Аудио успешно сгенерировано!');
+                        // Audio generated successfully - icon will appear automatically
                       } else {
                         alert('Ошибка при генерации аудио: ' + (data.error || 'Unknown error'));
                       }
@@ -410,7 +410,7 @@ function ReinforcementTaskEditor({ task, taskNumber, lessonDay, onSave, onCancel
 
                         const data = await response.json();
                         if (data.success) {
-                          alert('Аудио успешно загружено!');
+                          // Audio uploaded successfully - icon will appear automatically
                         } else {
                           alert('Ошибка при загрузке аудио: ' + (data.error || 'Unknown error'));
                         }

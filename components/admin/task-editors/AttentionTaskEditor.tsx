@@ -137,7 +137,6 @@ export default function AttentionTaskEditor({ task, onChange, lessonDay }: Atten
         };
         setItems(newItems);
         updateTask(newItems);
-        alert('Аудио успешно сгенерировано!');
       } else {
         alert('Ошибка при генерации аудио: ' + (data.error || 'Unknown error'));
       }
@@ -611,7 +610,6 @@ function AttentionItemEditorModal({ item, lessonDay, onSave, onCancel }: {
                     if (data.success && data.audioUrl) {
                       setAudioUrl(data.audioUrl);
                       setAudioExists(true);
-                      alert('Аудио успешно сгенерировано!');
                     } else {
                       alert('Ошибка при генерации аудио: ' + (data.error || 'Unknown error'));
                     }
@@ -657,7 +655,6 @@ function AttentionItemEditorModal({ item, lessonDay, onSave, onCancel }: {
                       if (data.success && data.audioUrl) {
                         setAudioUrl(data.audioUrl);
                         setAudioExists(true);
-                        alert('Аудио успешно загружено!');
                       } else {
                         alert('Ошибка при загрузке аудио: ' + (data.error || 'Unknown error'));
                       }

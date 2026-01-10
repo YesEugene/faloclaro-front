@@ -166,7 +166,6 @@ export default function ExplanationBlockEditor({ block, onChange, lessonDay }: E
         setExamples(newExamples);
         setAudioUrls(prev => ({ ...prev, [index]: data.audioUrl }));
         updateBlock({ examples: newExamples });
-        alert('Аудио успешно сгенерировано!');
       } else {
         alert('Ошибка при генерации аудио: ' + (data.error || 'Unknown error'));
       }

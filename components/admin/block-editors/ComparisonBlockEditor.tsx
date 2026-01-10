@@ -172,7 +172,6 @@ export default function ComparisonBlockEditor({ block, onChange, lessonDay }: Co
         setComparisonCards(newCards);
         setAudioUrls(prev => ({ ...prev, [index]: data.audioUrl }));
         updateBlock({ comparison_card: newCards });
-        alert('Аудио успешно сгенерировано!');
       } else {
         alert('Ошибка при генерации аудио: ' + (data.error || 'Unknown error'));
       }
@@ -441,7 +440,6 @@ function ComparisonCardEditor({ card, lessonDay, onSave, onCancel }: {
                 const data = await response.json();
                 if (data.success && data.audioUrl) {
                   setAudioUrl(data.audioUrl);
-                  alert('Аудио успешно сгенерировано!');
                 } else {
                   alert('Ошибка при генерации аудио: ' + (data.error || 'Unknown error'));
                 }
@@ -486,7 +484,6 @@ function ComparisonCardEditor({ card, lessonDay, onSave, onCancel }: {
                   const data = await response.json();
                   if (data.success && data.audioUrl) {
                     setAudioUrl(data.audioUrl);
-                    alert('Аудио успешно загружено!');
                   } else {
                     alert('Ошибка при загрузке аудио: ' + (data.error || 'Unknown error'));
                   }

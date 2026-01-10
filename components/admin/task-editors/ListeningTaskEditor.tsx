@@ -178,7 +178,6 @@ export default function ListeningTaskEditor({ task, onChange, lessonDay }: Liste
         };
         setItems(newItems);
         updateTask(newItems);
-        alert('Аудио успешно сгенерировано!');
       } else {
         alert('Ошибка при генерации аудио: ' + (data.error || 'Unknown error'));
       }
@@ -703,7 +702,6 @@ function ListeningItemEditorModal({ item, lessonDay, onSave, onCancel }: {
                     if (data.success && data.audioUrl) {
                       setAudioUrl(data.audioUrl);
                       setAudioExists(true);
-                      alert('Аудио успешно сгенерировано!');
                     } else {
                       alert('Ошибка при генерации аудио: ' + (data.error || 'Unknown error'));
                     }
@@ -749,7 +747,6 @@ function ListeningItemEditorModal({ item, lessonDay, onSave, onCancel }: {
                       if (data.success && data.audioUrl) {
                         setAudioUrl(data.audioUrl);
                         setAudioExists(true);
-                        alert('Аудио успешно загружено!');
                       } else {
                         alert('Ошибка при загрузке аудио: ' + (data.error || 'Unknown error'));
                       }
