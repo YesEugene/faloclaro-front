@@ -27,30 +27,82 @@ function getTTSClient() {
     if (credentialsJson) {
       // Use JSON credentials directly (for Vercel/serverless environments)
       console.log('  Using JSON credentials from environment variable...');
+      console.log('  JSON length:', credentialsJson.length, 'characters');
+      console.log('  JSON preview (first 200 chars):', credentialsJson.substring(0, 200));
+      
       let credentials: any;
       try {
-        credentials = typeof credentialsJson === 'string' ? JSON.parse(credentialsJson) : credentialsJson;
+        // In Vercel, JSON might be stored as a string that needs parsing
+        // Try parsing once, and if it's already an object, use it directly
+        if (typeof credentialsJson === 'string') {
+          // Remove any leading/trailing whitespace
+          const trimmedJson = credentialsJson.trim();
+          
+          // Check if it looks like it might be double-encoded (has escaped quotes)
+          if (trimmedJson.startsWith('"') && trimmedJson.endsWith('"')) {
+            console.log('  JSON appears to be double-quoted, unescaping...');
+            // Try to unescape the string first
+            const unescaped = JSON.parse(trimmedJson);
+            credentials = typeof unescaped === 'string' ? JSON.parse(unescaped) : unescaped;
+          } else {
+            // Normal JSON parsing
+            credentials = JSON.parse(trimmedJson);
+          }
+        } else {
+          // Already an object (shouldn't happen in Vercel, but handle it anyway)
+          credentials = credentialsJson;
+        }
       } catch (parseError: any) {
         console.error('❌ Error parsing JSON credentials:', parseError.message);
-        throw new Error(`Failed to parse GOOGLE_APPLICATION_CREDENTIALS_JSON: ${parseError.message}`);
+        console.error('  JSON snippet around error:', credentialsJson.substring(Math.max(0, parseError.position - 50), parseError.position + 50));
+        throw new Error(`Failed to parse GOOGLE_APPLICATION_CREDENTIALS_JSON: ${parseError.message}. Make sure the JSON is valid and not double-encoded.`);
       }
+      
+      console.log('  Credentials parsed. Type:', credentials.type, 'Project ID:', credentials.project_id);
+      console.log('  Client email:', credentials.client_email);
+      console.log('  Has private_key:', !!credentials.private_key, 'Length:', credentials.private_key?.length || 0);
       
       if (!credentials.type || !credentials.project_id || !credentials.private_key || !credentials.client_email) {
-        console.error('❌ Invalid credentials structure. Required fields: type, project_id, private_key, client_email');
-        throw new Error('Invalid credentials structure. Required fields: type, project_id, private_key, client_email');
+        const missingFields = [];
+        if (!credentials.type) missingFields.push('type');
+        if (!credentials.project_id) missingFields.push('project_id');
+        if (!credentials.private_key) missingFields.push('private_key');
+        if (!credentials.client_email) missingFields.push('client_email');
+        console.error('❌ Invalid credentials structure. Missing fields:', missingFields.join(', '));
+        throw new Error(`Invalid credentials structure. Missing required fields: ${missingFields.join(', ')}`);
       }
       
-      console.log('  Credentials parsed successfully. Project ID:', credentials.project_id);
-      // Use the full credentials object as-is, but ensure private_key has proper newlines
+      // Process private_key: replace escaped newlines with actual newlines
+      // This handles cases where JSON has \\n instead of \n
+      let processedPrivateKey = credentials.private_key;
+      if (typeof processedPrivateKey === 'string') {
+        // Replace \\n with actual newlines (handle both escaped and double-escaped)
+        processedPrivateKey = processedPrivateKey.replace(/\\n/g, '\n').replace(/\\\\n/g, '\n');
+        // Ensure the private key starts with BEGIN and ends with END
+        if (!processedPrivateKey.includes('BEGIN PRIVATE KEY')) {
+          console.warn('⚠️  Private key format might be incorrect (missing BEGIN PRIVATE KEY)');
+        }
+      }
+      
+      console.log('  Credentials processed successfully. Project ID:', credentials.project_id);
+      
+      // Use the full credentials object with processed private_key
       const processedCredentials = {
         ...credentials,
-        private_key: credentials.private_key?.replace(/\\n/g, '\n') || credentials.private_key,
+        private_key: processedPrivateKey,
       };
-      ttsClient = new TextToSpeechClient({
-        credentials: processedCredentials,
-        projectId: credentials.project_id,
-      });
-      console.log('✅ TTS client initialized successfully with JSON credentials');
+      
+      try {
+        ttsClient = new TextToSpeechClient({
+          credentials: processedCredentials,
+          projectId: credentials.project_id,
+        });
+        console.log('✅ TTS client initialized successfully with JSON credentials');
+      } catch (initError: any) {
+        console.error('❌ Error creating TextToSpeechClient:', initError.message);
+        console.error('  Error code:', initError.code);
+        throw new Error(`Failed to create TextToSpeechClient: ${initError.message}. Check that credentials are valid and Text-to-Speech API is enabled.`);
+      }
     } else if (credentialsPath) {
       // Use keyFilename (for local development)
       console.log('  Using keyFilename:', credentialsPath);
