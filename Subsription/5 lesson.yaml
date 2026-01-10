@@ -3,37 +3,14 @@ day:
   title:
     ru: "Информация и объявления"
     en: "Information and announcements"
-  subtitle:
-    ru: "Учимся понимать где, когда и сколько"
-    en: "Understanding where, when and how much"
-  estimated_time: "15–25"
 
 tasks:
+  # 1) VOCABULARY
   - task_id: 1
     type: "vocabulary"
     title:
       ru: "Слова и фразы"
       en: "Words and phrases"
-    subtitle:
-      ru: "Информация и объявления"
-      en: "Information and announcements"
-    estimated_time: "≈10"
-    recommended_time: "10"
-    completion_rule: "auto_after_audio_10_min"
-
-    ui:
-      show_audio_settings: true
-      show_timer: true
-      allow_repeat: true
-
-    card_format:
-      show_word: true
-      show_transcription: true
-      show_example_sentence: true
-      show_word_translation_ru: true
-      show_sentence_translation_ru: true
-      show_sentence_translation_en: true
-
     content:
       cards:
         - word: "Aberto"
@@ -84,6 +61,14 @@ tasks:
           word_translation_ru: "бесплатная"
           word_translation_en: "free"
 
+        - word: "Museu"
+          transcription: "[muˈzɛu]"
+          example_sentence: "O museu está aberto."
+          sentence_translation_ru: "Музей открыт."
+          sentence_translation_en: "The museum is open."
+          word_translation_ru: "музей"
+          word_translation_en: "museum"
+
         - word: "Das"
           transcription: "[daʃ]"
           example_sentence: "Aberto das 10 às 18."
@@ -100,14 +85,6 @@ tasks:
           word_translation_ru: "до (о времени)"
           word_translation_en: "to"
 
-        - word: "Museu"
-          transcription: "[muˈzɛu]"
-          example_sentence: "O museu está aberto."
-          sentence_translation_ru: "Музей открыт."
-          sentence_translation_en: "The museum is open."
-          word_translation_ru: "музей"
-          word_translation_en: "museum"
-
         - word: "Informação"
           transcription: "[ĩfuɾmɐˈsɐ̃w]"
           example_sentence: "Esta é a informação."
@@ -116,26 +93,16 @@ tasks:
           word_translation_ru: "информация"
           word_translation_en: "information"
 
-    completion_message: "Уровень прогресса: Начало"
-
+  # 2) RULES
   - task_id: 2
     type: "rules"
     title:
       ru: "Как это сказать"
       en: "How to say it"
-    subtitle:
-      ru: "Информация в объявлениях"
-      en: "Information in announcements"
-    estimated_time: "≈5"
-    show_timer: false
-    show_settings: false
-
     structure:
       blocks_order:
         - block_1_open_closed
         - block_2_price
-        - block_3_reinforcement
-
     blocks:
       block_1_open_closed:
         type: "explanation"
@@ -143,17 +110,8 @@ tasks:
           ru: "Открыто или закрыто"
           en: "Open or closed"
         explanation_text:
-          ru: |
-            Чтобы сказать, открыт объект или закрыт, используют:
-            **Está aberto / está fechado**
-          en: |
-            To say if a place is open or closed, use:
-            **Está aberto / está fechado**
-        examples:
-          - text: "O museu está aberto."
-            audio: true
-          - text: "O museu está fechado."
-            audio: true
+          ru: "Чтобы сказать, открыт объект или закрыт, используют: Está aberto / Está fechado."
+          en: "To say if a place is open or closed, use: Está aberto / Está fechado."
 
       block_2_price:
         type: "explanation"
@@ -161,138 +119,57 @@ tasks:
           ru: "Цена или бесплатно"
           en: "Price or free"
         explanation_text:
-          ru: |
-            В объявлениях часто говорят:
-            **Preço** или **Entrada gratuita**
-          en: |
-            In announcements you often hear:
-            **Preço** or **Entrada gratuita**
-        examples:
-          - text: "Entrada gratuita."
-            audio: true
+          ru: "В объявлениях часто указывают цену или говорят, что вход бесплатный."
+          en: "In announcements they often state the price or say the entrance is free."
 
-      block_3_reinforcement:
-        type: "reinforcement"
-        task_1:
-          format: "single_choice"
-          audio: "Entrada gratuita."
-          question:
-            ru: "Сколько стоит вход?"
-            en: "How much is the entrance?"
-          options:
-            - text:
-                ru: "Бесплатно"
-                en: "Free"
-              correct: true
-            - text:
-                ru: "Дорого"
-                en: "Expensive"
-              correct: false
-            - text:
-                ru: "Неизвестно"
-                en: "Unknown"
-              correct: false
-
-    completion_message: "Уровень прогресса: Разогрев"
-
+  # 3) LISTENING
   - task_id: 3
     type: "listening_comprehension"
     title:
       ru: "Предложения и понимание"
       en: "Sentences and understanding"
-    subtitle:
-      ru: "Слушай объявление и пойми информацию"
-      en: "Listen to the announcement and understand the information"
-    estimated_time: "≈5"
-    show_timer: false
-    show_settings: false
-
-    ui_rules:
-      audio_plays_first: true
-      show_text_after_answer: true
-      one_clear_correct_answer: true
-
     items:
       - item_id: 1
         audio: "Museu aberto das 10 às 18. Entrada gratuita."
-        text_hidden_before_answer: true
-        questions:
-          - question:
-              ru: "Где?"
-              en: "Where?"
-            correct_answer: "Museu"
-          - question:
-              ru: "Когда?"
-              en: "When?"
-            correct_answer: "Das 10 às 18"
-          - question:
-              ru: "Сколько стоит?"
-              en: "How much?"
-            correct_answer: "Gratuita"
+        question:
+          ru: "Что здесь говорится?"
+          en: "What is said here?"
+        options:
+          - text: "Информация о музее"
+            correct: true
+          - text: "Просьба о помощи"
+            correct: false
 
-    completion_message: "Уровень прогресса: Понимание"
-
+  # 4) ATTENTION
   - task_id: 4
     type: "attention"
     title:
       ru: "Внимательность"
       en: "Attention"
-    subtitle:
-      ru: "Найди ключевую информацию"
-      en: "Find the key information"
-    estimated_time: "≈3–5"
-    show_timer: false
-    show_settings: false
-
     items:
       - item_id: 1
         text: "Museu aberto das 10 às 18. Entrada gratuita."
         question:
-          ru: "Что здесь важно?"
-          en: "What is important here?"
+          ru: "В какой ситуации это используют?"
+          en: "In what situation is this used?"
         options:
           - text:
-              ru: "Часы работы и цена"
-              en: "Opening hours and price"
+              ru: "Объявление"
+              en: "An announcement"
             correct: true
           - text:
-              ru: "Имя человека"
-              en: "Person’s name"
-            correct: false
-          - text:
-              ru: "Просьба"
-              en: "A request"
+              ru: "Знакомство"
+              en: "Introduction"
             correct: false
 
-    completion_message: "Уровень прогресса: Уверенность"
-
+  # 5) WRITING
   - task_id: 5
     type: "writing_optional"
     title:
       ru: "Письмо"
       en: "Writing"
-    subtitle:
-      ru: "Конструктор сообщения"
-      en: "Message builder"
-    estimated_time: "≈3–5"
-    show_timer: false
-    show_settings: false
-    optional: true
-
-    instruction:
-      text:
-        ru: |
-          Заполни сообщение, как в SMS.
-        en: |
-          Complete the message like in an SMS.
-
     main_task:
       format: "template_fill"
       template:
         - "Hoje o museu está ___."
         - "A entrada é ___."
-      hints:
-        - "aberto"
-        - "gratuita"
-
-    completion_message: "Уровень прогресса: Закреплено"

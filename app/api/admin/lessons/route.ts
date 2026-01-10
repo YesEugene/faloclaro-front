@@ -105,10 +105,16 @@ export async function POST(request: NextRequest) {
     }
 
     // Prepare insert data - handle optional fields correctly
+    // title_pt is required (NOT NULL), so use title_en or title_ru as fallback
+    const titlePt = body.title_pt && body.title_pt.trim() 
+      ? body.title_pt.trim() 
+      : (title_en && title_en.trim() ? title_en.trim() : (title_ru && title_ru.trim() ? title_ru.trim() : ''));
+
     const insertData: any = {
       day_number,
       title_ru: (title_ru && title_ru.trim()) ? title_ru.trim() : null,
       title_en: (title_en && title_en.trim()) ? title_en.trim() : null,
+      title_pt: titlePt, // Required field - use provided value or fallback to EN/RU
       yaml_content: yaml_content || {},
       is_published: is_published !== undefined ? is_published : false,
     };
@@ -119,6 +125,10 @@ export async function POST(request: NextRequest) {
     }
     if (subtitle_en && subtitle_en.trim()) {
       insertData.subtitle_en = subtitle_en.trim();
+    }
+    // subtitle_pt is optional, only include if provided
+    if (body.subtitle_pt && body.subtitle_pt.trim()) {
+      insertData.subtitle_pt = body.subtitle_pt.trim();
     }
 
     // Only include optional fields if they have values

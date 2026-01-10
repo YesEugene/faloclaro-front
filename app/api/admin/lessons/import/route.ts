@@ -42,14 +42,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const supabase = getSupabaseAdmin();
-
     // Extract lesson metadata
     let dayNumber: number | null = null;
     let titleRu = '';
     let titleEn = '';
+    let titlePt = '';
     let subtitleRu = '';
     let subtitleEn = '';
+    let subtitlePt = '';
     let estimatedTime = '';
 
     // Support both old YAML format (day.title) and new format (title_ru, title_en)
@@ -62,21 +62,34 @@ export async function POST(request: NextRequest) {
       titleEn = typeof lessonData.day.title === 'string' 
         ? '' 
         : lessonData.day.title?.en || '';
+      titlePt = typeof lessonData.day.title === 'string'
+        ? ''
+        : lessonData.day.title?.pt || '';
       subtitleRu = typeof lessonData.day.subtitle === 'string' 
         ? lessonData.day.subtitle 
         : lessonData.day.subtitle?.ru || '';
       subtitleEn = typeof lessonData.day.subtitle === 'string' 
         ? '' 
         : lessonData.day.subtitle?.en || '';
+      subtitlePt = typeof lessonData.day.subtitle === 'string'
+        ? ''
+        : lessonData.day.subtitle?.pt || '';
       estimatedTime = lessonData.day.estimated_time || '';
     } else {
       // New format (direct fields or day_number at top level)
       dayNumber = lessonData.day_number || lessonData.number || null;
       titleRu = lessonData.title_ru || '';
       titleEn = lessonData.title_en || '';
+      titlePt = lessonData.title_pt || '';
       subtitleRu = lessonData.subtitle_ru || '';
       subtitleEn = lessonData.subtitle_en || '';
+      subtitlePt = lessonData.subtitle_pt || '';
       estimatedTime = lessonData.estimated_time || '';
+    }
+
+    // title_pt is required (NOT NULL), so use title_en or title_ru as fallback if not provided
+    if (!titlePt || !titlePt.trim()) {
+      titlePt = titleEn && titleEn.trim() ? titleEn.trim() : (titleRu && titleRu.trim() ? titleRu.trim() : '');
     }
 
     // Prepare yaml_content (store the entire lesson structure)
@@ -131,7 +144,8 @@ export async function POST(request: NextRequest) {
 
     if (lessonId) {
       // Update existing lesson
-      const { data: existingLesson } = await supabase
+      const supabaseAdmin = getSupabaseAdmin();
+      const { data: existingLesson } = await supabaseAdmin
         .from('lessons')
         .select('day_number')
         .eq('id', lessonId)
@@ -145,26 +159,37 @@ export async function POST(request: NextRequest) {
       }
 
       // Prepare update data - only include subtitle fields if they have values (optional fields)
+      // title_pt is required (NOT NULL), so use title_en or title_ru as fallback
+      const titlePtValue = titlePt && titlePt.trim() 
+        ? titlePt.trim() 
+        : (titleEn && titleEn.trim() ? titleEn.trim() : (titleRu && titleRu.trim() ? titleRu.trim() : ''));
+
       const updateData: any = {
         yaml_content: yamlContent,
-        title_ru: titleRu || null,
-        title_en: titleEn || null,
+        title_ru: titleRu && titleRu.trim() ? titleRu.trim() : null,
+        title_en: titleEn && titleEn.trim() ? titleEn.trim() : null,
+        title_pt: titlePtValue, // Required field - use provided value or fallback to EN/RU
         updated_at: new Date().toISOString(),
       };
       
       // Only include subtitle fields if they have values (optional fields)
       if (subtitleRu && subtitleRu.trim()) {
-        updateData.subtitle_ru = subtitleRu;
+        updateData.subtitle_ru = subtitleRu.trim();
       } else {
         updateData.subtitle_ru = null; // Clear subtitle if empty
       }
       if (subtitleEn && subtitleEn.trim()) {
-        updateData.subtitle_en = subtitleEn;
+        updateData.subtitle_en = subtitleEn.trim();
       } else {
         updateData.subtitle_en = null; // Clear subtitle if empty
       }
+      if (subtitlePt && subtitlePt.trim()) {
+        updateData.subtitle_pt = subtitlePt.trim();
+      } else {
+        updateData.subtitle_pt = null; // Clear subtitle if empty
+      }
 
-      const { data: updatedLesson, error: updateError } = await supabase
+      const { data: updatedLesson, error: updateError } = await supabaseAdmin
         .from('lessons')
         .update(updateData)
         .eq('id', lessonId)
@@ -193,8 +218,9 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      // Check if lesson with this day_number already exists
-      const { data: existingLesson } = await supabase
+      // Check if lesson with this day_number already exists (use admin client for RLS bypass)
+      const supabaseAdmin = getSupabaseAdmin();
+      const { data: existingLesson } = await supabaseAdmin
         .from('lessons')
         .select('id')
         .eq('day_number', dayNumber)
@@ -208,23 +234,32 @@ export async function POST(request: NextRequest) {
       }
 
       // Prepare insert data - use null for empty optional fields
+      // title_pt is required (NOT NULL), so use title_en or title_ru as fallback
+      const titlePtValue = titlePt && titlePt.trim() 
+        ? titlePt.trim() 
+        : (titleEn && titleEn.trim() ? titleEn.trim() : (titleRu && titleRu.trim() ? titleRu.trim() : ''));
+
       const insertData: any = {
         day_number: dayNumber,
-        title_ru: titleRu || null,
-        title_en: titleEn || null,
+        title_ru: titleRu && titleRu.trim() ? titleRu.trim() : null,
+        title_en: titleEn && titleEn.trim() ? titleEn.trim() : null,
+        title_pt: titlePtValue, // Required field - use provided value or fallback to EN/RU
         yaml_content: yamlContent,
         is_published: false, // New lessons are not published by default
       };
       
       // Only include subtitle fields if they have values (optional fields)
       if (subtitleRu && subtitleRu.trim()) {
-        insertData.subtitle_ru = subtitleRu;
+        insertData.subtitle_ru = subtitleRu.trim();
       }
       if (subtitleEn && subtitleEn.trim()) {
-        insertData.subtitle_en = subtitleEn;
+        insertData.subtitle_en = subtitleEn.trim();
+      }
+      if (subtitlePt && subtitlePt.trim()) {
+        insertData.subtitle_pt = subtitlePt.trim();
       }
 
-      const { data: newLesson, error: createError } = await supabase
+      const { data: newLesson, error: createError } = await supabaseAdmin
         .from('lessons')
         .insert(insertData)
         .select()
