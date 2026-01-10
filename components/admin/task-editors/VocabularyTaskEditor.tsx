@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 interface VocabularyTaskEditorProps {
   task: any;
@@ -402,7 +402,48 @@ function CardEditorModal({ card, lessonDay, onSave, onCancel }: {
     word_translation_ru: card?.word_translation_ru || '',
     word_translation_en: card?.word_translation_en || '',
     audioFile: null as File | null,
+    audioUrl: card?.audio_url || '', // Store audio URL from card or after generation
   });
+  
+  const [isCheckingAudio, setIsCheckingAudio] = useState(false);
+  const [audioExists, setAudioExists] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  
+  // Check if audio exists in database when word changes or modal opens
+  useEffect(() => {
+    const checkAudioExists = async () => {
+      if (!formData.word.trim()) {
+        setAudioExists(false);
+        setFormData(prev => ({ ...prev, audioUrl: '' }));
+        return;
+      }
+      
+      setIsCheckingAudio(true);
+      try {
+        // Try to find audio in phrases table
+        const response = await fetch(`/api/phrases?text=${encodeURIComponent(formData.word.trim())}&lessonId=${lessonDay}`);
+        const data = await response.json();
+        if (data.success && data.exists && data.audioUrl) {
+          setAudioExists(true);
+          setFormData(prev => ({ ...prev, audioUrl: data.audioUrl }));
+        } else {
+          setAudioExists(false);
+          setFormData(prev => ({ ...prev, audioUrl: '' }));
+        }
+      } catch (err) {
+        console.error('Error checking audio:', err);
+        setAudioExists(false);
+        setFormData(prev => ({ ...prev, audioUrl: '' }));
+      } finally {
+        setIsCheckingAudio(false);
+      }
+    };
+    
+    // Delay check slightly to avoid too many requests
+    const timeoutId = setTimeout(checkAudioExists, 500);
+    return () => clearTimeout(timeoutId);
+  }, [formData.word, lessonDay]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -425,6 +466,8 @@ function CardEditorModal({ card, lessonDay, onSave, onCancel }: {
       sentence_translation_en: formData.sentence_translation_en.trim() || undefined,
       word_translation_ru: formData.word_translation_ru.trim() || undefined,
       word_translation_en: formData.word_translation_en.trim() || undefined,
+      // Include audio_url if it exists (from generation or upload)
+      ...(formData.audioUrl ? { audio_url: formData.audioUrl } : {}),
     };
 
     // If audio file is uploaded, we'll need to handle upload separately
@@ -566,15 +609,45 @@ function CardEditorModal({ card, lessonDay, onSave, onCancel }: {
                     });
 
                     const data = await response.json();
-                    if (data.success) {
-                      alert('Аудио успешно сгенерировано!');
-                      // You could store the audio URL here if needed
+                    if (data.success && data.audioUrl) {
+                      // Update form data with audio URL immediately
+                      const newAudioUrl = data.audioUrl;
+                      setFormData(prev => ({ ...prev, audioUrl: newAudioUrl }));
+                      setAudioExists(true);
+                      
+                      console.log('✅ Audio generated successfully. URL:', newAudioUrl);
+                      console.log('   Bucket:', data.bucket);
+                      console.log('   Storage path:', data.storagePath);
+                      
+                      // Wait a moment for database to update, then re-check to confirm
+                      setTimeout(async () => {
+                        try {
+                          const checkResponse = await fetch(`/api/phrases?text=${encodeURIComponent(formData.word.trim())}&lessonId=${lessonDay}`);
+                          const checkData = await checkResponse.json();
+                          if (checkData.success && checkData.exists && checkData.audioUrl) {
+                            // Use URL from database if available (more reliable)
+                            console.log('✅ Audio confirmed in database. URL:', checkData.audioUrl);
+                            setFormData(prev => ({ ...prev, audioUrl: checkData.audioUrl }));
+                            setAudioExists(true);
+                          } else {
+                            // Keep the URL from generation response
+                            console.log('⚠️  Audio not yet in database, using generation URL');
+                            setAudioExists(true);
+                          }
+                        } catch (checkErr) {
+                          console.error('Error re-checking audio:', checkErr);
+                          // Keep the URL from generation response anyway
+                          setAudioExists(true);
+                        }
+                      }, 1000);
+                      
+                      alert('Аудио успешно сгенерировано! Теперь вы можете прослушать его, нажав кнопку Play.');
                     } else {
                       alert('Ошибка при генерации аудио: ' + (data.error || 'Unknown error'));
                     }
-                  } catch (err) {
+                  } catch (err: any) {
                     console.error('Error generating audio:', err);
-                    alert('Ошибка при генерации аудио');
+                    alert('Ошибка при генерации аудио: ' + (err.message || 'Unknown error'));
                   }
                 }}
                 className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
@@ -611,8 +684,11 @@ function CardEditorModal({ card, lessonDay, onSave, onCancel }: {
                       });
 
                       const data = await response.json();
-                      if (data.success) {
-                        alert('Аудио успешно загружено!');
+                      if (data.success && data.audioUrl) {
+                        // Update form data with audio URL
+                        setFormData(prev => ({ ...prev, audioUrl: data.audioUrl }));
+                        setAudioExists(true);
+                        alert('Аудио успешно загружено! Теперь вы можете прослушать его, нажав кнопку Play.');
                       } else {
                         alert('Ошибка при загрузке аудио: ' + (data.error || 'Unknown error'));
                       }
@@ -624,6 +700,92 @@ function CardEditorModal({ card, lessonDay, onSave, onCancel }: {
                 />
               </label>
             </div>
+            {(audioExists && formData.audioUrl) && (
+              <div className="mt-3 flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!audioRef.current || audioRef.current.src !== formData.audioUrl) {
+                      // Create new audio element or update src if URL changed
+                      if (audioRef.current) {
+                        audioRef.current.pause();
+                        audioRef.current = null;
+                      }
+                      
+                      audioRef.current = new Audio(formData.audioUrl);
+                      audioRef.current.onended = () => {
+                        setIsPlaying(false);
+                      };
+                      audioRef.current.onpause = () => {
+                        setIsPlaying(false);
+                      };
+                      audioRef.current.onplay = () => {
+                        setIsPlaying(true);
+                      };
+                      audioRef.current.onerror = () => {
+                        const audioEl = audioRef.current;
+                        if (!audioEl) return;
+                        
+                        const errorCode = audioEl.error?.code;
+                        const errorMessage = audioEl.error?.message || 'Unknown error';
+                        console.error('❌ Audio playback error in modal:', {
+                          errorCode,
+                          errorMessage,
+                          src: formData.audioUrl,
+                          readyState: audioEl.readyState,
+                          networkState: audioEl.networkState,
+                        });
+                        setIsPlaying(false);
+                        
+                        let errorMsg = 'Ошибка при воспроизведении аудио. ';
+                        if (errorCode === MediaError.MEDIA_ERR_NETWORK || errorCode === 2) {
+                          errorMsg += 'Проблема с сетью или файл недоступен. Проверьте, что Storage bucket настроен как публичный.';
+                        } else if (errorCode === MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED || errorCode === 4) {
+                          errorMsg += 'Формат файла не поддерживается.';
+                        } else {
+                          errorMsg += `Ошибка: ${errorMessage}`;
+                        }
+                        alert(errorMsg + '\nURL: ' + formData.audioUrl);
+                      };
+                      audioRef.current.onloadeddata = () => {
+                        console.log('✅ Audio loaded successfully in modal. URL:', formData.audioUrl);
+                      };
+                      audioRef.current.oncanplay = () => {
+                        console.log('✅ Audio can play in modal. URL:', formData.audioUrl);
+                      };
+                    }
+                    
+                    if (audioRef.current.paused) {
+                      // Update src if it changed
+                      if (audioRef.current.src !== formData.audioUrl) {
+                        audioRef.current.src = formData.audioUrl;
+                        audioRef.current.load();
+                      }
+                      
+                      audioRef.current.play().catch(err => {
+                        console.error('❌ Error playing audio in modal:', err);
+                        setIsPlaying(false);
+                        alert('Ошибка при воспроизведении аудио: ' + err.message + '\nURL: ' + formData.audioUrl);
+                      });
+                    } else {
+                      audioRef.current.pause();
+                      audioRef.current.currentTime = 0;
+                      setIsPlaying(false);
+                    }
+                  }}
+                  className={`px-4 py-2 rounded-lg transition-colors text-sm flex items-center gap-2 ${
+                    isPlaying 
+                      ? 'bg-red-600 text-white hover:bg-red-700' 
+                      : 'bg-purple-600 text-white hover:bg-purple-700'
+                  }`}
+                >
+                  {isPlaying ? '⏸️ Pause' : '▶️ Play'}
+                </button>
+                <span className="text-xs text-gray-500">
+                  {isCheckingAudio ? 'Проверка...' : audioExists ? 'Аудио доступно' : 'Аудио не найдено'}
+                </span>
+              </div>
+            )}
             <p className="text-xs text-gray-500 mt-2">
               Генерация использует Google Text-to-Speech. Загрузка позволяет использовать свой аудиофайл.
             </p>

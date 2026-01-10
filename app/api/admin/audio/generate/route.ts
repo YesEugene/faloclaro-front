@@ -383,28 +383,53 @@ export async function POST(request: NextRequest) {
       // Don't fail the request, audio is already uploaded
     }
 
-    // Also update phrases table for compatibility (optional - don't fail if this fails)
+    // CRITICAL: Update phrases table - this is how the frontend finds audio URLs
+    // This must succeed for audio to be playable on the frontend
     try {
-      await supabase
+      const { error: phraseError } = await supabase
         .from('phrases')
         .upsert({
           portuguese_text: textToGenerate,
           audio_url: publicUrl,
-          lesson_id: lessonId,
+          lesson_id: lessonId.toString(), // Ensure it's a string for consistency
         }, {
           onConflict: 'portuguese_text',
         });
+      
+      if (phraseError) {
+        console.error('❌ Error updating phrases table:', phraseError);
+        // Log but don't fail - audio is already uploaded
+      } else {
+        console.log('✅ Audio URL saved to phrases table successfully');
+      }
     } catch (phraseError) {
-      console.error('Error updating phrases table (non-critical):', phraseError);
-      // Don't fail the request
+      console.error('❌ Exception updating phrases table:', phraseError);
+      // Don't fail the request - audio is already uploaded
     }
 
+    console.log('✅ Audio generation complete!');
+    console.log('   Public URL:', publicUrl);
+    console.log('   Storage path:', storagePath);
+    console.log('   Bucket:', bucketName);
+    console.log('   Lesson ID:', lessonId);
+    console.log('   Text:', textToGenerate);
+    console.log('   Upload data:', uploadData);
+    
+    // CRITICAL: Log URL structure for debugging
+    console.log('   URL structure check:');
+    console.log('     - URL starts with https:', publicUrl.startsWith('https://'));
+    console.log('     - URL contains supabase.co:', publicUrl.includes('supabase.co'));
+    console.log('     - URL contains storage:', publicUrl.includes('storage'));
+    console.log('     - URL contains bucket:', publicUrl.includes(bucketName));
+    
     return NextResponse.json({
       success: true,
       audioUrl: publicUrl,
       storagePath,
       bucket: bucketName,
       audioFile,
+      lessonId,
+      text: textToGenerate,
       message: 'Audio generated and uploaded successfully',
     });
   } catch (error: any) {

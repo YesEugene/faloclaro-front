@@ -249,10 +249,17 @@ export default function VocabularyTaskPlayer({
           // Try to find phrase in database first (by word, not example sentence)
           // Use limit(1) instead of single() to avoid 406 errors when phrase doesn't exist
           try {
-            const { data: phraseArray, error: phraseError } = await supabase
+            // CRITICAL: Get audio URL from phrases table
+            // Audio URLs are saved here after generation via admin panel
+            const phraseQuery = supabase
               .from('phrases')
-              .select('audio_url, id')
-              .eq('portuguese_text', card.word)
+              .select('audio_url, id, lesson_id, created_at')
+              .eq('portuguese_text', card.word);
+            
+            // Get the most recent audio URL for this word
+            // This ensures we get the latest generated audio if multiple exist
+            const { data: phraseArray, error: phraseError } = await phraseQuery
+              .order('created_at', { ascending: false }) // Get most recent first
               .limit(1);
             
             if (phraseError) {
@@ -270,79 +277,14 @@ export default function VocabularyTaskPlayer({
             console.error(`❌ Exception fetching phrase for word: "${card.word}"`, error);
           }
           
-          // If no audio URL from database, try Storage fallback
+          // CRITICAL: Don't try to construct Storage URLs manually
+          // Audio should be loaded from database (phrases table) after generation
+          // If audio is not in database, it needs to be generated first in admin panel
+          // The URL from database will be the correct public URL from Storage
           if (!urls[card.word]) {
-            // If not in database, construct URL from Storage path for lesson cards
-            // Format: lesson-1/word-{word}.mp3
-            const sanitizeForUrl = (text: string) => {
-              return text
-                .toLowerCase()
-                .trim()
-                // Remove punctuation and special characters but keep hyphens and spaces
-                // Keep: letters, numbers, spaces, hyphens, accented chars
-                .replace(/[^\w\s\-àáâãäåèéêëìíîïòóôõöùúûüçñ]/g, '')
-                // Normalize accented characters
-                .replace(/[àáâãäå]/g, 'a')
-                .replace(/[èéêë]/g, 'e')
-                .replace(/[ìíîï]/g, 'i')
-                .replace(/[òóôõö]/g, 'o')
-                .replace(/[ùúûü]/g, 'u')
-                .replace(/[ç]/g, 'c')
-                .replace(/[ñ]/g, 'n')
-                // Replace spaces with dashes (but keep existing hyphens)
-                .replace(/\s+/g, '-')
-                // Remove multiple consecutive dashes
-                .replace(/-+/g, '-')
-                // Remove leading/trailing dashes
-                .replace(/^-|-$/g, '')
-                .substring(0, 100);
-            };
-            
-            const wordSanitized = sanitizeForUrl(card.word || '');
-            // CRITICAL: Use actual lesson day number instead of hardcoded 'lesson-1'
-            // Also try multiple storage paths to support both old and new formats
-            const lessonDayPrefix = dayNumber ? `lesson-${dayNumber}` : 'lesson-1';
-            const filename1 = `${lessonDayPrefix}-word-${wordSanitized}.mp3`;
-            const filename2 = `word-${wordSanitized}.mp3`;
-            const storagePath1 = `${lessonDayPrefix}/${filename1}`;
-            const storagePath2 = `lessons/${dayNumber || 1}/audio/${filename2}`;
-            
-            console.log(`🔍 Trying to get Storage URL for word: "${card.word}"`);
-            console.log(`   Lesson day: ${dayNumber || 1}`);
-            console.log(`   Sanitized: "${wordSanitized}"`);
-            console.log(`   Trying path 1: "${storagePath1}"`);
-            console.log(`   Trying path 2: "${storagePath2}"`);
-            
-            // Try multiple buckets and paths to support different storage configurations
-            let urlData: any = null;
-            
-            // Try 1: bucket 'audio' with old format
-            const { data: urlData1 } = supabase.storage
-              .from('audio')
-              .getPublicUrl(storagePath1);
-            
-            // Try 2: bucket 'lesson-audio' with new format
-            const { data: urlData2 } = supabase.storage
-              .from('lesson-audio')
-              .getPublicUrl(storagePath2);
-            
-            // Prefer urlData2 (new format) if available, otherwise use urlData1
-            urlData = urlData2?.publicUrl ? urlData2 : (urlData1?.publicUrl ? urlData1 : null);
-            
-            if (urlData?.publicUrl) {
-              const audioUrl = urlData.publicUrl;
-              urls[card.word] = audioUrl;
-              console.log(`✅ Generated Storage URL for word: "${card.word}"`);
-              console.log(`   URL: ${audioUrl}`);
-              
-              // CRITICAL: Don't test file accessibility with HEAD request - it causes 400 errors
-              // Just set the URL and let the audio element handle loading
-              // The file may not exist yet, which is fine - it will be generated on demand
-            } else {
-              console.warn(`⚠️  Could not generate Storage URL for word: "${card.word}"`);
-              console.warn(`   Tried paths: ${storagePath1}, ${storagePath2}`);
-              console.warn(`   Audio will be loaded from database or generated on demand`);
-            }
+            console.log(`ℹ️  No audio URL found in database for word: "${card.word}"`);
+            console.log(`   Audio can be generated in the admin panel. After generation, the URL will be saved to phrases table.`);
+            // Don't set a URL - audio will need to be generated first
           }
 
           // Use translations from card data if available (for lesson cards)
@@ -882,8 +824,39 @@ export default function VocabularyTaskPlayer({
             preload="auto"
             crossOrigin="anonymous"
             onError={(e) => {
-              console.error('Audio element error:', e);
+              const audioEl = e.target as HTMLAudioElement;
+              const errorCode = audioEl.error?.code;
+              const errorMessage = audioEl.error?.message || 'Unknown error';
+              console.error('❌ Audio element error:', {
+                error: e,
+                errorCode,
+                errorMessage,
+                src: currentAudioUrl,
+                readyState: audioEl.readyState,
+                networkState: audioEl.networkState,
+              });
+              
+              // Provide more specific error messages
+              if (errorCode === MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED || errorCode === 4) {
+                console.error('   Error: Media not supported or file format invalid');
+                console.error('   URL:', currentAudioUrl);
+              } else if (errorCode === MediaError.MEDIA_ERR_NETWORK || errorCode === 2) {
+                console.error('   Error: Network error - file may not be accessible');
+                console.error('   URL:', currentAudioUrl);
+                console.error('   Check if Storage bucket is public and file exists');
+              } else if (errorCode === MediaError.MEDIA_ERR_ABORTED || errorCode === 1) {
+                console.error('   Error: Playback aborted');
+              } else {
+                console.error('   Error: Unknown audio error');
+              }
+              
               setIsPlaying(false);
+            }}
+            onLoadedData={() => {
+              console.log('✅ Audio loaded successfully. URL:', currentAudioUrl);
+            }}
+            onCanPlay={() => {
+              console.log('✅ Audio can play. URL:', currentAudioUrl);
             }}
           />
         )}
