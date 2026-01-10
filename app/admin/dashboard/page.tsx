@@ -181,6 +181,8 @@ function UsersSection() {
 
   const handleSendInvite = async (userId: string) => {
     try {
+      setError('');
+      setSuccess('');
       const response = await fetch('/api/admin/users/invite', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -195,6 +197,32 @@ function UsersSection() {
       }
     } catch (err) {
       setError('Ошибка при отправке приглашения');
+    }
+  };
+
+  const handleGiveFullAccess = async (userId: string) => {
+    if (!confirm('Дать пользователю полный доступ ко всем урокам (1-60) бесплатно?')) {
+      return;
+    }
+
+    try {
+      setError('');
+      setSuccess('');
+      const response = await fetch('/api/admin/users/give-full-access', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId }),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        setSuccess(`Полный доступ предоставлен. Создано токенов: ${data.tokensCreated || 0}`);
+        loadUsers(); // Reload users to refresh data
+      } else {
+        setError(data.error || 'Ошибка при предоставлении полного доступа');
+      }
+    } catch (err) {
+      setError('Ошибка при предоставлении полного доступа');
     }
   };
 
@@ -322,12 +350,19 @@ function UsersSection() {
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {user.created_at ? new Date(user.created_at).toLocaleDateString('ru-RU') : '-'}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm">
+                <td className="px-6 py-4 whitespace-nowrap text-sm space-x-2">
                   <button
                     onClick={() => handleSendInvite(user.id)}
                     className="text-blue-600 hover:text-blue-800"
                   >
                     Отправить приглашение
+                  </button>
+                  <span className="text-gray-300">|</span>
+                  <button
+                    onClick={() => handleGiveFullAccess(user.id)}
+                    className="text-green-600 hover:text-green-800 font-medium"
+                  >
+                    Дать полный доступ
                   </button>
                 </td>
               </tr>
