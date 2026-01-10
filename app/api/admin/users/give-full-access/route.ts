@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
+import { sendLessonEmail } from '@/lib/send-lesson-email';
 import crypto from 'crypto';
 
 export async function POST(request: NextRequest) {
@@ -83,25 +84,51 @@ export async function POST(request: NextRequest) {
     }
 
     // Send email with link to first lesson (if user doesn't have it already)
-    const { data: firstLessonToken } = await supabase
-      .from('lesson_access_tokens')
-      .select('token, lesson_id, lesson:lessons(id, day_number)')
-      .eq('user_id', userId)
-      .eq('lesson:lessons(day_number)', 1)
+    const { data: firstLesson } = await supabase
+      .from('lessons')
+      .select('id, day_number')
+      .eq('day_number', 1)
       .single();
 
-    if (firstLessonToken && firstLessonToken.lesson) {
-      const { sendLessonEmail } = await import('@/lib/send-lesson-email');
-      try {
-        await sendLessonEmail(
-          userId,
-          firstLessonToken.lesson.id,
-          1,
-          firstLessonToken.token
-        );
-      } catch (emailError) {
-        console.error('Error sending email:', emailError);
-        // Don't fail if email fails
+    if (firstLesson) {
+      // Get or create token for first lesson
+      let { data: firstLessonToken } = await supabase
+        .from('lesson_access_tokens')
+        .select('token')
+        .eq('user_id', userId)
+        .eq('lesson_id', firstLesson.id)
+        .single();
+
+      if (!firstLessonToken) {
+        // Create token for first lesson if it doesn't exist
+        const token = crypto.randomBytes(32).toString('hex');
+        const expiresAt = new Date();
+        expiresAt.setDate(expiresAt.getDate() + 365);
+        
+        await supabase
+          .from('lesson_access_tokens')
+          .insert({
+            user_id: userId,
+            lesson_id: firstLesson.id,
+            token,
+            expires_at: expiresAt.toISOString(),
+          });
+        
+        firstLessonToken = { token };
+      }
+
+      if (firstLessonToken?.token) {
+        try {
+          await sendLessonEmail(
+            userId,
+            firstLesson.id,
+            1,
+            firstLessonToken.token
+          );
+        } catch (emailError) {
+          console.error('Error sending email:', emailError);
+          // Don't fail if email fails
+        }
       }
     }
 
