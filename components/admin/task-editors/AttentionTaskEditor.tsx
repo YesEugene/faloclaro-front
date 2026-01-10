@@ -28,6 +28,8 @@ export default function AttentionTaskEditor({ task, onChange, lessonDay }: Atten
   const [items, setItems] = useState<any[]>(getItems());
   const [showAddItem, setShowAddItem] = useState(false);
   const [editingItemIndex, setEditingItemIndex] = useState<number | null>(null);
+  const [generatingAudio, setGeneratingAudio] = useState<{ [key: number]: boolean }>({});
+  const [isPlayingAudio, setIsPlayingAudio] = useState<{ [key: number]: boolean }>({});
 
   const updateTask = (newItems: any[]) => {
     setItems(newItems);
@@ -101,6 +103,65 @@ export default function AttentionTaskEditor({ task, onChange, lessonDay }: Atten
       [newItems[index], newItems[index + 1]] = [newItems[index + 1], newItems[index]];
     }
     updateTask(newItems);
+  };
+
+  const handleGenerateAudio = async (index: number) => {
+    const item = items[index];
+    if (!item || !item.text || !item.text.trim()) {
+      alert('Пожалуйста, сначала добавьте текст');
+      return;
+    }
+
+    setGeneratingAudio(prev => ({ ...prev, [index]: true }));
+
+    try {
+      const response = await fetch('/api/admin/audio/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          text: item.text.trim(),
+          lessonId: lessonDay.toString(),
+          taskId: 4, // Attention task
+          blockId: 'check_meaning',
+          itemId: `item_${index}_${Date.now()}`,
+        }),
+      });
+
+      const data = await response.json();
+      if (data.success && data.audioUrl) {
+        // Update item with audio_url
+        const newItems = [...items];
+        newItems[index] = {
+          ...newItems[index],
+          audio_url: data.audioUrl,
+        };
+        setItems(newItems);
+        updateTask(newItems);
+        alert('Аудио успешно сгенерировано!');
+      } else {
+        alert('Ошибка при генерации аудио: ' + (data.error || 'Unknown error'));
+      }
+    } catch (error) {
+      console.error('Error generating audio:', error);
+      alert('Ошибка при генерации аудио');
+    } finally {
+      setGeneratingAudio(prev => ({ ...prev, [index]: false }));
+    }
+  };
+
+  const handlePlayAudio = (index: number) => {
+    const item = items[index];
+    const audioUrl = item?.audio_url;
+    if (!audioUrl) return;
+
+    setIsPlayingAudio(prev => ({ ...prev, [index]: true }));
+    const audio = new Audio(audioUrl);
+    audio.play().catch(err => {
+      console.error('Error playing audio:', err);
+      setIsPlayingAudio(prev => ({ ...prev, [index]: false }));
+    });
+    audio.onended = () => setIsPlayingAudio(prev => ({ ...prev, [index]: false }));
+    audio.onerror = () => setIsPlayingAudio(prev => ({ ...prev, [index]: false }));
   };
 
   return (
@@ -227,22 +288,16 @@ export default function AttentionTaskEditor({ task, onChange, lessonDay }: Atten
                         <span className="text-sm text-gray-600">Аудио: {item.audio}</span>
                       )}
                       {item.audio_url && (
-                        <>
-                          <span className="text-sm text-blue-600">🎵 Аудио</span>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              const audioElement = new Audio(item.audio_url);
-                              audioElement.play().catch(err => console.error('Error playing audio:', err));
-                            }}
-                            className="px-2 py-1 text-blue-600 hover:text-blue-800 text-sm"
-                            title="Воспроизвести аудио"
-                          >
-                            ▶️
-                          </button>
-                        </>
+                        <span className="text-sm text-blue-600">🎵 Аудио</span>
                       )}
                     </div>
+                    {item.text && (
+                      <p className="text-sm text-gray-700 mb-1">
+                        Текст: {typeof item.text === 'string' 
+                          ? item.text 
+                          : item.text.ru || item.text.en || ''}
+                      </p>
+                    )}
                     {item.question && (
                       <p className="text-sm text-gray-700 mb-1">
                         Вопрос: {typeof item.question === 'string' 
@@ -266,6 +321,24 @@ export default function AttentionTaskEditor({ task, onChange, lessonDay }: Atten
                     )}
                   </div>
                   <div className="flex gap-2">
+                    {item.audio_url && (
+                      <button
+                        onClick={() => handlePlayAudio(index)}
+                        disabled={isPlayingAudio[index]}
+                        className="px-2 py-1 text-blue-600 hover:text-blue-800 text-sm"
+                        title="Воспроизвести аудио"
+                      >
+                        {isPlayingAudio[index] ? '⏸️' : '▶️'}
+                      </button>
+                    )}
+                    <button
+                      onClick={() => handleGenerateAudio(index)}
+                      disabled={generatingAudio[index] || !item.text?.trim()}
+                      className="px-3 py-1 text-green-600 hover:text-green-800 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                      title="Сгенерировать аудио"
+                    >
+                      {generatingAudio[index] ? '⏳' : '🎵 Генерировать'}
+                    </button>
                     {index > 0 && (
                       <button
                         onClick={() => handleMoveItem(index, 'up')}

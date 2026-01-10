@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface ExplanationBlockEditorProps {
   block: any;
@@ -30,6 +30,9 @@ export default function ExplanationBlockEditor({ block, onChange, lessonDay }: E
   const [showAddHint, setShowAddHint] = useState(false);
   const [editingExampleIndex, setEditingExampleIndex] = useState<number | null>(null);
   const [editingHintIndex, setEditingHintIndex] = useState<number | null>(null);
+  const [generatingAudio, setGeneratingAudio] = useState<{ [key: number]: boolean }>({});
+  const [audioUrls, setAudioUrls] = useState<{ [key: number]: string | null }>({});
+  const [isPlayingAudio, setIsPlayingAudio] = useState<{ [key: number]: boolean }>({});
 
   const updateBlock = (updates: any) => {
     onChange({
@@ -56,13 +59,28 @@ export default function ExplanationBlockEditor({ block, onChange, lessonDay }: E
 
   const handleSaveExample = (example: any) => {
     const newExamples = [...examples];
+    const index = editingExampleIndex !== null && editingExampleIndex < examples.length 
+      ? editingExampleIndex 
+      : newExamples.length;
+    
     if (editingExampleIndex !== null && editingExampleIndex < examples.length) {
-      newExamples[editingExampleIndex] = example;
+      // Preserve audio_url if it exists when editing
+      newExamples[editingExampleIndex] = {
+        ...example,
+        audio_url: example.audio_url || examples[editingExampleIndex]?.audio_url,
+      };
     } else {
       newExamples.push(example);
     }
+    
     setExamples(newExamples);
     updateBlock({ examples: newExamples });
+    
+    // Update audio URL in state if it exists
+    if (example.audio_url) {
+      setAudioUrls(prev => ({ ...prev, [index]: example.audio_url }));
+    }
+    
     setShowAddExample(false);
     setEditingExampleIndex(null);
   };
@@ -72,7 +90,106 @@ export default function ExplanationBlockEditor({ block, onChange, lessonDay }: E
       const newExamples = examples.filter((_, i) => i !== index);
       setExamples(newExamples);
       updateBlock({ examples: newExamples });
+      // Clean up audio state
+      const newAudioUrls = { ...audioUrls };
+      delete newAudioUrls[index];
+      setAudioUrls(newAudioUrls);
     }
+  };
+
+  // Check for existing audio URLs when examples change
+  useEffect(() => {
+    const checkAudioUrls = async () => {
+      const urls: { [key: number]: string | null } = {};
+      
+      for (let i = 0; i < examples.length; i++) {
+        const example = examples[i];
+        
+        // Prioritize audio_url from example if it exists
+        if (example.audio_url) {
+          urls[i] = example.audio_url;
+          continue;
+        }
+        
+        // Otherwise check database
+        if (example.text && example.text.trim()) {
+          try {
+            const response = await fetch(`/api/phrases?text=${encodeURIComponent(example.text.trim())}`);
+            const data = await response.json();
+            if (data.success && data.exists && data.audioUrl) {
+              urls[i] = data.audioUrl;
+            }
+          } catch (error) {
+            console.error(`Error checking audio for example ${i}:`, error);
+          }
+        }
+      }
+      
+      setAudioUrls(urls);
+    };
+    
+    if (examples.length > 0) {
+      checkAudioUrls();
+    }
+  }, [examples]);
+
+  const handleGenerateAudio = async (index: number) => {
+    const example = examples[index];
+    if (!example || !example.text || !example.text.trim()) {
+      alert('Пожалуйста, сначала добавьте текст примера');
+      return;
+    }
+
+    setGeneratingAudio(prev => ({ ...prev, [index]: true }));
+
+    try {
+      const response = await fetch('/api/admin/audio/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          text: example.text.trim(),
+          lessonId: lessonDay.toString(),
+          taskId: 2, // Rules task
+          blockId: block.block_id || block.block_type || 'explanation',
+          itemId: `example_${index}_${Date.now()}`,
+        }),
+      });
+
+      const data = await response.json();
+      if (data.success && data.audioUrl) {
+        // Update example with audio_url
+        const newExamples = [...examples];
+        newExamples[index] = {
+          ...newExamples[index],
+          audio_url: data.audioUrl,
+        };
+        setExamples(newExamples);
+        setAudioUrls(prev => ({ ...prev, [index]: data.audioUrl }));
+        updateBlock({ examples: newExamples });
+        alert('Аудио успешно сгенерировано!');
+      } else {
+        alert('Ошибка при генерации аудио: ' + (data.error || 'Unknown error'));
+      }
+    } catch (error) {
+      console.error('Error generating audio:', error);
+      alert('Ошибка при генерации аудио');
+    } finally {
+      setGeneratingAudio(prev => ({ ...prev, [index]: false }));
+    }
+  };
+
+  const handlePlayAudio = (index: number) => {
+    const audioUrl = audioUrls[index] || examples[index]?.audio_url;
+    if (!audioUrl) return;
+
+    setIsPlayingAudio(prev => ({ ...prev, [index]: true }));
+    const audio = new Audio(audioUrl);
+    audio.play().catch(err => {
+      console.error('Error playing audio:', err);
+      setIsPlayingAudio(prev => ({ ...prev, [index]: false }));
+    });
+    audio.onended = () => setIsPlayingAudio(prev => ({ ...prev, [index]: false }));
+    audio.onerror = () => setIsPlayingAudio(prev => ({ ...prev, [index]: false }));
   };
 
   const handleAddHint = () => {
@@ -200,37 +317,65 @@ export default function ExplanationBlockEditor({ block, onChange, lessonDay }: E
           <p className="text-gray-600 text-center py-4">Примеры еще не добавлены</p>
         ) : (
           <div className="space-y-3">
-            {examples.map((example, index) => (
-              <div
-                key={index}
-                className="border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition-colors"
-              >
-                <div className="flex justify-between items-start">
-                  <div className="flex-1">
-                    <p className="font-medium text-gray-900">{example.text || 'Без текста'}</p>
-                    {example.pause_after_audio_sec && (
-                      <p className="text-sm text-gray-600 mt-1">
-                        Пауза после аудио: {example.pause_after_audio_sec} сек
-                      </p>
-                    )}
-                  </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => handleEditExample(index)}
-                      className="px-3 py-1 text-blue-600 hover:text-blue-800 text-sm font-medium"
-                    >
-                      Редактировать
-                    </button>
-                    <button
-                      onClick={() => handleDeleteExample(index)}
-                      className="px-3 py-1 text-red-600 hover:text-red-800 text-sm font-medium"
-                    >
-                      Удалить
-                    </button>
+            {examples.map((example, index) => {
+              const hasAudio = audioUrls[index] || example.audio_url;
+              const isPlaying = isPlayingAudio[index];
+              
+              return (
+                <div
+                  key={index}
+                  className="border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition-colors"
+                >
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <p className="font-medium text-gray-900">{example.text || 'Без текста'}</p>
+                        {hasAudio && (
+                          <span className="text-sm text-blue-600">🎵 Аудио</span>
+                        )}
+                      </div>
+                      {example.pause_after_audio_sec && (
+                        <p className="text-sm text-gray-600 mt-1">
+                          Пауза после аудио: {example.pause_after_audio_sec} сек
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex gap-2">
+                      {hasAudio && (
+                        <button
+                          onClick={() => handlePlayAudio(index)}
+                          disabled={isPlaying}
+                          className="px-2 py-1 text-blue-600 hover:text-blue-800 text-sm"
+                          title="Воспроизвести аудио"
+                        >
+                          {isPlaying ? '⏸️' : '▶️'}
+                        </button>
+                      )}
+                      <button
+                        onClick={() => handleGenerateAudio(index)}
+                        disabled={generatingAudio[index] || !example.text?.trim()}
+                        className="px-3 py-1 text-green-600 hover:text-green-800 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                        title="Сгенерировать аудио"
+                      >
+                        {generatingAudio[index] ? '⏳' : '🎵 Генерировать'}
+                      </button>
+                      <button
+                        onClick={() => handleEditExample(index)}
+                        className="px-3 py-1 text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
+                        Редактировать
+                      </button>
+                      <button
+                        onClick={() => handleDeleteExample(index)}
+                        className="px-3 py-1 text-red-600 hover:text-red-800 text-sm font-medium"
+                      >
+                        Удалить
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
@@ -334,6 +479,8 @@ function ExampleEditorModal({ example, onSave, onCancel }: {
       text: formData.text.trim(),
       audio: true,
       pause_after_audio_sec: formData.pause_after_audio_sec,
+      // Preserve audio_url if it exists when editing
+      audio_url: example?.audio_url || undefined,
     });
   };
 

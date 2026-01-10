@@ -23,6 +23,8 @@ export default function VocabularyTaskEditor({ task, onChange, lessonDay }: Voca
   const [cards, setCards] = useState<any[]>(getCards());
   const [showAddCard, setShowAddCard] = useState(false);
   const [editingCardIndex, setEditingCardIndex] = useState<number | null>(null);
+  const [generatingAudio, setGeneratingAudio] = useState<{ [key: number]: boolean }>({});
+  const [isPlayingAudio, setIsPlayingAudio] = useState<{ [key: number]: boolean }>({});
 
   // Update task when cards change
   const updateTask = (newCards: any[]) => {
@@ -103,7 +105,77 @@ export default function VocabularyTaskEditor({ task, onChange, lessonDay }: Voca
     if (confirm('Вы уверены, что хотите удалить это слово?')) {
       const newCards = cards.filter((_, i) => i !== index);
       updateTask(newCards);
+      // Clean up audio state
+      setGeneratingAudio(prev => {
+        const newState = { ...prev };
+        delete newState[index];
+        return newState;
+      });
+      setIsPlayingAudio(prev => {
+        const newState = { ...prev };
+        delete newState[index];
+        return newState;
+      });
     }
+  };
+
+  const handleGenerateAudio = async (index: number) => {
+    const card = cards[index];
+    if (!card || !card.word || !card.word.trim()) {
+      alert('Пожалуйста, сначала добавьте слово');
+      return;
+    }
+
+    setGeneratingAudio(prev => ({ ...prev, [index]: true }));
+
+    try {
+      const response = await fetch('/api/admin/audio/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          text: card.word.trim(),
+          lessonId: lessonDay.toString(),
+          taskId: 1, // Vocabulary task
+          blockId: 'listen_and_repeat',
+          itemId: `card_${index}_${Date.now()}`,
+        }),
+      });
+
+      const data = await response.json();
+      if (data.success && data.audioUrl) {
+        // Update card with audio_url
+        const newCards = [...cards];
+        newCards[index] = {
+          ...newCards[index],
+          audio_url: data.audioUrl,
+        };
+        setCards(newCards);
+        updateTask(newCards);
+        alert('Аудио успешно сгенерировано!');
+      } else {
+        alert('Ошибка при генерации аудио: ' + (data.error || 'Unknown error'));
+      }
+    } catch (error) {
+      console.error('Error generating audio:', error);
+      alert('Ошибка при генерации аудио');
+    } finally {
+      setGeneratingAudio(prev => ({ ...prev, [index]: false }));
+    }
+  };
+
+  const handlePlayAudio = (index: number) => {
+    const card = cards[index];
+    const audioUrl = card?.audio_url;
+    if (!audioUrl) return;
+
+    setIsPlayingAudio(prev => ({ ...prev, [index]: true }));
+    const audio = new Audio(audioUrl);
+    audio.play().catch(err => {
+      console.error('Error playing audio:', err);
+      setIsPlayingAudio(prev => ({ ...prev, [index]: false }));
+    });
+    audio.onended = () => setIsPlayingAudio(prev => ({ ...prev, [index]: false }));
+    audio.onerror = () => setIsPlayingAudio(prev => ({ ...prev, [index]: false }));
   };
 
   const handleMoveCard = (index: number, direction: 'up' | 'down') => {
@@ -339,19 +411,22 @@ export default function VocabularyTaskEditor({ task, onChange, lessonDay }: Voca
                   <div className="flex gap-2 items-center">
                     {card.audio_url && (
                       <button
-                        onClick={() => {
-                          const audio = new Audio(card.audio_url);
-                          audio.play().catch(err => {
-                            console.error('Error playing audio:', err);
-                            alert('Ошибка при воспроизведении аудио');
-                          });
-                        }}
-                        className="px-3 py-1 bg-purple-600 text-white rounded hover:bg-purple-700 text-sm font-medium flex items-center gap-1"
-                        title="Проиграть аудио"
+                        onClick={() => handlePlayAudio(index)}
+                        disabled={isPlayingAudio[index]}
+                        className="px-2 py-1 text-blue-600 hover:text-blue-800 text-sm"
+                        title="Воспроизвести аудио"
                       >
-                        ▶️ Play
+                        {isPlayingAudio[index] ? '⏸️' : '▶️'}
                       </button>
                     )}
+                    <button
+                      onClick={() => handleGenerateAudio(index)}
+                      disabled={generatingAudio[index] || !card.word?.trim()}
+                      className="px-3 py-1 text-green-600 hover:text-green-800 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                      title="Сгенерировать аудио"
+                    >
+                      {generatingAudio[index] ? '⏳' : '🎵 Генерировать'}
+                    </button>
                     {index > 0 && (
                       <button
                         onClick={() => handleMoveCard(index, 'up')}
