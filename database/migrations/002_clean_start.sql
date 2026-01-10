@@ -25,3 +25,4 @@ DELETE FROM lessons;
 -- Note: This migration assumes you have exported existing lessons to JSON backup
 -- before running this migration.
 
+

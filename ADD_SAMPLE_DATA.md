@@ -133,3 +133,4 @@ FROM phrases WHERE portuguese_text = 'Boa tarde!' LIMIT 1;
 
 
 
+

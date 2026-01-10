@@ -115,3 +115,4 @@ UPDATE phrases SET ipa_transcription = 'ɨʃˈta ˈpɛɾtu' WHERE portuguese_tex
 
 
 
+

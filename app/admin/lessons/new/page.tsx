@@ -47,16 +47,33 @@ export default function NewLessonPage() {
           day_number: parseInt(dayNumber),
           title_ru: titleRu.trim() || undefined,
           title_en: titleEn.trim() || undefined,
+          subtitle_ru: subtitleRu.trim() || undefined,
+          subtitle_en: subtitleEn.trim() || undefined,
           yaml_content: yamlContent,
         }),
       });
 
       const data = await response.json();
+      
+      if (!response.ok) {
+        // Handle HTTP error responses
+        const errorMessage = data.error || 'Ошибка при создании урока';
+        const details = data.details ? `: ${data.details}` : '';
+        const hint = data.hint ? ` (${data.hint})` : '';
+        setError(errorMessage + details + hint);
+        console.error('Create lesson error:', data);
+        return;
+      }
+
       if (data.success && data.lesson) {
         // Redirect to edit page
         router.push(`/admin/lessons/${data.lesson.id}/edit`);
       } else {
-        setError(data.error || 'Ошибка при создании урока');
+        const errorMessage = data.error || 'Ошибка при создании урока';
+        const details = data.details ? `: ${data.details}` : '';
+        const hint = data.hint ? ` (${data.hint})` : '';
+        setError(errorMessage + details + hint);
+        console.error('Create lesson error:', data);
       }
     } catch (err) {
       console.error('Error creating lesson:', err);
@@ -121,14 +138,18 @@ export default function NewLessonPage() {
                       body: formData,
                     });
 
-                    const data = await response.json();
+                  const data = await response.json();
 
-                    if (data.success) {
-                      // Redirect to edit page
-                      router.push(`/admin/lessons/${data.lesson.id}/edit`);
-                    } else {
-                      setError(data.error || 'Ошибка при импорте урока');
-                    }
+                  if (data.success) {
+                    // Redirect to edit page
+                    router.push(`/admin/lessons/${data.lesson.id}/edit`);
+                  } else {
+                    const errorMessage = data.error || 'Ошибка при импорте урока';
+                    const details = data.details ? `: ${data.details}` : '';
+                    const hint = data.hint ? ` (${data.hint})` : '';
+                    setError(errorMessage + details + hint);
+                    console.error('Import error:', data);
+                  }
                   } catch (err) {
                     console.error('Error importing lesson:', err);
                     setError('Ошибка при импорте урока');

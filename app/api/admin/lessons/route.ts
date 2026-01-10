@@ -64,7 +64,9 @@ export async function POST(request: NextRequest) {
     const { 
       day_number, 
       title_ru, 
-      title_en, 
+      title_en,
+      subtitle_ru,
+      subtitle_en,
       yaml_content,
       level_id,
       order_in_level,
@@ -73,13 +75,14 @@ export async function POST(request: NextRequest) {
 
     if (!day_number) {
       return NextResponse.json(
-        { error: 'day_number is required' },
+        { success: false, error: 'day_number is required' },
         { status: 400 }
       );
     }
 
-    // Check if lesson with this day_number already exists
-    const { data: existingLessons, error: checkError } = await supabase
+    // Check if lesson with this day_number already exists (use admin client for RLS bypass)
+    const supabaseAdmin = getSupabaseAdmin();
+    const { data: existingLessons, error: checkError } = await supabaseAdmin
       .from('lessons')
       .select('id')
       .eq('day_number', day_number)
@@ -89,37 +92,61 @@ export async function POST(request: NextRequest) {
       // PGRST116 = no rows returned, which is fine
       console.error('Error checking existing lessons:', checkError);
       return NextResponse.json(
-        { error: 'Failed to check existing lessons' },
+        { success: false, error: 'Failed to check existing lessons', details: checkError.message },
         { status: 500 }
       );
     }
 
     if (existingLessons && existingLessons.length > 0) {
       return NextResponse.json(
-        { error: `Lesson with day_number ${day_number} already exists` },
+        { success: false, error: `Lesson with day_number ${day_number} already exists` },
         { status: 400 }
       );
     }
 
-    // Create new lesson (use admin client for write operations)
-    const { data: lesson, error: insertError } = await getSupabaseAdmin()
+    // Prepare insert data - handle optional fields correctly
+    const insertData: any = {
+      day_number,
+      title_ru: (title_ru && title_ru.trim()) ? title_ru.trim() : null,
+      title_en: (title_en && title_en.trim()) ? title_en.trim() : null,
+      yaml_content: yaml_content || {},
+      is_published: is_published !== undefined ? is_published : false,
+    };
+
+    // Only include subtitle fields if they have values (optional fields)
+    if (subtitle_ru && subtitle_ru.trim()) {
+      insertData.subtitle_ru = subtitle_ru.trim();
+    }
+    if (subtitle_en && subtitle_en.trim()) {
+      insertData.subtitle_en = subtitle_en.trim();
+    }
+
+    // Only include optional fields if they have values
+    if (level_id) {
+      insertData.level_id = level_id;
+    }
+    if (order_in_level !== null && order_in_level !== undefined) {
+      insertData.order_in_level = order_in_level;
+    }
+
+    // Create new lesson (use admin client for write operations to bypass RLS)
+    const { data: lesson, error: insertError } = await supabaseAdmin
       .from('lessons')
-      .insert({
-        day_number,
-        title_ru: title_ru || null,
-        title_en: title_en || null,
-        yaml_content: yaml_content || {},
-        level_id: level_id || null,
-        order_in_level: order_in_level || null,
-        is_published: is_published !== undefined ? is_published : false,
-      })
+      .insert(insertData)
       .select()
       .single();
 
     if (insertError) {
       console.error('Error creating lesson:', insertError);
+      console.error('Insert data:', insertData);
       return NextResponse.json(
-        { error: 'Failed to create lesson' },
+        { 
+          success: false, 
+          error: 'Failed to create lesson',
+          details: insertError.message,
+          code: insertError.code,
+          hint: insertError.hint,
+        },
         { status: 500 }
       );
     }
@@ -130,8 +157,13 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('Error in POST /api/admin/lessons:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { 
+        success: false,
+        error: 'Internal server error',
+        details: errorMessage,
+      },
       { status: 500 }
     );
   }
