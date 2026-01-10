@@ -105,16 +105,18 @@ export async function POST(request: NextRequest) {
         const expiresAt = new Date();
         expiresAt.setDate(expiresAt.getDate() + 365);
         
-        await supabase
+        const { data: insertedToken } = await supabase
           .from('lesson_access_tokens')
           .insert({
             user_id: userId,
             lesson_id: firstLesson.id,
             token,
             expires_at: expiresAt.toISOString(),
-          });
+          })
+          .select('token')
+          .single();
         
-        firstLessonToken = { token };
+        firstLessonToken = insertedToken || { token };
       }
 
       if (firstLessonToken?.token) {
