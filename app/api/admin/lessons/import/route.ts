@@ -54,7 +54,8 @@ export async function POST(request: NextRequest) {
 
     // Support both old YAML format (day.title) and new format (title_ru, title_en)
     if (lessonData.day) {
-      dayNumber = lessonData.day.day_number || null;
+      // Support both day.number and day.day_number
+      dayNumber = lessonData.day.day_number || lessonData.day.number || null;
       titleRu = typeof lessonData.day.title === 'string' 
         ? lessonData.day.title 
         : lessonData.day.title?.ru || '';
@@ -69,8 +70,8 @@ export async function POST(request: NextRequest) {
         : lessonData.day.subtitle?.en || '';
       estimatedTime = lessonData.day.estimated_time || '';
     } else {
-      // New format
-      dayNumber = lessonData.day_number || null;
+      // New format (direct fields or day_number at top level)
+      dayNumber = lessonData.day_number || lessonData.number || null;
       titleRu = lessonData.title_ru || '';
       titleEn = lessonData.title_en || '';
       subtitleRu = lessonData.subtitle_ru || '';
@@ -79,8 +80,20 @@ export async function POST(request: NextRequest) {
     }
 
     // Prepare yaml_content (store the entire lesson structure)
+    // Normalize day structure to use day_number instead of number
+    let normalizedDay = lessonData.day;
+    if (normalizedDay && normalizedDay.number && !normalizedDay.day_number) {
+      normalizedDay = {
+        ...normalizedDay,
+        day_number: normalizedDay.number,
+      };
+      // Remove number if day_number is set
+      const { number, ...dayWithoutNumber } = normalizedDay;
+      normalizedDay = dayWithoutNumber;
+    }
+    
     const yamlContent: any = {
-      day: lessonData.day || {
+      day: normalizedDay || {
         day_number: dayNumber,
         title: { ru: titleRu, en: titleEn },
         subtitle: { ru: subtitleRu, en: subtitleEn },
