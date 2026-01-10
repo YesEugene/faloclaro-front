@@ -834,7 +834,7 @@ function LessonsSection() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
                     <button
-                      onClick={() => handleEditLesson(lesson)}
+                      onClick={() => router.push(`/admin/lessons/${lesson.id}/edit`)}
                       className="text-blue-600 hover:text-blue-800"
                     >
                       Редактировать
