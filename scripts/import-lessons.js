@@ -204,8 +204,20 @@ function loadLessonFiles(dayNumber) {
             console.log(`  ✅ Merged vocabulary content into task ${taskItem.task_id}`);
           } else {
             // For tasks 2-5, replace completely to ensure all data is included
-            dayData.tasks[existingIndex] = taskItem;
+            // But ensure structure and blocks are preserved from task file
+            const existingTask = dayData.tasks[existingIndex];
+            // Replace completely with new task data, ensuring structure and blocks are included
+            const updatedTask = {
+              ...taskItem,
+              // Explicitly ensure structure and blocks are set from taskData (not taskItem which might have old values)
+              structure: taskData.structure || taskItem.structure || existingTask.structure,
+              blocks: taskData.blocks || taskItem.blocks || existingTask.blocks,
+            };
+            dayData.tasks[existingIndex] = updatedTask;
             console.log(`  ✅ Updated task ${taskItem.task_id} (${taskItem.type})`);
+            console.log(`     Structure blocks_order: ${updatedTask.structure?.blocks_order?.length || 0} blocks`);
+            console.log(`     Blocks count: ${Object.keys(updatedTask.blocks || {}).length}`);
+            console.log(`     Blocks keys: ${Object.keys(updatedTask.blocks || {}).join(', ')}`);
           }
         } else {
           // Task doesn't exist, add it - but ensure ui object is created for vocabulary tasks
@@ -222,6 +234,13 @@ function loadLessonFiles(dayNumber) {
               taskItem.completion_rule = taskData.task.completion_rule;
             }
           }
+          // For rules tasks, ensure structure and blocks are explicitly set
+          if (taskItem.type === 'rules') {
+            taskItem.structure = taskData.structure || taskItem.structure;
+            taskItem.blocks = taskData.blocks || taskItem.blocks;
+            console.log(`     Structure keys: ${Object.keys(taskItem.structure || {}).join(', ')}`);
+            console.log(`     Blocks keys: ${Object.keys(taskItem.blocks || {}).join(', ')}`);
+          }
           dayData.tasks.push(taskItem);
           console.log(`  ✅ Added task ${taskItem.task_id} (${taskItem.type})`);
         }
@@ -235,6 +254,18 @@ function loadLessonFiles(dayNumber) {
 
   // Sort tasks by task_id
   dayData.tasks.sort((a, b) => (a.task_id || 0) - (b.task_id || 0));
+
+  // Debug: Log final tasks structure
+  console.log(`\n  📊 Final tasks structure after merge:`);
+  dayData.tasks.forEach((t, i) => {
+    if (t.type === 'rules') {
+      console.log(`    Task ${t.task_id} (${t.type}):`);
+      console.log(`      Structure: ${t.structure ? 'exists' : 'MISSING'}`);
+      console.log(`      Blocks order: ${t.structure?.blocks_order?.length || 0} items`);
+      console.log(`      Blocks: ${Object.keys(t.blocks || {}).length} blocks`);
+      console.log(`      Blocks keys: ${Object.keys(t.blocks || {}).join(', ')}`);
+    }
+  });
 
   return dayData;
 }
@@ -261,6 +292,18 @@ async function importLesson(dayNumber, yamlData) {
       .single();
 
     if (existing) {
+      // Debug: Log task 2 structure before saving
+      const task2 = (yamlData.tasks || []).find((t) => t.task_id === 2 && t.type === 'rules');
+      if (task2) {
+        console.log(`\n🔍 Task 2 (rules) before saving to DB:`, {
+          hasStructure: !!task2.structure,
+          hasBlocks: !!task2.blocks,
+          structureBlocksOrder: (task2.structure && task2.structure.blocks_order) ? task2.structure.blocks_order.length : 0,
+          blocksKeys: Object.keys(task2.blocks || {}),
+          structureBlocksOrderArray: (task2.structure && task2.structure.blocks_order) || [],
+        });
+      }
+
       // Update existing lesson
       const { error: updateError } = await supabase
         .from('lessons')
@@ -282,6 +325,29 @@ async function importLesson(dayNumber, yamlData) {
       }
 
       console.log(`✅ Updated lesson ${dayNumber}`);
+      
+      // Verify what was saved
+      const { data: savedLesson } = await supabase
+        .from('lessons')
+        .select('yaml_content')
+        .eq('day_number', dayNumber)
+        .single();
+      
+      if (savedLesson && savedLesson.yaml_content) {
+        const savedContent = typeof savedLesson.yaml_content === 'string' 
+          ? JSON.parse(savedLesson.yaml_content) 
+          : savedLesson.yaml_content;
+        const savedTask2 = (savedContent.tasks || []).find((t) => t.task_id === 2 && t.type === 'rules');
+        if (savedTask2) {
+          console.log(`\n🔍 Task 2 (rules) after saving to DB:`, {
+            hasStructure: !!savedTask2.structure,
+            hasBlocks: !!savedTask2.blocks,
+            structureBlocksOrder: (savedTask2.structure && savedTask2.structure.blocks_order) ? savedTask2.structure.blocks_order.length : 0,
+            blocksKeys: Object.keys(savedTask2.blocks || {}),
+          });
+        }
+      }
+      
       return true;
     } else {
       // Create new lesson

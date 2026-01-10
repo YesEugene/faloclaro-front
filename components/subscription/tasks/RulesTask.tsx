@@ -284,23 +284,32 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
 
   // Handle answer selection for reinforcement tasks
   const handleAnswerSelect = (taskKey: string, answer: string) => {
-    setSelectedAnswers(prev => ({ ...prev, [taskKey]: answer }));
-    setShowResults(prev => ({ ...prev, [taskKey]: true }));
+    const updatedAnswers = { ...selectedAnswers, [taskKey]: answer };
+    const updatedShowResults = { ...showResults, [taskKey]: true };
     
-    // If this is the last block and all tasks are completed, mark task as completed
-    if (currentBlockIndex === blocksOrder.length - 1 && currentBlock.type === 'reinforcement') {
-      const allTasksCompleted = checkAllReinforcementTasksCompleted();
-      if (allTasksCompleted) {
-        setLocalIsCompleted(true);
-        // Save all answers and state
-        onComplete({
-          selectedAnswers, // Save all selected answers
-          showResults, // Save all show results
-          speakOutLoudCompleted, // Save speak out loud completion state
-          completedAt: new Date().toISOString(),
-        });
-      }
+    setSelectedAnswers(updatedAnswers);
+    setShowResults(updatedShowResults);
+    
+    // Check if all tasks in this reinforcement block are completed
+    // We need to check with updated state, not current state
+    const hasTask1 = !!currentBlock.task_1;
+    const hasTask2 = !!currentBlock.task_2;
+    const allTasksCompleted = (!hasTask1 || updatedShowResults['task_1']) && (!hasTask2 || updatedShowResults['task_2']);
+    
+    // Only mark task as completed if this is the LAST block (speak_out_loud block is index 4, which is last)
+    // AND all reinforcement tasks are completed
+    if (currentBlockIndex === blocksOrder.length - 1 && currentBlock.type === 'reinforcement' && allTasksCompleted) {
+      setLocalIsCompleted(true);
+      // Save all answers and state
+      onComplete({
+        selectedAnswers: updatedAnswers, // Save all selected answers
+        showResults: updatedShowResults, // Save all show results
+        speakOutLoudCompleted, // Save speak out loud completion state
+        completedAt: new Date().toISOString(),
+      });
     }
+    // If this is NOT the last block (e.g., block 4 reinforcement, but block 5 is speak_out_loud),
+    // we should NOT mark task as completed - user should continue to next block
   };
   
   // Check if all reinforcement tasks are completed
