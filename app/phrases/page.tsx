@@ -64,12 +64,16 @@ function PhrasesContent() {
           return;
         }
 
-        // Find vocabulary task
+        // Find vocabulary task - always task_id: 1 for vocabulary tasks
         const tasks = lessonData.yaml_content?.tasks || [];
-        const vocabularyTask = tasks.find((t: any) => t.task_id === parseInt(taskId));
+        const vocabularyTask = tasks.find((t: any) => t.task_id === 1 && t.type === 'vocabulary');
         
         if (!vocabularyTask || !vocabularyTask.content?.cards) {
-          console.error('Vocabulary task not found or has no cards');
+          console.error('Vocabulary task not found or has no cards', {
+            tasksFound: tasks.length,
+            tasks: tasks.map((t: any) => ({ task_id: t.task_id, type: t.type })),
+            taskIdFromUrl: taskId,
+          });
           setLoading(false);
           return;
         }
