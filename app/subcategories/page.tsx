@@ -69,10 +69,10 @@ const clusterConfig: Record<string, {
 };
 
 const subcategoryTypes = [
-  { key: 'all', en: 'Select all', ru: 'Выбрать все', pt: 'Selecionar todos' },
-  { key: 'word', en: 'Words', ru: 'Слова', pt: 'Palavras' },
-  { key: 'short_sentence', en: 'Short sentences', ru: 'Короткие предложения', pt: 'Frases curtas' },
-  { key: 'long_sentence', en: 'Long sentences', ru: 'Длинные предложения', pt: 'Frases longas' },
+  { key: 'all', en: 'Select all', ru: 'Выбрать все' },
+  { key: 'word', en: 'Words', ru: 'Слова' },
+  { key: 'short_sentence', en: 'Short sentences', ru: 'Короткие предложения' },
+  { key: 'long_sentence', en: 'Long sentences', ru: 'Длинные предложения' },
 ];
 
 function SubcategoriesContent() {
@@ -171,16 +171,12 @@ function SubcategoriesContent() {
         // Multiple clusters selected
         return language === 'ru' 
           ? `Выбрать все тематики`
-          : language === 'pt'
-          ? `Selecionar todos os temas`
           : `Select all themes`;
       } else if (cluster) {
         // Single cluster
         const clusterDisplayName = getClusterName(cluster.name, language);
         return language === 'ru' 
           ? `Выбрать все ${clusterDisplayName}`
-          : language === 'pt'
-          ? `Selecionar todos ${clusterDisplayName}`
           : `Select all ${clusterDisplayName}`;
       }
     }
@@ -206,7 +202,7 @@ function SubcategoriesContent() {
 
   const clusterColor = getClusterColor();
   const clusterDisplayName = isMultipleClusters 
-    ? (language === 'ru' ? 'Все тематики' : language === 'pt' ? 'Todos os temas' : 'All themes')
+    ? (language === 'ru' ? 'Все тематики' : 'All themes')
     : cluster 
     ? getClusterName(cluster.name, language)
     : '';
@@ -245,7 +241,7 @@ function SubcategoriesContent() {
             }}
           >
             <span className="text-gray-700">
-              {language === 'ru' ? '← Назад к темам' : language === 'pt' ? '← Voltar aos temas' : '← Back to topics'}
+              {language === 'ru' ? '← Назад к темам' : '← Back to topics'}
             </span>
           </button>
         </div>
@@ -264,7 +260,7 @@ function SubcategoriesContent() {
             <div className="absolute bottom-4 left-4 right-4">
               <div className="text-left">
                 <div className="font-semibold text-black mb-1" style={{ fontSize: '16px' }}>
-                  {language === 'ru' ? 'Выбрать все' : language === 'pt' ? 'Selecionar todos' : 'Select all'}
+                  {language === 'ru' ? 'Выбрать все' : 'Select all'}
                 </div>
                 <div className="font-semibold text-black leading-tight" style={{ fontSize: '26px' }}>
                   {clusterDisplayName}
