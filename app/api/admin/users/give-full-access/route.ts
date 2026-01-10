@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
-import { sendLessonEmail } from '@/lib/send-lesson-email';
+import { sendFullAccessEmail } from '@/lib/send-lesson-email';
 import crypto from 'crypto';
 
 export async function POST(request: NextRequest) {
@@ -116,7 +116,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Send email with link to first lesson (if user doesn't have it already)
+    // Send email about full access with link to first lesson
     const { data: firstLesson } = await supabase
       .from('lessons')
       .select('id, day_number')
@@ -124,46 +124,23 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (firstLesson) {
-      // Get or create token for first lesson
-      let { data: firstLessonToken } = await supabase
+      // Get token for first lesson (should exist after creating tokens above)
+      const { data: firstLessonToken } = await supabase
         .from('lesson_access_tokens')
         .select('token')
         .eq('user_id', userId)
         .eq('lesson_id', firstLesson.id)
         .single();
 
-      if (!firstLessonToken) {
-        // Create token for first lesson if it doesn't exist
-        const token = crypto.randomBytes(32).toString('hex');
-        const expiresAt = new Date();
-        expiresAt.setDate(expiresAt.getDate() + 365);
-        
-        const { data: insertedToken } = await supabase
-          .from('lesson_access_tokens')
-          .insert({
-            user_id: userId,
-            lesson_id: firstLesson.id,
-            token,
-            expires_at: expiresAt.toISOString(),
-          })
-          .select('token')
-          .single();
-        
-        firstLessonToken = insertedToken || { token };
-      }
-
       if (firstLessonToken?.token) {
         try {
-          await sendLessonEmail(
-            userId,
-            firstLesson.id,
-            1,
-            firstLessonToken.token
-          );
+          await sendFullAccessEmail(userId, firstLessonToken.token);
         } catch (emailError) {
-          console.error('Error sending email:', emailError);
+          console.error('Error sending full access email:', emailError);
           // Don't fail if email fails
         }
+      } else {
+        console.warn('First lesson token not found after creating tokens');
       }
     }
 

@@ -36,6 +36,19 @@ function OverviewPageContent() {
 
   const loadAllLessonsData = async (userId: string) => {
     try {
+      // Get user subscription status
+      const { data: subscriptionData } = await supabase
+        .from('subscriptions')
+        .select('status')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      if (subscriptionData) {
+        setSubscription(subscriptionData);
+      }
+
       // Get all user tokens
       const { data: tokensData } = await supabase
         .from('lesson_access_tokens')
@@ -71,6 +84,10 @@ function OverviewPageContent() {
   };
 
   const isLessonUnlocked = (lessonDay: number): boolean => {
+    // If user has paid subscription, all lessons are unlocked
+    if (subscription?.status === 'paid') {
+      return true;
+    }
     // First 3 lessons are always unlocked if user has any token
     if (lessonDay <= 3 && userTokens.size > 0) {
       return true;
