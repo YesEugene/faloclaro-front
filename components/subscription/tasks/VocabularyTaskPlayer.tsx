@@ -906,6 +906,21 @@ export default function VocabularyTaskPlayer({
                 );
               }
               
+              // If we're on first card (index 0) but can go to previous task - show previous task button
+              if (currentCardIndex === 0 && canGoPrevious && onPreviousTask) {
+                return (
+                  <button
+                    onClick={onPreviousTask}
+                    className="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors flex items-center justify-center"
+                    aria-label={t.previousTask}
+                  >
+                    <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                  </button>
+                );
+              }
+              
               // Otherwise, if we can go to previous card - show previous card button
               if (currentCardIndex > 0) {
                 return (

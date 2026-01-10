@@ -551,38 +551,58 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
         <div className="max-w-md mx-auto pt-3 pb-3" style={{ paddingBottom: 'env(safe-area-inset-bottom, 12px)', height: '69px', color: 'rgba(0, 0, 0, 1)', paddingLeft: '16px', paddingRight: '16px' }}>
           <div className="flex items-center justify-between gap-4">
             {/* Previous Button - Left */}
-            {/* If task is completed AND on last item: show previous task button, else: show previous item button */}
-            {localIsCompleted && currentItemIndex === items.length - 1 ? (
-              // Task completed AND on last item - show previous task button
-              canGoPrevious && onPreviousTask ? (
-                <button
-                  onClick={onPreviousTask}
-                  className="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors flex items-center justify-center"
-                  aria-label={appLanguage === 'ru' ? 'Предыдущее задание' : appLanguage === 'en' ? 'Previous task' : 'Tarefa anterior'}
-                >
-                  <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
-                </button>
-              ) : (
-                <div className="w-10 h-10"></div>
-              )
-            ) : (
-              // Task not completed OR not on last item - show previous item button
-              currentItemIndex > 0 ? (
-                <button
-                  onClick={handlePreviousItem}
-                  className="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors flex items-center justify-center"
-                  aria-label={appLanguage === 'ru' ? 'Предыдущий блок' : appLanguage === 'en' ? 'Previous item' : 'Item anterior'}
-                >
-                  <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
-                </button>
-              ) : (
-                <div className="w-10 h-10"></div>
-              )
-            )}
+            {/* Always show previous button if available: previous task OR previous item/block */}
+            {(() => {
+              // If task is completed AND on last item - show previous task button
+              if (localIsCompleted && currentItemIndex === items.length - 1) {
+                if (canGoPrevious && onPreviousTask) {
+                  return (
+                    <button
+                      onClick={onPreviousTask}
+                      className="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors flex items-center justify-center"
+                      aria-label={appLanguage === 'ru' ? 'Предыдущее задание' : appLanguage === 'en' ? 'Previous task' : 'Tarefa anterior'}
+                    >
+                      <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                      </svg>
+                    </button>
+                  );
+                }
+              }
+              
+              // If we're on first item (index 0) but can go to previous task - show previous task button
+              if (currentItemIndex === 0 && canGoPrevious && onPreviousTask) {
+                return (
+                  <button
+                    onClick={onPreviousTask}
+                    className="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors flex items-center justify-center"
+                    aria-label={appLanguage === 'ru' ? 'Предыдущее задание' : appLanguage === 'en' ? 'Previous task' : 'Tarefa anterior'}
+                  >
+                    <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                  </button>
+                );
+              }
+              
+              // If we can go to previous item - show previous item button
+              if (currentItemIndex > 0) {
+                return (
+                  <button
+                    onClick={handlePreviousItem}
+                    className="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors flex items-center justify-center"
+                    aria-label={appLanguage === 'ru' ? 'Предыдущий блок' : appLanguage === 'en' ? 'Previous item' : 'Item anterior'}
+                  >
+                    <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                  </button>
+                );
+              }
+              
+              // No previous options - show empty spacer
+              return <div className="w-10 h-10"></div>;
+            })()}
 
             {/* Task Title - Center */}
             <div className="flex-1 text-center">
