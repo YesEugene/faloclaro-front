@@ -1,3 +1,64 @@
 task:
   task_id: 3
   type: listening_comprehension
+  title:
+    ru: "Предложения и понимание"
+    en: "Sentences and understanding"
+  subtitle:
+    ru: "Слушай фразу и пойми, о чём она"
+    en: "Listen to the phrase and understand what it's about"
+  estimated_time: "≈5"
+  show_timer: false
+  show_settings: false
+  completion_message:
+    ru: "Уровень прогресса: Понимание"
+    en: "Progress level: Understanding"
+
+ui_rules:
+  audio_plays_first: true
+  show_text_after_answer: true
+  one_clear_correct_answer: true
+
+items:
+  - item_id: 1
+    audio: "Preciso de ajuda."
+    text_hidden_before_answer: true
+    question:
+      ru: "О чём говорит человек?"
+      en: "What is the person saying?"
+    options:
+      - text: "Просит о помощи"
+        correct: true
+      - text: "Благодарит"
+        correct: false
+      - text: "Отказывает"
+        correct: false
+
+  - item_id: 2
+    audio: "Pode ajudar?"
+    text_hidden_before_answer: true
+    question:
+      ru: "О чём говорит человек?"
+      en: "What is the person saying?"
+    options:
+      - text: "Просит о помощи"
+        correct: true
+      - text: "Благодарит"
+        correct: false
+      - text: "Отказывает"
+        correct: false
+
+  - item_id: 3
+    optional: true
+    audio: "Hoje não posso."
+    text_hidden_before_answer: true
+    question:
+      ru: "Что означает эта фраза?"
+      en: "What does this phrase mean?"
+    options:
+      - text: "Сегодня не могу"
+        correct: true
+      - text: "Завтра смогу"
+        correct: false
+      - text: "Спасибо"
+        correct: false
