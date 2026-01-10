@@ -14,15 +14,57 @@ export default function RulesTaskEditor({ task, onChange, lessonDay }: RulesTask
   const getBlocksArray = () => {
     if (Array.isArray(task.blocks)) {
       // New structure: blocks is already an array
-      return task.blocks;
-    } else if (task.blocks && typeof task.blocks === 'object') {
+      // Ensure each block has required structure
+      return task.blocks.map((block: any) => {
+        if (!block || typeof block !== 'object') {
+          return {
+            block_id: `block_${Date.now()}`,
+            block_type: 'explanation',
+            content: {},
+          };
+        }
+        return {
+          ...block,
+          block_id: block.block_id || block.id || `block_${Date.now()}`,
+          block_type: typeof block.block_type === 'string' 
+            ? block.block_type 
+            : (typeof block.type === 'string' ? block.type : 'explanation'),
+          content: block.content || {},
+        };
+      });
+    } else if (task.blocks && typeof task.blocks === 'object' && !Array.isArray(task.blocks)) {
       // Old structure: blocks is an object, convert to array
       const blocksOrder = task.structure?.blocks_order || Object.keys(task.blocks);
-      return blocksOrder.map((blockId: string) => ({
-        block_id: blockId,
-        block_type: task.blocks[blockId]?.type || task.blocks[blockId]?.block_type || 'how_to_say',
-        content: task.blocks[blockId]?.content || task.blocks[blockId],
-      }));
+      return blocksOrder.map((blockId: string) => {
+        const oldBlock = task.blocks[blockId];
+        if (!oldBlock || typeof oldBlock !== 'object') {
+          return {
+            block_id: blockId,
+            block_type: 'explanation',
+            content: {},
+          };
+        }
+        
+        // Extract block_type/type - ensure it's a string
+        let blockType = oldBlock.type || oldBlock.block_type || 'how_to_say';
+        if (typeof blockType !== 'string') {
+          blockType = 'explanation';
+        }
+        
+        // Extract content - ensure it's an object, not the whole block
+        let content = oldBlock.content;
+        if (!content || typeof content !== 'object' || Array.isArray(content)) {
+          // If no content, use the block itself but remove type/block_type
+          const { type, block_type, ...rest } = oldBlock;
+          content = rest && typeof rest === 'object' ? rest : {};
+        }
+        
+        return {
+          block_id: blockId,
+          block_type: blockType,
+          content: content,
+        };
+      });
     }
     return [];
   };
@@ -139,11 +181,37 @@ export default function RulesTaskEditor({ task, onChange, lessonDay }: RulesTask
     setEditingBlockIndex(null);
   };
 
-  if (editingBlockIndex !== null && blocks[editingBlockIndex]) {
+  if (editingBlockIndex !== null && editingBlockIndex >= 0 && editingBlockIndex < blocks.length) {
+    const blockToEdit = blocks[editingBlockIndex];
+    
+    // Ensure block has required structure
+    if (!blockToEdit || typeof blockToEdit !== 'object') {
+      console.error('Invalid block structure:', blockToEdit);
+      return (
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <p className="text-red-600">Ошибка: блок имеет неверную структуру</p>
+          <button
+            onClick={() => setEditingBlockIndex(null)}
+            className="mt-4 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
+          >
+            Назад
+          </button>
+        </div>
+      );
+    }
+
+    // Ensure block has block_id and block_type
+    const normalizedBlock = {
+      ...blockToEdit,
+      block_id: blockToEdit.block_id || `block_${editingBlockIndex + 1}`,
+      block_type: blockToEdit.block_type || blockToEdit.type || 'explanation',
+      content: blockToEdit.content || {},
+    };
+
     return (
       <BlockEditor
-        blockKey={blocks[editingBlockIndex].block_id}
-        block={blocks[editingBlockIndex]}
+        blockKey={normalizedBlock.block_id}
+        block={normalizedBlock}
         lessonDay={lessonDay}
         onSave={(block) => handleSaveBlock(editingBlockIndex, block)}
         onCancel={() => setEditingBlockIndex(null)}
@@ -263,12 +331,24 @@ export default function RulesTaskEditor({ task, onChange, lessonDay }: RulesTask
         ) : (
           <div className="space-y-3">
             {blocks.map((block, index) => {
-              if (!block) return null;
-              const blockTitle = block.content?.title || block.title || {};
+              if (!block || typeof block !== 'object') {
+                console.warn(`Invalid block at index ${index}:`, block);
+                return null;
+              }
+              
+              // Safely extract block type - must be a string
+              const blockType = typeof block.block_type === 'string' 
+                ? block.block_type 
+                : (typeof block.type === 'string' ? block.type : 'unknown');
+              
+              // Safely extract title
+              const blockTitle = (block.content && typeof block.content === 'object' && block.content.title)
+                ? block.content.title
+                : (block.title && typeof block.title === 'object' ? block.title : {});
 
               return (
                 <div
-                  key={block.block_id || index}
+                  key={block.block_id || `block_${index}`}
                   className="border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition-colors"
                 >
                   <div className="flex justify-between items-start">
@@ -278,13 +358,15 @@ export default function RulesTaskEditor({ task, onChange, lessonDay }: RulesTask
                           Блок {index + 1} / {blocks.length}
                         </span>
                         <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded text-sm">
-                          {block.block_type || block.type}
+                          {blockType}
                         </span>
                       </div>
                       <h3 className="font-semibold text-gray-900">
                         {typeof blockTitle === 'string' 
                           ? blockTitle 
-                          : blockTitle?.ru || blockTitle?.en || 'Без названия'}
+                          : (blockTitle && typeof blockTitle === 'object' 
+                            ? (blockTitle.ru || blockTitle.en || 'Без названия')
+                            : 'Без названия')}
                       </h3>
                     </div>
                     <div className="flex gap-2">

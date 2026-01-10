@@ -3,14 +3,33 @@ day:
   title:
     ru: "Информация и объявления"
     en: "Information and announcements"
+  subtitle:
+    ru: "Понимаем где, когда и сколько"
+    en: "Understanding where, when and how much"
 
 tasks:
-  # 1) VOCABULARY
+
   - task_id: 1
-    type: "vocabulary"
+    type: vocabulary
     title:
       ru: "Слова и фразы"
       en: "Words and phrases"
+    subtitle:
+      ru: "Информация и объявления"
+      en: "Information and announcements"
+    estimated_time: "~10"
+    show_timer: true
+    show_audio_settings: true
+    completion_rule: "auto_after_audio_10_min"
+
+    card_format:
+      show_word: true
+      show_transcription: true
+      show_example_sentence: true
+      show_word_translation_ru: true
+      show_sentence_translation_ru: true
+      show_sentence_translation_en: true
+
     content:
       cards:
         - word: "Aberto"
@@ -19,7 +38,6 @@ tasks:
           sentence_translation_ru: "Музей открыт."
           sentence_translation_en: "The museum is open."
           word_translation_ru: "открыт"
-          word_translation_en: "open"
 
         - word: "Fechado"
           transcription: "[fɨˈʃadu]"
@@ -27,15 +45,13 @@ tasks:
           sentence_translation_ru: "Музей закрыт."
           sentence_translation_en: "The museum is closed."
           word_translation_ru: "закрыт"
-          word_translation_en: "closed"
 
         - word: "Horário"
           transcription: "[uˈɾaɾju]"
           example_sentence: "Qual é o horário?"
           sentence_translation_ru: "Какое расписание?"
           sentence_translation_en: "What are the hours?"
-          word_translation_ru: "расписание / часы работы"
-          word_translation_en: "schedule / opening hours"
+          word_translation_ru: "часы работы"
 
         - word: "Preço"
           transcription: "[ˈpɾɛsu]"
@@ -43,7 +59,6 @@ tasks:
           sentence_translation_ru: "Какая цена?"
           sentence_translation_en: "What is the price?"
           word_translation_ru: "цена"
-          word_translation_en: "price"
 
         - word: "Entrada"
           transcription: "[ẽˈtɾadɐ]"
@@ -51,7 +66,6 @@ tasks:
           sentence_translation_ru: "Вход бесплатный."
           sentence_translation_en: "The entrance is free."
           word_translation_ru: "вход"
-          word_translation_en: "entrance"
 
         - word: "Gratuita"
           transcription: "[ɡɾɐˈtuitɐ]"
@@ -59,7 +73,6 @@ tasks:
           sentence_translation_ru: "Бесплатный вход."
           sentence_translation_en: "Free entrance."
           word_translation_ru: "бесплатная"
-          word_translation_en: "free"
 
         - word: "Museu"
           transcription: "[muˈzɛu]"
@@ -67,7 +80,6 @@ tasks:
           sentence_translation_ru: "Музей открыт."
           sentence_translation_en: "The museum is open."
           word_translation_ru: "музей"
-          word_translation_en: "museum"
 
         - word: "Das"
           transcription: "[daʃ]"
@@ -75,7 +87,6 @@ tasks:
           sentence_translation_ru: "Открыто с 10 до 18."
           sentence_translation_en: "Open from 10 to 18."
           word_translation_ru: "с (о времени)"
-          word_translation_en: "from"
 
         - word: "Às"
           transcription: "[aʃ]"
@@ -83,7 +94,6 @@ tasks:
           sentence_translation_ru: "С 10 до 18."
           sentence_translation_en: "From 10 to 18."
           word_translation_ru: "до (о времени)"
-          word_translation_en: "to"
 
         - word: "Informação"
           transcription: "[ĩfuɾmɐˈsɐ̃w]"
@@ -91,9 +101,7 @@ tasks:
           sentence_translation_ru: "Это информация."
           sentence_translation_en: "This is the information."
           word_translation_ru: "информация"
-          word_translation_en: "information"
 
-  # 2) RULES
   - task_id: 2
     type: rules
     title:
@@ -217,8 +225,7 @@ tasks:
             en: "✔ I said it out loud"
           completes_task: true
 
-  # 3) LISTENING
-    - task_id: 3
+  - task_id: 3
     type: listening_comprehension
     title:
       ru: "Предложения и понимание"
@@ -287,8 +294,7 @@ tasks:
               en: "Closed"
             correct: false
 
-  # 4) ATTENTION
-   - task_id: 4
+  - task_id: 4
     type: attention
     title:
       ru: "Внимательность"
@@ -296,12 +302,6 @@ tasks:
     subtitle:
       ru: "Найди важную информацию"
       en: "Find the key information"
-
-    ui_rules:
-      audio_plays_first: false
-      show_text_after_answer: false
-      only_known_words: true
-      no_similar_distractors: true
 
     items:
       - item_id: 1
@@ -341,9 +341,8 @@ tasks:
               ru: "Поздороваться"
               en: "Say hello"
             correct: false
-            
-  # 5) WRITING
-   - task_id: 5
+
+  - task_id: 5
     type: writing_optional
     title:
       ru: "Письмо"
@@ -353,10 +352,8 @@ tasks:
       en: "Message builder"
 
     instruction:
-      ru: |
-        Заполни сообщение, как в SMS.
-      en: |
-        Complete the message like an SMS.
+      ru: "Заполни сообщение, как в SMS."
+      en: "Complete the message like an SMS."
 
     main_task:
       format: template_fill
