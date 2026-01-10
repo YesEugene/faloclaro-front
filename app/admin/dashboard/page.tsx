@@ -704,7 +704,7 @@ function LessonsSection() {
               Содержимое урока (JSON)
             </label>
             <textarea
-              value={typeof editingLesson === 'string' ? editingLesson : JSON.stringify(editingLesson, null, 2)}
+              value={editingLesson || ''}
               onChange={(e) => {
                 // Store as string for editing, parse on save
                 setEditingLesson(e.target.value);
