@@ -36,21 +36,27 @@ export async function GET(request: NextRequest) {
     });
 
     // Transform subscription data to payment format
-    const payments = (subscriptions || []).map((sub: any) => ({
-      id: sub.id,
-      user_id: sub.user_id,
-      user_email: userEmailMap.get(sub.user_id) || '',
-      amount: sub.amount_paid || null, // Amount in cents (if stored)
-      currency: sub.currency || 'EUR',
-      status: sub.status,
-      stripe_payment_intent_id: sub.stripe_payment_intent_id || sub.stripe_subscription_id || null,
-      stripe_session_id: sub.stripe_session_id || null,
-      created_at: sub.created_at,
-      updated_at: sub.updated_at,
-      paid_at: sub.paid_at,
-      trial_started_at: sub.trial_started_at,
-      trial_ends_at: sub.trial_ends_at,
-    }));
+    // Note: We'll need to get amount from Stripe API if not stored in DB
+    const payments = (subscriptions || []).map((sub: any) => {
+      // Extract Stripe session ID or payment intent ID
+      const stripeId = sub.stripe_session_id || sub.stripe_subscription_id || sub.stripe_payment_intent_id || null;
+      
+      return {
+        id: sub.id,
+        user_id: sub.user_id,
+        user_email: userEmailMap.get(sub.user_id) || '',
+        amount: sub.amount_paid || null, // Amount in cents (if stored, otherwise will be null)
+        currency: sub.currency || 'EUR',
+        status: sub.status,
+        stripe_payment_intent_id: sub.stripe_payment_intent_id || null,
+        stripe_session_id: sub.stripe_session_id || sub.stripe_subscription_id || null,
+        created_at: sub.created_at,
+        updated_at: sub.updated_at,
+        paid_at: sub.paid_at || (sub.status === 'paid' ? sub.created_at : null),
+        trial_started_at: sub.trial_started_at,
+        trial_ends_at: sub.trial_ends_at,
+      };
+    });
 
     return NextResponse.json({
       success: true,
