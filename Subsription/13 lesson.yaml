@@ -1,11 +1,11 @@
 day:
   number: 13
   title:
-    ru: "Люди и отношения"
-    en: "People and relationships"
+    ru: "Просьбы и ответы"
+    en: "Requests and responses"
   subtitle:
-    ru: "Понимаем, кто есть кто"
-    en: "Understanding who is who"
+    ru: "Понимаем диалоги"
+    en: "Understanding short dialogues"
 
 tasks:
 
@@ -18,8 +18,8 @@ tasks:
       ru: "Слова и фразы"
       en: "Words and phrases"
     subtitle:
-      ru: "Люди и связи"
-      en: "People and relations"
+      ru: "Просить и отвечать"
+      en: "Asking and answering"
     estimated_time: "~10"
     show_timer: true
     show_audio_settings: true
@@ -35,75 +35,75 @@ tasks:
 
     content:
       cards:
-        - word: "Família"
-          transcription: "[fɐˈmiljɐ]"
-          example_sentence: "A minha família."
-          sentence_translation_ru: "Моя семья."
-          sentence_translation_en: "My family."
-          word_translation_ru: "семья"
+        - word: "Pode"
+          transcription: "[ˈpɔdɨ]"
+          example_sentence: "Pode ajudar?"
+          sentence_translation_ru: "Вы можете помочь?"
+          sentence_translation_en: "Can you help?"
+          word_translation_ru: "можно / можешь"
 
-        - word: "Amigo"
-          transcription: "[ɐˈmiɡu]"
-          example_sentence: "O meu amigo."
-          sentence_translation_ru: "Мой друг."
-          sentence_translation_en: "My friend."
-          word_translation_ru: "друг"
+        - word: "Sim"
+          transcription: "[sĩ]"
+          example_sentence: "Sim, posso."
+          sentence_translation_ru: "Да, могу."
+          sentence_translation_en: "Yes, I can."
+          word_translation_ru: "да"
 
-        - word: "Colega"
-          transcription: "[kuˈlɛɡɐ]"
-          example_sentence: "O meu colega."
-          sentence_translation_ru: "Мой коллега."
-          sentence_translation_en: "My colleague."
-          word_translation_ru: "коллега"
+        - word: "Não"
+          transcription: "[nɐ̃w̃]"
+          example_sentence: "Não posso."
+          sentence_translation_ru: "Я не могу."
+          sentence_translation_en: "I can’t."
+          word_translation_ru: "нет"
 
-        - word: "Marido"
-          transcription: "[mɐˈɾidu]"
-          example_sentence: "O meu marido."
-          sentence_translation_ru: "Мой муж."
-          sentence_translation_en: "My husband."
-          word_translation_ru: "муж"
+        - word: "Por favor"
+          transcription: "[puɾ fɐˈvoɾ]"
+          example_sentence: "Ajuda, por favor."
+          sentence_translation_ru: "Помоги, пожалуйста."
+          sentence_translation_en: "Help, please."
+          word_translation_ru: "пожалуйста"
 
-        - word: "Mulher"
-          transcription: "[muˈʎɛɾ]"
-          example_sentence: "A minha mulher."
-          sentence_translation_ru: "Моя жена."
-          sentence_translation_en: "My wife."
-          word_translation_ru: "жена"
+        - word: "Obrigado"
+          transcription: "[ubɾiˈɡadu]"
+          example_sentence: "Obrigado."
+          sentence_translation_ru: "Спасибо."
+          sentence_translation_en: "Thank you."
+          word_translation_ru: "спасибо"
 
-        - word: "Filho"
-          transcription: "[ˈfiʎu]"
-          example_sentence: "O meu filho."
-          sentence_translation_ru: "Мой сын."
-          sentence_translation_en: "My son."
-          word_translation_ru: "сын"
+        - word: "Desculpa"
+          transcription: "[dɨʃˈkulpɐ]"
+          example_sentence: "Desculpa."
+          sentence_translation_ru: "Извини."
+          sentence_translation_en: "Sorry."
+          word_translation_ru: "извини"
 
-        - word: "Filha"
-          transcription: "[ˈfiʎɐ]"
-          example_sentence: "A minha filha."
-          sentence_translation_ru: "Моя дочь."
-          sentence_translation_en: "My daughter."
-          word_translation_ru: "дочь"
+        - word: "Agora"
+          transcription: "[ɐˈɡɔɾɐ]"
+          example_sentence: "Agora, por favor."
+          sentence_translation_ru: "Сейчас, пожалуйста."
+          sentence_translation_en: "Now, please."
+          word_translation_ru: "сейчас"
 
-        - word: "Pai"
-          transcription: "[paj]"
-          example_sentence: "O meu pai."
-          sentence_translation_ru: "Мой отец."
-          sentence_translation_en: "My father."
-          word_translation_ru: "отец"
+        - word: "Amanhã"
+          transcription: "[ɐmɐˈɲɐ]"
+          example_sentence: "Amanhã posso."
+          sentence_translation_ru: "Завтра могу."
+          sentence_translation_en: "Tomorrow I can."
+          word_translation_ru: "завтра"
 
-        - word: "Mãe"
-          transcription: "[mɐ̃j̃]"
-          example_sentence: "A minha mãe."
-          sentence_translation_ru: "Моя мама."
-          sentence_translation_en: "My mother."
-          word_translation_ru: "мать"
+        - word: "Ajuda"
+          transcription: "[ɐˈʒudɐ]"
+          example_sentence: "Preciso de ajuda."
+          sentence_translation_ru: "Мне нужна помощь."
+          sentence_translation_en: "I need help."
+          word_translation_ru: "помощь"
 
-        - word: "Gente"
-          transcription: "[ˈʒẽtɨ]"
-          example_sentence: "Muita gente."
-          sentence_translation_ru: "Много людей."
-          sentence_translation_en: "Many people."
-          word_translation_ru: "люди"
+        - word: "Posso"
+          transcription: "[ˈposu]"
+          example_sentence: "Posso ajudar."
+          sentence_translation_ru: "Я могу помочь."
+          sentence_translation_en: "I can help."
+          word_translation_ru: "могу"
 
 
 # =========================================================
@@ -115,95 +115,93 @@ tasks:
       ru: "Как это сказать"
       en: "How to say it"
     subtitle:
-      ru: "Говорим о людях"
-      en: "Talking about people"
+      ru: "Просьба и ответ"
+      en: "Request and response"
 
     structure:
       blocks_order:
-        - block_1_my
-        - block_2_family
+        - block_1_request
+        - block_2_response
         - block_3_equivalence
         - block_4_reinforcement
         - block_5_speak
 
     blocks:
 
-      block_1_my:
+      block_1_request:
         type: explanation
         title:
-          ru: "Мой и моя"
-          en: "My"
+          ru: "Как попросить"
+          en: "How to ask"
         explanation_text:
-          ru: "Чтобы сказать «мой» или «моя», используют: meu / minha."
-          en: "To say 'my', use: meu / minha."
+          ru: "Чтобы вежливо попросить, используют: Pode…? Por favor."
+          en: "To ask politely, use: Pode…? Por favor."
         examples:
-          - text: "O meu amigo."
-            audio: true
-          - text: "A minha mãe."
+          - text: "Pode ajudar, por favor?"
             audio: true
 
-      block_2_family:
+      block_2_response:
         type: explanation
         title:
-          ru: "Говорим о семье"
-          en: "Talking about family"
+          ru: "Как ответить"
+          en: "How to answer"
         explanation_text:
-          ru: "Чтобы сказать, кто человек, используют: O meu pai, A minha filha."
-          en: "To say who someone is, use: O meu pai, A minha filha."
+          ru: "Чтобы ответить, используют: Sim, posso. / Não posso."
+          en: "To answer, use: Sim, posso. / Não posso."
         examples:
-          - text: "O meu pai."
+          - text: "Sim, posso."
             audio: true
-          - text: "A minha filha."
+          - text: "Não posso."
             audio: true
 
       block_3_equivalence:
         type: comparison
         title:
-          ru: "Примеры"
-          en: "Examples"
+          ru: "Диалог"
+          en: "Dialogue"
         comparison_card:
-          - text: "O meu amigo."
+          - text: "Pode ajudar?"
             audio: true
-          - text: "A minha amiga."
+          - text: "Sim, posso."
             audio: true
         note:
-          ru: "Оба говорят о человеке."
-          en: "Both refer to a person."
+          ru: "Просьба и ответ."
+          en: "A request and a response."
 
       block_4_reinforcement:
         type: reinforcement
 
         task_1:
           format: single_choice
-          audio: "A minha mãe."
+          audio: "Pode ajudar?"
           question:
-            ru: "Кто это?"
-            en: "Who is this?"
+            ru: "Что это?"
+            en: "What is this?"
           options:
             - text:
-                ru: "Мама"
-                en: "Mother"
+                ru: "Просьба"
+                en: "A request"
               correct: true
             - text:
-                ru: "Дочь"
-                en: "Daughter"
+                ru: "Благодарность"
+                en: "Thanks"
               correct: false
             - text:
-                ru: "Друг"
-                en: "Friend"
+                ru: "Прощание"
+                en: "Goodbye"
               correct: false
 
         task_2:
           format: situation_to_phrase
           situation_text:
-            ru: "Ты хочешь сказать «мой друг»."
-            en: "You want to say 'my friend'."
+            ru: "Ты хочешь сказать, что можешь."
+            en: "You want to say you can."
           options:
-            - text: "O meu amigo."
+            - text: "Posso."
               correct: true
-            - text: "A minha mãe."
+            - text: "Não posso."
               correct: false
-            - text: "O meu pai."
+            - text: "Obrigado."
               correct: false
 
       block_5_speak:
@@ -212,8 +210,8 @@ tasks:
           ru: "Скажи вслух"
           en: "Speak out loud"
         instruction_text:
-          ru: "Скажи: O meu amigo. A minha mãe."
-          en: "Say: O meu amigo. A minha mãe."
+          ru: "Скажи: Pode ajudar? Sim, posso."
+          en: "Say: Pode ajudar? Sim, posso."
         action_button:
           text:
             ru: "✔ Я сказал(а) вслух"
@@ -230,8 +228,7 @@ tasks:
       ru: "Предложения и понимание"
       en: "Listening and understanding"
     subtitle:
-      ru: "Слушай и пойми, кто это"
-      en: "Listen and understand who it is"
+      ru: "Слушай диалог"
 
     ui_rules:
       audio_plays_first: true
@@ -239,63 +236,43 @@ tasks:
 
     items:
       - item_id: 1
-        audio: "O meu pai."
+        audio: "Pode ajudar? Sim, posso."
         text_hidden_before_answer: true
         question:
-          ru: "Кто это?"
-          en: "Who is this?"
+          ru: "Что происходит?"
+          en: "What is happening?"
         options:
           - text:
-              ru: "Отец"
-              en: "Father"
+              ru: "Просьба и согласие"
+              en: "A request and agreement"
             correct: true
           - text:
-              ru: "Сын"
-              en: "Son"
+              ru: "Просьба и отказ"
+              en: "A request and refusal"
             correct: false
           - text:
-              ru: "Друг"
-              en: "Friend"
+              ru: "Благодарность"
+              en: "Thanks"
             correct: false
 
       - item_id: 2
-        audio: "A minha filha."
+        audio: "Pode agora? Não posso."
         text_hidden_before_answer: true
         question:
-          ru: "Кто это?"
-          en: "Who is this?"
+          ru: "Что это?"
+          en: "What is this?"
         options:
           - text:
-              ru: "Дочь"
-              en: "Daughter"
+              ru: "Просьба и отказ"
+              en: "A request and refusal"
             correct: true
           - text:
-              ru: "Мама"
-              en: "Mother"
+              ru: "Просьба и согласие"
+              en: "A request and agreement"
             correct: false
           - text:
-              ru: "Коллега"
-              en: "Colleague"
-            correct: false
-
-      - item_id: 3
-        audio: "O meu colega."
-        text_hidden_before_answer: true
-        question:
-          ru: "Кто это?"
-          en: "Who is this?"
-        options:
-          - text:
-              ru: "Коллега"
-              en: "Colleague"
-            correct: true
-          - text:
-              ru: "Друг"
-              en: "Friend"
-            correct: false
-          - text:
-              ru: "Сын"
-              en: "Son"
+              ru: "Прощание"
+              en: "Goodbye"
             correct: false
 
 
@@ -308,46 +285,45 @@ tasks:
       ru: "Внимательность"
       en: "Attention"
     subtitle:
-      ru: "Пойми, о ком говорят"
-      en: "Understand who they talk about"
+      ru: "Пойми диалог"
 
     items:
       - item_id: 1
-        audio: "A minha mulher."
+        audio: "Pode amanhã? Sim."
         question:
-          ru: "Кто это?"
-          en: "Who is this?"
+          ru: "Что это?"
+          en: "What is this?"
         options:
           - text:
-              ru: "Жена"
-              en: "Wife"
+              ru: "Просьба и согласие"
+              en: "A request and agreement"
             correct: true
           - text:
-              ru: "Мама"
-              en: "Mother"
+              ru: "Просьба и отказ"
+              en: "A request and refusal"
             correct: false
           - text:
-              ru: "Друг"
-              en: "Friend"
+              ru: "Благодарность"
+              en: "Thanks"
             correct: false
 
       - item_id: 2
-        audio: "O meu filho."
+        audio: "Pode agora? Não."
         question:
-          ru: "Кто это?"
-          en: "Who is this?"
+          ru: "Что это?"
+          en: "What is this?"
         options:
           - text:
-              ru: "Сын"
-              en: "Son"
+              ru: "Просьба и отказ"
+              en: "A request and refusal"
             correct: true
           - text:
-              ru: "Отец"
-              en: "Father"
+              ru: "Просьба и согласие"
+              en: "A request and agreement"
             correct: false
           - text:
-              ru: "Коллега"
-              en: "Colleague"
+              ru: "Приветствие"
+              en: "Greeting"
             correct: false
 
 
@@ -360,8 +336,8 @@ tasks:
       ru: "Письмо"
       en: "Writing"
     subtitle:
-      ru: "Скажи, кто это"
-      en: "Say who this is"
+      ru: "Собери диалог"
+      en: "Build a dialogue"
 
     instruction:
       ru: "Заполни фразы."
@@ -370,25 +346,25 @@ tasks:
     main_task:
       format: template_fill
       template:
-        - "O meu ___."
-        - "A minha ___."
+        - "Pode ___?"
+        - "Sim, ___."
       hints:
-        - "amigo"
-        - "mãe"
+        - "ajudar"
+        - "posso"
 
     example:
       show_by_button: true
       content:
-        - "O meu amigo."
-        - "A minha mãe."
+        - "Pode ajudar?"
+        - "Sim, posso."
 
     alternative:
       title:
         ru: "Можно сказать вслух"
         en: "You can say it out loud"
       instruction:
-        ru: "Скажи: O meu amigo. A minha mãe."
-        en: "Say: O meu amigo. A minha mãe."
+        ru: "Скажи: Pode ajudar? Sim, posso."
+        en: "Say: Pode ajudar? Sim, posso."
       action_button:
         text:
           ru: "✔ Я сказал(а) вслух"

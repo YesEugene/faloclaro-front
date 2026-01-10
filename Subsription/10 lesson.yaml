@@ -1,11 +1,11 @@
 day:
   number: 10
   title:
-    ru: "Здоровье и помощь"
-    en: "Health and help"
+    ru: "Кто есть кто"
+    en: "Who is who"
   subtitle:
-    ru: "Понимаем, когда кому-то нужна помощь"
-    en: "Understanding when someone needs help"
+    ru: "Понимаем, о ком говорят"
+    en: "Understanding who people are"
 
 tasks:
 
@@ -18,8 +18,8 @@ tasks:
       ru: "Слова и фразы"
       en: "Words and phrases"
     subtitle:
-      ru: "Здоровье и помощь"
-      en: "Health and help"
+      ru: "Люди и роли"
+      en: "People and roles"
     estimated_time: "~10"
     show_timer: true
     show_audio_settings: true
@@ -35,75 +35,75 @@ tasks:
 
     content:
       cards:
-        - word: "Médico"
-          transcription: "[ˈmɛdiku]"
-          example_sentence: "Preciso de um médico."
-          sentence_translation_ru: "Мне нужен врач."
-          sentence_translation_en: "I need a doctor."
-          word_translation_ru: "врач"
+        - word: "Pessoa"
+          transcription: "[pɨˈsoɐ]"
+          example_sentence: "A pessoa aqui."
+          sentence_translation_ru: "Человек здесь."
+          sentence_translation_en: "The person is here."
+          word_translation_ru: "человек"
 
-        - word: "Farmácia"
-          transcription: "[fɐɾˈmasjɐ]"
-          example_sentence: "A farmácia está aberta."
-          sentence_translation_ru: "Аптека открыта."
-          sentence_translation_en: "The pharmacy is open."
-          word_translation_ru: "аптека"
+        - word: "Cliente"
+          transcription: "[kliˈẽtɨ]"
+          example_sentence: "O cliente."
+          sentence_translation_ru: "Клиент."
+          sentence_translation_en: "The client."
+          word_translation_ru: "клиент"
 
-        - word: "Ajuda"
-          transcription: "[ɐˈʒudɐ]"
-          example_sentence: "Preciso de ajuda."
-          sentence_translation_ru: "Мне нужна помощь."
-          sentence_translation_en: "I need help."
-          word_translation_ru: "помощь"
+        - word: "Amigo"
+          transcription: "[ɐˈmiɡu]"
+          example_sentence: "O meu amigo."
+          sentence_translation_ru: "Мой друг."
+          sentence_translation_en: "My friend."
+          word_translation_ru: "друг"
 
-        - word: "Doente"
-          transcription: "[duˈẽtɨ]"
-          example_sentence: "Estou doente."
-          sentence_translation_ru: "Я болен(больна)."
-          sentence_translation_en: "I am sick."
-          word_translation_ru: "больной"
+        - word: "Mulher"
+          transcription: "[muˈʎɛɾ]"
+          example_sentence: "A minha mulher."
+          sentence_translation_ru: "Моя жена."
+          sentence_translation_en: "My wife."
+          word_translation_ru: "жена"
 
-        - word: "Dor"
-          transcription: "[doɾ]"
-          example_sentence: "Tenho dor."
-          sentence_translation_ru: "У меня боль."
-          sentence_translation_en: "I have pain."
-          word_translation_ru: "боль"
+        - word: "Marido"
+          transcription: "[mɐˈɾidu]"
+          example_sentence: "O meu marido."
+          sentence_translation_ru: "Мой муж."
+          sentence_translation_en: "My husband."
+          word_translation_ru: "муж"
 
-        - word: "Cabeça"
-          transcription: "[kɐˈbesɐ]"
-          example_sentence: "Dor de cabeça."
-          sentence_translation_ru: "Боль в голове."
-          sentence_translation_en: "Headache."
-          word_translation_ru: "голова"
+        - word: "Filho"
+          transcription: "[ˈfiʎu]"
+          example_sentence: "O meu filho."
+          sentence_translation_ru: "Мой сын."
+          sentence_translation_en: "My son."
+          word_translation_ru: "сын"
 
-        - word: "Febre"
-          transcription: "[ˈfɛbɾɨ]"
-          example_sentence: "Tenho febre."
-          sentence_translation_ru: "У меня температура."
-          sentence_translation_en: "I have a fever."
-          word_translation_ru: "температура"
+        - word: "Filha"
+          transcription: "[ˈfiʎɐ]"
+          example_sentence: "A minha filha."
+          sentence_translation_ru: "Моя дочь."
+          sentence_translation_en: "My daughter."
+          word_translation_ru: "дочь"
 
-        - word: "Remédio"
-          transcription: "[ʁɨˈmɛdju]"
-          example_sentence: "Preciso de remédio."
-          sentence_translation_ru: "Мне нужно лекарство."
-          sentence_translation_en: "I need medicine."
-          word_translation_ru: "лекарство"
+        - word: "Pessoa conhecida"
+          transcription: "[pɨˈsoɐ kuɲɨˈsidɐ]"
+          example_sentence: "Uma pessoa conhecida."
+          sentence_translation_ru: "Знакомый человек."
+          sentence_translation_en: "A known person."
+          word_translation_ru: "знакомый"
 
-        - word: "Hospital"
-          transcription: "[uʃpiˈtaɫ]"
-          example_sentence: "O hospital é aqui."
-          sentence_translation_ru: "Больница здесь."
-          sentence_translation_en: "The hospital is here."
-          word_translation_ru: "больница"
+        - word: "Pessoa nova"
+          transcription: "[pɨˈsoɐ ˈnovɐ]"
+          example_sentence: "Uma pessoa nova."
+          sentence_translation_ru: "Новый человек."
+          sentence_translation_en: "A new person."
+          word_translation_ru: "новый человек"
 
-        - word: "Urgente"
-          transcription: "[uɾˈʒẽtɨ]"
-          example_sentence: "É urgente."
-          sentence_translation_ru: "Это срочно."
-          sentence_translation_en: "It is urgent."
-          word_translation_ru: "срочно"
+        - word: "Gente"
+          transcription: "[ˈʒẽtɨ]"
+          example_sentence: "Muita gente."
+          sentence_translation_ru: "Много людей."
+          sentence_translation_en: "Many people."
+          word_translation_ru: "люди"
 
 
 # =========================================================
@@ -115,95 +115,95 @@ tasks:
       ru: "Как это сказать"
       en: "How to say it"
     subtitle:
-      ru: "Просьба о помощи и здоровье"
-      en: "Asking for help and health"
+      ru: "Говорим, кто этот человек"
+      en: "Talking about who someone is"
 
     structure:
       blocks_order:
-        - block_1_need
-        - block_2_be_sick
+        - block_1_identity
+        - block_2_my_person
         - block_3_equivalence
         - block_4_reinforcement
         - block_5_speak
 
     blocks:
 
-      block_1_need:
+      block_1_identity:
         type: explanation
         title:
-          ru: "Как сказать, что тебе нужно"
-          en: "How to say you need something"
+          ru: "Как сказать, кто человек"
+          en: "How to say who someone is"
         explanation_text:
-          ru: "Чтобы сказать, что тебе что-то нужно, используют: Preciso de + слово."
-          en: "To say you need something, use: Preciso de + word."
+          ru: "Чтобы сказать, кто это, используют: É + pessoa."
+          en: "To say who someone is, use: É + person."
         examples:
-          - text: "Preciso de ajuda."
+          - text: "É um cliente."
             audio: true
-          - text: "Preciso de um médico."
+          - text: "É uma pessoa."
             audio: true
 
-      block_2_be_sick:
+      block_2_my_person:
         type: explanation
         title:
-          ru: "Как сказать, что ты болен"
-          en: "How to say you are sick"
+          ru: "Мой и моя"
+          en: "My"
         explanation_text:
-          ru: "Чтобы сказать, что ты болен, используют: Estou doente."
-          en: "To say you are sick, use: Estou doente."
+          ru: "Чтобы сказать «мой», используют: o meu / a minha."
+          en: "To say 'my', use: o meu / a minha."
         examples:
-          - text: "Estou doente."
+          - text: "O meu amigo."
             audio: true
-          - text: "Tenho dor."
+          - text: "A minha filha."
             audio: true
 
       block_3_equivalence:
         type: comparison
         title:
-          ru: "Примеры"
-          en: "Examples"
+          ru: "Два способа"
+          en: "Two ways"
         comparison_card:
-          - text: "Preciso de ajuda."
+          - text: "É um cliente."
             audio: true
-          - text: "Estou doente."
+          - text: "O meu cliente."
             audio: true
         note:
-          ru: "Обе фразы говорят о проблеме."
-          en: "Both phrases express a problem."
+          ru: "Оба говорят о человеке."
+          en: "Both refer to a person."
 
       block_4_reinforcement:
         type: reinforcement
 
         task_1:
           format: single_choice
-          audio: "Preciso de um médico."
+          audio: "A minha filha."
           question:
-            ru: "Что хочет человек?"
-            en: "What does the person want?"
+            ru: "Кто это?"
+            en: "Who is this?"
           options:
             - text:
-                ru: "Врача"
-                en: "A doctor"
+                ru: "Дочь"
+                en: "Daughter"
               correct: true
             - text:
-                ru: "Билет"
-                en: "A ticket"
+                ru: "Жена"
+                en: "Wife"
               correct: false
             - text:
-                ru: "Еду"
-                en: "Food"
+                ru: "Друг"
+                en: "Friend"
               correct: false
 
         task_2:
           format: situation_to_phrase
           situation_text:
-            ru: "Ты болен и хочешь сказать это."
-            en: "You are sick and want to say it."
+            ru: "Ты хочешь сказать «мой друг»."
+            en: "You want to say 'my friend'."
           options:
-            - text: "Estou doente."
+            - text: "O meu amigo."
               correct: true
-            - text: "É barato."
+            - text: "A minha mãe."
               correct: false
-            - text: "Obrigado."
+            - text: "É uma pessoa."
               correct: false
 
       block_5_speak:
@@ -212,8 +212,8 @@ tasks:
           ru: "Скажи вслух"
           en: "Speak out loud"
         instruction_text:
-          ru: "Скажи: Preciso de ajuda. Estou doente."
-          en: "Say: Preciso de ajuda. Estou doente."
+          ru: "Скажи: O meu amigo. A minha filha."
+          en: "Say: O meu amigo. A minha filha."
         action_button:
           text:
             ru: "✔ Я сказал(а) вслух"
@@ -230,8 +230,8 @@ tasks:
       ru: "Предложения и понимание"
       en: "Listening and understanding"
     subtitle:
-      ru: "Слушай и пойми проблему"
-      en: "Listen and understand the problem"
+      ru: "Слушай и пойми, кто это"
+      en: "Listen and understand who it is"
 
     ui_rules:
       audio_plays_first: true
@@ -239,63 +239,63 @@ tasks:
 
     items:
       - item_id: 1
-        audio: "Tenho dor de cabeça."
+        audio: "O meu amigo."
         text_hidden_before_answer: true
         question:
-          ru: "Что у человека?"
-          en: "What does the person have?"
+          ru: "Кто это?"
+          en: "Who is this?"
         options:
           - text:
-              ru: "Боль в голове"
-              en: "A headache"
+              ru: "Друг"
+              en: "Friend"
             correct: true
           - text:
-              ru: "Температура"
-              en: "A fever"
+              ru: "Клиент"
+              en: "Client"
             correct: false
           - text:
-              ru: "Встреча"
-              en: "A meeting"
+              ru: "Жена"
+              en: "Wife"
             correct: false
 
       - item_id: 2
-        audio: "Preciso de um médico."
+        audio: "A minha mulher."
         text_hidden_before_answer: true
         question:
-          ru: "Что ему нужно?"
-          en: "What does he need?"
+          ru: "Кто это?"
+          en: "Who is this?"
         options:
           - text:
-              ru: "Врач"
-              en: "A doctor"
+              ru: "Жена"
+              en: "Wife"
             correct: true
           - text:
-              ru: "Автобус"
-              en: "A bus"
+              ru: "Дочь"
+              en: "Daughter"
             correct: false
           - text:
-              ru: "Кофе"
-              en: "Coffee"
+              ru: "Коллега"
+              en: "Colleague"
             correct: false
 
       - item_id: 3
-        audio: "É urgente."
+        audio: "É um cliente."
         text_hidden_before_answer: true
         question:
-          ru: "Как это?"
-          en: "How is it?"
+          ru: "Кто это?"
+          en: "Who is this?"
         options:
           - text:
-              ru: "Срочно"
-              en: "Urgent"
+              ru: "Клиент"
+              en: "Client"
             correct: true
           - text:
-              ru: "Дёшево"
-              en: "Cheap"
+              ru: "Друг"
+              en: "Friend"
             correct: false
           - text:
-              ru: "Открыто"
-              en: "Open"
+              ru: "Сын"
+              en: "Son"
             correct: false
 
 
@@ -308,46 +308,46 @@ tasks:
       ru: "Внимательность"
       en: "Attention"
     subtitle:
-      ru: "Пойми, что происходит"
-      en: "Understand what is happening"
+      ru: "Пойми, о ком говорят"
+      en: "Understand who they talk about"
 
     items:
       - item_id: 1
-        audio: "Preciso de ajuda."
+        audio: "O meu filho."
         question:
-          ru: "В какой ситуации это говорят?"
-          en: "In what situation is this said?"
+          ru: "Кто это?"
+          en: "Who is this?"
         options:
           - text:
-              ru: "Когда нужна помощь"
-              en: "When someone needs help"
+              ru: "Сын"
+              en: "Son"
             correct: true
           - text:
-              ru: "Когда платят"
-              en: "When paying"
+              ru: "Муж"
+              en: "Husband"
             correct: false
           - text:
-              ru: "Когда прощаются"
-              en: "When saying goodbye"
+              ru: "Друг"
+              en: "Friend"
             correct: false
 
       - item_id: 2
-        audio: "Estou doente."
+        audio: "Uma pessoa nova."
         question:
-          ru: "Что происходит?"
-          en: "What is happening?"
+          ru: "Кто это?"
+          en: "Who is this?"
         options:
           - text:
-              ru: "Человек болен"
-              en: "The person is sick"
+              ru: "Новый человек"
+              en: "A new person"
             correct: true
           - text:
-              ru: "Он покупает"
-              en: "He is buying"
+              ru: "Семья"
+              en: "Family"
             correct: false
           - text:
-              ru: "Он едет"
-              en: "He is traveling"
+              ru: "Коллега"
+              en: "Colleague"
             correct: false
 
 
@@ -360,8 +360,8 @@ tasks:
       ru: "Письмо"
       en: "Writing"
     subtitle:
-      ru: "Сообщи о проблеме"
-      en: "Tell the problem"
+      ru: "Скажи, кто это"
+      en: "Say who this is"
 
     instruction:
       ru: "Заполни фразы."
@@ -370,25 +370,25 @@ tasks:
     main_task:
       format: template_fill
       template:
-        - "Estou ___."
-        - "Preciso de ___."
+        - "O meu ___."
+        - "É uma ___."
       hints:
-        - "doente"
-        - "ajuda"
+        - "amigo"
+        - "pessoa"
 
     example:
       show_by_button: true
       content:
-        - "Estou doente."
-        - "Preciso de ajuda."
+        - "O meu amigo."
+        - "É uma pessoa."
 
     alternative:
       title:
         ru: "Можно сказать вслух"
         en: "You can say it out loud"
       instruction:
-        ru: "Скажи: Estou doente. Preciso de ajuda."
-        en: "Say: Estou doente. Preciso de ajuda."
+        ru: "Скажи: O meu amigo. É uma pessoa."
+        en: "Say: O meu amigo. É uma pessoa."
       action_button:
         text:
           ru: "✔ Я сказал(а) вслух"

@@ -125,26 +125,24 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
       // If this is just saving (not completing), update completion_data only
       if (completionData?.saved && !completionData?.replay) {
         const taskProgress = userProgress.task_progress?.find((tp: any) => tp.task_id === taskId);
-        if (taskProgress) {
-          // Update completion_data without changing status
-          await supabase
-            .from('task_progress')
-            .update({
-              completion_data: completionData,
-            })
-            .eq('id', taskProgress.id);
-        } else {
-          // Create new task_progress entry with in_progress status
-          const task = tasks.find(t => t.task_id === taskId);
-          await supabase
-            .from('task_progress')
-            .insert({
-              user_progress_id: userProgress.id,
-              task_id: taskId,
-              task_type: task?.type || 'unknown',
-              status: 'in_progress',
-              completion_data: completionData,
-            });
+        const task = tasks.find(t => t.task_id === taskId);
+        
+        // Always use upsert to handle both insert and update cases
+        // This avoids 400 errors when record exists in local state but not in DB
+        const { error } = await supabase
+          .from('task_progress')
+          .upsert({
+            user_progress_id: userProgress.id,
+            task_id: taskId,
+            task_type: task?.type || 'unknown',
+            status: taskProgress?.status || 'in_progress', // Preserve existing status if available
+            completion_data: completionData,
+          }, {
+            onConflict: 'user_progress_id,task_id',
+          });
+        
+        if (error) {
+          console.error('Error upserting task_progress (saved):', error);
         }
         // Update local state
         const updatedTaskProgress = userProgress.task_progress?.map((tp: any) => 
@@ -166,16 +164,24 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
       
       // If replaying, clear completion_data and reset status to in_progress
       if (completionData?.replay) {
-        const taskProgress = userProgress.task_progress?.find((tp: any) => tp.task_id === taskId);
-        if (taskProgress) {
-          await supabase
-            .from('task_progress')
-            .update({
-              status: 'in_progress',
-              completion_data: completionData, // Empty answers and showResults
-              completed_at: null,
-            })
-            .eq('id', taskProgress.id);
+        const task = tasks.find(t => t.task_id === taskId);
+        
+        // Always use upsert to handle both insert and update cases
+        const { error } = await supabase
+          .from('task_progress')
+          .upsert({
+            user_progress_id: userProgress.id,
+            task_id: taskId,
+            task_type: task?.type || 'unknown',
+            status: 'in_progress',
+            completion_data: completionData, // Empty answers and showResults
+            completed_at: null,
+          }, {
+            onConflict: 'user_progress_id,task_id',
+          });
+        
+        if (error) {
+          console.error('Error upserting task_progress on replay:', error);
         }
         
         // Update local state to reflect replay
@@ -201,30 +207,25 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
       // Update task progress - mark as completed
       const taskProgress = userProgress.task_progress?.find((tp: any) => tp.task_id === taskId);
       const wasAlreadyCompleted = taskProgress?.status === 'completed';
+      const task = tasks.find(t => t.task_id === taskId);
       
-      if (taskProgress) {
-        // Update existing - always update completion_data even if task was already completed (for replay)
-        await supabase
-          .from('task_progress')
-          .update({
-            status: 'completed',
-            completion_data: completionData, // Always update with latest answers/progress
-            completed_at: new Date().toISOString(),
-          })
-          .eq('id', taskProgress.id);
-      } else {
-        // Create new
-        const task = tasks.find(t => t.task_id === taskId);
-        await supabase
-          .from('task_progress')
-          .insert({
-            user_progress_id: userProgress.id,
-            task_id: taskId,
-            task_type: task?.type || 'unknown',
-            status: 'completed',
-            completion_data: completionData,
-            completed_at: new Date().toISOString(),
-          });
+      // Always use upsert to handle both insert and update cases
+      // This avoids 400 errors when record exists in local state but not in DB
+      const { error } = await supabase
+        .from('task_progress')
+        .upsert({
+          user_progress_id: userProgress.id,
+          task_id: taskId,
+          task_type: task?.type || 'unknown',
+          status: 'completed',
+          completion_data: completionData, // Always update with latest answers/progress
+          completed_at: new Date().toISOString(),
+        }, {
+          onConflict: 'user_progress_id,task_id',
+        });
+      
+      if (error) {
+        console.error('Error upserting task_progress (completed):', error);
       }
 
       // Update user progress - count completed tasks correctly

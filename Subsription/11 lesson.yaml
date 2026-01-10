@@ -1,11 +1,11 @@
 day:
   number: 11
   title:
-    ru: "Дом и услуги"
-    en: "Home and services"
+    ru: "Что человеку нужно"
+    en: "What the person needs"
   subtitle:
-    ru: "Понимаем проблемы и просьбы дома"
-    en: "Understanding home problems and requests"
+    ru: "Понимаем просьбы и жалобы"
+    en: "Understanding requests and problems"
 
 tasks:
 
@@ -18,8 +18,8 @@ tasks:
       ru: "Слова и фразы"
       en: "Words and phrases"
     subtitle:
-      ru: "Дом и услуги"
-      en: "Home and services"
+      ru: "Потребности и проблемы"
+      en: "Needs and problems"
     estimated_time: "~10"
     show_timer: true
     show_audio_settings: true
@@ -35,75 +35,75 @@ tasks:
 
     content:
       cards:
-        - word: "Casa"
-          transcription: "[ˈkazɐ]"
-          example_sentence: "A casa é grande."
-          sentence_translation_ru: "Дом большой."
-          sentence_translation_en: "The house is big."
-          word_translation_ru: "дом"
+        - word: "Preciso"
+          transcription: "[pɾɨˈsizu]"
+          example_sentence: "Preciso de ajuda."
+          sentence_translation_ru: "Мне нужна помощь."
+          sentence_translation_en: "I need help."
+          word_translation_ru: "мне нужно"
 
-        - word: "Apartamento"
-          transcription: "[ɐpɐɾtɐˈmẽtu]"
-          example_sentence: "O apartamento é aqui."
-          sentence_translation_ru: "Квартира здесь."
-          sentence_translation_en: "The apartment is here."
-          word_translation_ru: "квартира"
-
-        - word: "Luz"
-          transcription: "[luʃ]"
-          example_sentence: "Não há luz."
-          sentence_translation_ru: "Нет света."
-          sentence_translation_en: "There is no electricity."
-          word_translation_ru: "электричество / свет"
-
-        - word: "Água"
-          transcription: "[ˈaɡwɐ]"
-          example_sentence: "Não há água."
-          sentence_translation_ru: "Нет воды."
-          sentence_translation_en: "There is no water."
-          word_translation_ru: "вода"
-
-        - word: "Internet"
-          transcription: "[ĩtɛɾˈnɛt]"
-          example_sentence: "A internet não funciona."
-          sentence_translation_ru: "Интернет не работает."
-          sentence_translation_en: "The internet doesn’t work."
-          word_translation_ru: "интернет"
+        - word: "Ajuda"
+          transcription: "[ɐˈʒudɐ]"
+          example_sentence: "Preciso de ajuda."
+          sentence_translation_ru: "Мне нужна помощь."
+          sentence_translation_en: "I need help."
+          word_translation_ru: "помощь"
 
         - word: "Problema"
           transcription: "[pɾuˈblɛmɐ]"
-          example_sentence: "Há um problema."
-          sentence_translation_ru: "Есть проблема."
-          sentence_translation_en: "There is a problem."
+          example_sentence: "Tenho um problema."
+          sentence_translation_ru: "У меня проблема."
+          sentence_translation_en: "I have a problem."
           word_translation_ru: "проблема"
 
-        - word: "Funciona"
-          transcription: "[fũsiˈonɐ]"
-          example_sentence: "Não funciona."
-          sentence_translation_ru: "Не работает."
-          sentence_translation_en: "It doesn’t work."
-          word_translation_ru: "работает"
+        - word: "Não"
+          transcription: "[nɐ̃w̃]"
+          example_sentence: "Não posso."
+          sentence_translation_ru: "Я не могу."
+          sentence_translation_en: "I can’t."
+          word_translation_ru: "не"
 
-        - word: "Reparar"
-          transcription: "[ʁɨpɐˈɾaɾ]"
-          example_sentence: "Preciso reparar."
-          sentence_translation_ru: "Мне нужно починить."
-          sentence_translation_en: "I need to fix it."
-          word_translation_ru: "чинить"
+        - word: "Posso"
+          transcription: "[ˈposu]"
+          example_sentence: "Posso ajudar."
+          sentence_translation_ru: "Я могу помочь."
+          sentence_translation_en: "I can help."
+          word_translation_ru: "могу"
 
-        - word: "Serviço"
-          transcription: "[sɨɾˈvisu]"
-          example_sentence: "O serviço é bom."
-          sentence_translation_ru: "Сервис хороший."
-          sentence_translation_en: "The service is good."
-          word_translation_ru: "сервис"
+        - word: "Ajuda agora"
+          transcription: "[ɐˈʒudɐ ɐˈɡɔɾɐ]"
+          example_sentence: "Preciso de ajuda agora."
+          sentence_translation_ru: "Мне нужна помощь сейчас."
+          sentence_translation_en: "I need help now."
+          word_translation_ru: "помощь сейчас"
 
-        - word: "Técnico"
-          transcription: "[ˈtɛkniku]"
-          example_sentence: "Preciso de um técnico."
-          sentence_translation_ru: "Мне нужен техник."
-          sentence_translation_en: "I need a technician."
-          word_translation_ru: "техник"
+        - word: "Dor"
+          transcription: "[doɾ]"
+          example_sentence: "Tenho dor."
+          sentence_translation_ru: "У меня боль."
+          sentence_translation_en: "I have pain."
+          word_translation_ru: "боль"
+
+        - word: "Mal"
+          transcription: "[mal]"
+          example_sentence: "Estou mal."
+          sentence_translation_ru: "Мне плохо."
+          sentence_translation_en: "I feel bad."
+          word_translation_ru: "плохо"
+
+        - word: "Bem"
+          transcription: "[bɐ̃j̃]"
+          example_sentence: "Estou bem."
+          sentence_translation_ru: "Мне хорошо."
+          sentence_translation_en: "I am fine."
+          word_translation_ru: "хорошо"
+
+        - word: "Preciso falar"
+          transcription: "[pɾɨˈsizu fɐˈlaɾ]"
+          example_sentence: "Preciso falar."
+          sentence_translation_ru: "Мне нужно поговорить."
+          sentence_translation_en: "I need to talk."
+          word_translation_ru: "мне нужно поговорить"
 
 
 # =========================================================
@@ -115,45 +115,45 @@ tasks:
       ru: "Как это сказать"
       en: "How to say it"
     subtitle:
-      ru: "Проблемы дома"
-      en: "Problems at home"
+      ru: "Говорим о потребностях"
+      en: "Talking about needs"
 
     structure:
       blocks_order:
-        - block_1_problem
-        - block_2_need_service
+        - block_1_need
+        - block_2_can
         - block_3_equivalence
         - block_4_reinforcement
         - block_5_speak
 
     blocks:
 
-      block_1_problem:
+      block_1_need:
         type: explanation
         title:
-          ru: "Как сказать, что что-то не работает"
-          en: "How to say something doesn’t work"
+          ru: "Как сказать «мне нужно»"
+          en: "How to say 'I need'"
         explanation_text:
-          ru: "Чтобы сказать, что что-то не работает, используют: Não funciona."
-          en: "To say something doesn’t work, use: Não funciona."
+          ru: "Чтобы сказать, что тебе что-то нужно, используют: Preciso de + вещь."
+          en: "To say you need something, use: Preciso de + thing."
         examples:
-          - text: "A internet não funciona."
+          - text: "Preciso de ajuda."
             audio: true
-          - text: "A luz não funciona."
+          - text: "Preciso de água."
             audio: true
 
-      block_2_need_service:
+      block_2_can:
         type: explanation
         title:
-          ru: "Как попросить помощь"
-          en: "How to ask for help"
+          ru: "Могу и не могу"
+          en: "Can and can’t"
         explanation_text:
-          ru: "Чтобы попросить помощь, говорят: Preciso de + serviço ou pessoa."
-          en: "To ask for help, say: Preciso de + service or person."
+          ru: "Чтобы сказать, что ты можешь или не можешь, используют: Posso / Não posso."
+          en: "To say you can or can’t, use: Posso / Não posso."
         examples:
-          - text: "Preciso de um técnico."
+          - text: "Posso ajudar."
             audio: true
-          - text: "Preciso de ajuda."
+          - text: "Não posso."
             audio: true
 
       block_3_equivalence:
@@ -162,46 +162,46 @@ tasks:
           ru: "Примеры"
           en: "Examples"
         comparison_card:
-          - text: "A internet não funciona."
+          - text: "Preciso de ajuda."
             audio: true
-          - text: "Preciso de um técnico."
+          - text: "Posso ajudar."
             audio: true
         note:
-          ru: "Обе фразы говорят о проблеме и необходимости помощи."
-          en: "Both phrases express a problem and the need for help."
+          ru: "Первая — просьба, вторая — ответ."
+          en: "The first is a request, the second is a response."
 
       block_4_reinforcement:
         type: reinforcement
 
         task_1:
           format: single_choice
-          audio: "A água não funciona."
+          audio: "Preciso de ajuda."
           question:
-            ru: "В чём проблема?"
-            en: "What is the problem?"
+            ru: "Что делает человек?"
+            en: "What is the person doing?"
           options:
             - text:
-                ru: "Нет воды"
-                en: "No water"
+                ru: "Просит помощи"
+                en: "Asking for help"
               correct: true
             - text:
-                ru: "Нет интернета"
-                en: "No internet"
+                ru: "Благодарит"
+                en: "Thanking"
               correct: false
             - text:
-                ru: "Нет еды"
-                en: "No food"
+                ru: "Прощается"
+                en: "Saying goodbye"
               correct: false
 
         task_2:
           format: situation_to_phrase
           situation_text:
-            ru: "Тебе нужен специалист."
-            en: "You need a technician."
+            ru: "Ты хочешь сказать, что не можешь."
+            en: "You want to say you can’t."
           options:
-            - text: "Preciso de um técnico."
+            - text: "Não posso."
               correct: true
-            - text: "É caro."
+            - text: "Posso."
               correct: false
             - text: "Obrigado."
               correct: false
@@ -212,8 +212,8 @@ tasks:
           ru: "Скажи вслух"
           en: "Speak out loud"
         instruction_text:
-          ru: "Скажи: A internet não funciona. Preciso de um técnico."
-          en: "Say: A internet não funciona. Preciso de um técnico."
+          ru: "Скажи: Preciso de ajuda. Posso ajudar."
+          en: "Say: Preciso de ajuda. Posso ajudar."
         action_button:
           text:
             ru: "✔ Я сказал(а) вслух"
@@ -230,8 +230,7 @@ tasks:
       ru: "Предложения и понимание"
       en: "Listening and understanding"
     subtitle:
-      ru: "Слушай и пойми проблему"
-      en: "Listen and understand the problem"
+      ru: "Слушай и пойми, что нужно"
 
     ui_rules:
       audio_plays_first: true
@@ -239,63 +238,63 @@ tasks:
 
     items:
       - item_id: 1
-        audio: "A internet não funciona."
+        audio: "Preciso de ajuda."
         text_hidden_before_answer: true
         question:
-          ru: "В чём проблема?"
-          en: "What is the problem?"
-        options:
-          - text:
-              ru: "Интернет"
-              en: "Internet"
-            correct: true
-          - text:
-              ru: "Вода"
-              en: "Water"
-            correct: false
-          - text:
-              ru: "Свет"
-              en: "Electricity"
-            correct: false
-
-      - item_id: 2
-        audio: "Preciso de um técnico."
-        text_hidden_before_answer: true
-        question:
-          ru: "Что нужно человеку?"
+          ru: "Что человеку нужно?"
           en: "What does the person need?"
         options:
           - text:
-              ru: "Техник"
-              en: "A technician"
+              ru: "Помощь"
+              en: "Help"
             correct: true
           - text:
-              ru: "Кофе"
-              en: "Coffee"
+              ru: "Еда"
+              en: "Food"
             correct: false
           - text:
-              ru: "Билет"
-              en: "A ticket"
+              ru: "Работа"
+              en: "Work"
+            correct: false
+
+      - item_id: 2
+        audio: "Estou mal."
+        text_hidden_before_answer: true
+        question:
+          ru: "Как себя чувствует человек?"
+          en: "How does the person feel?"
+        options:
+          - text:
+              ru: "Плохо"
+              en: "Bad"
+            correct: true
+          - text:
+              ru: "Хорошо"
+              en: "Fine"
+            correct: false
+          - text:
+              ru: "Занят"
+              en: "Busy"
             correct: false
 
       - item_id: 3
-        audio: "Não há luz."
+        audio: "Posso ajudar."
         text_hidden_before_answer: true
         question:
-          ru: "Что произошло?"
-          en: "What happened?"
+          ru: "Что это?"
+          en: "What is this?"
         options:
           - text:
-              ru: "Нет электричества"
-              en: "There is no electricity"
+              ru: "Предложение помощи"
+              en: "An offer of help"
             correct: true
           - text:
-              ru: "Нет воды"
-              en: "There is no water"
+              ru: "Жалоба"
+              en: "A complaint"
             correct: false
           - text:
-              ru: "Нет интернета"
-              en: "There is no internet"
+              ru: "Цена"
+              en: "A price"
             correct: false
 
 
@@ -308,46 +307,45 @@ tasks:
       ru: "Внимательность"
       en: "Attention"
     subtitle:
-      ru: "Пойми, что нужно делать"
-      en: "Understand what needs to be done"
+      ru: "Пойми намерение"
 
     items:
       - item_id: 1
-        audio: "A luz não funciona."
+        audio: "Preciso falar."
         question:
-          ru: "Что это значит?"
-          en: "What does it mean?"
+          ru: "Что человек хочет?"
+          en: "What does the person want?"
         options:
           - text:
-              ru: "Нет электричества"
-              en: "No electricity"
+              ru: "Поговорить"
+              en: "To talk"
             correct: true
           - text:
-              ru: "Нет воды"
-              en: "No water"
+              ru: "Заплатить"
+              en: "To pay"
             correct: false
           - text:
-              ru: "Нет интернета"
-              en: "No internet"
+              ru: "Уйти"
+              en: "To leave"
             correct: false
 
       - item_id: 2
-        audio: "Preciso de um técnico."
+        audio: "Não posso."
         question:
-          ru: "Что нужно сделать?"
-          en: "What needs to be done?"
+          ru: "Что это?"
+          en: "What is this?"
         options:
           - text:
-              ru: "Вызвать техника"
-              en: "Call a technician"
+              ru: "Отказ"
+              en: "A refusal"
             correct: true
           - text:
-              ru: "Купить билет"
-              en: "Buy a ticket"
+              ru: "Просьба"
+              en: "A request"
             correct: false
           - text:
-              ru: "Заказать кофе"
-              en: "Order coffee"
+              ru: "Благодарность"
+              en: "Thanks"
             correct: false
 
 
@@ -360,8 +358,8 @@ tasks:
       ru: "Письмо"
       en: "Writing"
     subtitle:
-      ru: "Сообщи о проблеме"
-      en: "Tell about the problem"
+      ru: "Скажи, что тебе нужно"
+      en: "Say what you need"
 
     instruction:
       ru: "Заполни фразы."
@@ -370,25 +368,25 @@ tasks:
     main_task:
       format: template_fill
       template:
-        - "A ___ não funciona."
-        - "Preciso de um ___."
+        - "Preciso de ___."
+        - "Posso ___."
       hints:
-        - "internet"
-        - "técnico"
+        - "ajuda"
+        - "falar"
 
     example:
       show_by_button: true
       content:
-        - "A internet não funciona."
-        - "Preciso de um técnico."
+        - "Preciso de ajuda."
+        - "Posso falar."
 
     alternative:
       title:
         ru: "Можно сказать вслух"
         en: "You can say it out loud"
       instruction:
-        ru: "Скажи: A internet não funciona. Preciso de um técnico."
-        en: "Say: A internet não funciona. Preciso de um técnico."
+        ru: "Скажи: Preciso de ajuda. Posso falar."
+        en: "Say: Preciso de ajuda. Posso falar."
       action_button:
         text:
           ru: "✔ Я сказал(а) вслух"

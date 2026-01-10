@@ -1,11 +1,11 @@
 day:
   number: 12
   title:
-    ru: "Ориентация и улицы"
-    en: "Directions and streets"
+    ru: "Когда это происходит"
+    en: "When it happens"
   subtitle:
-    ru: "Понимаем, куда идти"
-    en: "Understanding where to go"
+    ru: "Понимаем время и расписания"
+    en: "Understanding time and schedules"
 
 tasks:
 
@@ -18,8 +18,8 @@ tasks:
       ru: "Слова и фразы"
       en: "Words and phrases"
     subtitle:
-      ru: "Улицы и направления"
-      en: "Streets and directions"
+      ru: "Время и расписание"
+      en: "Time and schedules"
     estimated_time: "~10"
     show_timer: true
     show_audio_settings: true
@@ -35,75 +35,75 @@ tasks:
 
     content:
       cards:
-        - word: "Rua"
-          transcription: "[ˈʁuɐ]"
-          example_sentence: "A rua é aqui."
-          sentence_translation_ru: "Улица здесь."
-          sentence_translation_en: "The street is here."
-          word_translation_ru: "улица"
+        - word: "Hoje"
+          transcription: "[ˈoʒɨ]"
+          example_sentence: "Hoje trabalho."
+          sentence_translation_ru: "Сегодня я работаю."
+          sentence_translation_en: "Today I work."
+          word_translation_ru: "сегодня"
 
-        - word: "Direita"
-          transcription: "[dɨˈɾejtɐ]"
-          example_sentence: "À direita."
-          sentence_translation_ru: "Направо."
-          sentence_translation_en: "To the right."
-          word_translation_ru: "направо"
+        - word: "Amanhã"
+          transcription: "[ɐmɐˈɲɐ]"
+          example_sentence: "Amanhã descanso."
+          sentence_translation_ru: "Завтра я отдыхаю."
+          sentence_translation_en: "Tomorrow I rest."
+          word_translation_ru: "завтра"
 
-        - word: "Esquerda"
-          transcription: "[iʃˈkɛɾdɐ]"
-          example_sentence: "À esquerda."
-          sentence_translation_ru: "Налево."
-          sentence_translation_en: "To the left."
-          word_translation_ru: "налево"
+        - word: "Agora"
+          transcription: "[ɐˈɡɔɾɐ]"
+          example_sentence: "Agora trabalho."
+          sentence_translation_ru: "Сейчас я работаю."
+          sentence_translation_en: "Now I work."
+          word_translation_ru: "сейчас"
 
-        - word: "Perto"
-          transcription: "[ˈpɛɾtu]"
-          example_sentence: "É perto."
-          sentence_translation_ru: "Это близко."
-          sentence_translation_en: "It is near."
-          word_translation_ru: "близко"
+        - word: "De manhã"
+          transcription: "[dɨ mɐˈɲɐ]"
+          example_sentence: "Trabalho de manhã."
+          sentence_translation_ru: "Я работаю утром."
+          sentence_translation_en: "I work in the morning."
+          word_translation_ru: "утром"
 
-        - word: "Longe"
-          transcription: "[ˈlõʒɨ]"
-          example_sentence: "É longe."
-          sentence_translation_ru: "Это далеко."
-          sentence_translation_en: "It is far."
-          word_translation_ru: "далеко"
+        - word: "À tarde"
+          transcription: "[a ˈtaɾdɨ]"
+          example_sentence: "Descanso à tarde."
+          sentence_translation_ru: "Я отдыхаю днём."
+          sentence_translation_en: "I rest in the afternoon."
+          word_translation_ru: "днём"
 
-        - word: "Aqui"
-          transcription: "[ɐˈki]"
-          example_sentence: "É aqui."
-          sentence_translation_ru: "Это здесь."
-          sentence_translation_en: "It is here."
-          word_translation_ru: "здесь"
+        - word: "À noite"
+          transcription: "[a ˈnojtɨ]"
+          example_sentence: "Durmo à noite."
+          sentence_translation_ru: "Я сплю ночью."
+          sentence_translation_en: "I sleep at night."
+          word_translation_ru: "вечером / ночью"
 
-        - word: "Ali"
-          transcription: "[ɐˈli]"
-          example_sentence: "É ali."
-          sentence_translation_ru: "Это там."
-          sentence_translation_en: "It is there."
-          word_translation_ru: "там"
+        - word: "Horário"
+          transcription: "[oˈɾaɾju]"
+          example_sentence: "O horário é aqui."
+          sentence_translation_ru: "Расписание здесь."
+          sentence_translation_en: "The schedule is here."
+          word_translation_ru: "расписание"
 
-        - word: "Em frente"
-          transcription: "[ẽ ˈfɾẽtɨ]"
-          example_sentence: "É em frente."
-          sentence_translation_ru: "Это прямо."
-          sentence_translation_en: "It is in front."
-          word_translation_ru: "прямо"
+        - word: "Aberto"
+          transcription: "[ɐˈbɛɾtu]"
+          example_sentence: "Está aberto."
+          sentence_translation_ru: "Открыто."
+          sentence_translation_en: "It is open."
+          word_translation_ru: "открыто"
 
-        - word: "Cruzar"
-          transcription: "[kɾuˈzaɾ]"
-          example_sentence: "Cruza a rua."
-          sentence_translation_ru: "Перейди улицу."
-          sentence_translation_en: "Cross the street."
-          word_translation_ru: "пересекать"
+        - word: "Fechado"
+          transcription: "[fɨˈʃadu]"
+          example_sentence: "Está fechado."
+          sentence_translation_ru: "Закрыто."
+          sentence_translation_en: "It is closed."
+          word_translation_ru: "закрыто"
 
-        - word: "Mapa"
-          transcription: "[ˈmapɐ]"
-          example_sentence: "O mapa está aqui."
-          sentence_translation_ru: "Карта здесь."
-          sentence_translation_en: "The map is here."
-          word_translation_ru: "карта"
+        - word: "Hoje à tarde"
+          transcription: "[ˈoʒɨ a ˈtaɾdɨ]"
+          example_sentence: "Hoje à tarde trabalho."
+          sentence_translation_ru: "Сегодня днём я работаю."
+          sentence_translation_en: "This afternoon I work."
+          word_translation_ru: "сегодня днём"
 
 
 # =========================================================
@@ -115,93 +115,95 @@ tasks:
       ru: "Как это сказать"
       en: "How to say it"
     subtitle:
-      ru: "Спросить и дать направление"
-      en: "Asking and giving directions"
+      ru: "Говорим, когда что-то происходит"
+      en: "Talking about when things happen"
 
     structure:
       blocks_order:
-        - block_1_where
-        - block_2_direction
+        - block_1_time
+        - block_2_open
         - block_3_equivalence
         - block_4_reinforcement
         - block_5_speak
 
     blocks:
 
-      block_1_where:
+      block_1_time:
         type: explanation
         title:
-          ru: "Как спросить «где?»"
-          en: "How to ask 'where?'"
+          ru: "Сегодня, завтра, сейчас"
+          en: "Today, tomorrow, now"
         explanation_text:
-          ru: "Чтобы спросить, где что-то находится, используют: Onde fica…?"
-          en: "To ask where something is, use: Onde fica…?"
+          ru: "Чтобы сказать, когда что-то происходит, используют: Hoje, Amanhã, Agora."
+          en: "To say when something happens, use: Hoje, Amanhã, Agora."
         examples:
-          - text: "Onde fica a rua?"
+          - text: "Hoje trabalho."
+            audio: true
+          - text: "Agora descanso."
             audio: true
 
-      block_2_direction:
+      block_2_open:
         type: explanation
         title:
-          ru: "Как сказать направление"
-          en: "How to give direction"
+          ru: "Открыто и закрыто"
+          en: "Open and closed"
         explanation_text:
-          ru: "Чтобы сказать направление, используют: à direita, à esquerda, em frente."
-          en: "To give direction, use: à direita, à esquerda, em frente."
+          ru: "Чтобы сказать, открыт ли объект, используют: Está aberto / Está fechado."
+          en: "To say if a place is open or closed, use: Está aberto / Está fechado."
         examples:
-          - text: "À direita."
+          - text: "Está aberto."
             audio: true
-          - text: "Em frente."
+          - text: "Está fechado."
             audio: true
 
       block_3_equivalence:
         type: comparison
         title:
-          ru: "Вопрос и ответ"
-          en: "Question and answer"
+          ru: "Время и состояние"
+          en: "Time and status"
         comparison_card:
-          - text: "Onde fica a rua?"
+          - text: "Hoje está aberto."
             audio: true
-          - text: "É em frente."
+          - text: "Agora está fechado."
             audio: true
         note:
-          ru: "Первая фраза — вопрос, вторая — ответ."
-          en: "The first is a question, the second is an answer."
+          ru: "Обе фразы говорят о времени и состоянии."
+          en: "Both talk about time and status."
 
       block_4_reinforcement:
         type: reinforcement
 
         task_1:
           format: single_choice
-          audio: "É à direita."
+          audio: "Hoje está aberto."
           question:
-            ru: "Куда идти?"
-            en: "Where should you go?"
+            ru: "Когда это открыто?"
+            en: "When is it open?"
           options:
             - text:
-                ru: "Направо"
-                en: "To the right"
+                ru: "Сегодня"
+                en: "Today"
               correct: true
             - text:
-                ru: "Налево"
-                en: "To the left"
+                ru: "Завтра"
+                en: "Tomorrow"
               correct: false
             - text:
-                ru: "Прямо"
-                en: "Straight"
+                ru: "Вчера"
+                en: "Yesterday"
               correct: false
 
         task_2:
           format: situation_to_phrase
           situation_text:
-            ru: "Ты хочешь спросить, где улица."
-            en: "You want to ask where the street is."
+            ru: "Ты хочешь сказать, что сейчас закрыто."
+            en: "You want to say it is closed now."
           options:
-            - text: "Onde fica a rua?"
+            - text: "Agora está fechado."
               correct: true
-            - text: "Quanto custa?"
+            - text: "Hoje está aberto."
               correct: false
-            - text: "Preciso de ajuda."
+            - text: "Amanhã trabalho."
               correct: false
 
       block_5_speak:
@@ -210,8 +212,8 @@ tasks:
           ru: "Скажи вслух"
           en: "Speak out loud"
         instruction_text:
-          ru: "Скажи: Onde fica a rua? É em frente."
-          en: "Say: Onde fica a rua? É em frente."
+          ru: "Скажи: Hoje está aberto. Agora está fechado."
+          en: "Say: Hoje está aberto. Agora está fechado."
         action_button:
           text:
             ru: "✔ Я сказал(а) вслух"
@@ -228,8 +230,7 @@ tasks:
       ru: "Предложения и понимание"
       en: "Listening and understanding"
     subtitle:
-      ru: "Слушай и пойми направление"
-      en: "Listen and understand the direction"
+      ru: "Слушай и пойми время"
 
     ui_rules:
       audio_plays_first: true
@@ -237,63 +238,63 @@ tasks:
 
     items:
       - item_id: 1
-        audio: "É à esquerda."
+        audio: "Hoje está aberto."
         text_hidden_before_answer: true
         question:
-          ru: "Куда идти?"
-          en: "Where should you go?"
+          ru: "Когда открыто?"
+          en: "When is it open?"
         options:
           - text:
-              ru: "Налево"
-              en: "To the left"
+              ru: "Сегодня"
+              en: "Today"
             correct: true
           - text:
-              ru: "Направо"
-              en: "To the right"
+              ru: "Завтра"
+              en: "Tomorrow"
             correct: false
           - text:
-              ru: "Далеко"
-              en: "Far"
+              ru: "Ночью"
+              en: "At night"
             correct: false
 
       - item_id: 2
-        audio: "É perto."
+        audio: "Agora está fechado."
         text_hidden_before_answer: true
         question:
-          ru: "Это далеко?"
-          en: "Is it far?"
+          ru: "Когда закрыто?"
+          en: "When is it closed?"
         options:
           - text:
-              ru: "Нет, близко"
-              en: "No, it’s near"
+              ru: "Сейчас"
+              en: "Now"
             correct: true
           - text:
-              ru: "Да, далеко"
-              en: "Yes, it’s far"
+              ru: "Сегодня"
+              en: "Today"
             correct: false
           - text:
-              ru: "Это карта"
-              en: "It’s a map"
+              ru: "Завтра"
+              en: "Tomorrow"
             correct: false
 
       - item_id: 3
-        audio: "Cruza a rua."
+        audio: "Hoje à tarde."
         text_hidden_before_answer: true
         question:
-          ru: "Что нужно сделать?"
-          en: "What should you do?"
+          ru: "О чём это?"
+          en: "What is this about?"
         options:
           - text:
-              ru: "Перейти улицу"
-              en: "Cross the street"
+              ru: "Время"
+              en: "Time"
             correct: true
           - text:
-              ru: "Повернуть"
-              en: "Turn"
+              ru: "Место"
+              en: "Place"
             correct: false
           - text:
-              ru: "Заплатить"
-              en: "Pay"
+              ru: "Цена"
+              en: "Price"
             correct: false
 
 
@@ -306,46 +307,45 @@ tasks:
       ru: "Внимательность"
       en: "Attention"
     subtitle:
-      ru: "Пойми, что происходит"
-      en: "Understand what is happening"
+      ru: "Пойми, когда"
 
     items:
       - item_id: 1
-        audio: "Onde fica a rua?"
+        audio: "Amanhã está fechado."
         question:
-          ru: "Что делает человек?"
-          en: "What is the person doing?"
+          ru: "Когда закрыто?"
+          en: "When is it closed?"
         options:
           - text:
-              ru: "Спрашивает дорогу"
-              en: "Asking for directions"
+              ru: "Завтра"
+              en: "Tomorrow"
             correct: true
           - text:
-              ru: "Платит"
-              en: "Paying"
+              ru: "Сегодня"
+              en: "Today"
             correct: false
           - text:
-              ru: "Жалуется"
-              en: "Complaining"
+              ru: "Сейчас"
+              en: "Now"
             correct: false
 
       - item_id: 2
-        audio: "É em frente."
+        audio: "Hoje à noite."
         question:
-          ru: "Что это?"
-          en: "What is this?"
+          ru: "О чём это?"
+          en: "What is this about?"
         options:
           - text:
-              ru: "Указание направления"
-              en: "A direction"
+              ru: "Время"
+              en: "Time"
             correct: true
           - text:
-              ru: "Цена"
-              en: "A price"
+              ru: "Человек"
+              en: "A person"
             correct: false
           - text:
-              ru: "Просьба"
-              en: "A request"
+              ru: "Цена"
+              en: "Price"
             correct: false
 
 
@@ -358,8 +358,7 @@ tasks:
       ru: "Письмо"
       en: "Writing"
     subtitle:
-      ru: "Собери фразу"
-      en: "Build a sentence"
+      ru: "Скажи, когда"
 
     instruction:
       ru: "Заполни фразы."
@@ -368,25 +367,25 @@ tasks:
     main_task:
       format: template_fill
       template:
-        - "É à ___."
-        - "É ___."
+        - "Hoje está ___."
+        - "Amanhã ___."
       hints:
-        - "direita"
-        - "perto"
+        - "aberto"
+        - "fechado"
 
     example:
       show_by_button: true
       content:
-        - "É à direita."
-        - "É perto."
+        - "Hoje está aberto."
+        - "Amanhã está fechado."
 
     alternative:
       title:
         ru: "Можно сказать вслух"
         en: "You can say it out loud"
       instruction:
-        ru: "Скажи: É à direita. É perto."
-        en: "Say: É à direita. É perto."
+        ru: "Скажи: Hoje está aberto. Amanhã está fechado."
+        en: "Say: Hoje está aberto. Amanhã está fechado."
       action_button:
         text:
           ru: "✔ Я сказал(а) вслух"
