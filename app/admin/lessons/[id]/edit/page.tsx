@@ -15,6 +15,9 @@ function LessonEditorContent() {
   const [tasks, setTasks] = useState<any[]>([]);
   const [showTaskTypeModal, setShowTaskTypeModal] = useState(false);
   const [editingTask, setEditingTask] = useState<any | null>(null);
+  const [editingLesson, setEditingLesson] = useState(false);
+  const [lessonTitle, setLessonTitle] = useState<{ ru: string; en: string; pt: string }>({ ru: '', en: '', pt: '' });
+  const [lessonSubtitle, setLessonSubtitle] = useState<{ ru: string; en: string; pt: string }>({ ru: '', en: '', pt: '' });
 
   useEffect(() => {
     if (lessonId) {
@@ -29,6 +32,17 @@ function LessonEditorContent() {
       const data = await response.json();
       if (data.success && data.lesson) {
         setLesson(data.lesson);
+        // Set lesson title and subtitle for editing
+        setLessonTitle({
+          ru: data.lesson.title_ru || '',
+          en: data.lesson.title_en || '',
+          pt: data.lesson.title_pt || '',
+        });
+        setLessonSubtitle({
+          ru: data.lesson.subtitle_ru || '',
+          en: data.lesson.subtitle_en || '',
+          pt: data.lesson.subtitle_pt || '',
+        });
         // Parse yaml_content if it's a string
         const yamlContent = typeof data.lesson.yaml_content === 'string' 
           ? JSON.parse(data.lesson.yaml_content || '{}')
@@ -186,19 +200,240 @@ function LessonEditorContent() {
                 height={40}
                 className="h-8 w-auto"
               />
-              <h1 className="text-xl font-bold text-gray-900">
-                Урок {lesson.day_number}: {lesson.title_ru}
-              </h1>
+              <div className="flex items-center gap-2">
+                {!editingLesson ? (
+                  <>
+                    <h1 className="text-xl font-bold text-gray-900">
+                      Урок {lesson.day_number}: {lesson.title_ru || lesson.title_en || lesson.title_pt || 'Без названия'}
+                    </h1>
+                    <button
+                      onClick={() => setEditingLesson(true)}
+                      className="text-gray-400 hover:text-gray-600 text-sm px-2 py-1"
+                      title="Редактировать урок"
+                    >
+                      ✏️
+                    </button>
+                  </>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      value={lessonTitle.ru}
+                      onChange={(e) => setLessonTitle({ ...lessonTitle, ru: e.target.value })}
+                      placeholder="Название (RU)"
+                      className="px-2 py-1 border border-gray-300 rounded text-sm"
+                    />
+                    <button
+                      onClick={async () => {
+                        try {
+                          const response = await fetch(`/api/admin/lessons/${lessonId}`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                              title_ru: lessonTitle.ru,
+                              title_en: lessonTitle.en,
+                              title_pt: lessonTitle.pt || lessonTitle.en || lessonTitle.ru,
+                              subtitle_ru: lessonSubtitle.ru,
+                              subtitle_en: lessonSubtitle.en,
+                              subtitle_pt: lessonSubtitle.pt,
+                            }),
+                          });
+
+                          const data = await response.json();
+                          if (data.success) {
+                            setEditingLesson(false);
+                            loadLesson();
+                            alert('Урок успешно обновлен!');
+                          } else {
+                            alert('Ошибка при сохранении: ' + (data.error || 'Unknown error'));
+                          }
+                        } catch (err) {
+                          console.error('Error saving lesson:', err);
+                          alert('Ошибка при сохранении урока');
+                        }
+                      }}
+                      className="px-3 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700"
+                    >
+                      Сохранить
+                    </button>
+                    <button
+                      onClick={() => {
+                        setEditingLesson(false);
+                        // Reset to original values
+                        setLessonTitle({
+                          ru: lesson.title_ru || '',
+                          en: lesson.title_en || '',
+                          pt: lesson.title_pt || '',
+                        });
+                        setLessonSubtitle({
+                          ru: lesson.subtitle_ru || '',
+                          en: lesson.subtitle_en || '',
+                          pt: lesson.subtitle_pt || '',
+                        });
+                      }}
+                      className="px-3 py-1 bg-gray-300 text-gray-700 rounded text-sm hover:bg-gray-400"
+                    >
+                      Отмена
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
-            <button
-              onClick={() => setShowTaskTypeModal(true)}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              + Создать задание
-            </button>
+            <div className="flex gap-2">
+              {!editingLesson && (
+                <button
+                  onClick={() => setShowTaskTypeModal(true)}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  + Создать задание
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </header>
+      
+      {/* Lesson Edit Form - Show when editingLesson is true */}
+      {editingLesson && (
+        <div className="bg-white border-b border-gray-200 px-4 sm:px-6 lg:px-8 py-4">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Редактирование урока</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Название (RU) *
+                </label>
+                <input
+                  type="text"
+                  value={lessonTitle.ru}
+                  onChange={(e) => setLessonTitle({ ...lessonTitle, ru: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                  placeholder="Информация и объявления"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Название (EN) *
+                </label>
+                <input
+                  type="text"
+                  value={lessonTitle.en}
+                  onChange={(e) => setLessonTitle({ ...lessonTitle, en: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                  placeholder="Information and announcements"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Название (PT) *
+                </label>
+                <input
+                  type="text"
+                  value={lessonTitle.pt}
+                  onChange={(e) => setLessonTitle({ ...lessonTitle, pt: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                  placeholder="Informação e anúncios"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Подзаголовок (RU)
+                </label>
+                <input
+                  type="text"
+                  value={lessonSubtitle.ru}
+                  onChange={(e) => setLessonSubtitle({ ...lessonSubtitle, ru: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                  placeholder="Просьбы и ответы"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Подзаголовок (EN)
+                </label>
+                <input
+                  type="text"
+                  value={lessonSubtitle.en}
+                  onChange={(e) => setLessonSubtitle({ ...lessonSubtitle, en: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                  placeholder="Requests and responses"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Подзаголовок (PT)
+                </label>
+                <input
+                  type="text"
+                  value={lessonSubtitle.pt}
+                  onChange={(e) => setLessonSubtitle({ ...lessonSubtitle, pt: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                  placeholder="Pedidos e respostas"
+                />
+              </div>
+            </div>
+            <div className="flex justify-end gap-2 mt-4">
+              <button
+                onClick={async () => {
+                  if (!lessonTitle.ru?.trim() && !lessonTitle.en?.trim() && !lessonTitle.pt?.trim()) {
+                    alert('Пожалуйста, введите название урока хотя бы на одном языке');
+                    return;
+                  }
+
+                  try {
+                    const response = await fetch(`/api/admin/lessons/${lessonId}`, {
+                      method: 'PUT',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        title_ru: lessonTitle.ru?.trim() || null,
+                        title_en: lessonTitle.en?.trim() || null,
+                        title_pt: lessonTitle.pt?.trim() || lessonTitle.en?.trim() || lessonTitle.ru?.trim() || '',
+                        subtitle_ru: lessonSubtitle.ru?.trim() || null,
+                        subtitle_en: lessonSubtitle.en?.trim() || null,
+                        subtitle_pt: lessonSubtitle.pt?.trim() || null,
+                      }),
+                    });
+
+                    const data = await response.json();
+                    if (data.success) {
+                      setEditingLesson(false);
+                      loadLesson();
+                      alert('Урок успешно обновлен!');
+                    } else {
+                      alert('Ошибка при сохранении: ' + (data.error || 'Unknown error'));
+                    }
+                  } catch (err) {
+                    console.error('Error saving lesson:', err);
+                    alert('Ошибка при сохранении урока');
+                  }
+                }}
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+              >
+                Сохранить изменения
+              </button>
+              <button
+                onClick={() => {
+                  setEditingLesson(false);
+                  // Reset to original values
+                  setLessonTitle({
+                    ru: lesson.title_ru || '',
+                    en: lesson.title_en || '',
+                    pt: lesson.title_pt || '',
+                  });
+                  setLessonSubtitle({
+                    ru: lesson.subtitle_ru || '',
+                    en: lesson.subtitle_en || '',
+                    pt: lesson.subtitle_pt || '',
+                  });
+                }}
+                className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors"
+              >
+                Отмена
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Two-Panel Layout */}
       <div className="flex-1 flex overflow-hidden">

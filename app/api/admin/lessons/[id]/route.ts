@@ -70,7 +70,11 @@ export async function PUT(
       order_in_level,
       is_published,
       title_ru,
-      title_en
+      title_en,
+      title_pt,
+      subtitle_ru,
+      subtitle_en,
+      subtitle_pt
     } = body;
 
     const updateData: any = {
@@ -85,8 +89,18 @@ export async function PUT(
     if (level_id !== undefined) updateData.level_id = level_id;
     if (order_in_level !== undefined) updateData.order_in_level = order_in_level;
     if (is_published !== undefined) updateData.is_published = is_published;
-    if (title_ru !== undefined) updateData.title_ru = title_ru;
-    if (title_en !== undefined) updateData.title_en = title_en;
+    if (title_ru !== undefined) updateData.title_ru = title_ru && title_ru.trim() ? title_ru.trim() : null;
+    if (title_en !== undefined) updateData.title_en = title_en && title_en.trim() ? title_en.trim() : null;
+    if (title_pt !== undefined) {
+      // title_pt is required (NOT NULL), so use title_en or title_ru as fallback if empty
+      const titlePtValue = title_pt && title_pt.trim() 
+        ? title_pt.trim() 
+        : (title_en && title_en.trim() ? title_en.trim() : (title_ru && title_ru.trim() ? title_ru.trim() : ''));
+      updateData.title_pt = titlePtValue || null;
+    }
+    if (subtitle_ru !== undefined) updateData.subtitle_ru = subtitle_ru && subtitle_ru.trim() ? subtitle_ru.trim() : null;
+    if (subtitle_en !== undefined) updateData.subtitle_en = subtitle_en && subtitle_en.trim() ? subtitle_en.trim() : null;
+    if (subtitle_pt !== undefined) updateData.subtitle_pt = subtitle_pt && subtitle_pt.trim() ? subtitle_pt.trim() : null;
 
     // Update lesson (use admin client for write operations)
     const { data, error } = await getSupabaseAdmin()

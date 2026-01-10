@@ -109,7 +109,16 @@ export default function VocabularyTaskPlayer({
   
   // Check show_timer from task.ui or task.show_timer (fallback for backwards compatibility)
   const showTimer = task.ui?.show_timer !== undefined ? task.ui.show_timer : (task.show_timer !== undefined ? task.show_timer : true);
-  const requiredTime = task.completion_rule === 'auto_after_audio_10_min' ? 10 * 60 * 1000 : 0; // 10 minutes in ms
+  
+  // CRITICAL: Set requiredTime based on completion_rule, but default to 10 minutes if show_timer is true
+  // This ensures timer is visible when show_timer is enabled, even if completion_rule is not set
+  let requiredTime = 0;
+  if (task.completion_rule === 'auto_after_audio_10_min') {
+    requiredTime = 10 * 60 * 1000; // 10 minutes in ms
+  } else if (showTimer) {
+    // If show_timer is true but completion_rule is not set, use default 10 minutes
+    requiredTime = 10 * 60 * 1000; // 10 minutes in ms
+  }
   
   // CRITICAL: Default card_format if not present (for imported lessons)
   // If card_format is missing, enable all fields by default so content is visible
@@ -290,39 +299,49 @@ export default function VocabularyTaskPlayer({
             };
             
             const wordSanitized = sanitizeForUrl(card.word || '');
-            const filename = `lesson-1-word-${wordSanitized}.mp3`;
-            const storagePath = `lesson-1/${filename}`;
+            // CRITICAL: Use actual lesson day number instead of hardcoded 'lesson-1'
+            // Also try multiple storage paths to support both old and new formats
+            const lessonDayPrefix = dayNumber ? `lesson-${dayNumber}` : 'lesson-1';
+            const filename1 = `${lessonDayPrefix}-word-${wordSanitized}.mp3`;
+            const filename2 = `word-${wordSanitized}.mp3`;
+            const storagePath1 = `${lessonDayPrefix}/${filename1}`;
+            const storagePath2 = `lessons/${dayNumber || 1}/audio/${filename2}`;
             
             console.log(`🔍 Trying to get Storage URL for word: "${card.word}"`);
+            console.log(`   Lesson day: ${dayNumber || 1}`);
             console.log(`   Sanitized: "${wordSanitized}"`);
-            console.log(`   Storage path: "${storagePath}"`);
+            console.log(`   Trying path 1: "${storagePath1}"`);
+            console.log(`   Trying path 2: "${storagePath2}"`);
             
-            // Get public URL from Supabase Storage
-            // Note: getPublicUrl doesn't return an error, it always returns a URL
-            const { data: urlData } = supabase.storage
+            // Try multiple buckets and paths to support different storage configurations
+            let urlData: any = null;
+            
+            // Try 1: bucket 'audio' with old format
+            const { data: urlData1 } = supabase.storage
               .from('audio')
-              .getPublicUrl(storagePath);
+              .getPublicUrl(storagePath1);
+            
+            // Try 2: bucket 'lesson-audio' with new format
+            const { data: urlData2 } = supabase.storage
+              .from('lesson-audio')
+              .getPublicUrl(storagePath2);
+            
+            // Prefer urlData2 (new format) if available, otherwise use urlData1
+            urlData = urlData2?.publicUrl ? urlData2 : (urlData1?.publicUrl ? urlData1 : null);
             
             if (urlData?.publicUrl) {
-              urls[card.word] = urlData.publicUrl;
+              const audioUrl = urlData.publicUrl;
+              urls[card.word] = audioUrl;
               console.log(`✅ Generated Storage URL for word: "${card.word}"`);
-              console.log(`   URL: ${urlData.publicUrl}`);
+              console.log(`   URL: ${audioUrl}`);
               
-              // Test if file is accessible
-              fetch(urlData.publicUrl, { method: 'HEAD' })
-                .then(response => {
-                  if (response.ok) {
-                    console.log(`✅ File is accessible: ${urlData.publicUrl}`);
-                  } else {
-                    console.warn(`⚠️  File returned status ${response.status}: ${urlData.publicUrl}`);
-                  }
-                })
-                .catch(error => {
-                  console.error(`❌ Error checking file accessibility:`, error);
-                });
+              // CRITICAL: Don't test file accessibility with HEAD request - it causes 400 errors
+              // Just set the URL and let the audio element handle loading
+              // The file may not exist yet, which is fine - it will be generated on demand
             } else {
-              console.warn(`⚠️  No audio URL found for word: "${card.word}"`);
-              console.warn(`   Expected path: ${storagePath}`);
+              console.warn(`⚠️  Could not generate Storage URL for word: "${card.word}"`);
+              console.warn(`   Tried paths: ${storagePath1}, ${storagePath2}`);
+              console.warn(`   Audio will be loaded from database or generated on demand`);
             }
           }
 
@@ -784,7 +803,8 @@ export default function VocabularyTaskPlayer({
         }}
       >
         {/* Timer - On the blue card, top right, positioned to not overlap white button bar */}
-        {showTimer && requiredTime > 0 && (
+        {/* CRITICAL: Show timer if showTimer is true, use requiredTime or default to 10 minutes */}
+        {showTimer && (
           <div 
             className="absolute right-4 bg-white rounded-full py-1.5 shadow-sm" 
             style={{ 
@@ -795,7 +815,7 @@ export default function VocabularyTaskPlayer({
             }}
           >
             <span className="text-xs font-medium text-gray-700 whitespace-nowrap" style={{ height: '12px', fontSize: '12px' }}>
-              {formatTime(displayTime)} / {formatTime(requiredTime)}
+              {formatTime(displayTime)} / {formatTime(requiredTime || 10 * 60 * 1000)}
             </span>
           </div>
         )}
