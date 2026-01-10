@@ -10,21 +10,32 @@ interface RulesTaskEditorProps {
 }
 
 export default function RulesTaskEditor({ task, onChange, lessonDay }: RulesTaskEditorProps) {
-  const [blocks, setBlocks] = useState<any>(task.blocks || {});
-  const [blocksOrder, setBlocksOrder] = useState<string[]>(task.structure?.blocks_order || []);
-  const [showBlockTemplates, setShowBlockTemplates] = useState(false);
-  const [editingBlockKey, setEditingBlockKey] = useState<string | null>(null);
+  // Support both old structure (blocks object) and new structure (blocks array)
+  const getBlocksArray = () => {
+    if (Array.isArray(task.blocks)) {
+      // New structure: blocks is already an array
+      return task.blocks;
+    } else if (task.blocks && typeof task.blocks === 'object') {
+      // Old structure: blocks is an object, convert to array
+      const blocksOrder = task.structure?.blocks_order || Object.keys(task.blocks);
+      return blocksOrder.map((blockId: string) => ({
+        block_id: blockId,
+        block_type: task.blocks[blockId]?.type || task.blocks[blockId]?.block_type || 'how_to_say',
+        content: task.blocks[blockId]?.content || task.blocks[blockId],
+      }));
+    }
+    return [];
+  };
 
-  const updateTask = (newBlocks: any, newBlocksOrder: string[]) => {
+  const [blocks, setBlocks] = useState<any[]>(getBlocksArray());
+  const [showBlockTemplates, setShowBlockTemplates] = useState(false);
+  const [editingBlockIndex, setEditingBlockIndex] = useState<number | null>(null);
+
+  const updateTask = (newBlocks: any[]) => {
     setBlocks(newBlocks);
-    setBlocksOrder(newBlocksOrder);
     onChange({
       ...task,
-      blocks: newBlocks,
-      structure: {
-        ...task.structure,
-        blocks_order: newBlocksOrder,
-      },
+      blocks: newBlocks, // Always use array format for new structure
     });
   };
 
@@ -56,71 +67,86 @@ export default function RulesTaskEditor({ task, onChange, lessonDay }: RulesTask
   ];
 
   const handleAddBlock = (templateType: string) => {
-    const blockKey = `block_${blocksOrder.length + 1}_${templateType}`;
+    const blockId = `block_${blocks.length + 1}`;
+    const blockTypeMap: Record<string, string> = {
+      'explanation': 'how_to_say',
+      'comparison': 'comparison',
+      'reinforcement': 'reinforcement',
+      'speak_out_loud': 'speak_out_loud',
+    };
+    
+    const blockType = blockTypeMap[templateType] || templateType;
     const newBlock: any = {
-      type: templateType,
-      title: { ru: '', en: '' },
+      block_id: blockId,
+      block_type: blockType,
+      content: {},
     };
 
-    if (templateType === 'explanation') {
-      newBlock.explanation_text = { ru: '', en: '' };
-      newBlock.examples = [];
-      newBlock.hint = [];
+    if (templateType === 'explanation' || blockType === 'how_to_say') {
+      newBlock.content = {
+        title: { ru: '', en: '' },
+        explanation_text: { ru: '', en: '' },
+        examples: [],
+        hint: [],
+      };
     } else if (templateType === 'comparison') {
-      newBlock.comparison_card = [];
-      newBlock.note = { ru: '', en: '' };
+      newBlock.content = {
+        comparison_card: [],
+        note: { ru: '', en: '' },
+      };
     } else if (templateType === 'reinforcement') {
-      newBlock.task_1 = null;
-      newBlock.task_2 = null;
+      newBlock.content = {
+        task_1: null,
+        task_2: null,
+      };
     } else if (templateType === 'speak_out_loud') {
-      newBlock.instruction_text = { ru: '', en: '' };
-      newBlock.action_button = {
-        text: { ru: '✔ Я сказал(а) вслух', en: '✔ I said it out loud' },
-        completes_task: true,
+      newBlock.content = {
+        instruction_text: { ru: '', en: '' },
+        action_button: {
+          text: { ru: '✔ Я сказал(а) вслух', en: '✔ I said it out loud' },
+          completes_task: true,
+        },
       };
     }
 
-    const newBlocks = { ...blocks, [blockKey]: newBlock };
-    const newBlocksOrder = [...blocksOrder, blockKey];
-    updateTask(newBlocks, newBlocksOrder);
-    setEditingBlockKey(blockKey);
+    const newBlocks = [...blocks, newBlock];
+    updateTask(newBlocks);
+    setEditingBlockIndex(newBlocks.length - 1);
     setShowBlockTemplates(false);
   };
 
-  const handleDeleteBlock = (blockKey: string) => {
+  const handleDeleteBlock = (index: number) => {
     if (confirm('Вы уверены, что хотите удалить этот блок?')) {
-      const newBlocks = { ...blocks };
-      delete newBlocks[blockKey];
-      const newBlocksOrder = blocksOrder.filter(key => key !== blockKey);
-      updateTask(newBlocks, newBlocksOrder);
+      const newBlocks = blocks.filter((_, i) => i !== index);
+      updateTask(newBlocks);
     }
   };
 
   const handleMoveBlock = (index: number, direction: 'up' | 'down') => {
-    const newBlocksOrder = [...blocksOrder];
+    const newBlocks = [...blocks];
     if (direction === 'up' && index > 0) {
-      [newBlocksOrder[index - 1], newBlocksOrder[index]] = [newBlocksOrder[index], newBlocksOrder[index - 1]];
-    } else if (direction === 'down' && index < newBlocksOrder.length - 1) {
-      [newBlocksOrder[index], newBlocksOrder[index + 1]] = [newBlocksOrder[index + 1], newBlocksOrder[index]];
+      [newBlocks[index - 1], newBlocks[index]] = [newBlocks[index], newBlocks[index - 1]];
+    } else if (direction === 'down' && index < newBlocks.length - 1) {
+      [newBlocks[index], newBlocks[index + 1]] = [newBlocks[index + 1], newBlocks[index]];
     }
-    setBlocksOrder(newBlocksOrder);
-    updateTask(blocks, newBlocksOrder);
+    updateTask(newBlocks);
   };
 
-  const handleSaveBlock = (blockKey: string, block: any) => {
-    const newBlocks = { ...blocks, [blockKey]: block };
-    updateTask(newBlocks, blocksOrder);
-    setEditingBlockKey(null);
+  const handleSaveBlock = (index: number, block: any) => {
+    const newBlocks = [...blocks];
+    newBlocks[index] = block;
+    updateTask(newBlocks);
+    setEditingBlockIndex(null);
   };
 
-  if (editingBlockKey && blocks[editingBlockKey]) {
+  if (editingBlockIndex !== null && blocks[editingBlockIndex]) {
     return (
       <BlockEditor
-        blockKey={editingBlockKey}
-        block={blocks[editingBlockKey]}
+        blockKey={blocks[editingBlockIndex].block_id}
+        block={blocks[editingBlockIndex]}
         lessonDay={lessonDay}
-        onSave={(block) => handleSaveBlock(editingBlockKey, block)}
-        onCancel={() => setEditingBlockKey(null)}
+        onSave={(block) => handleSaveBlock(editingBlockIndex, block)}
+        onCancel={() => setEditingBlockIndex(null)}
       />
     );
   }
@@ -221,7 +247,7 @@ export default function RulesTaskEditor({ task, onChange, lessonDay }: RulesTask
       {/* Blocks */}
       <div className="bg-white rounded-lg shadow-md p-6">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold text-gray-900">Блоки ({blocksOrder.length})</h2>
+          <h2 className="text-lg font-semibold text-gray-900">Блоки ({blocks.length})</h2>
           <button
             onClick={() => setShowBlockTemplates(true)}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -230,35 +256,35 @@ export default function RulesTaskEditor({ task, onChange, lessonDay }: RulesTask
           </button>
         </div>
 
-        {blocksOrder.length === 0 ? (
+        {blocks.length === 0 ? (
           <p className="text-gray-600 text-center py-8">
             Блоки еще не добавлены. Нажмите "Добавить блок", чтобы начать.
           </p>
         ) : (
           <div className="space-y-3">
-            {blocksOrder.map((blockKey, index) => {
-              const block = blocks[blockKey];
+            {blocks.map((block, index) => {
               if (!block) return null;
+              const blockTitle = block.content?.title || block.title || {};
 
               return (
                 <div
-                  key={blockKey}
+                  key={block.block_id || index}
                   className="border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition-colors"
                 >
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
                         <span className="text-sm font-medium text-gray-500">
-                          Блок {index + 1} / {blocksOrder.length}
+                          Блок {index + 1} / {blocks.length}
                         </span>
                         <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded text-sm">
-                          {block.type}
+                          {block.block_type || block.type}
                         </span>
                       </div>
                       <h3 className="font-semibold text-gray-900">
-                        {typeof block.title === 'string' 
-                          ? block.title 
-                          : block.title?.ru || block.title?.en || 'Без названия'}
+                        {typeof blockTitle === 'string' 
+                          ? blockTitle 
+                          : blockTitle?.ru || blockTitle?.en || 'Без названия'}
                       </h3>
                     </div>
                     <div className="flex gap-2">
@@ -271,7 +297,7 @@ export default function RulesTaskEditor({ task, onChange, lessonDay }: RulesTask
                           ↑
                         </button>
                       )}
-                      {index < blocksOrder.length - 1 && (
+                      {index < blocks.length - 1 && (
                         <button
                           onClick={() => handleMoveBlock(index, 'down')}
                           className="px-2 py-1 text-gray-600 hover:text-gray-900"
@@ -281,13 +307,13 @@ export default function RulesTaskEditor({ task, onChange, lessonDay }: RulesTask
                         </button>
                       )}
                       <button
-                        onClick={() => setEditingBlockKey(blockKey)}
+                        onClick={() => setEditingBlockIndex(index)}
                         className="px-3 py-1 text-blue-600 hover:text-blue-800 text-sm font-medium"
                       >
                         Редактировать
                       </button>
                       <button
-                        onClick={() => handleDeleteBlock(blockKey)}
+                        onClick={() => handleDeleteBlock(index)}
                         className="px-3 py-1 text-red-600 hover:text-red-800 text-sm font-medium"
                       >
                         Удалить

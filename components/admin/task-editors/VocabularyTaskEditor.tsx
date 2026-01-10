@@ -9,20 +9,72 @@ interface VocabularyTaskEditorProps {
 }
 
 export default function VocabularyTaskEditor({ task, onChange, lessonDay }: VocabularyTaskEditorProps) {
-  const [cards, setCards] = useState<any[]>(task.content?.cards || []);
+  // Support both old structure (content.cards) and new structure (blocks[0].content.cards)
+  const getCards = () => {
+    if (task.blocks && Array.isArray(task.blocks) && task.blocks.length > 0) {
+      // New structure: blocks array
+      const listenBlock = task.blocks.find((b: any) => b.block_type === 'listen_and_repeat');
+      return listenBlock?.content?.cards || [];
+    }
+    // Old structure: content.cards
+    return task.content?.cards || [];
+  };
+
+  const [cards, setCards] = useState<any[]>(getCards());
   const [showAddCard, setShowAddCard] = useState(false);
   const [editingCardIndex, setEditingCardIndex] = useState<number | null>(null);
 
   // Update task when cards change
   const updateTask = (newCards: any[]) => {
     setCards(newCards);
-    onChange({
-      ...task,
-      content: {
-        ...task.content,
-        cards: newCards,
-      },
-    });
+    
+    // Update based on structure
+    if (task.blocks && Array.isArray(task.blocks)) {
+      // New structure: update blocks array
+      const updatedBlocks = task.blocks.map((block: any) => {
+        if (block.block_type === 'listen_and_repeat') {
+          return {
+            ...block,
+            content: {
+              ...block.content,
+              cards: newCards,
+            },
+          };
+        }
+        return block;
+      });
+      
+      // If no listen_and_repeat block exists, create one
+      if (!updatedBlocks.some((b: any) => b.block_type === 'listen_and_repeat')) {
+        updatedBlocks.push({
+          block_id: 'block_1',
+          block_type: 'listen_and_repeat',
+          content: {
+            cards: newCards,
+          },
+          ui: task.ui || {
+            show_audio_settings: true,
+            show_timer: true,
+            allow_repeat: true,
+          },
+          completion_rule: task.completion_rule || 'auto_after_audio_10_min',
+        });
+      }
+      
+      onChange({
+        ...task,
+        blocks: updatedBlocks,
+      });
+    } else {
+      // Old structure: update content.cards
+      onChange({
+        ...task,
+        content: {
+          ...task.content,
+          cards: newCards,
+        },
+      });
+    }
   };
 
   const handleAddCard = () => {
@@ -158,13 +210,35 @@ export default function VocabularyTaskEditor({ task, onChange, lessonDay }: Voca
             <label className="flex items-center gap-2">
               <input
                 type="checkbox"
-                checked={task.ui?.show_timer !== false}
+                checked={(() => {
+                  if (task.blocks && Array.isArray(task.blocks)) {
+                    const block = task.blocks.find((b: any) => b.block_type === 'listen_and_repeat');
+                    return block?.ui?.show_timer !== false;
+                  }
+                  return task.ui?.show_timer !== false;
+                })()}
                 onChange={(e) => {
-                  const ui = task.ui || {};
-                  onChange({
-                    ...task,
-                    ui: { ...ui, show_timer: e.target.checked },
-                  });
+                  if (task.blocks && Array.isArray(task.blocks)) {
+                    const updatedBlocks = task.blocks.map((block: any) => {
+                      if (block.block_type === 'listen_and_repeat') {
+                        return {
+                          ...block,
+                          ui: {
+                            ...block.ui,
+                            show_timer: e.target.checked,
+                          },
+                        };
+                      }
+                      return block;
+                    });
+                    onChange({ ...task, blocks: updatedBlocks });
+                  } else {
+                    const ui = task.ui || {};
+                    onChange({
+                      ...task,
+                      ui: { ...ui, show_timer: e.target.checked },
+                    });
+                  }
                 }}
                 className="rounded"
               />
@@ -173,13 +247,35 @@ export default function VocabularyTaskEditor({ task, onChange, lessonDay }: Voca
             <label className="flex items-center gap-2 mt-2">
               <input
                 type="checkbox"
-                checked={task.ui?.show_audio_settings !== false}
+                checked={(() => {
+                  if (task.blocks && Array.isArray(task.blocks)) {
+                    const block = task.blocks.find((b: any) => b.block_type === 'listen_and_repeat');
+                    return block?.ui?.show_audio_settings !== false;
+                  }
+                  return task.ui?.show_audio_settings !== false;
+                })()}
                 onChange={(e) => {
-                  const ui = task.ui || {};
-                  onChange({
-                    ...task,
-                    ui: { ...ui, show_audio_settings: e.target.checked },
-                  });
+                  if (task.blocks && Array.isArray(task.blocks)) {
+                    const updatedBlocks = task.blocks.map((block: any) => {
+                      if (block.block_type === 'listen_and_repeat') {
+                        return {
+                          ...block,
+                          ui: {
+                            ...block.ui,
+                            show_audio_settings: e.target.checked,
+                          },
+                        };
+                      }
+                      return block;
+                    });
+                    onChange({ ...task, blocks: updatedBlocks });
+                  } else {
+                    const ui = task.ui || {};
+                    onChange({
+                      ...task,
+                      ui: { ...ui, show_audio_settings: e.target.checked },
+                    });
+                  }
                 }}
                 className="rounded"
               />
