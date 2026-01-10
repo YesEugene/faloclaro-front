@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Get all lessons to calculate total
+    // Get all lessons to calculate total and create complete progress map
     const { data: allLessons } = await supabase
       .from('lessons')
       .select('id, day_number')
@@ -49,24 +49,52 @@ export async function GET(request: NextRequest) {
 
     const totalLessons = allLessons?.length || 0;
 
-    // Process progress data
-    const lessonsProgress = (progress || []).map((p: any) => {
-      const lesson = p.lesson || {};
-      const taskProgress = p.task_progress || [];
-      const completedTasks = taskProgress.filter((tp: any) => tp.status === 'completed').length;
-      const totalTasks = 5; // Each lesson has 5 tasks
-
-      return {
-        day_number: lesson.day_number || 0,
-        lesson_id: lesson.id,
-        status: p.status || 'not_started',
-        started_at: p.started_at,
-        completed_at: p.completed_at,
-        completed_tasks: completedTasks,
-        total_tasks: totalTasks,
-        task_progress: taskProgress,
-      };
+    // Create a map of progress by lesson_id for quick lookup
+    const progressMap = new Map<string, any>();
+    (progress || []).forEach((p: any) => {
+      const lessonId = p.lesson?.id || p.lesson_id;
+      if (lessonId) {
+        progressMap.set(lessonId, p);
+      }
     });
+
+    // Create progress for all lessons (including not started)
+    const lessonsProgress: any[] = [];
+    
+    if (allLessons) {
+      for (const lesson of allLessons) {
+        const existingProgress = progressMap.get(lesson.id);
+        
+        if (existingProgress) {
+          const taskProgress = existingProgress.task_progress || [];
+          const completedTasks = taskProgress.filter((tp: any) => tp.status === 'completed').length;
+          const totalTasks = 5; // Each lesson has 5 tasks
+
+          lessonsProgress.push({
+            day_number: lesson.day_number,
+            lesson_id: lesson.id,
+            status: existingProgress.status || 'not_started',
+            started_at: existingProgress.started_at,
+            completed_at: existingProgress.completed_at,
+            completed_tasks: completedTasks,
+            total_tasks: totalTasks,
+            task_progress: taskProgress,
+          });
+        } else {
+          // Lesson not started
+          lessonsProgress.push({
+            day_number: lesson.day_number,
+            lesson_id: lesson.id,
+            status: 'not_started',
+            started_at: null,
+            completed_at: null,
+            completed_tasks: 0,
+            total_tasks: 5,
+            task_progress: [],
+          });
+        }
+      }
+    }
 
     // Calculate statistics
     const startedLessons = lessonsProgress.filter((lp: any) => 
