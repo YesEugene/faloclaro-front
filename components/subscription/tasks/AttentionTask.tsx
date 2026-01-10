@@ -252,27 +252,34 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
   }, [audioUrls]);
 
   const handleAnswerSelect = (itemIndex: number, optionText: string) => {
-    const newAnswers = { ...answers, [itemIndex]: optionText };
-    const newShowResults = { ...showResults, [itemIndex]: true };
+    // CRITICAL: itemIndex should always equal currentItemIndex (user can only answer current block)
+    // But ensure we're on the correct block
+    const actualItemIndex = itemIndex === currentItemIndex ? itemIndex : currentItemIndex;
+    
+    const newAnswers = { ...answers, [actualItemIndex]: optionText };
+    const newShowResults = { ...showResults, [actualItemIndex]: true };
+    
+    // CRITICAL: If answering the last block, ensure we stay on it (so replay button is visible)
+    // Do this BEFORE updating state to ensure button appears immediately
+    if (actualItemIndex === items.length - 1) {
+      // Force currentItemIndex to last block to show replay button
+      setCurrentItemIndex(items.length - 1);
+      currentItemIndexRef.current = items.length - 1;
+    }
+    
+    // CRITICAL: Always update state - this triggers re-render with replay button
     setAnswers(newAnswers);
     setShowResults(newShowResults);
     
     // Check if all items are answered after this answer
     const allAnsweredNow = items.every((item: any, index: number) => {
-      if (index === itemIndex) return true; // Current item is now answered
+      if (index === actualItemIndex) return true; // Current item is now answered
       return newAnswers[index] !== undefined && newAnswers[index] !== null && newAnswers[index] !== '';
     });
     
     // If all answered and this is the last item, mark as completed immediately
-    // IMPORTANT: Keep currentItemIndex on the last block - don't reset it
-    if (allAnsweredNow && itemIndex === items.length - 1) {
+    if (allAnsweredNow && actualItemIndex === items.length - 1) {
       setLocalIsCompleted(true);
-      // Ensure we stay on the last block (itemIndex === items.length - 1)
-      // Don't reset currentItemIndex - user should see the replay button on the last block
-      if (currentItemIndex !== itemIndex) {
-        setCurrentItemIndex(itemIndex);
-        currentItemIndexRef.current = itemIndex;
-      }
       const correctCount = items.filter((item: any, index: number) => {
         const selectedAnswer = newAnswers[index];
         const correctOption = item.options?.find((opt: any) => opt.correct);
@@ -374,11 +381,14 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
   }
 
   const currentAnswer = answers[currentItemIndex];
-  const showResult = showResults[currentItemIndex];
+  const showResult = showResults[currentItemIndex] || false;
   const correctOption = currentItem.options?.find((opt: any) => opt.correct);
   // Check if all items are answered (either by showResults or by answers)
   // If task is completed locally, all items are considered answered
   const allAnswered = localIsCompleted || items.every((item: any, index: number) => answers[index] !== undefined);
+  
+  // CRITICAL: Check if we're on the last block and it's answered - for replay button display
+  const isLastBlockAnswered = currentItemIndex === items.length - 1 && (showResult || answers[currentItemIndex] !== undefined);
 
   return (
     <div className="space-y-6 w-full" style={{ paddingBottom: '140px' }}>
@@ -501,9 +511,10 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
             </div>
           )}
 
-          {/* Replay Button - Show when task is completed (even if not all items answered, because task was completed) */}
-          {/* Always show on last item if task is completed */}
-          {localIsCompleted && currentItemIndex === items.length - 1 && (
+          {/* Replay Button - Show on last block after answering it */}
+          {/* CRITICAL: Simple logic - show button if we're on last block AND it's answered */}
+          {/* This ensures consistent behavior: button always appears after answering the last block */}
+          {isLastBlockAnswered && (
             <button
               onClick={(e) => {
                 e.preventDefault();
