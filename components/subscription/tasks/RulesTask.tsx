@@ -634,16 +634,47 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
             </div>
           )}
 
-            {/* Task 2: Situation to Phrase */}
+            {/* Task 2: Can be either Single Choice or Situation to Phrase */}
             {currentBlock.task_2 && (
-              <div className="space-y-4">
-                <p className="text-lg font-semibold text-black mb-2">{getSituationText(currentBlock.task_2, appLanguage)}</p>
+              <div className="space-y-4 mt-6">
+                {/* Show question if it exists (single_choice format), otherwise show situation_text */}
+                {currentBlock.task_2.question ? (
+                  <>
+                    <p className="text-lg font-semibold text-black mb-4">{getQuestionText(currentBlock.task_2, appLanguage)}</p>
+                    
+                    {currentBlock.task_2.audio && (
+                      <div className="flex items-center justify-center mb-4">
+                        <button
+                          onClick={() => playAudio(currentBlock.task_2.audio)}
+                          disabled={isPlayingAudio[currentBlock.task_2.audio]}
+                          className="p-4 rounded-full transition-colors"
+                          style={{ backgroundColor: '#F4F5F8' }}
+                        >
+                          {isPlayingAudio[currentBlock.task_2.audio] ? (
+                            <svg className="w-10 h-10 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                            </svg>
+                          ) : (
+                            <svg className="w-10 h-10 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+                            </svg>
+                          )}
+                        </button>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <p className="text-lg font-semibold text-black mb-2">{getSituationText(currentBlock.task_2, appLanguage)}</p>
+                )}
                 
           <div className="space-y-2">
                   {currentBlock.task_2.options?.map((option: any, index: number) => {
                     const taskKey = 'task_2';
-                    const optionText = typeof option.text === 'string' ? option.text : option.text; // Task 2 options are Portuguese phrases, not translated
-                    const isSelected = selectedAnswers[taskKey] === optionText;
+                    // Handle both formats: translated text (single_choice) and plain Portuguese text (situation_to_phrase)
+                    const optionText = currentBlock.task_2.format === 'single_choice' 
+                      ? getTranslatedText(option.text, appLanguage)
+                      : (typeof option.text === 'string' ? option.text : option.text);
+                    const isSelected = selectedAnswers[taskKey] === optionText || (option.text && typeof option.text === 'object' && selectedAnswers[taskKey] === getTranslatedText(option.text, appLanguage));
                     const isCorrect = option.correct;
                     const showResult = showResults[taskKey];
                     
