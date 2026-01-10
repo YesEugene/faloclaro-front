@@ -1,0 +1,103 @@
+task:
+  task_id: 1
+  type: vocabulary
+  title:
+    ru: "Слова и фразы"
+    en: "Words and phrases"
+  subtitle:
+    ru: "Просьбы и ответы"
+    en: "Requests and responses"
+  show_timer: true
+  show_settings: true
+  completion_rule: "auto_after_audio_10_min"
+
+card_format:
+  show_word: true
+  show_transcription: true
+  show_example_sentence: true
+  show_word_translation_ru: true
+  show_sentence_translation_ru: true
+  show_sentence_translation_en: true
+  show_word_translation_en: true
+
+content:
+  cards:
+    - word: "Preciso"
+      transcription: "[pɾɨˈsizu]"
+      example_sentence: "Preciso de ajuda."
+      sentence_translation_ru: "Мне нужна помощь."
+      sentence_translation_en: "I need help."
+      word_translation_ru: "нужно / мне нужно"
+      word_translation_en: "need / I need"
+
+    - word: "Ajuda"
+      transcription: "[ɐˈʒudɐ]"
+      example_sentence: "Preciso de ajuda."
+      sentence_translation_ru: "Мне нужна помощь."
+      sentence_translation_en: "I need help."
+      word_translation_ru: "помощь"
+      word_translation_en: "help"
+
+    - word: "Pode"
+      transcription: "[ˈpɔdɨ]"
+      example_sentence: "Pode ajudar?"
+      sentence_translation_ru: "Можешь помочь?"
+      sentence_translation_en: "Can you help?"
+      word_translation_ru: "можешь / можно"
+      word_translation_en: "can you / can"
+
+    - word: "Ajudar"
+      transcription: "[ɐʒuˈdaɾ]"
+      example_sentence: "Pode ajudar?"
+      sentence_translation_ru: "Можешь помочь?"
+      sentence_translation_en: "Can you help?"
+      word_translation_ru: "помогать"
+      word_translation_en: "to help"
+
+    - word: "Pode ajudar?"
+      transcription: "[ˈpɔdɨ ɐʒuˈdaɾ]"
+      example_sentence: "Pode ajudar agora?"
+      sentence_translation_ru: "Можешь помочь сейчас?"
+      sentence_translation_en: "Can you help now?"
+      word_translation_ru: "можешь помочь?"
+      word_translation_en: "can you help?"
+
+    - word: "Obrigado"
+      transcription: "[ubɾiˈɡadu]"
+      example_sentence: "Obrigado pela ajuda."
+      sentence_translation_ru: "Спасибо за помощь."
+      sentence_translation_en: "Thank you for the help."
+      word_translation_ru: "спасибо (муж.)"
+      word_translation_en: "thank you (masc.)"
+
+    - word: "Obrigada"
+      transcription: "[ubɾiˈɡadɐ]"
+      example_sentence: "Obrigada!"
+      sentence_translation_ru: "Спасибо!"
+      sentence_translation_en: "Thank you!"
+      word_translation_ru: "спасибо (жен.)"
+      word_translation_en: "thank you (fem.)"
+
+    - word: "Hoje não"
+      transcription: "[ˈoʒɨ nɐ̃w]"
+      example_sentence: "Hoje não posso."
+      sentence_translation_ru: "Сегодня не могу."
+      sentence_translation_en: "I can't today."
+      word_translation_ru: "сегодня нет / не сегодня"
+      word_translation_en: "not today"
+
+    - word: "Só"
+      transcription: "[sɔ]"
+      example_sentence: "Só amanhã."
+      sentence_translation_ru: "Только завтра."
+      sentence_translation_en: "Only tomorrow."
+      word_translation_ru: "только"
+      word_translation_en: "only"
+
+    - word: "Resposta"
+      transcription: "[ʁɨʃˈpɔʃtɐ]"
+      example_sentence: "Esta é a resposta."
+      sentence_translation_ru: "Это ответ."
+      sentence_translation_en: "This is the answer."
+      word_translation_ru: "ответ"
+      word_translation_en: "answer / response"

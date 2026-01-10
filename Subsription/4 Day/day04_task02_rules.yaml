@@ -1,0 +1,6 @@
+task:
+  task_id: 2
+  type: rules
+  title:
+    ru: "Как это сказать"
+    en: "How to say it"

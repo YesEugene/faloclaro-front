@@ -1,0 +1,9 @@
+day:
+  number: 4
+  title:
+    ru: "Просьбы и ответы"
+    en: "Requests and responses"
+  subtitle:
+    ru: "Понимаем намерение и отвечаем"
+    en: "Understanding intention and responding"
+  estimated_time: "15–25"
