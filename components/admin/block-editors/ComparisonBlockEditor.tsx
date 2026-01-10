@@ -207,6 +207,7 @@ export default function ComparisonBlockEditor({ block, onChange, lessonDay }: Co
             </div>
             <ComparisonCardEditor
               card={editingCardIndex !== null && editingCardIndex < comparisonCards.length ? comparisonCards[editingCardIndex] : null}
+              lessonDay={lessonDay}
               onSave={handleSaveCard}
               onCancel={() => { setShowAddCard(false); setEditingCardIndex(null); }}
             />
@@ -218,8 +219,9 @@ export default function ComparisonBlockEditor({ block, onChange, lessonDay }: Co
 }
 
 // Comparison Card Editor Component
-function ComparisonCardEditor({ card, onSave, onCancel }: {
+function ComparisonCardEditor({ card, lessonDay, onSave, onCancel }: {
   card: any | null;
+  lessonDay: number;
   onSave: (card: any) => void;
   onCancel: () => void;
 }) {
@@ -250,9 +252,86 @@ function ComparisonCardEditor({ card, onSave, onCancel }: {
           className="w-full px-3 py-2 border border-gray-300 rounded-lg"
           placeholder="Obrigado pela ajuda."
         />
-        <p className="text-xs text-gray-500 mt-1">
-          Аудио будет сгенерировано автоматически при сохранении задания
-        </p>
+        <div className="flex gap-2 mt-2">
+          <button
+            type="button"
+            onClick={async () => {
+              if (!text.trim()) {
+                alert('Пожалуйста, введите текст для генерации аудио');
+                return;
+              }
+              
+              try {
+                const response = await fetch('/api/admin/audio/generate', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    text: text.trim(),
+                    lessonId: lessonDay.toString(),
+                    taskId: 2,
+                    blockId: 'comparison',
+                    itemId: `card_${Date.now()}`,
+                  }),
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                  alert('Аудио успешно сгенерировано!');
+                } else {
+                  alert('Ошибка при генерации аудио: ' + (data.error || 'Unknown error'));
+                }
+              } catch (err) {
+                console.error('Error generating audio:', err);
+                alert('Ошибка при генерации аудио');
+              }
+            }}
+            className="px-3 py-1 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-xs"
+          >
+            🎵 Генерировать
+          </button>
+          <label className="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-xs cursor-pointer">
+            📤 Загрузить
+            <input
+              type="file"
+              accept="audio/*"
+              className="hidden"
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+
+                if (!text.trim()) {
+                  alert('Пожалуйста, введите текст');
+                  return;
+                }
+
+                try {
+                  const uploadFormData = new FormData();
+                  uploadFormData.append('file', file);
+                  uploadFormData.append('lessonId', lessonDay.toString());
+                  uploadFormData.append('taskId', '2');
+                  uploadFormData.append('blockId', 'comparison');
+                  uploadFormData.append('itemId', `card_${Date.now()}`);
+                  uploadFormData.append('textPt', text.trim());
+
+                  const response = await fetch('/api/admin/audio/upload', {
+                    method: 'POST',
+                    body: uploadFormData,
+                  });
+
+                  const data = await response.json();
+                  if (data.success) {
+                    alert('Аудио успешно загружено!');
+                  } else {
+                    alert('Ошибка при загрузке аудио: ' + (data.error || 'Unknown error'));
+                  }
+                } catch (err) {
+                  console.error('Error uploading audio:', err);
+                  alert('Ошибка при загрузке аудио');
+                }
+              }}
+            />
+          </label>
+        </div>
       </div>
       <div className="flex justify-end gap-2 pt-4 border-t border-gray-200">
         <button

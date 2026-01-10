@@ -541,11 +541,91 @@ function CardEditorModal({ card, lessonDay, onSave, onCancel }: {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Аудиофайл (будет сгенерирован автоматически)
+              Аудио
             </label>
-            <p className="text-xs text-gray-500 mb-2">
-              Аудио будет сгенерировано автоматически при сохранении задания через скрипт generate-audio.
-              Если нужно загрузить свой файл, используйте скрипт upload-audio.
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={async () => {
+                  if (!formData.word.trim()) {
+                    alert('Пожалуйста, введите португальское слово для генерации аудио');
+                    return;
+                  }
+                  
+                  try {
+                    const response = await fetch('/api/admin/audio/generate', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        text: formData.word.trim(),
+                        lessonId: lessonDay.toString(),
+                        taskId: 1,
+                        blockId: 'vocabulary',
+                        itemId: `word_${Date.now()}`,
+                      }),
+                    });
+
+                    const data = await response.json();
+                    if (data.success) {
+                      alert('Аудио успешно сгенерировано!');
+                      // You could store the audio URL here if needed
+                    } else {
+                      alert('Ошибка при генерации аудио: ' + (data.error || 'Unknown error'));
+                    }
+                  } catch (err) {
+                    console.error('Error generating audio:', err);
+                    alert('Ошибка при генерации аудио');
+                  }
+                }}
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
+              >
+                🎵 Сгенерировать аудио
+              </button>
+              <label className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm cursor-pointer">
+                📤 Загрузить файл
+                <input
+                  type="file"
+                  accept="audio/*"
+                  className="hidden"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+
+                    if (!formData.word.trim()) {
+                      alert('Пожалуйста, введите португальское слово');
+                      return;
+                    }
+
+                    try {
+                      const uploadFormData = new FormData();
+                      uploadFormData.append('file', file);
+                      uploadFormData.append('lessonId', lessonDay.toString());
+                      uploadFormData.append('taskId', '1');
+                      uploadFormData.append('blockId', 'vocabulary');
+                      uploadFormData.append('itemId', `word_${Date.now()}`);
+                      uploadFormData.append('textPt', formData.word.trim());
+
+                      const response = await fetch('/api/admin/audio/upload', {
+                        method: 'POST',
+                        body: uploadFormData,
+                      });
+
+                      const data = await response.json();
+                      if (data.success) {
+                        alert('Аудио успешно загружено!');
+                      } else {
+                        alert('Ошибка при загрузке аудио: ' + (data.error || 'Unknown error'));
+                      }
+                    } catch (err) {
+                      console.error('Error uploading audio:', err);
+                      alert('Ошибка при загрузке аудио');
+                    }
+                  }}
+                />
+              </label>
+            </div>
+            <p className="text-xs text-gray-500 mt-2">
+              Генерация использует Google Text-to-Speech. Загрузка позволяет использовать свой аудиофайл.
             </p>
           </div>
           <div className="flex justify-end gap-2 pt-4 border-t border-gray-200">

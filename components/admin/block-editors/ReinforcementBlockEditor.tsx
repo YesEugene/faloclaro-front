@@ -187,6 +187,7 @@ export default function ReinforcementBlockEditor({ block, onChange, lessonDay }:
         <ReinforcementTaskEditor
           task={task1}
           taskNumber={1}
+          lessonDay={lessonDay}
           onSave={handleSaveTask1}
           onCancel={() => setShowTask1Editor(false)}
         />
@@ -196,6 +197,7 @@ export default function ReinforcementBlockEditor({ block, onChange, lessonDay }:
         <ReinforcementTaskEditor
           task={task2}
           taskNumber={2}
+          lessonDay={lessonDay}
           onSave={handleSaveTask2}
           onCancel={() => setShowTask2Editor(false)}
         />
@@ -205,9 +207,10 @@ export default function ReinforcementBlockEditor({ block, onChange, lessonDay }:
 }
 
 // Reinforcement Task Editor Component
-function ReinforcementTaskEditor({ task, taskNumber, onSave, onCancel }: {
+function ReinforcementTaskEditor({ task, taskNumber, lessonDay, onSave, onCancel }: {
   task: any | null;
   taskNumber: number;
+  lessonDay: number;
   onSave: (task: any) => void;
   onCancel: () => void;
 }) {
@@ -332,15 +335,95 @@ function ReinforcementTaskEditor({ task, taskNumber, onSave, onCancel }: {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Аудио текст для проигрывания (PT) *
               </label>
-              <input
-                type="text"
-                value={audio}
-                onChange={(e) => setAudio(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                placeholder="Preciso de ajuda."
-              />
-              <p className="text-xs text-gray-500 mt-1">
-                Аудио будет сгенерировано автоматически при сохранении задания
+              <div className="flex gap-2 mb-2">
+                <input
+                  type="text"
+                  value={audio}
+                  onChange={(e) => setAudio(e.target.value)}
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg"
+                  placeholder="Preciso de ajuda."
+                />
+                <button
+                  type="button"
+                  onClick={async () => {
+                    if (!audio.trim()) {
+                      alert('Пожалуйста, введите текст для генерации аудио');
+                      return;
+                    }
+                    
+                    try {
+                      const response = await fetch('/api/admin/audio/generate', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                          text: audio.trim(),
+                          lessonId: lessonDay.toString(),
+                          taskId: 2,
+                          blockId: 'reinforcement',
+                          itemId: `task_${taskNumber}_${Date.now()}`,
+                        }),
+                      });
+
+                      const data = await response.json();
+                      if (data.success) {
+                        alert('Аудио успешно сгенерировано!');
+                      } else {
+                        alert('Ошибка при генерации аудио: ' + (data.error || 'Unknown error'));
+                      }
+                    } catch (err) {
+                      console.error('Error generating audio:', err);
+                      alert('Ошибка при генерации аудио');
+                    }
+                  }}
+                  className="px-3 py-1 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-xs whitespace-nowrap"
+                >
+                  🎵 Генерировать
+                </button>
+                <label className="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-xs cursor-pointer whitespace-nowrap">
+                  📤 Загрузить
+                  <input
+                    type="file"
+                    accept="audio/*"
+                    className="hidden"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+
+                      if (!audio.trim()) {
+                        alert('Пожалуйста, введите текст');
+                        return;
+                      }
+
+                      try {
+                        const uploadFormData = new FormData();
+                        uploadFormData.append('file', file);
+                        uploadFormData.append('lessonId', lessonDay.toString());
+                        uploadFormData.append('taskId', '2');
+                        uploadFormData.append('blockId', 'reinforcement');
+                        uploadFormData.append('itemId', `task_${taskNumber}_${Date.now()}`);
+                        uploadFormData.append('textPt', audio.trim());
+
+                        const response = await fetch('/api/admin/audio/upload', {
+                          method: 'POST',
+                          body: uploadFormData,
+                        });
+
+                        const data = await response.json();
+                        if (data.success) {
+                          alert('Аудио успешно загружено!');
+                        } else {
+                          alert('Ошибка при загрузке аудио: ' + (data.error || 'Unknown error'));
+                        }
+                      } catch (err) {
+                        console.error('Error uploading audio:', err);
+                        alert('Ошибка при загрузке аудио');
+                      }
+                    }}
+                  />
+                </label>
+              </div>
+              <p className="text-xs text-gray-500">
+                Генерация использует Google Text-to-Speech. Загрузка позволяет использовать свой аудиофайл.
               </p>
             </div>
           )}
