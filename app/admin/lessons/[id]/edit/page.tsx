@@ -205,7 +205,48 @@ function LessonEditorContent() {
         {/* Left Panel - Tasks List */}
         <div className="w-80 bg-white border-r border-gray-200 overflow-y-auto">
           <div className="p-4">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Задания урока</h2>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-semibold text-gray-900">Задания урока</h2>
+              <label className="px-3 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors cursor-pointer text-sm">
+                📥 Импорт
+                <input
+                  type="file"
+                  accept=".json,.yaml,.yml"
+                  className="hidden"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+
+                    if (!confirm('Импорт из файла заменит все текущие данные урока. Продолжить?')) {
+                      return;
+                    }
+
+                    try {
+                      const formData = new FormData();
+                      formData.append('file', file);
+                      formData.append('lessonId', lessonId);
+
+                      const response = await fetch('/api/admin/lessons/import', {
+                        method: 'POST',
+                        body: formData,
+                      });
+
+                      const data = await response.json();
+
+                      if (data.success) {
+                        alert('Урок успешно импортирован!');
+                        loadLesson(); // Reload lesson data
+                      } else {
+                        alert('Ошибка при импорте: ' + (data.error || 'Unknown error'));
+                      }
+                    } catch (err) {
+                      console.error('Error importing lesson:', err);
+                      alert('Ошибка при импорте урока');
+                    }
+                  }}
+                />
+              </label>
+            </div>
             {tasks.length === 0 ? (
               <p className="text-gray-500 text-sm text-center py-8">
                 Заданий пока нет

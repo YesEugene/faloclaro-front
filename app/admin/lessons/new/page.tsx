@@ -95,6 +95,58 @@ export default function NewLessonPage() {
       {/* Main Content */}
       <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-white rounded-lg shadow-md p-6 space-y-6">
+          {/* Import Section */}
+          <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <h3 className="font-semibold text-blue-900 mb-2">📥 Импорт из файла</h3>
+            <p className="text-sm text-blue-700 mb-3">
+              Загрузите JSON или YAML файл с уроком, чтобы автоматически заполнить все поля и создать урок
+            </p>
+            <label className="block">
+              <input
+                type="file"
+                accept=".json,.yaml,.yml"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+
+                  try {
+                    setLoading(true);
+                    setError('');
+
+                    const formData = new FormData();
+                    formData.append('file', file);
+
+                    const response = await fetch('/api/admin/lessons/import', {
+                      method: 'POST',
+                      body: formData,
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                      // Redirect to edit page
+                      router.push(`/admin/lessons/${data.lesson.id}/edit`);
+                    } else {
+                      setError(data.error || 'Ошибка при импорте урока');
+                    }
+                  } catch (err) {
+                    console.error('Error importing lesson:', err);
+                    setError('Ошибка при импорте урока');
+                  } finally {
+                    setLoading(false);
+                  }
+                }}
+                className="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700"
+              />
+            </label>
+          </div>
+
+          <div className="flex items-center mb-6">
+            <div className="flex-1 border-t border-gray-300"></div>
+            <span className="px-4 text-sm text-gray-500">или создайте вручную</span>
+            <div className="flex-1 border-t border-gray-300"></div>
+          </div>
+
           <div>
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Основная информация</h2>
             
