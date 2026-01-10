@@ -9,25 +9,66 @@ interface ListeningTaskEditorProps {
 }
 
 export default function ListeningTaskEditor({ task, onChange, lessonDay }: ListeningTaskEditorProps) {
+  // Normalize options in items - ensure option.text is always a string
+  const normalizeItemOptions = (item: any): any => {
+    if (!item || typeof item !== 'object') return item;
+    if (item.options && Array.isArray(item.options)) {
+      return {
+        ...item,
+        options: item.options.map((opt: any) => {
+          if (!opt || typeof opt !== 'object') return opt;
+          // If text is an object, extract string value (prefer pt/portuguese, then ru, then en)
+          if (opt.text && typeof opt.text === 'object' && !Array.isArray(opt.text)) {
+            return {
+              ...opt,
+              text: opt.text.pt || opt.text.portuguese || opt.text.ru || opt.text.en || String(opt.text),
+            };
+          }
+          // If text is not a string, convert to string
+          if (opt.text && typeof opt.text !== 'string') {
+            return {
+              ...opt,
+              text: String(opt.text),
+            };
+          }
+          return opt;
+        }),
+      };
+    }
+    return item;
+  };
+
   // Support both old structure (task.items) and new structure (task.blocks[].content.items)
   const getItems = () => {
+    let items: any[] = [];
     if (task.blocks && Array.isArray(task.blocks)) {
       // New structure: collect items from all listen_phrase blocks
-      const items: any[] = [];
       task.blocks.forEach((block: any) => {
         if (block.block_type === 'listen_phrase' && block.content?.items) {
           items.push(...block.content.items);
         }
       });
-      return items;
+    } else {
+      // Old structure: task.items
+      items = task.items || [];
     }
-    // Old structure: task.items
-    return task.items || [];
+    // Normalize all items - ensure options have text as string
+    return items.map(normalizeItemOptions);
   };
 
   const [items, setItems] = useState<any[]>(getItems());
   const [showAddItem, setShowAddItem] = useState(false);
   const [editingItemIndex, setEditingItemIndex] = useState<number | null>(null);
+
+  // Update items when task changes (e.g., after save or load), but only if not editing
+  useEffect(() => {
+    // Only update if we're not currently editing an item (to avoid resetting user input)
+    if (!showAddItem && editingItemIndex === null) {
+      const normalizedItems = getItems();
+      setItems(normalizedItems);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [task?.blocks, task?.items, showAddItem, editingItemIndex]);
 
   const updateTask = (newItems: any[]) => {
     setItems(newItems);
@@ -73,11 +114,13 @@ export default function ListeningTaskEditor({ task, onChange, lessonDay }: Liste
   };
 
   const handleSaveItem = (item: any) => {
+    // Normalize item options before saving to ensure text is always a string
+    const normalizedItem = normalizeItemOptions(item);
     const newItems = [...items];
     if (editingItemIndex !== null && editingItemIndex < items.length) {
-      newItems[editingItemIndex] = item;
+      newItems[editingItemIndex] = normalizedItem;
     } else {
-      newItems.push(item);
+      newItems.push(normalizedItem);
     }
     updateTask(newItems);
     setShowAddItem(false);
@@ -296,7 +339,9 @@ export default function ListeningTaskEditor({ task, onChange, lessonDay }: Liste
       {/* Item Editor Modal */}
       {showAddItem && (
         <ListeningItemEditorModal
-          item={editingItemIndex !== null && editingItemIndex < items.length ? items[editingItemIndex] : null}
+          item={editingItemIndex !== null && editingItemIndex >= 0 && editingItemIndex < items.length 
+            ? normalizeItemOptions(items[editingItemIndex]) 
+            : null}
           lessonDay={lessonDay}
           onSave={handleSaveItem}
           onCancel={() => {
@@ -316,6 +361,29 @@ function ListeningItemEditorModal({ item, lessonDay, onSave, onCancel }: {
   onSave: (item: any) => void;
   onCancel: () => void;
 }) {
+  // Normalize item options - ensure text is always a string, not an object
+  const normalizeOptions = (optionsArray: any[]): any[] => {
+    if (!Array.isArray(optionsArray)) return [];
+    return optionsArray.map(opt => {
+      if (!opt || typeof opt !== 'object') return opt;
+      // If text is an object, extract string value (prefer pt/portuguese, then ru, then en)
+      if (opt.text && typeof opt.text === 'object' && !Array.isArray(opt.text)) {
+        return {
+          ...opt,
+          text: opt.text.pt || opt.text.portuguese || opt.text.ru || opt.text.en || String(opt.text),
+        };
+      }
+      // If text is not a string, convert to string
+      if (opt.text && typeof opt.text !== 'string') {
+        return {
+          ...opt,
+          text: String(opt.text),
+        };
+      }
+      return opt;
+    });
+  };
+
   const [audio, setAudio] = useState<string>(item?.audio || '');
   const [audioUrl, setAudioUrl] = useState<string | null>(item?.audio_url || null);
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
@@ -325,9 +393,30 @@ function ListeningItemEditorModal({ item, lessonDay, onSave, onCancel }: {
     ru: typeof item?.question === 'string' ? '' : (item?.question?.ru || ''),
     en: typeof item?.question === 'string' ? '' : (item?.question?.en || ''),
   });
-  const [options, setOptions] = useState<any[]>(item?.options || []);
+  const [options, setOptions] = useState<any[]>(normalizeOptions(item?.options || []));
   const [showOptionEditor, setShowOptionEditor] = useState(false);
   const [editingOptionIndex, setEditingOptionIndex] = useState<number | null>(null);
+
+  // Update state when item prop changes (e.g., when editing different item)
+  useEffect(() => {
+    if (item) {
+      setAudio(item.audio || '');
+      setAudioUrl(item.audio_url || null);
+      setTextHidden(item.text_hidden_before_answer !== false);
+      setQuestion({
+        ru: typeof item.question === 'string' ? '' : (item.question?.ru || ''),
+        en: typeof item.question === 'string' ? '' : (item.question?.en || ''),
+      });
+      setOptions(normalizeOptions(item.options || []));
+    } else {
+      // Reset to defaults when item is null (new item)
+      setAudio('');
+      setAudioUrl(null);
+      setTextHidden(true);
+      setQuestion({ ru: '', en: '' });
+      setOptions([]);
+    }
+  }, [item]);
 
   // Check for existing audio when audio text changes or modal opens
   useEffect(() => {
@@ -393,11 +482,27 @@ function ListeningItemEditorModal({ item, lessonDay, onSave, onCancel }: {
   };
 
   const handleSaveOption = (option: any) => {
+    // Ensure option.text is always a string, never an object
+    let normalizedOption = option;
+    if (option && typeof option === 'object') {
+      let textValue = option.text;
+      if (textValue && typeof textValue === 'object' && !Array.isArray(textValue)) {
+        textValue = textValue.pt || textValue.portuguese || textValue.ru || textValue.en || String(textValue);
+      } else if (textValue && typeof textValue !== 'string') {
+        textValue = String(textValue || '');
+      }
+      normalizedOption = {
+        ...option,
+        text: textValue || '',
+        correct: option.correct || false,
+      };
+    }
+    
     const newOptions = [...options];
     if (editingOptionIndex !== null && editingOptionIndex < options.length) {
-      newOptions[editingOptionIndex] = option;
+      newOptions[editingOptionIndex] = normalizedOption;
     } else {
-      newOptions.push(option);
+      newOptions.push(normalizedOption);
     }
     setOptions(newOptions);
     setShowOptionEditor(false);
@@ -427,6 +532,22 @@ function ListeningItemEditorModal({ item, lessonDay, onSave, onCancel }: {
       return;
     }
 
+    // Ensure all options have text as string, not object
+    const normalizedOptions = options.map((opt: any) => {
+      if (!opt || typeof opt !== 'object') return opt;
+      let textValue = opt.text;
+      if (textValue && typeof textValue === 'object' && !Array.isArray(textValue)) {
+        textValue = textValue.pt || textValue.portuguese || textValue.ru || textValue.en || String(textValue);
+      } else if (textValue && typeof textValue !== 'string') {
+        textValue = String(textValue || '');
+      }
+      return {
+        ...opt,
+        text: textValue || '',
+        correct: opt.correct || false,
+      };
+    });
+
     const itemData: any = {
       item_id: item?.item_id || Date.now(),
       audio: audio.trim(),
@@ -436,7 +557,7 @@ function ListeningItemEditorModal({ item, lessonDay, onSave, onCancel }: {
         ru: question.ru.trim() || undefined,
         en: question.en.trim() || undefined,
       },
-      options,
+      options: normalizedOptions,
     };
 
     onSave(itemData);
@@ -635,9 +756,26 @@ function ListeningItemEditorModal({ item, lessonDay, onSave, onCancel }: {
               <p className="text-gray-600 text-center py-4">Варианты ответа еще не добавлены</p>
             ) : (
               <div className="space-y-3">
-                {options.map((option, index) => (
+                {options.map((option, index) => {
+                  // Ensure option is valid and text is normalized before rendering
+                  if (!option || typeof option !== 'object') {
+                    console.warn(`Invalid option at index ${index}:`, option);
+                    return null;
+                  }
+                  
+                  // Normalize option.text to always be a string
+                  let optionText: string;
+                  if (typeof option.text === 'string') {
+                    optionText = option.text;
+                  } else if (option.text && typeof option.text === 'object' && !Array.isArray(option.text)) {
+                    optionText = option.text.pt || option.text.portuguese || option.text.ru || option.text.en || JSON.stringify(option.text);
+                  } else {
+                    optionText = String(option.text || '');
+                  }
+                  
+                  return (
                   <div
-                    key={index}
+                    key={`option-${index}-${optionText.substring(0, 20)}`}
                     className="border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition-colors"
                   >
                     <div className="flex justify-between items-start">
@@ -648,7 +786,9 @@ function ListeningItemEditorModal({ item, lessonDay, onSave, onCancel }: {
                               Правильный
                             </span>
                           )}
-                          <span className="font-medium text-gray-900">{option.text}</span>
+                          <span className="font-medium text-gray-900">
+                            {optionText}
+                          </span>
                         </div>
                       </div>
                       <div className="flex gap-2">
@@ -667,7 +807,8 @@ function ListeningItemEditorModal({ item, lessonDay, onSave, onCancel }: {
                       </div>
                     </div>
                   </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
@@ -707,13 +848,31 @@ function ListeningItemEditorModal({ item, lessonDay, onSave, onCancel }: {
                   </label>
                   <input
                     type="text"
-                    value={editingOptionIndex !== null && editingOptionIndex < options.length ? options[editingOptionIndex]?.text || '' : ''}
+                    value={(() => {
+                      if (editingOptionIndex !== null && editingOptionIndex < options.length) {
+                        const currentOption = options[editingOptionIndex];
+                        if (!currentOption) return '';
+                        const optText = currentOption.text;
+                        if (typeof optText === 'string') return optText;
+                        if (optText && typeof optText === 'object' && !Array.isArray(optText)) {
+                          return optText.pt || optText.portuguese || optText.ru || optText.en || '';
+                        }
+                        return String(optText || '');
+                      }
+                      return '';
+                    })()}
                     onChange={(e) => {
+                      // Always use string value from input
+                      const textValue = e.target.value;
                       const newOptions = [...options];
                       if (editingOptionIndex !== null && editingOptionIndex < options.length) {
-                        newOptions[editingOptionIndex] = { ...newOptions[editingOptionIndex], text: e.target.value };
+                        newOptions[editingOptionIndex] = { 
+                          ...newOptions[editingOptionIndex], 
+                          text: textValue, // Always string from input
+                          correct: newOptions[editingOptionIndex]?.correct || false,
+                        };
                       } else {
-                        newOptions.push({ text: e.target.value, correct: false });
+                        newOptions.push({ text: textValue, correct: false });
                       }
                       setOptions(newOptions);
                     }}
@@ -747,15 +906,31 @@ function ListeningItemEditorModal({ item, lessonDay, onSave, onCancel }: {
                   </button>
                   <button
                     onClick={() => {
+                      // Get text value from input field (always string)
+                      const textInput = document.querySelector('input[placeholder="Просит о помощи"]') as HTMLInputElement;
+                      const textValue = textInput?.value || '';
+                      if (!textValue.trim()) {
+                        alert('Пожалуйста, введите текст варианта');
+                        return;
+                      }
+                      
+                      // Get correct value from checkbox
+                      const correctCheckbox = document.querySelector('input[type="checkbox"]') as HTMLInputElement;
+                      const isCorrect = correctCheckbox?.checked || false;
+                      
+                      // Always create new option with normalized text (always string)
                       if (editingOptionIndex !== null && editingOptionIndex < options.length) {
-                        handleSaveOption(options[editingOptionIndex]);
+                        const existingOption = options[editingOptionIndex];
+                        handleSaveOption({ 
+                          ...existingOption, 
+                          text: textValue.trim(),
+                          correct: isCorrect,
+                        });
                       } else {
-                        const text = (document.querySelector('input[placeholder="Просит о помощи"]') as HTMLInputElement)?.value || '';
-                        if (!text.trim()) {
-                          alert('Пожалуйста, введите текст варианта');
-                          return;
-                        }
-                        handleSaveOption({ text: text.trim(), correct: false });
+                        handleSaveOption({ 
+                          text: textValue.trim(), 
+                          correct: isCorrect,
+                        });
                       }
                     }}
                     className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
