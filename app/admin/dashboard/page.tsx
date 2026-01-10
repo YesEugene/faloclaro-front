@@ -930,20 +930,79 @@ function LessonsSection() {
                   <td className="px-6 py-4 text-sm text-gray-900">
                     {dayInfo.title?.ru || dayInfo.title || 'Без названия'}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {lesson.levels 
-                      ? `${lesson.levels.level_number} Уровень`
-                      : 'Нет уровня'}
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                    <select
+                      value={lesson.level_id || ''}
+                      onChange={async (e) => {
+                        const newLevelId = e.target.value || null;
+                        try {
+                          const response = await fetch(`/api/admin/lessons/${lesson.id}`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                              level_id: newLevelId,
+                            }),
+                          });
+
+                          const data = await response.json();
+                          if (data.success) {
+                            loadLessons();
+                          } else {
+                            alert('Ошибка при обновлении уровня: ' + (data.error || 'Unknown error'));
+                          }
+                        } catch (err) {
+                          alert('Ошибка при обновлении уровня');
+                        }
+                      }}
+                      className="px-3 py-1 border border-gray-300 rounded-lg text-sm text-gray-900 bg-white"
+                    >
+                      <option value="">Нет уровня</option>
+                      {levels.map((level) => (
+                        <option key={level.id} value={level.id}>
+                          {level.level_number} Уровень
+                        </option>
+                      ))}
+                    </select>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {tasks.length || 0}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm space-x-2">
                     <button
                       onClick={() => router.push(`/admin/lessons/${lesson.id}/edit`)}
                       className="text-blue-600 hover:text-blue-800"
                     >
                       Редактировать
+                    </button>
+                    <span className="text-gray-300">|</span>
+                    <button
+                      onClick={async () => {
+                        const newStatus = !lesson.is_published;
+                        if (!confirm(`Урок будет ${newStatus ? 'опубликован' : 'скрыт'}. Продолжить?`)) {
+                          return;
+                        }
+                        try {
+                          const response = await fetch(`/api/admin/lessons/${lesson.id}`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                              is_published: newStatus,
+                            }),
+                          });
+
+                          const data = await response.json();
+                          if (data.success) {
+                            loadLessons();
+                          } else {
+                            alert('Ошибка при обновлении статуса: ' + (data.error || 'Unknown error'));
+                          }
+                        } catch (err) {
+                          alert('Ошибка при обновлении статуса');
+                        }
+                      }}
+                      className={`text-sm ${lesson.is_published ? 'text-green-600 hover:text-green-800' : 'text-gray-400 hover:text-gray-600'}`}
+                    >
+                      {lesson.is_published ? '✓ Опубликован' : 'Скрыт'}
                     </button>
                   </td>
                 </tr>

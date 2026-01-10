@@ -21,6 +21,7 @@ function OverviewPageContent() {
   const [allLessonsProgress, setAllLessonsProgress] = useState<Map<number, string>>(new Map()); // day_number -> status
   const [userTokens, setUserTokens] = useState<Map<number, string>>(new Map()); // day_number -> token
   const [subscription, setSubscription] = useState<any>(null);
+  const [allLessons, setAllLessons] = useState<any[]>([]); // All published lessons from DB
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -36,6 +37,17 @@ function OverviewPageContent() {
 
   const loadAllLessonsData = async (userId: string) => {
     try {
+      // Get all published lessons from DB
+      const { data: lessonsData } = await supabase
+        .from('lessons')
+        .select('day_number')
+        .eq('is_published', true)
+        .order('day_number', { ascending: true });
+
+      if (lessonsData) {
+        setAllLessons(lessonsData);
+      }
+
       // Get user subscription status
       const { data: subscriptionData } = await supabase
         .from('subscriptions')
@@ -485,7 +497,7 @@ function OverviewPageContent() {
           {/* УРОК X/60 (время) - поднят выше на 5px */}
           <div className="flex items-center gap-2 mb-3" style={{ marginTop: '-5px' }}>
             <span className="text-lg font-bold text-black">
-              {appLanguage === 'ru' ? 'УРОК' : appLanguage === 'en' ? 'LESSON' : 'LIÇÃO'} {lesson.day_number}/60
+              {appLanguage === 'ru' ? 'УРОК' : appLanguage === 'en' ? 'LESSON' : 'LIÇÃO'} {lesson.day_number}{allLessons.length > 0 ? `/${allLessons.length}` : ''}
             </span>
             {dayInfo.estimated_time && (
               <span className="text-sm text-gray-600">
@@ -607,17 +619,18 @@ function OverviewPageContent() {
           <div className="max-w-md mx-auto px-4 py-3">
             <div className="overflow-x-auto -mx-4 px-4">
               <div className="flex gap-3" style={{ minWidth: 'max-content' }}>
-                {Array.from({ length: 60 }, (_, i) => i + 1).map((lessonDay) => {
+                {allLessons.map((publishedLesson) => {
+                  const lessonDay = publishedLesson.day_number;
                   const isUnlocked = isLessonUnlocked(lessonDay);
                   const progressStatus = allLessonsProgress.get(lessonDay);
                   const isCompleted = progressStatus === 'completed';
                   const isCurrent = lessonDay === day;
                   
                   // Find first unlocked lesson that is not completed (for determining current lesson)
-                  const firstUnlockedNotCompleted = Array.from({ length: 60 }, (_, i) => i + 1).find(d => 
-                    isLessonUnlocked(d) && 
-                    allLessonsProgress.get(d) !== 'completed'
-                  );
+                  const firstUnlockedNotCompleted = allLessons.find(l => 
+                    isLessonUnlocked(l.day_number) && 
+                    allLessonsProgress.get(l.day_number) !== 'completed'
+                  )?.day_number;
                   
                   // Current lesson: in_progress OR first unlocked lesson that is not completed
                   const isCurrentLesson = isCurrent || 
@@ -670,16 +683,22 @@ function OverviewPageContent() {
                   // Get token for this lesson or use current token
                   // For first 3 lessons, if unlocked but no token, use current token (they're free)
                   const lessonToken = userTokens.get(lessonDay) || (isUnlocked && lessonDay <= 3 ? token : null);
-                  const lessonUrl = isUnlocked || isCompleted
-                    ? `/pt/lesson/${lessonDay}/${lessonToken || token}/overview`
-                    : `/pt/payment?lesson=${lessonDay}${token ? `&token=${token}` : ''}`;
+                  // Show all published lessons, but only allow navigation if unlocked
+                  const lessonUrl = (isUnlocked || isCompleted) && lessonToken
+                    ? `/pt/lesson/${lessonDay}/${lessonToken}/overview`
+                    : '#';
+
+                  const LessonCard = (isUnlocked || isCompleted) && lessonToken ? Link : 'div';
+                  const cardProps = (isUnlocked || isCompleted) && lessonToken 
+                    ? { href: lessonUrl }
+                    : {};
 
                   return (
-                    <Link
+                    <LessonCard
                       key={lessonDay}
-                      href={lessonUrl}
+                      {...cardProps}
                       style={cardStyle}
-                      className="transition-all hover:opacity-80"
+                      className={`transition-all ${(isUnlocked || isCompleted) && lessonToken ? 'hover:opacity-80 cursor-pointer' : 'cursor-not-allowed opacity-60'}`}
                     >
                       {/* Icon above number */}
                       <div className="flex-shrink-0 mb-2">
