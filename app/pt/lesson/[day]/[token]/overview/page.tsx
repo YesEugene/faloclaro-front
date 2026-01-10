@@ -22,6 +22,8 @@ function OverviewPageContent() {
   const [userTokens, setUserTokens] = useState<Map<number, string>>(new Map()); // day_number -> token
   const [subscription, setSubscription] = useState<any>(null);
   const [allLessons, setAllLessons] = useState<any[]>([]); // All published lessons from DB
+  const [levels, setLevels] = useState<any[]>([]); // All levels from DB
+  const [expandedLevels, setExpandedLevels] = useState<Set<string>>(new Set()); // Expanded level IDs
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -37,10 +39,24 @@ function OverviewPageContent() {
 
   const loadAllLessonsData = async (userId: string) => {
     try {
-      // Get all published lessons from DB
+      // Get all levels from DB
+      const { data: levelsData } = await supabase
+        .from('levels')
+        .select('*')
+        .order('level_number', { ascending: true });
+
+      if (levelsData) {
+        setLevels(levelsData);
+        // Expand first level by default
+        if (levelsData.length > 0) {
+          setExpandedLevels(new Set([levelsData[0].id]));
+        }
+      }
+
+      // Get all published lessons from DB with level info
       const { data: lessonsData } = await supabase
         .from('lessons')
-        .select('day_number')
+        .select('day_number, level_id, levels(id, level_number, name_ru, name_en)')
         .eq('is_published', true)
         .order('day_number', { ascending: true });
 
@@ -106,6 +122,117 @@ function OverviewPageContent() {
     }
     // Other lessons are unlocked if user has a token for them
     return userTokens.has(lessonDay);
+  };
+
+  // Helper function to render a lesson card
+  const renderLessonCard = (publishedLesson: any) => {
+    const lessonDay = publishedLesson.day_number;
+    const isUnlocked = isLessonUnlocked(lessonDay);
+    const progressStatus = allLessonsProgress.get(lessonDay);
+    const isCompleted = progressStatus === 'completed';
+    const isCurrent = lessonDay === day;
+    
+    // Find first unlocked lesson that is not completed (for determining current lesson)
+    const firstUnlockedNotCompleted = allLessons.find(l => 
+      isLessonUnlocked(l.day_number) && 
+      allLessonsProgress.get(l.day_number) !== 'completed'
+    )?.day_number;
+    
+    // Current lesson: in_progress OR first unlocked lesson that is not completed
+    const isCurrentLesson = isCurrent || 
+      (progressStatus === 'in_progress') ||
+      (!progressStatus && isUnlocked && !isCompleted && lessonDay === firstUnlockedNotCompleted);
+    
+    // Determine icon based on status
+    let iconSrc = '/Img/eye.svg'; // default: locked
+    if (isCompleted) {
+      iconSrc = '/Img/done.svg';
+    } else if (isCurrentLesson) {
+      iconSrc = '/Img/Play.svg';
+    } else if (isUnlocked) {
+      iconSrc = '/Img/eyeopen.svg';
+    }
+    
+    // Determine card style - all lessons on white background
+    let cardStyle: React.CSSProperties = {
+      width: '85px',
+      height: '85px', // Square format
+      borderRadius: '8px',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'flex-start',
+      cursor: 'pointer',
+      flexShrink: 0,
+      paddingTop: '12px',
+      paddingBottom: '8px',
+      backgroundColor: 'white',
+      border: '1px solid #E5E7EB',
+    };
+
+    // Completed lessons get green border
+    if (isCompleted) {
+      cardStyle.border = '2px solid #BEF4C2';
+    } else if (isCurrentLesson) {
+      // Current lesson gets blue border
+      cardStyle.border = '2px solid #CBE8FF';
+    }
+    
+    // Get token for this lesson or use current token
+    // For first 3 lessons, if unlocked but no token, use current token (they're free)
+    const lessonToken = userTokens.get(lessonDay) || (isUnlocked && lessonDay <= 3 ? token : null);
+    // Show all published lessons, but only allow navigation if unlocked
+    const canNavigate = (isUnlocked || isCompleted) && lessonToken;
+    const lessonUrl = canNavigate
+      ? `/pt/lesson/${lessonDay}/${lessonToken}/overview`
+      : '#';
+
+    return (
+      <div key={lessonDay}>
+        {canNavigate ? (
+          <Link
+            href={lessonUrl}
+            style={cardStyle}
+            className="transition-all hover:opacity-80 cursor-pointer"
+          >
+            {/* Icon above number */}
+            <div className="flex-shrink-0 mb-2">
+              <Image
+                src={iconSrc}
+                alt={isCompleted ? 'Completed' : isCurrentLesson ? 'Current' : isUnlocked ? 'Unlocked' : 'Locked'}
+                width={24}
+                height={24}
+                className="w-6 h-6"
+              />
+            </div>
+            {/* Lesson number - positioned below middle */}
+            <span className="text-sm font-medium text-gray-700 text-center mt-auto">
+              {lessonDay} {appLanguage === 'ru' ? 'Урок' : appLanguage === 'en' ? 'Lesson' : 'Lição'}
+            </span>
+          </Link>
+        ) : (
+          <div
+            style={cardStyle}
+            className="transition-all cursor-not-allowed opacity-60"
+          >
+            {/* Icon above number */}
+            <div className="flex-shrink-0 mb-2">
+              <Image
+                src={iconSrc}
+                alt={isCompleted ? 'Completed' : isCurrentLesson ? 'Current' : isUnlocked ? 'Unlocked' : 'Locked'}
+                width={24}
+                height={24}
+                className="w-6 h-6"
+              />
+            </div>
+            {/* Lesson number - positioned below middle */}
+            <span className="text-sm font-medium text-gray-700 text-center mt-auto">
+              {lessonDay} {appLanguage === 'ru' ? 'Урок' : appLanguage === 'en' ? 'Lesson' : 'Lição'}
+            </span>
+          </div>
+        )}
+      </div>
+    );
   };
 
   const loadLesson = async () => {
@@ -614,133 +741,142 @@ function OverviewPageContent() {
           )}
         </div>
 
-        {/* Lessons Navigation - Moved to Bottom - Square Cards with Icons */}
+        {/* Lessons Navigation - Grouped by Levels - Expandable Tabs */}
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-20" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
           <div className="max-w-md mx-auto px-4 py-3">
             <div className="overflow-x-auto -mx-4 px-4">
               <div className="flex gap-3" style={{ minWidth: 'max-content' }}>
-                {allLessons.map((publishedLesson) => {
-                  const lessonDay = publishedLesson.day_number;
-                  const isUnlocked = isLessonUnlocked(lessonDay);
-                  const progressStatus = allLessonsProgress.get(lessonDay);
-                  const isCompleted = progressStatus === 'completed';
-                  const isCurrent = lessonDay === day;
+                {/* Render levels with their lessons */}
+                {levels.map((level) => {
+                  const levelLessons = allLessons.filter((l: any) => l.level_id === level.id);
+                  const isExpanded = expandedLevels.has(level.id);
                   
-                  // Find first unlocked lesson that is not completed (for determining current lesson)
-                  const firstUnlockedNotCompleted = allLessons.find(l => 
-                    isLessonUnlocked(l.day_number) && 
-                    allLessonsProgress.get(l.day_number) !== 'completed'
-                  )?.day_number;
-                  
-                  // Current lesson: in_progress OR first unlocked lesson that is not completed
-                  const isCurrentLesson = isCurrent || 
-                    (progressStatus === 'in_progress') ||
-                    (!progressStatus && isUnlocked && !isCompleted && lessonDay === firstUnlockedNotCompleted);
-                  
-                  // Determine icon based on status
-                  let iconSrc = '/Img/eye.svg'; // default: locked
-                  if (isCompleted) {
-                    iconSrc = '/Img/done.svg';
-                  } else if (isCurrentLesson) {
-                    iconSrc = '/Img/Play.svg';
-                  } else if (isUnlocked) {
-                    iconSrc = '/Img/eyeopen.svg';
-                  }
-                  
-                  // Determine card style - priority: completed > current > unlocked > locked
-                  let cardStyle: React.CSSProperties = {
-                    width: '85px',
-                    height: '85px', // Square format
-                    borderRadius: '8px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'flex-start',
-                    cursor: 'pointer',
-                    flexShrink: 0,
-                    paddingTop: '12px',
-                    paddingBottom: '8px',
+                  // Level colors - Level 1 is green, others can be different colors
+                  const levelColors: Record<number, string> = {
+                    1: '#BEF4C2', // Green for level 1
+                    2: '#E9B0E4', // Purple for level 2
+                    3: '#84E9F3', // Teal for level 3
                   };
-
-                  if (isCompleted) {
-                    // Green - completed (highest priority)
-                    cardStyle.backgroundColor = '#BEF4C2';
-                    cardStyle.border = 'none';
-                  } else if (isCurrentLesson) {
-                    // Blue - current
-                    cardStyle.backgroundColor = '#CBE8FF';
-                    cardStyle.border = 'none';
-                  } else if (isUnlocked) {
-                    // White with border - unlocked but not started
-                    cardStyle.backgroundColor = 'white';
-                    cardStyle.border = '1px solid #E5E7EB';
-                  } else {
-                    // White with border - locked
-                    cardStyle.backgroundColor = 'white';
-                    cardStyle.border = '1px solid #E5E7EB';
-                  }
-                  
-                  // Get token for this lesson or use current token
-                  // For first 3 lessons, if unlocked but no token, use current token (they're free)
-                  const lessonToken = userTokens.get(lessonDay) || (isUnlocked && lessonDay <= 3 ? token : null);
-                  // Show all published lessons, but only allow navigation if unlocked
-                  const canNavigate = (isUnlocked || isCompleted) && lessonToken;
-                  const lessonUrl = canNavigate
-                    ? `/pt/lesson/${lessonDay}/${lessonToken}/overview`
-                    : '#';
+                  const levelColor = levelColors[level.level_number] || '#E5E7EB';
 
                   return (
-                    <div key={lessonDay}>
-                      {canNavigate ? (
-                        <Link
-                          href={lessonUrl}
-                          style={cardStyle}
-                          className="transition-all hover:opacity-80 cursor-pointer"
-                        >
-                          {/* Icon above number */}
-                          <div className="flex-shrink-0 mb-2">
-                            <Image
-                              src={iconSrc}
-                              alt={isCompleted ? 'Completed' : isCurrentLesson ? 'Current' : isUnlocked ? 'Unlocked' : 'Locked'}
-                              width={24}
-                              height={24}
-                              className="w-6 h-6"
-                            />
-                          </div>
-                          {/* Lesson number - positioned below middle */}
-                          <span className="text-sm font-medium text-gray-700 text-center mt-auto">
-                            {lessonDay} {appLanguage === 'ru' ? 'Урок' : appLanguage === 'en' ? 'Lesson' : 'Lição'}
-                          </span>
-                        </Link>
-                      ) : (
-                        <div
-                          style={cardStyle}
-                          className="transition-all cursor-not-allowed opacity-60"
-                        >
-                          {/* Icon above number */}
-                          <div className="flex-shrink-0 mb-2">
-                            <Image
-                              src={iconSrc}
-                              alt={isCompleted ? 'Completed' : isCurrentLesson ? 'Current' : isUnlocked ? 'Unlocked' : 'Locked'}
-                              width={24}
-                              height={24}
-                              className="w-6 h-6"
-                            />
-                          </div>
-                          {/* Lesson number - positioned below middle */}
-                          <span className="text-sm font-medium text-gray-700 text-center mt-auto">
-                            {lessonDay} {appLanguage === 'ru' ? 'Урок' : appLanguage === 'en' ? 'Lesson' : 'Lição'}
-                          </span>
+                    <div key={level.id} className="flex gap-2 flex-shrink-0">
+                      {/* Level Tab */}
+                      <button
+                        onClick={() => {
+                          const newExpanded = new Set(expandedLevels);
+                          if (newExpanded.has(level.id)) {
+                            newExpanded.delete(level.id);
+                          } else {
+                            newExpanded.add(level.id);
+                          }
+                          setExpandedLevels(newExpanded);
+                        }}
+                        style={{
+                          backgroundColor: levelColor,
+                          borderRadius: '8px',
+                          padding: '12px 16px',
+                          minWidth: '100px',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          cursor: 'pointer',
+                          border: 'none',
+                          transition: 'all 0.2s',
+                        }}
+                        className="hover:opacity-90"
+                      >
+                        <span className="text-2xl font-bold text-black">{level.level_number}</span>
+                        <span className="text-xs font-medium text-black mt-1">
+                          {appLanguage === 'ru' ? 'УРОВЕНЬ' : 'LEVEL'}
+                        </span>
+                      </button>
+
+                      {/* Expanded Lessons */}
+                      {isExpanded && (
+                        <div className="flex gap-2">
+                          {levelLessons.length > 0 ? (
+                            levelLessons.map((publishedLesson: any) => {
+                              return renderLessonCard(publishedLesson);
+                            })
+                          ) : (
+                            <div
+                              style={{
+                                width: '85px',
+                                height: '85px',
+                                borderRadius: '8px',
+                                backgroundColor: 'white',
+                                border: '1px solid #E5E7EB',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontSize: '12px',
+                                color: '#9CA3AF',
+                              }}
+                            >
+                              {appLanguage === 'ru' ? 'Нет уроков' : 'No lessons'}
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>
                   );
                 })}
+
+                {/* Lessons without level */}
+                {(() => {
+                  const noLevelLessons = allLessons.filter((l: any) => !l.level_id);
+                  if (noLevelLessons.length === 0) return null;
+
+                  const isExpanded = expandedLevels.has('no-level');
+
+                  return (
+                    <div className="flex gap-2 flex-shrink-0">
+                      <button
+                        onClick={() => {
+                          const newExpanded = new Set(expandedLevels);
+                          if (newExpanded.has('no-level')) {
+                            newExpanded.delete('no-level');
+                          } else {
+                            newExpanded.add('no-level');
+                          }
+                          setExpandedLevels(newExpanded);
+                        }}
+                        style={{
+                          backgroundColor: '#E5E7EB',
+                          borderRadius: '8px',
+                          padding: '12px 16px',
+                          minWidth: '100px',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          cursor: 'pointer',
+                          border: 'none',
+                          transition: 'all 0.2s',
+                        }}
+                        className="hover:opacity-90"
+                      >
+                        <span className="text-xs font-medium text-gray-600">
+                          {appLanguage === 'ru' ? 'БЕЗ УРОВНЯ' : 'NO LEVEL'}
+                        </span>
+                      </button>
+
+                      {isExpanded && (
+                        <div className="flex gap-2">
+                          {noLevelLessons.map((publishedLesson: any) => {
+                            return renderLessonCard(publishedLesson);
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })()}
               </div>
             </div>
           </div>
         </div>
-
       </div>
     </div>
   );
