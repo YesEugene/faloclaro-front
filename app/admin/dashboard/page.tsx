@@ -603,7 +603,7 @@ function LessonsSection() {
   const [lessons, setLessons] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedLesson, setSelectedLesson] = useState<any | null>(null);
-  const [editingLesson, setEditingLesson] = useState<any | null>(null);
+  const [editingLesson, setEditingLesson] = useState<string | null>(null); // Store as JSON string for editing
 
   useEffect(() => {
     loadLessons();
