@@ -18,6 +18,7 @@ function LessonEditorContent() {
   const [editingLesson, setEditingLesson] = useState(false);
   const [lessonTitle, setLessonTitle] = useState<{ ru: string; en: string; pt: string }>({ ru: '', en: '', pt: '' });
   const [lessonSubtitle, setLessonSubtitle] = useState<{ ru: string; en: string; pt: string }>({ ru: '', en: '', pt: '' });
+  const [isGeneratingAllAudio, setIsGeneratingAllAudio] = useState(false);
 
   useEffect(() => {
     if (lessonId) {
@@ -189,6 +190,343 @@ function LessonEditorContent() {
     }
   };
 
+  const handleGenerateAllAudio = async () => {
+    if (!lesson || !tasks || tasks.length === 0) {
+      alert('Урок не содержит заданий для генерации аудио');
+      return;
+    }
+
+    if (!confirm('Это сгенерирует аудио для всех элементов во всех заданиях урока. Продолжить?')) {
+      return;
+    }
+
+    setIsGeneratingAllAudio(true);
+    let successCount = 0;
+    let errorCount = 0;
+    const itemsToUpdate: Array<{ taskIndex: number; itemPath: string; audioUrl: string }> = [];
+
+    try {
+      const lessonDay = lesson.day_number || parseInt(lessonId) || 1;
+
+      // Collect all items that need audio generation and update them
+      const updatedTasks = JSON.parse(JSON.stringify(tasks)); // Deep copy
+
+      for (let taskIndex = 0; taskIndex < updatedTasks.length; taskIndex++) {
+        const task = updatedTasks[taskIndex];
+        const taskId = taskIndex + 1;
+
+        // Vocabulary task: cards
+        if (task.type === 'vocabulary') {
+          const cards = task.content?.cards || task.blocks?.find((b: any) => b.block_type === 'listen_and_repeat')?.content?.cards || [];
+          for (let cardIndex = 0; cardIndex < cards.length; cardIndex++) {
+            const card = cards[cardIndex];
+            if (card.word && card.word.trim() && !card.audio_url) {
+              try {
+                const response = await fetch('/api/admin/audio/generate', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    text: card.word.trim(),
+                    lessonId: lessonDay.toString(),
+                    taskId: taskId,
+                    blockId: 'listen_and_repeat',
+                    itemId: `card_${cardIndex}_${Date.now()}`,
+                  }),
+                });
+                const data = await response.json();
+                if (data.success && data.audioUrl) {
+                  card.audio_url = data.audioUrl;
+                  successCount++;
+                } else {
+                  errorCount++;
+                }
+              } catch (err) {
+                errorCount++;
+              }
+              await new Promise(resolve => setTimeout(resolve, 200)); // Rate limiting
+            }
+          }
+          // Update task with new cards
+          if (task.content) {
+            task.content.cards = cards;
+          } else if (task.blocks) {
+            const block = task.blocks.find((b: any) => b.block_type === 'listen_and_repeat');
+            if (block) {
+              block.content.cards = cards;
+            }
+          }
+        }
+
+        // Rules task: blocks
+        if (task.type === 'rules' || task.type === 'rules_task') {
+          const blocks = Array.isArray(task.blocks) ? task.blocks : (task.blocks ? Object.values(task.blocks) : []);
+          
+          for (const block of blocks) {
+            // Explanation block: examples
+            if (block.block_type === 'explanation' || block.block_type === 'how_to_say') {
+              const examples = block.content?.examples || block.examples || [];
+              for (let exampleIndex = 0; exampleIndex < examples.length; exampleIndex++) {
+                const example = examples[exampleIndex];
+                if (example.text && example.text.trim() && !example.audio_url) {
+                  try {
+                    const response = await fetch('/api/admin/audio/generate', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        text: example.text.trim(),
+                        lessonId: lessonDay.toString(),
+                        taskId: taskId,
+                        blockId: block.block_id || block.block_type || 'explanation',
+                        itemId: `example_${exampleIndex}_${Date.now()}`,
+                      }),
+                    });
+                    const data = await response.json();
+                    if (data.success && data.audioUrl) {
+                      example.audio_url = data.audioUrl;
+                      successCount++;
+                    } else {
+                      errorCount++;
+                    }
+                  } catch (err) {
+                    errorCount++;
+                  }
+                  await new Promise(resolve => setTimeout(resolve, 200));
+                }
+              }
+              if (block.content) {
+                block.content.examples = examples;
+              } else {
+                block.examples = examples;
+              }
+            }
+
+            // Comparison block: comparison cards
+            if (block.block_type === 'comparison') {
+              const cards = block.content?.comparison_card || block.comparison_card || [];
+              for (let cardIndex = 0; cardIndex < cards.length; cardIndex++) {
+                const card = cards[cardIndex];
+                if (card.text && card.text.trim() && !card.audio_url) {
+                  try {
+                    const response = await fetch('/api/admin/audio/generate', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        text: card.text.trim(),
+                        lessonId: lessonDay.toString(),
+                        taskId: taskId,
+                        blockId: block.block_id || block.block_type || 'comparison',
+                        itemId: `card_${cardIndex}_${Date.now()}`,
+                      }),
+                    });
+                    const data = await response.json();
+                    if (data.success && data.audioUrl) {
+                      card.audio_url = data.audioUrl;
+                      successCount++;
+                    } else {
+                      errorCount++;
+                    }
+                  } catch (err) {
+                    errorCount++;
+                  }
+                  await new Promise(resolve => setTimeout(resolve, 200));
+                }
+              }
+              if (block.content) {
+                block.content.comparison_card = cards;
+              } else {
+                block.comparison_card = cards;
+              }
+            }
+
+            // Reinforcement block: task_1 and task_2 audio
+            if (block.block_type === 'reinforcement') {
+              const task1 = block.content?.task_1 || block.task_1;
+              const task2 = block.content?.task_2 || block.task_2;
+              
+              if (task1?.audio && task1.audio.trim() && !task1.audio_url) {
+                try {
+                  const response = await fetch('/api/admin/audio/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      text: task1.audio.trim(),
+                      lessonId: lessonDay.toString(),
+                      taskId: taskId,
+                      blockId: block.block_id || block.block_type || 'reinforcement',
+                      itemId: `task_1_audio_${Date.now()}`,
+                    }),
+                  });
+                  const data = await response.json();
+                  if (data.success && data.audioUrl) {
+                    task1.audio_url = data.audioUrl;
+                    successCount++;
+                  } else {
+                    errorCount++;
+                  }
+                } catch (err) {
+                  errorCount++;
+                }
+                await new Promise(resolve => setTimeout(resolve, 200));
+              }
+              
+              if (task2?.audio && task2.audio.trim() && !task2.audio_url) {
+                try {
+                  const response = await fetch('/api/admin/audio/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      text: task2.audio.trim(),
+                      lessonId: lessonDay.toString(),
+                      taskId: taskId,
+                      blockId: block.block_id || block.block_type || 'reinforcement',
+                      itemId: `task_2_audio_${Date.now()}`,
+                    }),
+                  });
+                  const data = await response.json();
+                  if (data.success && data.audioUrl) {
+                    task2.audio_url = data.audioUrl;
+                    successCount++;
+                  } else {
+                    errorCount++;
+                  }
+                } catch (err) {
+                  errorCount++;
+                }
+                await new Promise(resolve => setTimeout(resolve, 200));
+              }
+            }
+          }
+          
+          // Update task blocks
+          if (Array.isArray(task.blocks)) {
+            task.blocks = blocks;
+          } else if (task.blocks) {
+            blocks.forEach((block: any) => {
+              task.blocks[block.block_id || block.block_type] = block;
+            });
+          }
+        }
+
+        // Listening task: items
+        if (task.type === 'listening' || task.type === 'listening_comprehension') {
+          const items = task.items || task.blocks?.find((b: any) => b.block_type === 'listen_phrase')?.content?.items || [];
+          for (let itemIndex = 0; itemIndex < items.length; itemIndex++) {
+            const item = items[itemIndex];
+            if (item.audio && item.audio.trim() && !item.audio_url) {
+              try {
+                const response = await fetch('/api/admin/audio/generate', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    text: item.audio.trim(),
+                    lessonId: lessonDay.toString(),
+                    taskId: taskId,
+                    blockId: 'listen_phrase',
+                    itemId: `item_${itemIndex}_${Date.now()}`,
+                  }),
+                });
+                const data = await response.json();
+                if (data.success && data.audioUrl) {
+                  item.audio_url = data.audioUrl;
+                  successCount++;
+                } else {
+                  errorCount++;
+                }
+              } catch (err) {
+                errorCount++;
+              }
+              await new Promise(resolve => setTimeout(resolve, 200));
+            }
+          }
+          if (task.items) {
+            task.items = items;
+          } else if (task.blocks) {
+            const block = task.blocks.find((b: any) => b.block_type === 'listen_phrase');
+            if (block) {
+              block.content.items = items;
+            }
+          }
+        }
+
+        // Attention task: items
+        if (task.type === 'attention' || task.type === 'attention_task') {
+          const items = task.items || task.blocks?.find((b: any) => b.block_type === 'check_meaning')?.content?.items || [];
+          for (let itemIndex = 0; itemIndex < items.length; itemIndex++) {
+            const item = items[itemIndex];
+            const text = typeof item.text === 'string' ? item.text.trim() : (item.text?.pt || item.text?.ru || item.text?.en || '').trim();
+            if (text && !item.audio_url) {
+              try {
+                const response = await fetch('/api/admin/audio/generate', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    text,
+                    lessonId: lessonDay.toString(),
+                    taskId: taskId,
+                    blockId: 'check_meaning',
+                    itemId: `item_${itemIndex}_${Date.now()}`,
+                  }),
+                });
+                const data = await response.json();
+                if (data.success && data.audioUrl) {
+                  item.audio_url = data.audioUrl;
+                  successCount++;
+                } else {
+                  errorCount++;
+                }
+              } catch (err) {
+                errorCount++;
+              }
+              await new Promise(resolve => setTimeout(resolve, 200));
+            }
+          }
+          if (task.items) {
+            task.items = items;
+          } else if (task.blocks) {
+            const block = task.blocks.find((b: any) => b.block_type === 'check_meaning');
+            if (block) {
+              block.content.items = items;
+            }
+          }
+        }
+      }
+
+      // Save updated tasks to lesson
+      const yamlContent = {
+        ...(typeof lesson.yaml_content === 'string' ? JSON.parse(lesson.yaml_content || '{}') : lesson.yaml_content || {}),
+        tasks: updatedTasks,
+      };
+
+      const saveResponse = await fetch(`/api/admin/lessons/${lessonId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ yaml_content: yamlContent }),
+      });
+
+      const saveData = await saveResponse.json();
+      if (saveData.success) {
+        // Reload lesson to show updated audio URLs
+        await loadLesson();
+        
+        // Show summary (only if there were errors, otherwise silent success)
+        if (errorCount > 0) {
+          alert(`Генерация завершена!\n\nУспешно: ${successCount}\nОшибок: ${errorCount}\nВсего: ${successCount + errorCount}`);
+        } else if (successCount > 0) {
+          console.log(`✅ Сгенерировано аудио для ${successCount} элементов`);
+        } else {
+          alert('Не найдено элементов для генерации аудио. Возможно, все элементы уже имеют аудио.');
+        }
+      } else {
+        alert('Ошибка при сохранении урока: ' + (saveData.error || 'Unknown error'));
+      }
+    } catch (err: any) {
+      console.error('Error generating all audio:', err);
+      alert('Ошибка при генерации аудио: ' + (err.message || 'Unknown error'));
+    } finally {
+      setIsGeneratingAllAudio(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -314,6 +652,14 @@ function LessonEditorContent() {
             <div className="flex gap-2">
               {!editingLesson && (
                 <>
+                  <button
+                    onClick={handleGenerateAllAudio}
+                    disabled={isGeneratingAllAudio}
+                    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                    title="Сгенерировать аудио для всех элементов урока"
+                  >
+                    {isGeneratingAllAudio ? '⏳ Генерирую...' : '🎵 Сгенерировать аудио урока'}
+                  </button>
                   <button
                     onClick={() => setShowTaskTypeModal(true)}
                     className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
