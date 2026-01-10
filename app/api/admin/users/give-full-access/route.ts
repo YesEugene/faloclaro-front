@@ -38,11 +38,11 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (existingSubscription) {
-      // Update existing subscription to paid
+      // Update existing subscription to active (full access)
       await supabase
         .from('subscriptions')
         .update({
-          status: 'paid',
+          status: 'active', // Use 'active' instead of 'paid' to match schema
           paid_at: new Date().toISOString(),
           expires_at: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString(),
           trial_started_at: null,
@@ -50,12 +50,12 @@ export async function POST(request: NextRequest) {
         })
         .eq('id', existingSubscription.id);
     } else {
-      // Create new paid subscription
+      // Create new active subscription (full access)
       await supabase
         .from('subscriptions')
         .insert({
           user_id: userId,
-          status: 'paid',
+          status: 'active', // Use 'active' instead of 'paid' to match schema
           paid_at: new Date().toISOString(),
           expires_at: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString(),
         });

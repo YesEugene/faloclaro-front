@@ -64,17 +64,24 @@ function OverviewPageContent() {
         setAllLessons(lessonsData);
       }
 
-      // Get user subscription status
-      const { data: subscriptionData } = await supabase
+      // Get user subscription status (use maybeSingle to handle case when subscription doesn't exist)
+      const { data: subscriptionData, error: subError } = await supabase
         .from('subscriptions')
-        .select('status')
+        .select('status, paid_at, expires_at')
         .eq('user_id', userId)
         .order('created_at', { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle();
 
       if (subscriptionData) {
+        console.log('Subscription status loaded:', {
+          status: subscriptionData.status,
+          userId,
+          hasPaidAt: !!subscriptionData.paid_at,
+        });
         setSubscription(subscriptionData);
+      } else if (subError && subError.code !== 'PGRST116') {
+        console.error('Error loading subscription:', subError);
       }
 
       // Get all user tokens
@@ -112,8 +119,8 @@ function OverviewPageContent() {
   };
 
   const isLessonUnlocked = (lessonDay: number): boolean => {
-    // If user has active subscription, all published lessons are unlocked
-    if (subscription?.status === 'active') {
+    // If user has active or paid subscription, all published lessons are unlocked
+    if (subscription?.status === 'active' || subscription?.status === 'paid') {
       return true;
     }
     // First 3 lessons are always unlocked if user has any token
@@ -179,8 +186,24 @@ function OverviewPageContent() {
     }
     
     // Get token for this lesson or use current token
-    // For unlocked lessons (first 3 or with active subscription), use current token if no specific token exists
+    // For unlocked lessons (first 3 or with active/paid subscription), use current token if no specific token exists
     const lessonToken = userTokens.get(lessonDay) || (isUnlocked ? token : null);
+    
+    // Debug: Log navigation logic for troubleshooting
+    if (lessonDay === 4) {
+      console.log('Lesson 4 navigation check:', {
+        lessonDay,
+        isUnlocked,
+        isCompleted,
+        hasSpecificToken: userTokens.has(lessonDay),
+        lessonToken: lessonToken ? lessonToken.substring(0, 8) + '...' : null,
+        currentToken: token ? token.substring(0, 8) + '...' : null,
+        subscriptionStatus: subscription?.status,
+        subscriptionData: subscription,
+        userTokensSize: userTokens.size,
+      });
+    }
+    
     // Show all published lessons, but only allow navigation if unlocked
     const canNavigate = (isUnlocked || isCompleted) && lessonToken;
     const lessonUrl = canNavigate
