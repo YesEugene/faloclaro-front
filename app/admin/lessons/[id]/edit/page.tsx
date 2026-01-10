@@ -27,13 +27,27 @@ function LessonEditorContent() {
       setLoading(true);
       const response = await fetch(`/api/admin/lessons`);
       const data = await response.json();
-      if (data.success) {
-        const foundLesson = data.lessons.find((l: any) => l.id === parseInt(lessonId));
+      if (data.success && data.lessons) {
+        // Try to find by id first
+        let foundLesson = data.lessons.find((l: any) => l.id === parseInt(lessonId));
+        
+        // If not found by id, try by day_number (in case id is actually day_number)
+        if (!foundLesson) {
+          foundLesson = data.lessons.find((l: any) => l.day_number === parseInt(lessonId));
+        }
+        
         if (foundLesson) {
           setLesson(foundLesson);
-          const yamlContent = foundLesson.yaml_content || {};
+          // Parse yaml_content if it's a string
+          const yamlContent = typeof foundLesson.yaml_content === 'string' 
+            ? JSON.parse(foundLesson.yaml_content || '{}')
+            : foundLesson.yaml_content || {};
           setTasks(yamlContent.tasks || []);
+        } else {
+          console.error('Lesson not found:', lessonId, 'Available lessons:', data.lessons.map((l: any) => ({ id: l.id, day_number: l.day_number })));
         }
+      } else {
+        console.error('Failed to load lessons:', data);
       }
     } catch (err) {
       console.error('Error loading lesson:', err);

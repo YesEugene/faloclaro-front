@@ -796,6 +796,15 @@ function LessonsSection() {
 
   return (
     <div className="space-y-6">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-2xl font-bold text-gray-900">Редактирование уроков</h2>
+        <button
+          onClick={() => router.push('/admin/lessons/new')}
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          + Создать урок
+        </button>
+      </div>
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
