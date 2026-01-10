@@ -384,23 +384,46 @@ export async function POST(request: NextRequest) {
     }
 
     // CRITICAL: Update phrases table - this is how the frontend finds audio URLs
-    // This must succeed for audio to be playable on the frontend
+    // NOTE: phrases table does not have lesson_id column, so we save only portuguese_text and audio_url
+    // If the same word appears in multiple lessons, they will share the same audio (which is correct)
+    // First, check if phrase exists, then update or insert
     try {
-      const { error: phraseError } = await supabase
+      // Check if phrase with this text already exists
+      const { data: existingPhrase, error: checkError } = await supabase
         .from('phrases')
-        .upsert({
-          portuguese_text: textToGenerate,
-          audio_url: publicUrl,
-          lesson_id: lessonId.toString(), // Ensure it's a string for consistency
-        }, {
-          onConflict: 'portuguese_text',
-        });
+        .select('id, audio_url')
+        .eq('portuguese_text', textToGenerate)
+        .limit(1)
+        .maybeSingle();
       
-      if (phraseError) {
-        console.error('❌ Error updating phrases table:', phraseError);
-        // Log but don't fail - audio is already uploaded
+      if (checkError && checkError.code !== 'PGRST116') { // PGRST116 = not found (OK)
+        console.error('❌ Error checking existing phrase:', checkError);
+      } else if (existingPhrase) {
+        // Update existing phrase with new audio URL
+        const { error: updateError } = await supabase
+          .from('phrases')
+          .update({ audio_url: publicUrl })
+          .eq('id', existingPhrase.id);
+        
+        if (updateError) {
+          console.error('❌ Error updating existing phrase:', updateError);
+        } else {
+          console.log('✅ Audio URL updated in phrases table for existing phrase');
+        }
       } else {
-        console.log('✅ Audio URL saved to phrases table successfully');
+        // Insert new phrase with audio URL
+        const { error: insertError } = await supabase
+          .from('phrases')
+          .insert({
+            portuguese_text: textToGenerate,
+            audio_url: publicUrl,
+          });
+        
+        if (insertError) {
+          console.error('❌ Error inserting new phrase:', insertError);
+        } else {
+          console.log('✅ Audio URL saved to phrases table for new phrase');
+        }
       }
     } catch (phraseError) {
       console.error('❌ Exception updating phrases table:', phraseError);

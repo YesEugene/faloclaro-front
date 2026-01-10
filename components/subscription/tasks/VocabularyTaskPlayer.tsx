@@ -251,14 +251,11 @@ export default function VocabularyTaskPlayer({
           try {
             // CRITICAL: Get audio URL from phrases table
             // Audio URLs are saved here after generation via admin panel
-            const phraseQuery = supabase
+            // NOTE: phrases table does not have lesson_id column, so we search only by portuguese_text
+            const { data: phraseArray, error: phraseError } = await supabase
               .from('phrases')
-              .select('audio_url, id, lesson_id, created_at')
-              .eq('portuguese_text', card.word);
-            
-            // Get the most recent audio URL for this word
-            // This ensures we get the latest generated audio if multiple exist
-            const { data: phraseArray, error: phraseError } = await phraseQuery
+              .select('audio_url, id, created_at')
+              .eq('portuguese_text', card.word)
               .order('created_at', { ascending: false }) // Get most recent first
               .limit(1);
             

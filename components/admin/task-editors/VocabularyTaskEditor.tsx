@@ -422,7 +422,8 @@ function CardEditorModal({ card, lessonDay, onSave, onCancel }: {
       setIsCheckingAudio(true);
       try {
         // Try to find audio in phrases table
-        const response = await fetch(`/api/phrases?text=${encodeURIComponent(formData.word.trim())}&lessonId=${lessonDay}`);
+        // NOTE: lessonId parameter is ignored by API (phrases table doesn't have lesson_id)
+        const response = await fetch(`/api/phrases?text=${encodeURIComponent(formData.word.trim())}`);
         const data = await response.json();
         if (data.success && data.exists && data.audioUrl) {
           setAudioExists(true);
@@ -622,7 +623,8 @@ function CardEditorModal({ card, lessonDay, onSave, onCancel }: {
                       // Wait a moment for database to update, then re-check to confirm
                       setTimeout(async () => {
                         try {
-                          const checkResponse = await fetch(`/api/phrases?text=${encodeURIComponent(formData.word.trim())}&lessonId=${lessonDay}`);
+                          // NOTE: lessonId parameter is ignored by API (phrases table doesn't have lesson_id)
+                          const checkResponse = await fetch(`/api/phrases?text=${encodeURIComponent(formData.word.trim())}`);
                           const checkData = await checkResponse.json();
                           if (checkData.success && checkData.exists && checkData.audioUrl) {
                             // Use URL from database if available (more reliable)

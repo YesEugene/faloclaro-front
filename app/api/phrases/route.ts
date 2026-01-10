@@ -15,18 +15,13 @@ export async function GET(request: NextRequest) {
     }
 
     // Try to find phrase in database by portuguese_text
-    const query = supabase
+    // NOTE: phrases table does not have lesson_id column, so we search only by portuguese_text
+    const { data: phrases, error } = await supabase
       .from('phrases')
-      .select('id, portuguese_text, audio_url, lesson_id')
+      .select('id, portuguese_text, audio_url')
       .eq('portuguese_text', text.trim())
+      .order('created_at', { ascending: false }) // Get most recent if multiple exist
       .limit(1);
-
-    // If lessonId is provided, also filter by lesson_id
-    if (lessonId) {
-      query.eq('lesson_id', lessonId);
-    }
-
-    const { data: phrases, error } = await query;
 
     if (error) {
       console.error('Error fetching phrase:', error);
