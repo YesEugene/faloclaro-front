@@ -92,6 +92,33 @@ export async function POST(request: NextRequest) {
       normalizedDay = dayWithoutNumber;
     }
     
+    // Normalize tasks structure - keep original structure but fix common issues
+    const normalizedTasks = (lessonData.tasks || []).map((task: any) => {
+      const normalizedTask = { ...task };
+      
+      // Fix attention task - ensure it has audio field if it has text
+      if (normalizedTask.type === 'attention') {
+        if (normalizedTask.items && Array.isArray(normalizedTask.items)) {
+          normalizedTask.items = normalizedTask.items.map((item: any) => {
+            // If item has 'text' but no 'audio', use text as audio
+            if (item.text && !item.audio) {
+              return {
+                ...item,
+                audio: item.text,
+                // Keep text for backward compatibility, but audio is required
+              };
+            }
+            return item;
+          });
+        }
+      }
+      
+      // Note: Listening tasks with 'questions' array are kept as-is
+      // The CRM editor will handle the conversion if needed
+      
+      return normalizedTask;
+    });
+    
     const yamlContent: any = {
       day: normalizedDay || {
         day_number: dayNumber,
@@ -99,7 +126,7 @@ export async function POST(request: NextRequest) {
         subtitle: { ru: subtitleRu, en: subtitleEn },
         estimated_time: estimatedTime,
       },
-      tasks: lessonData.tasks || [],
+      tasks: normalizedTasks,
     };
 
     if (lessonId) {
@@ -117,16 +144,29 @@ export async function POST(request: NextRequest) {
         );
       }
 
+      // Prepare update data - only include subtitle fields if they have values (optional fields)
+      const updateData: any = {
+        yaml_content: yamlContent,
+        title_ru: titleRu || null,
+        title_en: titleEn || null,
+        updated_at: new Date().toISOString(),
+      };
+      
+      // Only include subtitle fields if they have values (optional fields)
+      if (subtitleRu && subtitleRu.trim()) {
+        updateData.subtitle_ru = subtitleRu;
+      } else {
+        updateData.subtitle_ru = null; // Clear subtitle if empty
+      }
+      if (subtitleEn && subtitleEn.trim()) {
+        updateData.subtitle_en = subtitleEn;
+      } else {
+        updateData.subtitle_en = null; // Clear subtitle if empty
+      }
+
       const { data: updatedLesson, error: updateError } = await supabase
         .from('lessons')
-        .update({
-          yaml_content: yamlContent,
-          title_ru: titleRu,
-          title_en: titleEn,
-          subtitle_ru: subtitleRu,
-          subtitle_en: subtitleEn,
-          updated_at: new Date().toISOString(),
-        })
+        .update(updateData)
         .eq('id', lessonId)
         .select()
         .single();
@@ -167,24 +207,45 @@ export async function POST(request: NextRequest) {
         );
       }
 
+      // Prepare insert data - use null for empty optional fields
+      const insertData: any = {
+        day_number: dayNumber,
+        title_ru: titleRu || null,
+        title_en: titleEn || null,
+        yaml_content: yamlContent,
+        is_published: false, // New lessons are not published by default
+      };
+      
+      // Only include subtitle fields if they have values (optional fields)
+      if (subtitleRu && subtitleRu.trim()) {
+        insertData.subtitle_ru = subtitleRu;
+      }
+      if (subtitleEn && subtitleEn.trim()) {
+        insertData.subtitle_en = subtitleEn;
+      }
+
       const { data: newLesson, error: createError } = await supabase
         .from('lessons')
-        .insert({
-          day_number: dayNumber,
-          title_ru: titleRu,
-          title_en: titleEn,
-          subtitle_ru: subtitleRu,
-          subtitle_en: subtitleEn,
-          yaml_content: yamlContent,
-          is_published: false, // New lessons are not published by default
-        })
+        .insert(insertData)
         .select()
         .single();
 
       if (createError) {
         console.error('Error creating lesson:', createError);
+        console.error('Lesson data:', {
+          day_number: dayNumber,
+          title_ru: titleRu,
+          title_en: titleEn,
+          yaml_content_keys: Object.keys(yamlContent),
+          tasks_count: yamlContent.tasks?.length || 0,
+        });
         return NextResponse.json(
-          { error: 'Failed to create lesson', details: createError.message },
+          { 
+            error: 'Failed to create lesson', 
+            details: createError.message,
+            code: createError.code,
+            hint: createError.hint,
+          },
           { status: 500 }
         );
       }
@@ -197,8 +258,14 @@ export async function POST(request: NextRequest) {
     }
   } catch (error) {
     console.error('Error importing lesson:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    const errorStack = error instanceof Error ? error.stack : undefined;
     return NextResponse.json(
-      { error: 'Failed to import lesson', details: (error as Error).message },
+      { 
+        error: 'Failed to import lesson', 
+        details: errorMessage,
+        stack: process.env.NODE_ENV === 'development' ? errorStack : undefined,
+      },
       { status: 500 }
     );
   }
