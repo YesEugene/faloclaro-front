@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
@@ -8,7 +8,7 @@ import { useAppLanguage } from '@/lib/language-context';
 import { LanguageSelector } from '@/components/LanguageSelector';
 import Image from 'next/image';
 
-export default function SubcategoriesPage() {
+function SubcategoriesContent() {
   const { language } = useAppLanguage();
   const searchParams = useSearchParams();
   const [subcategories, setSubcategories] = useState<any[]>([]);
@@ -134,5 +134,17 @@ export default function SubcategoriesPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SubcategoriesPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="text-lg">Loading...</div>
+      </div>
+    }>
+      <SubcategoriesContent />
+    </Suspense>
   );
 }
