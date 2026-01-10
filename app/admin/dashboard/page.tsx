@@ -677,8 +677,12 @@ function LessonsSection() {
     try {
       const response = await fetch('/api/admin/levels');
       const data = await response.json();
+      console.log('Levels API response:', data);
       if (data.success) {
         setLevels(data.levels || []);
+        console.log('Levels loaded:', data.levels);
+      } else {
+        console.error('Failed to load levels:', data.error);
       }
     } catch (err) {
       console.error('Error loading levels:', err);
@@ -840,14 +844,55 @@ function LessonsSection() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold text-gray-900">Редактирование уроков</h2>
-        <button
-          onClick={() => router.push('/admin/lessons/new')}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          + Создать урок
-        </button>
+        <h2 className="text-2xl font-bold text-gray-900">Создание курса</h2>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setShowCreateLevel(true)}
+            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+          >
+            + Создать уровень
+          </button>
+          <button
+            onClick={() => router.push('/admin/lessons/new')}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            + Создать урок
+          </button>
+        </div>
       </div>
+
+      {/* Level Filter Tabs */}
+      <div className="flex gap-2 flex-wrap items-center">
+        <span className="text-sm text-gray-600 mr-2">Фильтр по уровням:</span>
+        <button
+          onClick={() => setSelectedLevelId(null)}
+          className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+            selectedLevelId === null
+              ? 'bg-blue-600 text-white'
+              : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+          }`}
+        >
+          Все уроки
+        </button>
+        {levels.length === 0 ? (
+          <span className="text-sm text-gray-500 italic">Уровни не созданы. Создайте первый уровень.</span>
+        ) : (
+          levels.map((level) => (
+            <button
+              key={level.id}
+              onClick={() => setSelectedLevelId(level.id)}
+              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                selectedLevelId === level.id
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+              }`}
+            >
+              {level.level_number} Уровень
+            </button>
+          ))
+        )}
+      </div>
+
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
