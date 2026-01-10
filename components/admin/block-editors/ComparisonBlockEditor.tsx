@@ -9,9 +9,34 @@ interface ComparisonBlockEditorProps {
 }
 
 export default function ComparisonBlockEditor({ block, onChange, lessonDay }: ComparisonBlockEditorProps) {
-  const [comparisonCards, setComparisonCards] = useState<any[]>(block.comparison_card || []);
+  // Support both old structure (block.comparison_card) and new structure (block.content.comparison_card)
+  const getContent = () => {
+    if (block.content && typeof block.content === 'object') {
+      return block.content;
+    }
+    // Old structure: convert to new structure
+    return {
+      comparison_card: block.comparison_card || [],
+      note: block.note || { ru: '', en: '' },
+    };
+  };
+
+  const content = getContent();
+  const [comparisonCards, setComparisonCards] = useState<any[]>(content.comparison_card || []);
   const [showAddCard, setShowAddCard] = useState(false);
   const [editingCardIndex, setEditingCardIndex] = useState<number | null>(null);
+
+  const updateBlock = (updates: any) => {
+    onChange({
+      ...block,
+      block_type: block.block_type || 'comparison',
+      content: {
+        ...content,
+        ...updates,
+        comparison_card: comparisonCards,
+      },
+    });
+  };
 
   const handleAddCard = () => {
     setEditingCardIndex(comparisonCards.length);
@@ -31,10 +56,7 @@ export default function ComparisonBlockEditor({ block, onChange, lessonDay }: Co
       newCards.push(card);
     }
     setComparisonCards(newCards);
-    onChange({
-      ...block,
-      comparison_card: newCards,
-    });
+    updateBlock({ comparison_card: newCards });
     setShowAddCard(false);
     setEditingCardIndex(null);
   };
@@ -43,10 +65,7 @@ export default function ComparisonBlockEditor({ block, onChange, lessonDay }: Co
     if (confirm('Вы уверены, что хотите удалить эту карточку?')) {
       const newCards = comparisonCards.filter((_, i) => i !== index);
       setComparisonCards(newCards);
-      onChange({
-        ...block,
-        comparison_card: newCards,
-      });
+      updateBlock({ comparison_card: newCards });
     }
   };
 
@@ -62,12 +81,10 @@ export default function ComparisonBlockEditor({ block, onChange, lessonDay }: Co
             </label>
             <input
               type="text"
-              value={typeof block.title === 'string' ? block.title : (block.title?.ru || '')}
+              value={typeof content.title === 'string' ? content.title : (content.title?.ru || '')}
               onChange={(e) => {
-                const title = block.title || {};
-                onChange({
-                  ...block,
-                  title: { ...title, ru: e.target.value },
+                updateBlock({
+                  title: { ...content.title, ru: e.target.value },
                 });
               }}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg"
@@ -80,12 +97,10 @@ export default function ComparisonBlockEditor({ block, onChange, lessonDay }: Co
             </label>
             <input
               type="text"
-              value={typeof block.title === 'string' ? '' : (block.title?.en || '')}
+              value={typeof content.title === 'string' ? '' : (content.title?.en || '')}
               onChange={(e) => {
-                const title = block.title || {};
-                onChange({
-                  ...block,
-                  title: { ...title, en: e.target.value },
+                updateBlock({
+                  title: { ...content.title, en: e.target.value },
                 });
               }}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg"
@@ -150,12 +165,10 @@ export default function ComparisonBlockEditor({ block, onChange, lessonDay }: Co
               Примечание (RU)
             </label>
             <textarea
-              value={typeof block.note === 'string' ? block.note : (block.note?.ru || '')}
+              value={typeof content.note === 'string' ? content.note : (content.note?.ru || '')}
               onChange={(e) => {
-                const note = block.note || {};
-                onChange({
-                  ...block,
-                  note: { ...note, ru: e.target.value },
+                updateBlock({
+                  note: { ...content.note, ru: e.target.value },
                 });
               }}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg h-24"
@@ -167,12 +180,10 @@ export default function ComparisonBlockEditor({ block, onChange, lessonDay }: Co
               Примечание (EN)
             </label>
             <textarea
-              value={typeof block.note === 'string' ? '' : (block.note?.en || '')}
+              value={typeof content.note === 'string' ? '' : (content.note?.en || '')}
               onChange={(e) => {
-                const note = block.note || {};
-                onChange({
-                  ...block,
-                  note: { ...note, en: e.target.value },
+                updateBlock({
+                  note: { ...content.note, en: e.target.value },
                 });
               }}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg h-24"

@@ -9,46 +9,58 @@ interface ReinforcementBlockEditorProps {
 }
 
 export default function ReinforcementBlockEditor({ block, onChange, lessonDay }: ReinforcementBlockEditorProps) {
-  const [task1, setTask1] = useState<any>(block.task_1 || null);
-  const [task2, setTask2] = useState<any>(block.task_2 || null);
+  // Support both old structure (block.task_1) and new structure (block.content.task_1)
+  const getContent = () => {
+    if (block.content && typeof block.content === 'object') {
+      return block.content;
+    }
+    // Old structure: convert to new structure
+    return {
+      task_1: block.task_1 || null,
+      task_2: block.task_2 || null,
+    };
+  };
+
+  const content = getContent();
+  const [task1, setTask1] = useState<any>(content.task_1 || null);
+  const [task2, setTask2] = useState<any>(content.task_2 || null);
   const [showTask1Editor, setShowTask1Editor] = useState(false);
   const [showTask2Editor, setShowTask2Editor] = useState(false);
 
-  const handleSaveTask1 = (task: any) => {
-    setTask1(task);
+  const updateBlock = (updates: any) => {
     onChange({
       ...block,
-      task_1: task,
+      block_type: block.block_type || 'reinforcement',
+      content: {
+        ...content,
+        ...updates,
+      },
     });
+  };
+
+  const handleSaveTask1 = (task: any) => {
+    setTask1(task);
+    updateBlock({ task_1: task });
     setShowTask1Editor(false);
   };
 
   const handleSaveTask2 = (task: any) => {
     setTask2(task);
-    onChange({
-      ...block,
-      task_2: task,
-    });
+    updateBlock({ task_2: task });
     setShowTask2Editor(false);
   };
 
   const handleDeleteTask1 = () => {
     if (confirm('Вы уверены, что хотите удалить задание 1?')) {
       setTask1(null);
-      onChange({
-        ...block,
-        task_1: null,
-      });
+      updateBlock({ task_1: null });
     }
   };
 
   const handleDeleteTask2 = () => {
     if (confirm('Вы уверены, что хотите удалить задание 2?')) {
       setTask2(null);
-      onChange({
-        ...block,
-        task_2: null,
-      });
+      updateBlock({ task_2: null });
     }
   };
 

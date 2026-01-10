@@ -9,51 +9,36 @@ interface SpeakOutLoudBlockEditorProps {
 }
 
 export default function SpeakOutLoudBlockEditor({ block, onChange, lessonDay }: SpeakOutLoudBlockEditorProps) {
+  // Support both old structure and new structure (block.content)
+  const getContent = () => {
+    if (block.content && typeof block.content === 'object') {
+      return block.content;
+    }
+    // Old structure: convert to new structure
+    return {
+      instruction_text: block.instruction_text || { ru: '', en: '' },
+      action_button: block.action_button || {
+        text: { ru: '✔ Я сказал(а) вслух', en: '✔ I said it out loud' },
+        completes_task: true,
+      },
+    };
+  };
+
+  const content = getContent();
+
+  const updateBlock = (updates: any) => {
+    onChange({
+      ...block,
+      block_type: block.block_type || 'speak_out_loud',
+      content: {
+        ...content,
+        ...updates,
+      },
+    });
+  };
+
   return (
     <div className="space-y-6">
-      {/* Block Title */}
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Название блока</h2>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Название (RU) *
-            </label>
-            <input
-              type="text"
-              value={typeof block.title === 'string' ? block.title : (block.title?.ru || '')}
-              onChange={(e) => {
-                const title = block.title || {};
-                onChange({
-                  ...block,
-                  title: { ...title, ru: e.target.value },
-                });
-              }}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-              placeholder="Скажи вслух"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Название (EN) *
-            </label>
-            <input
-              type="text"
-              value={typeof block.title === 'string' ? '' : (block.title?.en || '')}
-              onChange={(e) => {
-                const title = block.title || {};
-                onChange({
-                  ...block,
-                  title: { ...title, en: e.target.value },
-                });
-              }}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-              placeholder="Speak out loud"
-            />
-          </div>
-        </div>
-      </div>
-
       {/* Instruction Text */}
       <div className="bg-white rounded-lg shadow-md p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Инструкция</h2>
@@ -63,12 +48,10 @@ export default function SpeakOutLoudBlockEditor({ block, onChange, lessonDay }: 
               Инструкция (RU) *
             </label>
             <textarea
-              value={typeof block.instruction_text === 'string' ? block.instruction_text : (block.instruction_text?.ru || '')}
+              value={typeof content.instruction_text === 'string' ? content.instruction_text : (content.instruction_text?.ru || '')}
               onChange={(e) => {
-                const instruction_text = block.instruction_text || {};
-                onChange({
-                  ...block,
-                  instruction_text: { ...instruction_text, ru: e.target.value },
+                updateBlock({
+                  instruction_text: { ...content.instruction_text, ru: e.target.value },
                 });
               }}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg h-32"
@@ -83,12 +66,10 @@ export default function SpeakOutLoudBlockEditor({ block, onChange, lessonDay }: 
               Инструкция (EN) *
             </label>
             <textarea
-              value={typeof block.instruction_text === 'string' ? '' : (block.instruction_text?.en || '')}
+              value={typeof content.instruction_text === 'string' ? '' : (content.instruction_text?.en || '')}
               onChange={(e) => {
-                const instruction_text = block.instruction_text || {};
-                onChange({
-                  ...block,
-                  instruction_text: { ...instruction_text, en: e.target.value },
+                updateBlock({
+                  instruction_text: { ...content.instruction_text, en: e.target.value },
                 });
               }}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg h-32"
@@ -111,15 +92,13 @@ export default function SpeakOutLoudBlockEditor({ block, onChange, lessonDay }: 
             </label>
             <input
               type="text"
-              value={typeof block.action_button?.text === 'string' ? block.action_button?.text : (block.action_button?.text?.ru || '')}
+              value={typeof content.action_button?.text === 'string' ? content.action_button?.text : (content.action_button?.text?.ru || '')}
               onChange={(e) => {
-                const action_button = block.action_button || {};
-                onChange({
-                  ...block,
+                updateBlock({
                   action_button: {
-                    ...action_button,
+                    ...content.action_button,
                     text: {
-                      ...(typeof action_button.text === 'object' ? action_button.text : {}),
+                      ...(typeof content.action_button?.text === 'object' ? content.action_button.text : {}),
                       ru: e.target.value,
                     },
                     completes_task: true,
@@ -136,15 +115,13 @@ export default function SpeakOutLoudBlockEditor({ block, onChange, lessonDay }: 
             </label>
             <input
               type="text"
-              value={typeof block.action_button?.text === 'string' ? '' : (block.action_button?.text?.en || '')}
+              value={typeof content.action_button?.text === 'string' ? '' : (content.action_button?.text?.en || '')}
               onChange={(e) => {
-                const action_button = block.action_button || {};
-                onChange({
-                  ...block,
+                updateBlock({
                   action_button: {
-                    ...action_button,
+                    ...content.action_button,
                     text: {
-                      ...(typeof action_button.text === 'object' ? action_button.text : {}),
+                      ...(typeof content.action_button?.text === 'object' ? content.action_button.text : {}),
                       en: e.target.value,
                     },
                     completes_task: true,
