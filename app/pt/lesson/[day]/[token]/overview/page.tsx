@@ -112,8 +112,8 @@ function OverviewPageContent() {
   };
 
   const isLessonUnlocked = (lessonDay: number): boolean => {
-    // If user has paid subscription, all lessons are unlocked
-    if (subscription?.status === 'paid') {
+    // If user has active subscription, all published lessons are unlocked
+    if (subscription?.status === 'active') {
       return true;
     }
     // First 3 lessons are always unlocked if user has any token
@@ -179,8 +179,8 @@ function OverviewPageContent() {
     }
     
     // Get token for this lesson or use current token
-    // For first 3 lessons, if unlocked but no token, use current token (they're free)
-    const lessonToken = userTokens.get(lessonDay) || (isUnlocked && lessonDay <= 3 ? token : null);
+    // For unlocked lessons (first 3 or with active subscription), use current token if no specific token exists
+    const lessonToken = userTokens.get(lessonDay) || (isUnlocked ? token : null);
     // Show all published lessons, but only allow navigation if unlocked
     const canNavigate = (isUnlocked || isCompleted) && lessonToken;
     const lessonUrl = canNavigate
