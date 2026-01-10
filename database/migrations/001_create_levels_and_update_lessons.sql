@@ -56,13 +56,21 @@ CREATE INDEX IF NOT EXISTS idx_audio_files_block_id ON audio_files(block_id);
 ALTER TABLE levels ENABLE ROW LEVEL SECURITY;
 ALTER TABLE audio_files ENABLE ROW LEVEL SECURITY;
 
--- 8. Create RLS policies for levels (public read access)
+-- 8. Create RLS policies for levels (public read access, service role write access)
 CREATE POLICY "Public read access for levels" ON levels
   FOR SELECT USING (true);
 
--- 9. Create RLS policies for audio_files (public read access)
+-- Allow service role to insert/update/delete levels
+CREATE POLICY "Service role full access to levels" ON levels
+  FOR ALL USING (auth.role() = 'service_role');
+
+-- 9. Create RLS policies for audio_files (public read access, service role write access)
 CREATE POLICY "Public read access for audio_files" ON audio_files
   FOR SELECT USING (true);
 
--- Note: Write access will be handled by service role in API routes
+-- Allow service role to insert/update/delete audio_files
+CREATE POLICY "Service role full access to audio_files" ON audio_files
+  FOR ALL USING (auth.role() = 'service_role');
+
+-- Note: API routes use service role, so they have full access
 
