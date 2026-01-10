@@ -134,8 +134,61 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
     }
   };
 
-  // Get items from task - listening_comprehension uses items, not blocks
-  const items = task.items || [];
+  // Normalize option text - ensure it's always a string, not an object
+  const normalizeOptionText = (option: any): string => {
+    if (!option || typeof option !== 'object') return String(option || '');
+    if (typeof option.text === 'string') return option.text;
+    if (option.text && typeof option.text === 'object' && !Array.isArray(option.text)) {
+      // Extract string from object (prefer pt/portuguese, then ru, then en)
+      return option.text.pt || option.text.portuguese || option.text.ru || option.text.en || JSON.stringify(option.text);
+    }
+    return String(option.text || '');
+  };
+
+  // Normalize items - ensure all options have text as string
+  const normalizeItems = (itemsArray: any[]): any[] => {
+    if (!Array.isArray(itemsArray)) return [];
+    return itemsArray.map(item => {
+      if (!item || typeof item !== 'object') return item;
+      if (item.options && Array.isArray(item.options)) {
+        return {
+          ...item,
+          options: item.options.map((opt: any) => {
+            if (!opt || typeof opt !== 'object') return opt;
+            return {
+              ...opt,
+              text: normalizeOptionText(opt),
+            };
+          }),
+        };
+      }
+      return item;
+    });
+  };
+
+  // Get items from task - support both old structure (task.items) and new structure (task.blocks[].content.items)
+  const getItemsFromTask = (task: any): any[] => {
+    let items: any[] = [];
+    
+    // Try new structure: task.blocks (array)
+    if (task.blocks && Array.isArray(task.blocks)) {
+      task.blocks.forEach((block: any) => {
+        if (block.block_type === 'listen_phrase' && block.content?.items) {
+          items.push(...block.content.items);
+        }
+      });
+    }
+    
+    // Try old structure: task.items
+    if (items.length === 0 && task.items && Array.isArray(task.items)) {
+      items = task.items;
+    }
+    
+    return items;
+  };
+  
+  // Normalize items to ensure option.text is always a string
+  const items = normalizeItems(getItemsFromTask(task));
   const currentItem = items[currentItemIndex];
 
   // Load audio URLs for all items
@@ -278,7 +331,8 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
         correctCount: items.filter((item: any, index: number) => {
           const selectedAnswer = newAnswers[index];
           const correctOption = item.options?.find((opt: any) => opt.correct);
-          return selectedAnswer === correctOption?.text;
+          const correctOptionText = correctOption ? normalizeOptionText(correctOption) : '';
+          return selectedAnswer === correctOptionText;
         }).length,
         totalItems: items.length,
         completedAt: new Date().toISOString(),
@@ -341,7 +395,8 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
       const correctCount = items.filter((item: any, index: number) => {
         const selectedAnswer = answers[index];
         const correctOption = item.options?.find((opt: any) => opt.correct);
-        return selectedAnswer === correctOption?.text;
+        const correctOptionText = correctOption ? normalizeOptionText(correctOption) : '';
+        return selectedAnswer === correctOptionText;
       }).length;
 
       setLocalIsCompleted(true); // Update local state immediately
@@ -441,14 +496,16 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
           {/* Options */}
           <div className="space-y-2">
             {currentItem.options?.map((option: any, index: number) => {
-              const isSelected = currentAnswer === option.text;
+              // Normalize option.text to always be a string
+              const optionText = normalizeOptionText(option);
+              const isSelected = currentAnswer === optionText;
               const isCorrect = option.correct;
               const showResultForOption = showResult;
 
               return (
                 <button
                   key={index}
-                  onClick={() => handleAnswerSelect(currentItemIndex, option.text)}
+                  onClick={() => handleAnswerSelect(currentItemIndex, optionText)}
                   disabled={showResultForOption}
                   className="w-full text-left px-4 rounded-lg transition-colors flex items-center"
                   style={{
@@ -461,7 +518,7 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
                       : 'none'
                   }}
                 >
-                  {option.text}
+                  {optionText}
                 </button>
               );
             })}

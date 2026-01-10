@@ -242,9 +242,33 @@ export default function TaskCard({
           ? taskProgress.completion_data.showResults
           : undefined;
         
+        // Transform task if needed - extract items from blocks if using new structure
+        let listeningTask = task;
+        if (!task.items || (Array.isArray(task.items) && task.items.length === 0)) {
+          const items: any[] = [];
+          
+          // Try to extract items from blocks (new structure)
+          if (task.blocks && Array.isArray(task.blocks)) {
+            task.blocks.forEach((block: any) => {
+              if (block.block_type === 'listen_phrase' && block.content?.items) {
+                items.push(...block.content.items);
+              }
+            });
+          }
+          
+          // If items were found, create transformed task
+          if (items.length > 0) {
+            listeningTask = {
+              ...task,
+              items: items,
+            };
+            console.log('✅ Transformed listening task - extracted', items.length, 'items from blocks');
+          }
+        }
+        
         return (
           <ListeningTask
-            task={task}
+            task={listeningTask}
             language={language}
             onComplete={handleComplete}
             isCompleted={isCompleted}
