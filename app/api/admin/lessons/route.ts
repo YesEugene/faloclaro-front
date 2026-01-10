@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase-admin';
 
 export async function GET(request: NextRequest) {
   try {
@@ -100,8 +101,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create new lesson
-    const { data: lesson, error: insertError } = await supabase
+    // Create new lesson (use admin client for write operations)
+    const { data: lesson, error: insertError } = await supabaseAdmin
       .from('lessons')
       .insert({
         day_number,

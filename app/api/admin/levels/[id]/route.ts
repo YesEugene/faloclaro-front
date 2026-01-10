@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase-admin';
 
 // GET - Get a specific level
 export async function GET(
@@ -8,7 +8,7 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const { data: level, error } = await supabase
+    const { data: level, error } = await supabaseAdmin
       .from('levels')
       .select('*')
       .eq('id', id)
@@ -62,7 +62,7 @@ export async function PUT(
     if (description_en !== undefined) updateData.description_en = description_en;
     if (order_index !== undefined) updateData.order_index = order_index;
 
-    const { data: level, error } = await supabase
+    const { data: level, error } = await supabaseAdmin
       .from('levels')
       .update(updateData)
       .eq('id', id)
@@ -99,7 +99,7 @@ export async function DELETE(
     const { id } = await params;
 
     // Check if there are lessons in this level
-    const { data: lessons, error: checkError } = await supabase
+    const { data: lessons, error: checkError } = await supabaseAdmin
       .from('lessons')
       .select('id')
       .eq('level_id', id)
@@ -120,7 +120,7 @@ export async function DELETE(
       );
     }
 
-    const { error } = await supabase
+    const { error } = await supabaseAdmin
       .from('levels')
       .delete()
       .eq('id', id);

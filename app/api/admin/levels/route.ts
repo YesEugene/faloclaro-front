@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase-admin';
 
 // GET - Get all levels
 export async function GET(request: NextRequest) {
   try {
-    const { data: levels, error } = await supabase
+    const { data: levels, error } = await supabaseAdmin
       .from('levels')
       .select('*')
       .order('order_index', { ascending: true });
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if level with this number already exists
-    const { data: existingLevel, error: checkError } = await supabase
+    const { data: existingLevel, error: checkError } = await supabaseAdmin
       .from('levels')
       .select('id')
       .eq('level_number', level_number)
@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create new level
-    const { data: level, error: insertError } = await supabase
+    const { data: level, error: insertError } = await supabaseAdmin
       .from('levels')
       .insert({
         level_number,

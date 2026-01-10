@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase-admin';
 import { transformLessonForFrontend } from '@/lib/lesson-transformer';
 
 // GET - Get a specific lesson (with optional transformation for frontend)
@@ -87,8 +88,8 @@ export async function PUT(
     if (title_ru !== undefined) updateData.title_ru = title_ru;
     if (title_en !== undefined) updateData.title_en = title_en;
 
-    // Update lesson
-    const { data, error } = await supabase
+    // Update lesson (use admin client for write operations)
+    const { data, error } = await supabaseAdmin
       .from('lessons')
       .update(updateData)
       .eq('id', id)
@@ -124,14 +125,14 @@ export async function DELETE(
   try {
     const { id } = await params;
 
-    // Delete related audio files first
-    await supabase
+    // Delete related audio files first (use admin client)
+    await supabaseAdmin
       .from('audio_files')
       .delete()
       .eq('lesson_id', id);
 
-    // Delete lesson
-    const { error } = await supabase
+    // Delete lesson (use admin client)
+    const { error } = await supabaseAdmin
       .from('lessons')
       .delete()
       .eq('id', id);
