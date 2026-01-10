@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface ComparisonBlockEditorProps {
   block: any;
@@ -25,6 +25,9 @@ export default function ComparisonBlockEditor({ block, onChange, lessonDay }: Co
   const [comparisonCards, setComparisonCards] = useState<any[]>(content.comparison_card || []);
   const [showAddCard, setShowAddCard] = useState(false);
   const [editingCardIndex, setEditingCardIndex] = useState<number | null>(null);
+  const [generatingAudio, setGeneratingAudio] = useState<{ [key: number]: boolean }>({});
+  const [isPlayingAudio, setIsPlayingAudio] = useState<{ [key: number]: boolean }>({});
+  const [audioUrls, setAudioUrls] = useState<{ [key: number]: string | null }>({});
 
   const updateBlock = (updates: any) => {
     onChange({
@@ -50,13 +53,28 @@ export default function ComparisonBlockEditor({ block, onChange, lessonDay }: Co
 
   const handleSaveCard = (card: any) => {
     const newCards = [...comparisonCards];
+    const index = editingCardIndex !== null && editingCardIndex < comparisonCards.length 
+      ? editingCardIndex 
+      : newCards.length;
+    
     if (editingCardIndex !== null && editingCardIndex < comparisonCards.length) {
-      newCards[editingCardIndex] = card;
+      // Preserve audio_url if it exists when editing
+      newCards[editingCardIndex] = {
+        ...card,
+        audio_url: card.audio_url || comparisonCards[editingCardIndex]?.audio_url,
+      };
     } else {
       newCards.push(card);
     }
+    
     setComparisonCards(newCards);
     updateBlock({ comparison_card: newCards });
+    
+    // Update audio URL in state if it exists
+    if (card.audio_url) {
+      setAudioUrls(prev => ({ ...prev, [index]: card.audio_url }));
+    }
+    
     setShowAddCard(false);
     setEditingCardIndex(null);
   };
@@ -66,7 +84,119 @@ export default function ComparisonBlockEditor({ block, onChange, lessonDay }: Co
       const newCards = comparisonCards.filter((_, i) => i !== index);
       setComparisonCards(newCards);
       updateBlock({ comparison_card: newCards });
+      // Clean up audio state
+      setGeneratingAudio(prev => {
+        const newState = { ...prev };
+        delete newState[index];
+        return newState;
+      });
+      setIsPlayingAudio(prev => {
+        const newState = { ...prev };
+        delete newState[index];
+        return newState;
+      });
+      setAudioUrls(prev => {
+        const newState = { ...prev };
+        delete newState[index];
+        return newState;
+      });
     }
+  };
+
+  // Check for existing audio URLs when cards change
+  useEffect(() => {
+    const checkAudioUrls = async () => {
+      const urls: { [key: number]: string | null } = {};
+      
+      for (let i = 0; i < comparisonCards.length; i++) {
+        const card = comparisonCards[i];
+        
+        // Prioritize audio_url from card if it exists
+        if (card.audio_url) {
+          urls[i] = card.audio_url;
+          continue;
+        }
+        
+        // Otherwise check database
+        if (card.text && card.text.trim()) {
+          try {
+            const response = await fetch(`/api/phrases?text=${encodeURIComponent(card.text.trim())}`);
+            const data = await response.json();
+            if (data.success && data.exists && data.audioUrl) {
+              urls[i] = data.audioUrl;
+            }
+          } catch (error) {
+            console.error(`Error checking audio for card ${i}:`, error);
+          }
+        }
+      }
+      
+      setAudioUrls(urls);
+    };
+    
+    if (comparisonCards.length > 0) {
+      checkAudioUrls();
+    }
+  }, [comparisonCards]);
+
+  const handleGenerateAudio = async (index: number) => {
+    const card = comparisonCards[index];
+    if (!card || !card.text || !card.text.trim()) {
+      alert('Пожалуйста, сначала добавьте текст карточки');
+      return;
+    }
+
+    setGeneratingAudio(prev => ({ ...prev, [index]: true }));
+
+    try {
+      const response = await fetch('/api/admin/audio/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          text: card.text.trim(),
+          lessonId: lessonDay.toString(),
+          taskId: 2, // Rules task
+          blockId: block.block_id || block.block_type || 'comparison',
+          itemId: `card_${index}_${Date.now()}`,
+        }),
+      });
+
+      const data = await response.json();
+      if (data.success && data.audioUrl) {
+        // Update card with audio_url
+        const newCards = [...comparisonCards];
+        newCards[index] = {
+          ...newCards[index],
+          audio_url: data.audioUrl,
+        };
+        setComparisonCards(newCards);
+        setAudioUrls(prev => ({ ...prev, [index]: data.audioUrl }));
+        updateBlock({ comparison_card: newCards });
+        alert('Аудио успешно сгенерировано!');
+      } else {
+        alert('Ошибка при генерации аудио: ' + (data.error || 'Unknown error'));
+      }
+    } catch (error) {
+      console.error('Error generating audio:', error);
+      alert('Ошибка при генерации аудио');
+    } finally {
+      setGeneratingAudio(prev => ({ ...prev, [index]: false }));
+    }
+  };
+
+  const handlePlayAudio = (index: number) => {
+    const card = comparisonCards[index];
+    const audioUrl = audioUrls[index] || card?.audio_url;
+    if (!audioUrl) return;
+
+    setIsPlayingAudio(prev => ({ ...prev, [index]: true }));
+    const audio = new Audio(audioUrl);
+    audio.play().catch(err => {
+      console.error('Error playing audio:', err);
+      setIsPlayingAudio(prev => ({ ...prev, [index]: false }));
+    });
+    audio.onended = () => setIsPlayingAudio(prev => ({ ...prev, [index]: false }));
+    audio.onerror = () => setIsPlayingAudio(prev => ({ ...prev, [index]: false }));
   };
 
   return (
@@ -133,9 +263,32 @@ export default function ComparisonBlockEditor({ block, onChange, lessonDay }: Co
               >
                 <div className="flex justify-between items-start">
                   <div className="flex-1">
-                    <p className="font-medium text-gray-900">{card.text || 'Без текста'}</p>
+                    <div className="flex items-center gap-2 mb-1">
+                      <p className="font-medium text-gray-900">{card.text || 'Без текста'}</p>
+                      {(audioUrls[index] || card.audio_url) && (
+                        <span className="text-sm text-blue-600">🎵 Аудио</span>
+                      )}
+                    </div>
                   </div>
                   <div className="flex gap-2">
+                    {(audioUrls[index] || card.audio_url) && (
+                      <button
+                        onClick={() => handlePlayAudio(index)}
+                        disabled={isPlayingAudio[index]}
+                        className="px-2 py-1 text-blue-600 hover:text-blue-800 text-sm"
+                        title="Воспроизвести аудио"
+                      >
+                        {isPlayingAudio[index] ? '⏸️' : '▶️'}
+                      </button>
+                    )}
+                    <button
+                      onClick={() => handleGenerateAudio(index)}
+                      disabled={generatingAudio[index] || !card.text?.trim()}
+                      className="px-3 py-1 text-green-600 hover:text-green-800 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                      title="Сгенерировать аудио"
+                    >
+                      {generatingAudio[index] ? '⏳' : '🎵 Генерировать'}
+                    </button>
                     <button
                       onClick={() => handleEditCard(index)}
                       className="px-3 py-1 text-blue-600 hover:text-blue-800 text-sm font-medium"
@@ -226,6 +379,16 @@ function ComparisonCardEditor({ card, lessonDay, onSave, onCancel }: {
   onCancel: () => void;
 }) {
   const [text, setText] = useState(card?.text || '');
+  const [audioUrl, setAudioUrl] = useState<string | null>(card?.audio_url || null);
+
+  // Update audioUrl when card prop changes
+  useEffect(() => {
+    if (card?.audio_url) {
+      setAudioUrl(card.audio_url);
+    } else {
+      setAudioUrl(null);
+    }
+  }, [card?.audio_url]);
 
   const handleSave = () => {
     if (!text.trim()) {
@@ -236,6 +399,7 @@ function ComparisonCardEditor({ card, lessonDay, onSave, onCancel }: {
     onSave({
       text: text.trim(),
       audio: true,
+      audio_url: audioUrl || card?.audio_url || undefined,
     });
   };
 
@@ -275,7 +439,8 @@ function ComparisonCardEditor({ card, lessonDay, onSave, onCancel }: {
                 });
 
                 const data = await response.json();
-                if (data.success) {
+                if (data.success && data.audioUrl) {
+                  setAudioUrl(data.audioUrl);
                   alert('Аудио успешно сгенерировано!');
                 } else {
                   alert('Ошибка при генерации аудио: ' + (data.error || 'Unknown error'));
@@ -319,7 +484,8 @@ function ComparisonCardEditor({ card, lessonDay, onSave, onCancel }: {
                   });
 
                   const data = await response.json();
-                  if (data.success) {
+                  if (data.success && data.audioUrl) {
+                    setAudioUrl(data.audioUrl);
                     alert('Аудио успешно загружено!');
                   } else {
                     alert('Ошибка при загрузке аудио: ' + (data.error || 'Unknown error'));
