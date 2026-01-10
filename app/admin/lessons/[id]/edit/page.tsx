@@ -25,29 +25,17 @@ function LessonEditorContent() {
   const loadLesson = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/admin/lessons`);
+      const response = await fetch(`/api/admin/lessons/${lessonId}`);
       const data = await response.json();
-      if (data.success && data.lessons) {
-        // Try to find by id first
-        let foundLesson = data.lessons.find((l: any) => l.id === parseInt(lessonId));
-        
-        // If not found by id, try by day_number (in case id is actually day_number)
-        if (!foundLesson) {
-          foundLesson = data.lessons.find((l: any) => l.day_number === parseInt(lessonId));
-        }
-        
-        if (foundLesson) {
-          setLesson(foundLesson);
-          // Parse yaml_content if it's a string
-          const yamlContent = typeof foundLesson.yaml_content === 'string' 
-            ? JSON.parse(foundLesson.yaml_content || '{}')
-            : foundLesson.yaml_content || {};
-          setTasks(yamlContent.tasks || []);
-        } else {
-          console.error('Lesson not found:', lessonId, 'Available lessons:', data.lessons.map((l: any) => ({ id: l.id, day_number: l.day_number })));
-        }
+      if (data.success && data.lesson) {
+        setLesson(data.lesson);
+        // Parse yaml_content if it's a string
+        const yamlContent = typeof data.lesson.yaml_content === 'string' 
+          ? JSON.parse(data.lesson.yaml_content || '{}')
+          : data.lesson.yaml_content || {};
+        setTasks(yamlContent.tasks || []);
       } else {
-        console.error('Failed to load lessons:', data);
+        console.error('Failed to load lesson:', data);
       }
     } catch (err) {
       console.error('Error loading lesson:', err);
@@ -178,24 +166,11 @@ function LessonEditorContent() {
     );
   }
 
-  if (editingTask) {
-    return (
-      <TaskEditor
-        task={editingTask}
-        lessonDay={lesson.day_number}
-        onSave={(task) => {
-          handleSaveTask(task);
-        }}
-        onCancel={() => setEditingTask(null)}
-      />
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-20">
+        <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <button
@@ -212,18 +187,9 @@ function LessonEditorContent() {
                 className="h-8 w-auto"
               />
               <h1 className="text-xl font-bold text-gray-900">
-                Редактирование урока {lesson.day_number}: {lesson.title_ru}
+                Урок {lesson.day_number}: {lesson.title_ru}
               </h1>
             </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">Задания</h2>
             <button
               onClick={() => setShowTaskTypeModal(true)}
               className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -231,62 +197,82 @@ function LessonEditorContent() {
               + Создать задание
             </button>
           </div>
+        </div>
+      </header>
 
-          {tasks.length === 0 ? (
-            <p className="text-gray-600 text-center py-8">
-              Заданий пока нет. Создайте первое задание.
-            </p>
-          ) : (
-            <div className="space-y-4">
-              {tasks.map((task: any) => (
-                <div
-                  key={task.task_id}
-                  className="border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition-colors"
-                >
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded text-sm font-medium">
+      {/* Two-Panel Layout */}
+      <div className="flex-1 flex overflow-hidden">
+        {/* Left Panel - Tasks List */}
+        <div className="w-80 bg-white border-r border-gray-200 overflow-y-auto">
+          <div className="p-4">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Задания урока</h2>
+            {tasks.length === 0 ? (
+              <p className="text-gray-500 text-sm text-center py-8">
+                Заданий пока нет
+              </p>
+            ) : (
+              <div className="space-y-2">
+                {tasks.map((task: any) => {
+                  const isSelected = editingTask?.task_id === task.task_id;
+                  return (
+                    <div
+                      key={task.task_id}
+                      onClick={() => setEditingTask(task)}
+                      className={`p-3 rounded-lg cursor-pointer transition-all ${
+                        isSelected
+                          ? 'bg-blue-50 border-2 border-blue-500'
+                          : 'bg-gray-50 border-2 border-transparent hover:border-gray-300'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-sm font-medium text-gray-900">
                           Задание {task.task_id}
                         </span>
-                        <span className="px-2 py-1 bg-gray-100 text-gray-800 rounded text-sm">
-                          {task.type}
+                        <span className="text-xs px-2 py-0.5 bg-gray-200 text-gray-700 rounded">
+                          {task.task_type || task.type || 'unknown'}
                         </span>
                       </div>
-                      <h3 className="font-semibold text-gray-900">
+                      <h3 className="text-sm font-semibold text-gray-900 truncate">
                         {typeof task.title === 'string' 
                           ? task.title 
                           : task.title?.ru || task.title?.en || 'Без названия'}
                       </h3>
-                      {task.subtitle && (
-                        <p className="text-sm text-gray-600 mt-1">
-                          {typeof task.subtitle === 'string' 
-                            ? task.subtitle 
-                            : task.subtitle?.ru || task.subtitle?.en || ''}
+                      {task.blocks && Array.isArray(task.blocks) && (
+                        <p className="text-xs text-gray-500 mt-1">
+                          {task.blocks.length} блоков
                         </p>
                       )}
                     </div>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => setEditingTask(task)}
-                        className="px-3 py-1 text-blue-600 hover:text-blue-800 text-sm font-medium"
-                      >
-                        Редактировать
-                      </button>
-                      <button
-                        onClick={() => handleDeleteTask(task.task_id)}
-                        className="px-3 py-1 text-red-600 hover:text-red-800 text-sm font-medium"
-                      >
-                        Удалить
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Right Panel - Task Editor */}
+        <div className="flex-1 overflow-y-auto">
+          {editingTask ? (
+            <TaskEditor
+              task={editingTask}
+              lessonDay={lesson.day_number}
+              onSave={(task) => {
+                handleSaveTask(task);
+                // Keep editing the same task after save
+                setEditingTask(task);
+              }}
+              onCancel={() => setEditingTask(null)}
+            />
+          ) : (
+            <div className="flex items-center justify-center h-full text-gray-500">
+              <div className="text-center">
+                <p className="text-lg mb-2">Выберите задание для редактирования</p>
+                <p className="text-sm">или создайте новое задание</p>
+              </div>
             </div>
           )}
         </div>
-      </main>
+      </div>
 
       {/* Task Type Selection Modal */}
       {showTaskTypeModal && (
