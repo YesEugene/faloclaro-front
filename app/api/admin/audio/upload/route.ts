@@ -90,16 +90,50 @@ export async function POST(request: NextRequest) {
     }
 
     // Also update phrases table for compatibility if textPt is provided
+    // NOTE: phrases table does not have lesson_id column, so we save only portuguese_text and audio_url
     if (textPt) {
-      await supabase
-        .from('phrases')
-        .upsert({
-          portuguese_text: textPt,
-          audio_url: publicUrl,
-          lesson_id: lessonId,
-        }, {
-          onConflict: 'portuguese_text',
-        });
+      try {
+        // Check if phrase with this text already exists
+        const { data: existingPhrase, error: checkError } = await supabase
+          .from('phrases')
+          .select('id, audio_url')
+          .eq('portuguese_text', textPt)
+          .limit(1)
+          .maybeSingle();
+        
+        if (checkError && checkError.code !== 'PGRST116') { // PGRST116 = not found (OK)
+          console.error('❌ Error checking existing phrase:', checkError);
+        } else if (existingPhrase) {
+          // Update existing phrase with new audio URL
+          const { error: updateError } = await supabase
+            .from('phrases')
+            .update({ audio_url: publicUrl })
+            .eq('id', existingPhrase.id);
+          
+          if (updateError) {
+            console.error('❌ Error updating existing phrase:', updateError);
+          } else {
+            console.log('✅ Audio URL updated in phrases table for existing phrase');
+          }
+        } else {
+          // Insert new phrase with audio URL
+          const { error: insertError } = await supabase
+            .from('phrases')
+            .insert({
+              portuguese_text: textPt,
+              audio_url: publicUrl,
+            });
+          
+          if (insertError) {
+            console.error('❌ Error inserting new phrase:', insertError);
+          } else {
+            console.log('✅ Audio URL saved to phrases table for new phrase');
+          }
+        }
+      } catch (phraseError) {
+        console.error('❌ Exception updating phrases table:', phraseError);
+        // Don't fail the request - audio is already uploaded
+      }
     }
 
     return NextResponse.json({
