@@ -697,20 +697,20 @@ function OverviewPageContent() {
                           style={cardStyle}
                           className="transition-all hover:opacity-80 cursor-pointer"
                         >
-                      {/* Icon above number */}
-                      <div className="flex-shrink-0 mb-2">
-                        <Image
-                          src={iconSrc}
-                          alt={isCompleted ? 'Completed' : isCurrentLesson ? 'Current' : isUnlocked ? 'Unlocked' : 'Locked'}
-                          width={24}
-                          height={24}
-                          className="w-6 h-6"
-                        />
-                      </div>
-                      {/* Lesson number - positioned below middle */}
-                      <span className="text-sm font-medium text-gray-700 text-center mt-auto">
-                        {lessonDay} {appLanguage === 'ru' ? 'Урок' : appLanguage === 'en' ? 'Lesson' : 'Lição'}
-                      </span>
+                          {/* Icon above number */}
+                          <div className="flex-shrink-0 mb-2">
+                            <Image
+                              src={iconSrc}
+                              alt={isCompleted ? 'Completed' : isCurrentLesson ? 'Current' : isUnlocked ? 'Unlocked' : 'Locked'}
+                              width={24}
+                              height={24}
+                              className="w-6 h-6"
+                            />
+                          </div>
+                          {/* Lesson number - positioned below middle */}
+                          <span className="text-sm font-medium text-gray-700 text-center mt-auto">
+                            {lessonDay} {appLanguage === 'ru' ? 'Урок' : appLanguage === 'en' ? 'Lesson' : 'Lição'}
+                          </span>
                         </Link>
                       ) : (
                         <div
