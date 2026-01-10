@@ -376,160 +376,180 @@ function UsersSection() {
 
 // Stats Section Component
 function StatsSection() {
-  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [users, setUsers] = useState<any[]>([]);
-  const [stats, setStats] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [usersStats, setUsersStats] = useState<Map<string, any>>(new Map());
+  const [loadingUsers, setLoadingUsers] = useState(true);
+  const [loadingStats, setLoadingStats] = useState<Map<string, boolean>>(new Map());
 
   useEffect(() => {
     loadUsers();
   }, []);
 
-  useEffect(() => {
-    if (selectedUserId) {
-      loadUserStats(selectedUserId);
-    }
-  }, [selectedUserId]);
-
   const loadUsers = async () => {
     try {
+      setLoadingUsers(true);
       const response = await fetch('/api/admin/users');
       const data = await response.json();
       if (data.success) {
-        setUsers(data.users || []);
+        const usersList = data.users || [];
+        setUsers(usersList);
+        // Load stats for all users
+        usersList.forEach((user: any) => {
+          loadUserStats(user.id);
+        });
       }
     } catch (err) {
       console.error('Error loading users:', err);
     } finally {
-      setLoading(false);
+      setLoadingUsers(false);
     }
   };
 
   const loadUserStats = async (userId: string) => {
     try {
-      setLoading(true);
+      setLoadingStats(prev => new Map(prev).set(userId, true));
       const response = await fetch(`/api/admin/stats?userId=${userId}`);
       const data = await response.json();
-      if (data.success) {
-        setStats(data.stats);
+      if (data.success && data.stats) {
+        setUsersStats(prev => new Map(prev).set(userId, data.stats));
+      } else {
+        console.error('Failed to load stats for user:', userId, data);
       }
     } catch (err) {
-      console.error('Error loading stats:', err);
+      console.error('Error loading stats for user:', userId, err);
     } finally {
-      setLoading(false);
+      setLoadingStats(prev => new Map(prev).set(userId, false));
     }
   };
 
-  if (loading && !selectedUserId) {
+  if (loadingUsers) {
     return <div className="text-gray-600">Загрузка пользователей...</div>;
   }
 
   return (
     <div className="space-y-6">
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Выберите пользователя
-        </label>
-        <select
-          value={selectedUserId || ''}
-          onChange={(e) => setSelectedUserId(e.target.value || null)}
-          className="w-full max-w-md px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black"
-        >
-          <option value="">-- Выберите пользователя --</option>
-          {users.map((user) => (
-            <option key={user.id} value={user.id}>
-              {user.email}
-            </option>
-          ))}
-        </select>
-      </div>
+      <h2 className="text-xl font-semibold text-gray-900">Статистика прохождения курса</h2>
+      {users.length === 0 ? (
+        <p className="text-gray-600">Нет пользователей</p>
+      ) : (
+        <div className="space-y-6">
+          {users.map((user) => {
+            const stats = usersStats.get(user.id);
+            const isLoading = loadingStats.get(user.id);
 
-      {selectedUserId && loading ? (
-        <div className="text-gray-600">Загрузка статистики...</div>
-      ) : selectedUserId && stats ? (
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h3 className="text-lg font-semibold mb-4">Статистика прохождения курса</h3>
-          <div className="space-y-4">
-            <div>
-              <p className="text-sm text-gray-600 mb-2">
-                Всего уроков: {stats.totalLessons || 0}
-              </p>
-              <p className="text-sm text-gray-600 mb-2">
-                Начато уроков: {stats.startedLessons || 0}
-              </p>
-              <p className="text-sm text-gray-600 mb-2">
-                Завершено уроков: {stats.completedLessons || 0}
-              </p>
-              <p className="text-sm text-gray-600 mb-4">
-                Прогресс: {stats.completedLessons > 0 && stats.totalLessons > 0 
-                  ? Math.round((stats.completedLessons / stats.totalLessons) * 100) 
-                  : 0}%
-              </p>
-            </div>
-
-            {stats.lessons && stats.lessons.length > 0 && (
-              <div>
-                <h4 className="font-semibold mb-2">По урокам:</h4>
-                <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                          Урок
-                        </th>
-                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                          Статус
-                        </th>
-                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                          Дата начала
-                        </th>
-                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                          Дата завершения
-                        </th>
-                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                          Заданий завершено
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                      {stats.lessons.map((lesson: any) => (
-                        <tr key={lesson.day_number}>
-                          <td className="px-4 py-2 text-sm text-gray-900">
-                            Урок {lesson.day_number}
-                          </td>
-                          <td className="px-4 py-2 text-sm">
-                            <span className={`px-2 py-1 rounded text-xs ${
-                              lesson.status === 'completed' 
-                                ? 'bg-green-100 text-green-800'
-                                : lesson.status === 'in_progress'
-                                ? 'bg-blue-100 text-blue-800'
-                                : 'bg-gray-100 text-gray-800'
-                            }`}>
-                              {lesson.status === 'completed' ? 'Завершено' :
-                               lesson.status === 'in_progress' ? 'В процессе' : 'Не начато'}
-                            </span>
-                          </td>
-                          <td className="px-4 py-2 text-sm text-gray-500">
-                            {lesson.started_at ? new Date(lesson.started_at).toLocaleDateString('ru-RU') : '-'}
-                          </td>
-                          <td className="px-4 py-2 text-sm text-gray-500">
-                            {lesson.completed_at ? new Date(lesson.completed_at).toLocaleDateString('ru-RU') : '-'}
-                          </td>
-                          <td className="px-4 py-2 text-sm text-gray-500">
-                            {lesson.completed_tasks || 0} / {lesson.total_tasks || 5}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+            return (
+              <div key={user.id} className="bg-white rounded-lg shadow-md p-6">
+                <div className="mb-4 pb-4 border-b border-gray-200">
+                  <h3 className="text-lg font-semibold text-gray-900">{user.email}</h3>
+                  <p className="text-sm text-gray-500">
+                    Подписка: {user.subscription_status || 'trial'} | 
+                    Язык: {user.language_preference || 'ru'}
+                  </p>
                 </div>
+
+                {isLoading ? (
+                  <div className="text-gray-600">Загрузка статистики...</div>
+                ) : stats ? (
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <div>
+                        <p className="text-sm text-gray-600">Всего уроков</p>
+                        <p className="text-2xl font-bold text-gray-900">{stats.totalLessons || 0}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-600">Начато</p>
+                        <p className="text-2xl font-bold text-yellow-600">{stats.startedLessons || 0}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-600">Завершено</p>
+                        <p className="text-2xl font-bold text-green-600">{stats.completedLessons || 0}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-600">Прогресс</p>
+                        <p className="text-2xl font-bold text-blue-600">
+                          {stats.completedLessons > 0 && stats.totalLessons > 0 
+                            ? Math.round((stats.completedLessons / stats.totalLessons) * 100) 
+                            : 0}%
+                        </p>
+                      </div>
+                    </div>
+
+                    {stats.lessons && stats.lessons.length > 0 && (
+                      <div>
+                        <h4 className="font-semibold mb-3 text-gray-900">По урокам:</h4>
+                        <div className="overflow-x-auto">
+                          <table className="min-w-full divide-y divide-gray-200">
+                            <thead className="bg-gray-50">
+                              <tr>
+                                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                                  Урок
+                                </th>
+                                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                                  Статус
+                                </th>
+                                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                                  Дата начала
+                                </th>
+                                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                                  Дата завершения
+                                </th>
+                                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                                  Заданий завершено
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody className="bg-white divide-y divide-gray-200">
+                              {stats.lessons
+                                .filter((lesson: any) => lesson.status !== 'not_started')
+                                .map((lesson: any) => (
+                                <tr key={lesson.day_number || lesson.lesson_id}>
+                                  <td className="px-4 py-2 text-sm text-gray-900">
+                                    Урок {lesson.day_number || 'N/A'}
+                                  </td>
+                                  <td className="px-4 py-2 text-sm">
+                                    <span className={`px-2 py-1 rounded text-xs ${
+                                      lesson.status === 'completed' 
+                                        ? 'bg-green-100 text-green-800'
+                                        : lesson.status === 'in_progress'
+                                        ? 'bg-yellow-100 text-yellow-800'
+                                        : 'bg-gray-100 text-gray-800'
+                                    }`}>
+                                      {lesson.status === 'completed' ? 'Завершено' :
+                                       lesson.status === 'in_progress' ? 'В процессе' : 'Не начато'}
+                                    </span>
+                                  </td>
+                                  <td className="px-4 py-2 text-sm text-gray-500">
+                                    {lesson.started_at ? new Date(lesson.started_at).toLocaleDateString('ru-RU') : '-'}
+                                  </td>
+                                  <td className="px-4 py-2 text-sm text-gray-500">
+                                    {lesson.completed_at ? new Date(lesson.completed_at).toLocaleDateString('ru-RU') : '-'}
+                                  </td>
+                                  <td className="px-4 py-2 text-sm text-gray-900">
+                                    {lesson.completed_tasks || 0}/{lesson.total_tasks || 5}
+                                  </td>
+                                </tr>
+                              ))}
+                              {stats.lessons.filter((lesson: any) => lesson.status !== 'not_started').length === 0 && (
+                                <tr>
+                                  <td colSpan={5} className="px-4 py-4 text-center text-sm text-gray-500">
+                                    Нет начатых уроков
+                                  </td>
+                                </tr>
+                              )}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <p className="text-gray-600">Статистика не найдена</p>
+                )}
               </div>
-            )}
-          </div>
+            );
+          })}
         </div>
-      ) : selectedUserId ? (
-        <div className="text-gray-600">Статистика не найдена</div>
-      ) : null}
+      )}
     </div>
   );
 }
