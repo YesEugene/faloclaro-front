@@ -3,16 +3,16 @@ import { supabase } from '@/lib/supabase';
 
 export async function GET(request: NextRequest) {
   try {
-    // Get all subscriptions with payment info
+    // Get all subscriptions with payment info (paid subscriptions)
     const { data: subscriptions, error: subError } = await supabase
       .from('subscriptions')
       .select(`
         *,
-        user:subscription_users (
+        user:subscription_users!subscriptions_user_id_fkey (
           email
         )
       `)
-      .eq('status', 'paid')
+      .in('status', ['paid', 'active'])
       .order('created_at', { ascending: false });
 
     if (subError) {
@@ -23,22 +23,28 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Get Stripe payment intents if they exist in the database
-    // Note: You may need to create a table to store Stripe payment information
-    // For now, we'll use subscription data as payment information
+    // Transform subscription data to payment format
+    const payments = (subscriptions || []).map((sub: any) => {
+      // Get user email from joined data or from subscription_users relation
+      const userEmail = sub.user?.email || 
+                       (Array.isArray(sub.user) && sub.user[0]?.email) || 
+                       '';
 
-    const payments = (subscriptions || []).map((sub: any) => ({
-      id: sub.id,
-      user_id: sub.user_id,
-      user_email: sub.user?.email || '',
-      amount: sub.amount_paid || null, // Amount in cents
-      currency: sub.currency || 'EUR',
-      status: sub.status,
-      stripe_payment_intent_id: sub.stripe_payment_intent_id || null,
-      stripe_session_id: sub.stripe_session_id || null,
-      created_at: sub.created_at,
-      updated_at: sub.updated_at,
-    }));
+      return {
+        id: sub.id,
+        user_id: sub.user_id,
+        user_email: userEmail,
+        amount: sub.amount_paid || null, // Amount in cents (if stored)
+        currency: sub.currency || 'EUR',
+        status: sub.status,
+        stripe_payment_intent_id: sub.stripe_payment_intent_id || sub.stripe_subscription_id || null,
+        stripe_session_id: sub.stripe_session_id || null,
+        created_at: sub.created_at,
+        updated_at: sub.updated_at,
+        trial_started_at: sub.trial_started_at,
+        trial_ends_at: sub.trial_ends_at,
+      };
+    });
 
     return NextResponse.json({
       success: true,
