@@ -38,6 +38,8 @@ function PhrasesContent() {
       
       // Handle subscription course lesson
       if (lessonDay && lessonToken && taskId) {
+        console.log('🔍 Loading phrases for lesson:', { lessonDay, lessonToken, taskId });
+        
         // Verify token and get lesson
         const { data: tokenData, error: tokenError } = await supabase
           .from('lesson_access_tokens')
@@ -46,20 +48,129 @@ function PhrasesContent() {
           .single();
 
         if (tokenError || !tokenData) {
-          console.error('Invalid lesson token:', tokenError);
+          console.error('❌ Invalid lesson token:', tokenError);
           setLoading(false);
           return;
         }
 
-        // Get lesson
+        console.log('✅ Token found, lesson_id:', tokenData.lesson_id);
+
+        // Get lesson - also fetch day_number to verify we have the right lesson
         const { data: lessonData, error: lessonError } = await supabase
           .from('lessons')
-          .select('yaml_content')
+          .select('id, day_number, yaml_content')
           .eq('id', tokenData.lesson_id)
           .single();
 
         if (lessonError || !lessonData) {
-          console.error('Lesson not found:', lessonError);
+          console.error('❌ Lesson not found:', lessonError);
+          setLoading(false);
+          return;
+        }
+
+        console.log('✅ Lesson loaded:', {
+          lessonId: lessonData.id,
+          dayNumber: lessonData.day_number,
+          expectedDayNumber: lessonDay,
+          matches: lessonData.day_number.toString() === lessonDay,
+        });
+
+        // Verify we have the correct lesson by day_number
+        if (lessonData.day_number.toString() !== lessonDay) {
+          console.error('❌ Lesson day_number mismatch!', {
+            expected: lessonDay,
+            actual: lessonData.day_number,
+            lessonId: lessonData.id,
+          });
+          // Try to find the correct lesson by day_number instead
+          const { data: correctLessonData, error: correctLessonError } = await supabase
+            .from('lessons')
+            .select('id, day_number, yaml_content')
+            .eq('day_number', parseInt(lessonDay))
+            .single();
+
+          if (correctLessonError || !correctLessonData) {
+            console.error('❌ Correct lesson not found by day_number:', correctLessonError);
+            setLoading(false);
+            return;
+          }
+
+          console.log('✅ Found correct lesson by day_number:', correctLessonData.id);
+          // Use the correct lesson
+          const tasks = correctLessonData.yaml_content?.tasks || [];
+          const vocabularyTask = tasks.find((t: any) => t.task_id === 1 && t.type === 'vocabulary');
+          
+          if (!vocabularyTask || !vocabularyTask.content?.cards) {
+            console.error('❌ Vocabulary task not found in correct lesson', {
+              tasksFound: tasks.length,
+              tasks: tasks.map((t: any) => ({ task_id: t.task_id, type: t.type })),
+            });
+            setLoading(false);
+            return;
+          }
+
+          console.log('✅ Vocabulary task found:', {
+            taskId: vocabularyTask.task_id,
+            type: vocabularyTask.type,
+            cardsCount: vocabularyTask.content.cards.length,
+            firstWords: vocabularyTask.content.cards.slice(0, 3).map((c: any) => c.word),
+          });
+
+          // Load phrases from the correct lesson's vocabulary task
+          const cards = vocabularyTask.content.cards;
+          const phrasesList: Phrase[] = [];
+          
+          for (let i = 0; i < cards.length; i++) {
+            const card = cards[i];
+            if (card.word) {
+              // Try to find audio URL for the word from database (optional)
+              let audioUrl: string | null = null;
+              const { data: phraseWithAudio } = await supabase
+                .from('phrases')
+                .select('audio_url')
+                .eq('portuguese_text', card.word)
+                .eq('phrase_type', 'word')
+                .single();
+              
+              if (phraseWithAudio?.audio_url) {
+                audioUrl = phraseWithAudio.audio_url;
+              }
+              
+              // Always create phrase from card data to ensure we only show lesson words
+              const phraseFromCard: Phrase = {
+                id: `lesson-${lessonDay}-task-1-word-${i}`,
+                cluster_id: '',
+                portuguese_text: card.word,
+                ipa_transcription: card.transcription || '',
+                phrase_type: 'word',
+                order_index: i,
+                audio_url: audioUrl,
+                movie_title: null,
+                movie_character: null,
+                movie_year: null,
+              };
+              phrasesList.push(phraseFromCard);
+            }
+          }
+
+          setPhrases(phrasesList);
+
+          // Load translations from task cards
+          const translationsMap: Record<string, string> = {};
+          cards.forEach((card: any, index: number) => {
+            if (card.word) {
+              const phraseId = phrasesList[index]?.id;
+              if (phraseId) {
+                if (language === 'ru' && card.word_translation_ru) {
+                  translationsMap[phraseId] = card.word_translation_ru;
+                } else if (language === 'en' && card.word_translation_en) {
+                  translationsMap[phraseId] = card.word_translation_en;
+                }
+              }
+            }
+          });
+          setTranslations(translationsMap);
+          
           setLoading(false);
           return;
         }
@@ -69,7 +180,7 @@ function PhrasesContent() {
         const vocabularyTask = tasks.find((t: any) => t.task_id === 1 && t.type === 'vocabulary');
         
         if (!vocabularyTask || !vocabularyTask.content?.cards) {
-          console.error('Vocabulary task not found or has no cards', {
+          console.error('❌ Vocabulary task not found or has no cards', {
             tasksFound: tasks.length,
             tasks: tasks.map((t: any) => ({ task_id: t.task_id, type: t.type })),
             taskIdFromUrl: taskId,
@@ -77,6 +188,13 @@ function PhrasesContent() {
           setLoading(false);
           return;
         }
+
+        console.log('✅ Vocabulary task found:', {
+          taskId: vocabularyTask.task_id,
+          type: vocabularyTask.type,
+          cardsCount: vocabularyTask.content.cards.length,
+          firstWords: vocabularyTask.content.cards.slice(0, 5).map((c: any) => c.word),
+        });
 
         // Load phrases from task cards ONLY - don't search in database
         // This ensures we only show words from the current lesson
