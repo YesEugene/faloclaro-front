@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
       .from('user_progress')
       .select(`
         *,
-        lesson:lessons (
+        lesson:lessons!user_progress_lesson_id_fkey (
           id,
           day_number,
           yaml_content
@@ -30,16 +30,26 @@ export async function GET(request: NextRequest) {
           completion_data
         )
       `)
-      .eq('user_id', userId)
-      .order('lesson:lessons(day_number)', { ascending: true });
+      .eq('user_id', userId);
 
     if (progressError) {
       console.error('Error fetching progress:', progressError);
       return NextResponse.json(
-        { error: 'Failed to fetch progress' },
+        { error: 'Failed to fetch progress', details: progressError.message },
         { status: 500 }
       );
     }
+
+    console.log('User progress loaded:', {
+      userId,
+      progressCount: progress?.length || 0,
+      progress: progress?.map((p: any) => ({
+        lessonId: p.lesson_id,
+        dayNumber: p.lesson?.day_number,
+        status: p.status,
+        taskProgressCount: p.task_progress?.length || 0,
+      })),
+    });
 
     // Get all lessons to calculate total and create complete progress map
     const { data: allLessons } = await supabase
@@ -55,6 +65,8 @@ export async function GET(request: NextRequest) {
       const lessonId = p.lesson?.id || p.lesson_id;
       if (lessonId) {
         progressMap.set(lessonId, p);
+      } else {
+        console.warn('Progress entry without lesson_id or lesson:', p);
       }
     });
 
