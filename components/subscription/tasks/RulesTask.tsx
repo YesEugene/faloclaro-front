@@ -122,10 +122,60 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
   };
 
   // Parse task structure
-  // Blocks are at root level of task, not in structure
-  const structure = task.structure || {};
-  const blocksOrder = structure.blocks_order || [];
-  const blocks = task.blocks || {}; // Blocks are at root level
+  // Support both old structure (blocks object) and new structure (blocks array)
+  const getBlocksStructure = () => {
+    if (Array.isArray(task.blocks)) {
+      // New structure: blocks is an array
+      // Convert array to object for backward compatibility
+      const blocksObj: { [key: string]: any } = {};
+      const blocksOrder: string[] = [];
+      
+      task.blocks.forEach((block: any, index: number) => {
+        const blockId = block.block_id || block.id || `block_${index + 1}`;
+        blocksObj[blockId] = {
+          ...block,
+          type: block.block_type || block.type || 'explanation',
+          // Ensure content is extracted correctly
+          examples: block.content?.examples || block.examples,
+          comparison_card: block.content?.comparison_card || block.comparison_card,
+          task_1: block.content?.task_1 || block.task_1,
+          task_2: block.content?.task_2 || block.task_2,
+          hint: block.content?.hint || block.hint,
+          note: block.content?.note || block.note,
+          title: block.content?.title || block.title,
+          explanation_text: block.content?.explanation_text || block.explanation_text,
+          instruction_text: block.content?.instruction_text || block.instruction_text,
+          action_button: block.content?.action_button || block.action_button,
+        };
+        blocksOrder.push(blockId);
+      });
+      
+      return {
+        blocks: blocksObj,
+        blocksOrder,
+        structure: {
+          blocks_order: blocksOrder,
+        },
+      };
+    } else if (task.blocks && typeof task.blocks === 'object' && !Array.isArray(task.blocks)) {
+      // Old structure: blocks is an object
+      const structure = task.structure || {};
+      const blocksOrder = structure.blocks_order || Object.keys(task.blocks);
+      return {
+        blocks: task.blocks,
+        blocksOrder,
+        structure,
+      };
+    }
+    // Fallback: empty structure
+    return {
+      blocks: {},
+      blocksOrder: [],
+      structure: {},
+    };
+  };
+
+  const { blocks, blocksOrder, structure } = getBlocksStructure();
 
   // Don't auto-reset - let user explicitly click "Пройти заново" to reset
 
@@ -383,7 +433,25 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
   const renderBlock = () => {
     if (!currentBlock) return null;
 
-    switch (currentBlock.type) {
+    // Support both old structure (type) and new structure (block_type)
+    const blockType = currentBlock.block_type || currentBlock.type;
+    
+    // Ensure blockType is a string, not an object
+    const normalizedBlockType = typeof blockType === 'string' ? blockType : 'explanation';
+    
+    // Ensure currentBlock has required structure
+    if (!normalizedBlockType || normalizedBlockType === 'unknown') {
+      return (
+        <div className="text-center text-red-600">
+          {appLanguage === 'ru' ? 'Ошибка: тип блока не определен' : 'Error: block type is undefined'}
+          <pre className="mt-2 text-xs bg-gray-100 p-2 rounded overflow-auto">
+            {JSON.stringify(currentBlock, null, 2)}
+          </pre>
+        </div>
+      );
+    }
+
+    switch (normalizedBlockType) {
       case 'explanation':
     return (
           <div className="space-y-4">
@@ -590,8 +658,19 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
             <div className="space-y-2">
                   {currentBlock.task_1.options?.map((option: any, index: number) => {
                     const taskKey = 'task_1';
-                    const optionText = getTranslatedText(option.text, appLanguage);
-                    const isSelected = selectedAnswers[taskKey] === optionText || selectedAnswers[taskKey] === option.text;
+                    // Always ensure optionText is a string, never an object
+                    let optionText: string = getTranslatedText(option.text, appLanguage);
+                    if (!optionText || typeof optionText !== 'string') {
+                      // Fallback if getTranslatedText returns invalid value
+                      if (typeof option.text === 'string') {
+                        optionText = option.text;
+                      } else if (option.text && typeof option.text === 'object') {
+                        optionText = option.text.pt || option.text.portuguese || option.text.ru || option.text.en || String(option.text);
+                      } else {
+                        optionText = String(option.text || '');
+                      }
+                    }
+                    const isSelected = selectedAnswers[taskKey] === optionText || (option.text && typeof option.text === 'object' && selectedAnswers[taskKey] === getTranslatedText(option.text, appLanguage));
                     const isCorrect = option.correct;
                     const showResult = showResults[taskKey];
                     
@@ -671,9 +750,26 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                   {currentBlock.task_2.options?.map((option: any, index: number) => {
                     const taskKey = 'task_2';
                     // Handle both formats: translated text (single_choice) and plain Portuguese text (situation_to_phrase)
-                    const optionText = currentBlock.task_2.format === 'single_choice' 
-                      ? getTranslatedText(option.text, appLanguage)
-                      : (typeof option.text === 'string' ? option.text : option.text);
+                    // Always ensure optionText is a string, never an object
+                    let optionText: string;
+                    if (currentBlock.task_2.format === 'single_choice') {
+                      optionText = getTranslatedText(option.text, appLanguage);
+                    } else {
+                      // For situation_to_phrase, option.text might be a string or an object
+                      if (typeof option.text === 'string') {
+                        optionText = option.text;
+                      } else if (option.text && typeof option.text === 'object') {
+                        // If it's an object, extract Portuguese text or use getTranslatedText
+                        optionText = option.text.pt || option.text.portuguese || getTranslatedText(option.text, appLanguage);
+                      } else {
+                        // Fallback if option.text is null/undefined or unexpected type
+                        optionText = String(option.text || '');
+                      }
+                    }
+                    // Ensure optionText is always a string, never null/undefined
+                    if (!optionText || typeof optionText !== 'string') {
+                      optionText = '';
+                    }
                     const isSelected = selectedAnswers[taskKey] === optionText || (option.text && typeof option.text === 'object' && selectedAnswers[taskKey] === getTranslatedText(option.text, appLanguage));
                     const isCorrect = option.correct;
                     const showResult = showResults[taskKey];
@@ -790,7 +886,16 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
         );
 
       default:
-        return <div>Unknown block type: {currentBlock.type}</div>;
+        return (
+          <div className="text-center text-red-600">
+            {appLanguage === 'ru' 
+              ? `Неизвестный тип блока: ${normalizedBlockType}` 
+              : `Unknown block type: ${normalizedBlockType}`}
+            <pre className="mt-2 text-xs bg-gray-100 p-2 rounded overflow-auto">
+              {JSON.stringify(currentBlock, null, 2)}
+            </pre>
+          </div>
+        );
     }
   };
 

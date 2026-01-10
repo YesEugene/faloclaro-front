@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface ListeningTaskEditorProps {
   task: any;
@@ -224,6 +224,22 @@ export default function ListeningTaskEditor({ task, onChange, lessonDay }: Liste
                       {item.audio && (
                         <span className="text-sm text-gray-600">Аудио: {item.audio}</span>
                       )}
+                      {item.audio_url && (
+                        <>
+                          <span className="text-sm text-blue-600">🎵 Аудио</span>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              const audioElement = new Audio(item.audio_url);
+                              audioElement.play().catch(err => console.error('Error playing audio:', err));
+                            }}
+                            className="px-2 py-1 text-blue-600 hover:text-blue-800 text-sm"
+                            title="Воспроизвести аудио"
+                          >
+                            ▶️
+                          </button>
+                        </>
+                      )}
                     </div>
                     {item.question && (
                       <p className="text-sm text-gray-700 mb-1">
@@ -301,6 +317,9 @@ function ListeningItemEditorModal({ item, lessonDay, onSave, onCancel }: {
   onCancel: () => void;
 }) {
   const [audio, setAudio] = useState<string>(item?.audio || '');
+  const [audioUrl, setAudioUrl] = useState<string | null>(item?.audio_url || null);
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+  const [audioExists, setAudioExists] = useState(false);
   const [textHidden, setTextHidden] = useState<boolean>(item?.text_hidden_before_answer !== false);
   const [question, setQuestion] = useState<{ ru: string; en: string }>({
     ru: typeof item?.question === 'string' ? '' : (item?.question?.ru || ''),
@@ -309,6 +328,59 @@ function ListeningItemEditorModal({ item, lessonDay, onSave, onCancel }: {
   const [options, setOptions] = useState<any[]>(item?.options || []);
   const [showOptionEditor, setShowOptionEditor] = useState(false);
   const [editingOptionIndex, setEditingOptionIndex] = useState<number | null>(null);
+
+  // Check for existing audio when audio text changes or modal opens
+  useEffect(() => {
+    // Prioritize audio_url from item if it exists
+    if (item?.audio_url) {
+      setAudioUrl(item.audio_url);
+      setAudioExists(true);
+      return;
+    }
+
+    // Otherwise check database
+    if (!audio.trim()) {
+      setAudioExists(false);
+      setAudioUrl(null);
+      return;
+    }
+
+    const checkAudio = async () => {
+      try {
+        const response = await fetch(`/api/phrases?text=${encodeURIComponent(audio.trim())}`);
+        const data = await response.json();
+        if (data.success && data.exists && data.audioUrl) {
+          setAudioUrl(data.audioUrl);
+          setAudioExists(true);
+        } else {
+          setAudioExists(false);
+          setAudioUrl(null);
+        }
+      } catch (err) {
+        console.error('Error checking audio:', err);
+        setAudioExists(false);
+        setAudioUrl(null);
+      }
+    };
+
+    checkAudio();
+  }, [audio, item?.audio_url]);
+
+  const handlePlayAudio = () => {
+    if (!audioUrl) return;
+    
+    const audioElement = new Audio(audioUrl);
+    setIsPlayingAudio(true);
+    audioElement.play().catch(err => {
+      console.error('Error playing audio:', err);
+      setIsPlayingAudio(false);
+    });
+    audioElement.onended = () => setIsPlayingAudio(false);
+    audioElement.onerror = () => {
+      console.error('Error loading audio');
+      setIsPlayingAudio(false);
+    };
+  };
 
   const handleAddOption = () => {
     setEditingOptionIndex(options.length);
@@ -358,6 +430,7 @@ function ListeningItemEditorModal({ item, lessonDay, onSave, onCancel }: {
     const itemData: any = {
       item_id: item?.item_id || Date.now(),
       audio: audio.trim(),
+      audio_url: audioUrl || undefined,
       text_hidden_before_answer: textHidden,
       question: {
         ru: question.ru.trim() || undefined,
@@ -385,7 +458,7 @@ function ListeningItemEditorModal({ item, lessonDay, onSave, onCancel }: {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Аудио текст (PT) *
             </label>
-            <div className="flex gap-2 mb-2">
+            <div className="flex gap-2 mb-2 items-center">
               <input
                 type="text"
                 value={audio}
@@ -393,6 +466,31 @@ function ListeningItemEditorModal({ item, lessonDay, onSave, onCancel }: {
                 className="flex-1 px-3 py-2 border border-gray-300 rounded-lg"
                 placeholder="Preciso de ajuda."
               />
+              {audioExists && audioUrl && (
+                <button
+                  type="button"
+                  onClick={handlePlayAudio}
+                  disabled={isPlayingAudio}
+                  className="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm flex items-center gap-2"
+                  title="Воспроизвести аудио"
+                >
+                  {isPlayingAudio ? (
+                    <>
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                      </svg>
+                      <span>Пауза</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+                      </svg>
+                      <span>Play</span>
+                    </>
+                  )}
+                </button>
+              )}
               <button
                 type="button"
                 onClick={async () => {
@@ -415,7 +513,9 @@ function ListeningItemEditorModal({ item, lessonDay, onSave, onCancel }: {
                     });
 
                     const data = await response.json();
-                    if (data.success) {
+                    if (data.success && data.audioUrl) {
+                      setAudioUrl(data.audioUrl);
+                      setAudioExists(true);
                       alert('Аудио успешно сгенерировано!');
                     } else {
                       alert('Ошибка при генерации аудио: ' + (data.error || 'Unknown error'));
@@ -459,7 +559,9 @@ function ListeningItemEditorModal({ item, lessonDay, onSave, onCancel }: {
                       });
 
                       const data = await response.json();
-                      if (data.success) {
+                      if (data.success && data.audioUrl) {
+                        setAudioUrl(data.audioUrl);
+                        setAudioExists(true);
                         alert('Аудио успешно загружено!');
                       } else {
                         alert('Ошибка при загрузке аудио: ' + (data.error || 'Unknown error'));
