@@ -13,26 +13,69 @@ function getTTSClient() {
   const credentialsPath = process.env.GOOGLE_APPLICATION_CREDENTIALS;
   const credentialsJson = process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON;
   
+  console.log('🔍 Initializing TTS client...');
+  console.log('  GOOGLE_APPLICATION_CREDENTIALS:', credentialsPath ? 'SET (path)' : 'NOT SET');
+  console.log('  GOOGLE_APPLICATION_CREDENTIALS_JSON:', credentialsJson ? 'SET (JSON)' : 'NOT SET');
+  
   if (!credentialsPath && !credentialsJson) {
-    throw new Error('GOOGLE_APPLICATION_CREDENTIALS or GOOGLE_APPLICATION_CREDENTIALS_JSON environment variable must be set');
+    const error = 'GOOGLE_APPLICATION_CREDENTIALS or GOOGLE_APPLICATION_CREDENTIALS_JSON environment variable must be set';
+    console.error('❌', error);
+    throw new Error(error);
   }
 
   try {
     if (credentialsJson) {
       // Use JSON credentials directly (for Vercel/serverless environments)
-      const credentials = JSON.parse(credentialsJson);
+      console.log('  Using JSON credentials from environment variable...');
+      let credentials: any;
+      try {
+        credentials = typeof credentialsJson === 'string' ? JSON.parse(credentialsJson) : credentialsJson;
+      } catch (parseError: any) {
+        console.error('❌ Error parsing JSON credentials:', parseError.message);
+        throw new Error(`Failed to parse GOOGLE_APPLICATION_CREDENTIALS_JSON: ${parseError.message}`);
+      }
+      
+      if (!credentials.type || !credentials.project_id || !credentials.private_key || !credentials.client_email) {
+        console.error('❌ Invalid credentials structure. Required fields: type, project_id, private_key, client_email');
+        throw new Error('Invalid credentials structure. Required fields: type, project_id, private_key, client_email');
+      }
+      
+      console.log('  Credentials parsed successfully. Project ID:', credentials.project_id);
+      // Use the full credentials object as-is, but ensure private_key has proper newlines
+      const processedCredentials = {
+        ...credentials,
+        private_key: credentials.private_key?.replace(/\\n/g, '\n') || credentials.private_key,
+      };
       ttsClient = new TextToSpeechClient({
-        credentials,
+        credentials: processedCredentials,
+        projectId: credentials.project_id,
       });
+      console.log('✅ TTS client initialized successfully with JSON credentials');
     } else if (credentialsPath) {
       // Use keyFilename (for local development)
-      ttsClient = new TextToSpeechClient({
-        keyFilename: credentialsPath,
-      });
+      console.log('  Using keyFilename:', credentialsPath);
+      try {
+        ttsClient = new TextToSpeechClient({
+          keyFilename: credentialsPath,
+        });
+        console.log('✅ TTS client initialized successfully with keyFilename');
+      } catch (fileError: any) {
+        console.error('❌ Error reading credentials file:', fileError.message);
+        throw new Error(`Failed to read credentials file from ${credentialsPath}: ${fileError.message}`);
+      }
     }
   } catch (error: any) {
-    console.error('Error initializing TTS client:', error);
+    console.error('❌ Error initializing TTS client:', error);
+    console.error('  Error details:', {
+      message: error.message,
+      code: error.code,
+      stack: error.stack,
+    });
     throw new Error(`Failed to initialize TTS client: ${error.message}`);
+  }
+
+  if (!ttsClient) {
+    throw new Error('TTS client is null after initialization');
   }
 
   return ttsClient;
@@ -75,9 +118,10 @@ export async function POST(request: NextRequest) {
     // Generate audio using Google TTS
     let audioBuffer: Buffer;
     try {
+      console.log('🎵 Generating audio for text:', textToGenerate.substring(0, 50) + '...');
       const client = getTTSClient();
       if (!client) {
-        throw new Error('Failed to initialize TTS client');
+        throw new Error('Failed to initialize TTS client - client is null');
       }
       
       const ttsRequest = {
@@ -89,15 +133,48 @@ export async function POST(request: NextRequest) {
         },
       };
 
+      console.log('  Voice config:', VOICE_CONFIG);
+      console.log('  Making TTS API call...');
+      
       const [response] = await client.synthesizeSpeech(ttsRequest);
+      
+      if (!response.audioContent) {
+        throw new Error('TTS API returned empty audio content');
+      }
+      
       audioBuffer = Buffer.from(response.audioContent as Uint8Array);
+      console.log('✅ Audio generated successfully. Size:', audioBuffer.length, 'bytes');
     } catch (ttsError: any) {
-      console.error('Error generating TTS audio:', ttsError);
+      console.error('❌ Error generating TTS audio:', ttsError);
+      console.error('  Error details:', {
+        message: ttsError.message,
+        code: ttsError.code,
+        status: ttsError.status,
+        details: ttsError.details,
+        stack: ttsError.stack?.substring(0, 500),
+      });
+      
+      // Provide more specific error messages based on error type
+      let errorMessage = 'Failed to generate audio using Google TTS';
+      let hint = 'Check if GOOGLE_APPLICATION_CREDENTIALS or GOOGLE_APPLICATION_CREDENTIALS_JSON environment variable is set correctly';
+      
+      if (ttsError.message?.includes('credentials') || ttsError.code === 'ENOENT' || ttsError.code === 'ENOTFOUND') {
+        errorMessage = 'Google Cloud credentials are missing or invalid';
+        hint = 'Please set GOOGLE_APPLICATION_CREDENTIALS_JSON environment variable with your service account JSON credentials';
+      } else if (ttsError.code === 'PERMISSION_DENIED' || ttsError.code === 7) {
+        errorMessage = 'Permission denied. Check if the service account has Text-to-Speech API enabled';
+        hint = 'Enable Text-to-Speech API for your Google Cloud project and grant permissions to the service account';
+      } else if (ttsError.code === 'INVALID_ARGUMENT' || ttsError.code === 3) {
+        errorMessage = 'Invalid request parameters';
+        hint = `Check the text input and voice configuration. Error: ${ttsError.message}`;
+      }
+      
       return NextResponse.json(
         { 
-          error: 'Failed to generate audio using Google TTS', 
+          error: errorMessage,
           details: ttsError.message,
-          hint: 'Check if GOOGLE_APPLICATION_CREDENTIALS or GOOGLE_APPLICATION_CREDENTIALS_JSON environment variable is set correctly'
+          code: ttsError.code,
+          hint,
         },
         { status: 500 }
       );
