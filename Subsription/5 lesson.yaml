@@ -95,81 +95,293 @@ tasks:
 
   # 2) RULES
   - task_id: 2
-    type: "rules"
+    type: rules
     title:
       ru: "Как это сказать"
       en: "How to say it"
+    subtitle:
+      ru: "Информация в объявлениях"
+      en: "Information in announcements"
+
     structure:
       blocks_order:
         - block_1_open_closed
         - block_2_price
+        - block_3_equivalence
+        - block_4_reinforcement
+        - block_5_speak
+
     blocks:
+
       block_1_open_closed:
-        type: "explanation"
+        type: explanation
         title:
           ru: "Открыто или закрыто"
           en: "Open or closed"
         explanation_text:
-          ru: "Чтобы сказать, открыт объект или закрыт, используют: Está aberto / Está fechado."
-          en: "To say if a place is open or closed, use: Está aberto / Está fechado."
+          ru: |
+            Чтобы сказать, открыт объект или закрыт, используют:
+            Está aberto / Está fechado
+          en: |
+            To say if a place is open or closed, use:
+            Está aberto / Está fechado
+        examples:
+          - text: "O museu está aberto."
+            audio: true
+          - text: "O museu está fechado."
+            audio: true
 
       block_2_price:
-        type: "explanation"
+        type: explanation
         title:
           ru: "Цена или бесплатно"
           en: "Price or free"
         explanation_text:
-          ru: "В объявлениях часто указывают цену или говорят, что вход бесплатный."
-          en: "In announcements they often state the price or say the entrance is free."
+          ru: |
+            В объявлениях часто говорят:
+            Preço или Entrada gratuita
+          en: |
+            In announcements people often say:
+            Preço or Entrada gratuita
+        examples:
+          - text: "Entrada gratuita."
+            audio: true
+
+      block_3_equivalence:
+        type: comparison
+        title:
+          ru: "Два варианта — один смысл"
+          en: "Two options — one meaning"
+        comparison_card:
+          - text: "Entrada gratuita."
+            audio: true
+          - text: "Preço: 0€."
+            audio: true
+        note:
+          ru: "Оба варианта означают, что вход бесплатный."
+          en: "Both options mean that the entrance is free."
+
+      block_4_reinforcement:
+        type: reinforcement
+
+        task_1:
+          format: single_choice
+          audio: "Entrada gratuita."
+          question:
+            ru: "Сколько стоит вход?"
+            en: "How much is the entrance?"
+          options:
+            - text:
+                ru: "Бесплатно"
+                en: "Free"
+              correct: true
+            - text:
+                ru: "Дорого"
+                en: "Expensive"
+              correct: false
+            - text:
+                ru: "Закрыто"
+                en: "Closed"
+              correct: false
+
+        task_2:
+          format: situation_to_phrase
+          situation_text:
+            ru: "Ты видишь объявление о бесплатном музее."
+            en: "You see an announcement about a free museum."
+          options:
+            - text: "Entrada gratuita."
+              correct: true
+            - text: "O museu está fechado."
+              correct: false
+            - text: "Obrigado."
+              correct: false
+
+      block_5_speak:
+        type: speak_out_loud
+        title:
+          ru: "Скажи вслух"
+          en: "Speak out loud"
+        instruction_text:
+          ru: |
+            Попробуй сказать:
+            O museu está aberto.
+            A entrada é gratuita.
+          en: |
+            Try to say:
+            O museu está aberto.
+            A entrada é gratuita.
+        action_button:
+          text:
+            ru: "✔ Я сказал(а) вслух"
+            en: "✔ I said it out loud"
+          completes_task: true
 
   # 3) LISTENING
-  - task_id: 3
-    type: "listening_comprehension"
+    - task_id: 3
+    type: listening_comprehension
     title:
       ru: "Предложения и понимание"
-      en: "Sentences and understanding"
+      en: "Listening and understanding"
+    subtitle:
+      ru: "Слушай объявление и пойми смысл"
+      en: "Listen to the announcement and understand it"
+
+    ui_rules:
+      audio_plays_first: true
+      show_text_after_answer: true
+      one_clear_correct_answer: true
+
     items:
       - item_id: 1
         audio: "Museu aberto das 10 às 18. Entrada gratuita."
+        text_hidden_before_answer: true
         question:
-          ru: "Что здесь говорится?"
-          en: "What is said here?"
+          ru: "О чём это объявление?"
+          en: "What is this announcement about?"
         options:
-          - text: "Информация о музее"
+          - text:
+              ru: "О музее"
+              en: "About a museum"
             correct: true
-          - text: "Просьба о помощи"
+          - text:
+              ru: "О человеке"
+              en: "About a person"
+            correct: false
+          - text:
+              ru: "О просьбе"
+              en: "About a request"
+            correct: false
+
+      - item_id: 2
+        audio: "Museu aberto das 10 às 18. Entrada gratuita."
+        text_hidden_before_answer: true
+        question:
+          ru: "Когда открыт музей?"
+          en: "When is the museum open?"
+        options:
+          - text: "Das 10 às 18"
+            correct: true
+          - text: "Agora"
+            correct: false
+          - text: "Amanhã"
+            correct: false
+
+      - item_id: 3
+        audio: "Museu aberto das 10 às 18. Entrada gratuita."
+        text_hidden_before_answer: true
+        question:
+          ru: "Сколько стоит вход?"
+          en: "How much is the entrance?"
+        options:
+          - text:
+              ru: "Бесплатно"
+              en: "Free"
+            correct: true
+          - text:
+              ru: "Дорого"
+              en: "Expensive"
+            correct: false
+          - text:
+              ru: "Закрыто"
+              en: "Closed"
             correct: false
 
   # 4) ATTENTION
-  - task_id: 4
-    type: "attention"
+   - task_id: 4
+    type: attention
     title:
       ru: "Внимательность"
       en: "Attention"
+    subtitle:
+      ru: "Найди важную информацию"
+      en: "Find the key information"
+
+    ui_rules:
+      audio_plays_first: false
+      show_text_after_answer: false
+      only_known_words: true
+      no_similar_distractors: true
+
     items:
       - item_id: 1
         text: "Museu aberto das 10 às 18. Entrada gratuita."
         question:
-          ru: "В какой ситуации это используют?"
-          en: "In what situation is this used?"
+          ru: "Что здесь самое важное?"
+          en: "What is the most important here?"
         options:
           - text:
-              ru: "Объявление"
-              en: "An announcement"
+              ru: "Часы работы и цена"
+              en: "Opening hours and price"
             correct: true
           - text:
-              ru: "Знакомство"
-              en: "Introduction"
+              ru: "Имя человека"
+              en: "A person’s name"
+            correct: false
+          - text:
+              ru: "Где он живёт"
+              en: "Where someone lives"
             correct: false
 
+      - item_id: 2
+        text: "Museu aberto das 10 às 18. Entrada gratuita."
+        question:
+          ru: "Что можно сделать?"
+          en: "What can you do?"
+        options:
+          - text:
+              ru: "Пойти в музей бесплатно"
+              en: "Go to the museum for free"
+            correct: true
+          - text:
+              ru: "Попросить о помощи"
+              en: "Ask for help"
+            correct: false
+          - text:
+              ru: "Поздороваться"
+              en: "Say hello"
+            correct: false
+            
   # 5) WRITING
-  - task_id: 5
-    type: "writing_optional"
+   - task_id: 5
+    type: writing_optional
     title:
       ru: "Письмо"
       en: "Writing"
+    subtitle:
+      ru: "Конструктор сообщения"
+      en: "Message builder"
+
+    instruction:
+      ru: |
+        Заполни сообщение, как в SMS.
+      en: |
+        Complete the message like an SMS.
+
     main_task:
-      format: "template_fill"
+      format: template_fill
       template:
         - "Hoje o museu está ___."
         - "A entrada é ___."
+      hints:
+        - "aberto"
+        - "gratuita"
+
+    example:
+      show_by_button: true
+      content:
+        - "Hoje o museu está aberto."
+        - "A entrada é gratuita."
+
+    alternative:
+      title:
+        ru: "Не хочешь писать?"
+        en: "Don’t want to write?"
+      instruction:
+        ru: "Просто скажи вслух: O museu está aberto. A entrada é gratuita."
+        en: "Just say out loud: O museu está aberto. A entrada é gratuita."
+      action_button:
+        text:
+          ru: "✔ Я сказал(а) вслух"
+          en: "✔ I said it out loud"
+        completes_task: true

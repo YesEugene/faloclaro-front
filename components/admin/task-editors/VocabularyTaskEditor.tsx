@@ -313,6 +313,11 @@ export default function VocabularyTaskEditor({ task, onChange, lessonDay }: Voca
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-sm font-medium text-gray-500">#{index + 1}</span>
                       <span className="font-semibold text-gray-900">{card.word || 'Без слова'}</span>
+                      {card.audio_url && (
+                        <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full">
+                          🎵 Аудио
+                        </span>
+                      )}
                     </div>
                     {card.transcription && (
                       <p className="text-sm text-gray-600 mb-1">[{card.transcription}]</p>
@@ -331,7 +336,22 @@ export default function VocabularyTaskEditor({ task, onChange, lessonDay }: Voca
                       <p className="text-sm text-gray-600 mt-2 italic">"{card.example_sentence}"</p>
                     )}
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 items-center">
+                    {card.audio_url && (
+                      <button
+                        onClick={() => {
+                          const audio = new Audio(card.audio_url);
+                          audio.play().catch(err => {
+                            console.error('Error playing audio:', err);
+                            alert('Ошибка при воспроизведении аудио');
+                          });
+                        }}
+                        className="px-3 py-1 bg-purple-600 text-white rounded hover:bg-purple-700 text-sm font-medium flex items-center gap-1"
+                        title="Проиграть аудио"
+                      >
+                        ▶️ Play
+                      </button>
+                    )}
                     {index > 0 && (
                       <button
                         onClick={() => handleMoveCard(index, 'up')}
@@ -410,22 +430,35 @@ function CardEditorModal({ card, lessonDay, onSave, onCancel }: {
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   
-  // Check if audio exists in database when word changes or modal opens
+  // Initialize audio state from card or database when modal opens or card changes
   useEffect(() => {
-    const checkAudioExists = async () => {
-      if (!formData.word.trim()) {
+    const initializeAudio = async () => {
+      // CRITICAL: If card already has audio_url, use it immediately and mark as existing
+      // This preserves the audio URL even after closing and reopening the modal
+      if (card?.audio_url) {
+        console.log('✅ Card has audio_url, using it:', card.audio_url);
+        setFormData(prev => ({ ...prev, audioUrl: card.audio_url }));
+        setAudioExists(true);
+        return;
+      }
+      
+      // Get word from either formData or card (card.word might be available before formData.word)
+      const wordToCheck = formData.word.trim() || card?.word || '';
+      
+      // If no word, clear audio state
+      if (!wordToCheck) {
         setAudioExists(false);
         setFormData(prev => ({ ...prev, audioUrl: '' }));
         return;
       }
       
+      // Only check database if card doesn't have audio_url
       setIsCheckingAudio(true);
       try {
-        // Try to find audio in phrases table
-        // NOTE: lessonId parameter is ignored by API (phrases table doesn't have lesson_id)
-        const response = await fetch(`/api/phrases?text=${encodeURIComponent(formData.word.trim())}`);
+        const response = await fetch(`/api/phrases?text=${encodeURIComponent(wordToCheck)}`);
         const data = await response.json();
         if (data.success && data.exists && data.audioUrl) {
+          console.log('✅ Found audio in database:', data.audioUrl);
           setAudioExists(true);
           setFormData(prev => ({ ...prev, audioUrl: data.audioUrl }));
         } else {
@@ -441,10 +474,10 @@ function CardEditorModal({ card, lessonDay, onSave, onCancel }: {
       }
     };
     
-    // Delay check slightly to avoid too many requests
-    const timeoutId = setTimeout(checkAudioExists, 500);
-    return () => clearTimeout(timeoutId);
-  }, [formData.word, lessonDay]);
+    // Initialize on mount and when card changes
+    initializeAudio();
+  }, [card?.audio_url, card?.word, formData.word]); // Check when card or word changes
+  
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -467,9 +500,12 @@ function CardEditorModal({ card, lessonDay, onSave, onCancel }: {
       sentence_translation_en: formData.sentence_translation_en.trim() || undefined,
       word_translation_ru: formData.word_translation_ru.trim() || undefined,
       word_translation_en: formData.word_translation_en.trim() || undefined,
-      // Include audio_url if it exists (from generation or upload)
-      ...(formData.audioUrl ? { audio_url: formData.audioUrl } : {}),
+      // CRITICAL: Always include audio_url if it exists (from generation, upload, or card)
+      // This ensures the audio URL persists after saving and closing the modal
+      audio_url: formData.audioUrl || undefined,
     };
+    
+    console.log('💾 Saving card with audio_url:', cardData.audio_url || 'none');
 
     // If audio file is uploaded, we'll need to handle upload separately
     // For now, we'll just save the card data
