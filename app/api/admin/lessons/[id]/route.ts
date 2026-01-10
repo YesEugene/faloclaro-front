@@ -138,35 +138,94 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
+    const supabase = getSupabaseAdmin();
 
-    // Delete related audio files first (use admin client)
-    await getSupabaseAdmin()
-      .from('audio_files')
-      .delete()
-      .eq('lesson_id', id);
+    console.log(`🗑️  Starting deletion of lesson ${id}...`);
 
-    // Delete lesson (use admin client)
-    const { error } = await getSupabaseAdmin()
+    // Delete related data before deleting the lesson
+    // Note: user_progress and lesson_access_tokens have ON DELETE CASCADE in schema,
+    // but we'll delete them explicitly to ensure clean deletion
+    
+    // 1. Delete user progress (cascades to task_progress automatically)
+    try {
+      const { data: userProgressIds, error: fetchError } = await supabase
+        .from('user_progress')
+        .select('id')
+        .eq('lesson_id', id);
+      
+      if (!fetchError && userProgressIds && userProgressIds.length > 0) {
+        const progressIds = userProgressIds.map(p => p.id);
+        
+        // Delete task_progress first (references user_progress)
+        await supabase
+          .from('task_progress')
+          .delete()
+          .in('user_progress_id', progressIds);
+        
+        // Then delete user_progress
+        await supabase
+          .from('user_progress')
+          .delete()
+          .eq('lesson_id', id);
+        
+        console.log(`✅ Deleted ${userProgressIds.length} user_progress records`);
+      }
+    } catch (err: any) {
+      console.warn('⚠️  Warning deleting user_progress (may not exist or cascade will handle):', err.message);
+    }
+
+    // 2. Delete lesson access tokens
+    try {
+      const { error: tokensError } = await supabase
+        .from('lesson_access_tokens')
+        .delete()
+        .eq('lesson_id', id);
+      
+      if (!tokensError) {
+        console.log('✅ Deleted lesson_access_tokens records');
+      }
+    } catch (err: any) {
+      console.warn('⚠️  Warning deleting lesson_access_tokens (may not exist or cascade will handle):', err.message);
+    }
+
+    // 3. Delete related audio files
+    try {
+      const { error: audioFilesError } = await supabase
+        .from('audio_files')
+        .delete()
+        .eq('lesson_id', id);
+      
+      if (!audioFilesError) {
+        console.log('✅ Deleted audio_files records');
+      }
+    } catch (err: any) {
+      console.warn('⚠️  Warning deleting audio_files (may not exist):', err.message);
+    }
+
+    // 4. Finally, delete the lesson itself (this will cascade delete any remaining related data)
+    const { error } = await supabase
       .from('lessons')
       .delete()
       .eq('id', id);
 
     if (error) {
-      console.error('Error deleting lesson:', error);
+      console.error('❌ Error deleting lesson:', error);
       return NextResponse.json(
-        { error: 'Failed to delete lesson' },
+        { error: 'Failed to delete lesson', details: error.message },
         { status: 500 }
       );
     }
+
+    console.log('✅ Lesson deleted successfully');
 
     return NextResponse.json({
       success: true,
       message: 'Lesson deleted successfully',
     });
-  } catch (error) {
-    console.error('Error in DELETE /api/admin/lessons/[id]:', error);
+  } catch (error: any) {
+    console.error('❌ Error in DELETE /api/admin/lessons/[id]:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Internal server error', details: error.message },
       { status: 500 }
     );
   }

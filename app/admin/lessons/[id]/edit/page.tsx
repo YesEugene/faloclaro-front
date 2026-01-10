@@ -164,6 +164,31 @@ function LessonEditorContent() {
     }
   };
 
+  const handleDeleteLesson = async () => {
+    const lessonTitle = lesson.title_ru || lesson.title_en || lesson.title_pt || `Урок ${lesson.day_number}`;
+    const confirmMessage = `Вы уверены, что хотите удалить урок "${lessonTitle}"?\n\nЭто действие нельзя отменить. Все задания и связанные данные будут удалены.`;
+    
+    if (!confirm(confirmMessage)) return;
+
+    try {
+      const response = await fetch(`/api/admin/lessons/${lessonId}`, {
+        method: 'DELETE',
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        alert('Урок успешно удален!');
+        // Redirect to dashboard after deletion
+        router.push('/admin/dashboard');
+      } else {
+        alert('Ошибка при удалении урока: ' + (data.error || 'Unknown error'));
+      }
+    } catch (err: any) {
+      console.error('Error deleting lesson:', err);
+      alert('Ошибка при удалении урока: ' + (err.message || 'Unknown error'));
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -208,10 +233,17 @@ function LessonEditorContent() {
                     </h1>
                     <button
                       onClick={() => setEditingLesson(true)}
-                      className="text-gray-400 hover:text-gray-600 text-sm px-2 py-1"
+                      className="text-gray-400 hover:text-gray-600 text-sm px-2 py-1 rounded transition-colors"
                       title="Редактировать урок"
                     >
                       ✏️
+                    </button>
+                    <button
+                      onClick={handleDeleteLesson}
+                      className="text-red-400 hover:text-red-600 text-sm px-2 py-1 rounded transition-colors"
+                      title="Удалить урок"
+                    >
+                      🗑️
                     </button>
                   </>
                 ) : (
@@ -281,12 +313,21 @@ function LessonEditorContent() {
             </div>
             <div className="flex gap-2">
               {!editingLesson && (
-                <button
-                  onClick={() => setShowTaskTypeModal(true)}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  + Создать задание
-                </button>
+                <>
+                  <button
+                    onClick={() => setShowTaskTypeModal(true)}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    + Создать задание
+                  </button>
+                  <button
+                    onClick={handleDeleteLesson}
+                    className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center gap-2"
+                    title="Удалить урок"
+                  >
+                    🗑️ Удалить урок
+                  </button>
+                </>
               )}
             </div>
           </div>
