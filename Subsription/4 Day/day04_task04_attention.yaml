@@ -1,3 +1,89 @@
 task:
   task_id: 4
   type: attention
+  title:
+    ru: "Внимательность"
+    en: "Attention"
+  subtitle:
+    ru: "Пойми, что здесь происходит"
+    en: "Understand what is happening here"
+  estimated_time: "≈3–5"
+  show_timer: false
+  show_settings: false
+  completion_message:
+    ru: "Уровень прогресса: Уверенность"
+    en: "Progress level: Confidence"
+
+ui_rules:
+  audio_plays_first: true
+  show_text_after_answer: true
+  only_known_words: true
+  no_similar_distractors: true
+
+items:
+  - item_id: 1
+    audio: "Preciso de ajuda."
+    question:
+      ru: "О чём говорит человек?"
+      en: "What is the person saying?"
+    options:
+      - text:
+          ru: "Просит о помощи"
+          en: "Asking for help"
+        correct: true
+        feedback:
+          ru: "Preciso de ajuda означает «Мне нужна помощь»."
+          en: "Preciso de ajuda means «I need help»."
+      - text:
+          ru: "Благодарит"
+          en: "Thanking"
+        correct: false
+      - text:
+          ru: "Отказывает"
+          en: "Refusing"
+        correct: false
+
+  - item_id: 2
+    audio: "Pode ajudar?"
+    question:
+      ru: "Что означает эта фраза?"
+      en: "What does this phrase mean?"
+    options:
+      - text:
+          ru: "Просит о помощи"
+          en: "Asking for help"
+        correct: true
+        feedback:
+          ru: "Pode ajudar? означает «Можешь помочь?»."
+          en: "Pode ajudar? means «Can you help?»."
+      - text:
+          ru: "Благодарит"
+          en: "Thanking"
+        correct: false
+      - text:
+          ru: "Отказывает"
+          en: "Refusing"
+        correct: false
+
+  - item_id: 3
+    optional: true
+    audio: "Obrigado pela ajuda."
+    question:
+      ru: "О чём говорит человек?"
+      en: "What is the person saying?"
+    options:
+      - text:
+          ru: "Благодарит"
+          en: "Thanking"
+        correct: true
+        feedback:
+          ru: "Obrigado pela ajuda означает «Спасибо за помощь»."
+          en: "Obrigado pela ajuda means «Thank you for the help»."
+      - text:
+          ru: "Просит о помощи"
+          en: "Asking for help"
+        correct: false
+      - text:
+          ru: "Отказывает"
+          en: "Refusing"
+        correct: false

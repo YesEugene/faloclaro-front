@@ -1,3 +1,77 @@
 task:
   task_id: 5
   type: writing_optional
+  title:
+    ru: "Письмо"
+    en: "Writing"
+  subtitle:
+    ru: "Можно написать от руки или просто проговорить вслух"
+    en: "You can write by hand or just say it out loud"
+  estimated_time: "≈3–5"
+  show_timer: false
+  show_settings: false
+  optional: true
+  completion_message:
+    ru: "Уровень прогресса: Закреплено"
+    en: "Progress level: Reinforced"
+
+instruction:
+  text:
+    ru: |
+      Используй слова и фразы из сегодняшнего урока.
+      Можно просто сказать вслух — это тоже считается.
+    en: |
+      Use words and phrases from today's lesson.
+      You can just say it out loud — that counts too.
+
+main_task:
+  format: template_fill_or_speak
+  template:
+    - "Preciso de ___."
+    - "Pode ___?"
+    - "Obrigado pela ___."
+  hints:
+    - "ajuda"
+    - "ajudar"
+    - "ajuda"
+
+example:
+  show_by_button: true
+  button_text:
+    ru: "Показать пример"
+    en: "Show example"
+  content:
+    - "Preciso de ajuda."
+    - "Pode ajudar?"
+    - "Obrigado pela ajuda."
+
+alternative:
+  title:
+    ru: "Не хочешь писать?"
+    en: "Don't want to write?"
+  instruction:
+    ru: |
+      Просто скажи вслух:
+      **Preciso de ajuda.**
+      **Pode ajudar?**
+      **Obrigado pela ajuda.**
+    en: |
+      Just say out loud:
+      **Preciso de ajuda.**
+      **Pode ajudar?**
+      **Obrigado pela ajuda.**
+  action_button:
+    text:
+      ru: "✔ Я сказал(а) вслух"
+      en: "✔ I said it out loud"
+    completes_task: true
+
+reflection:
+  optional: true
+  text:
+    ru: |
+      Это уже португальский 🙂
+      Даже если с ошибками — это нормально.
+    en: |
+      This is already Portuguese 🙂
+      Even with mistakes — that's normal.
