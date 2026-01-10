@@ -33,29 +33,66 @@ function getTTSClient() {
       let credentials: any;
       try {
         // In Vercel, JSON might be stored as a string that needs parsing
-        // Try parsing once, and if it's already an object, use it directly
+        // It could be:
+        // 1. Direct JSON object: {"type": "service_account", ...}
+        // 2. JSON-escaped string: "{\"type\": \"service_account\", ...}"
+        // 3. Already parsed object (unlikely but possible)
+        
         if (typeof credentialsJson === 'string') {
           // Remove any leading/trailing whitespace
-          const trimmedJson = credentialsJson.trim();
+          let trimmedJson = credentialsJson.trim();
           
-          // Check if it looks like it might be double-encoded (has escaped quotes)
+          console.log('  First character:', trimmedJson.charAt(0));
+          console.log('  Last character:', trimmedJson.charAt(trimmedJson.length - 1));
+          
+          // Check if it's a JSON-escaped string (starts and ends with quotes)
           if (trimmedJson.startsWith('"') && trimmedJson.endsWith('"')) {
-            console.log('  JSON appears to be double-quoted, unescaping...');
-            // Try to unescape the string first
-            const unescaped = JSON.parse(trimmedJson);
-            credentials = typeof unescaped === 'string' ? JSON.parse(unescaped) : unescaped;
+            console.log('  JSON appears to be double-quoted string, parsing first level...');
+            try {
+              // First parse: get the actual JSON string
+              const firstParse = JSON.parse(trimmedJson);
+              
+              if (typeof firstParse === 'string') {
+                console.log('  First parse returned string, parsing second level...');
+                // Second parse: get the actual object
+                credentials = JSON.parse(firstParse);
+              } else {
+                // First parse returned an object (shouldn't happen but handle it)
+                console.log('  First parse returned object, using directly');
+                credentials = firstParse;
+              }
+            } catch (firstParseError: any) {
+              console.error('  First parse failed:', firstParseError.message);
+              // If first parse fails, maybe it's not double-encoded, try direct parse
+              console.log('  Trying direct parse instead...');
+              credentials = JSON.parse(trimmedJson);
+            }
+          } else if (trimmedJson.startsWith('{') && trimmedJson.endsWith('}')) {
+            // Direct JSON object
+            console.log('  JSON appears to be direct object, parsing...');
+            credentials = JSON.parse(trimmedJson);
           } else {
-            // Normal JSON parsing
+            // Try to parse anyway - might work
+            console.log('  JSON format unclear, attempting direct parse...');
             credentials = JSON.parse(trimmedJson);
           }
         } else {
           // Already an object (shouldn't happen in Vercel, but handle it anyway)
+          console.log('  Credentials already an object, using directly');
           credentials = credentialsJson;
         }
       } catch (parseError: any) {
         console.error('❌ Error parsing JSON credentials:', parseError.message);
-        console.error('  JSON snippet around error:', credentialsJson.substring(Math.max(0, parseError.position - 50), parseError.position + 50));
-        throw new Error(`Failed to parse GOOGLE_APPLICATION_CREDENTIALS_JSON: ${parseError.message}. Make sure the JSON is valid and not double-encoded.`);
+        console.error('  Error position:', parseError.position);
+        if (parseError.position !== undefined) {
+          const start = Math.max(0, parseError.position - 100);
+          const end = Math.min(credentialsJson.length, parseError.position + 100);
+          console.error('  JSON snippet around error:', credentialsJson.substring(start, end));
+          console.error('  Error marker position:', ' '.repeat(Math.min(100, parseError.position - start)) + '^');
+        } else {
+          console.error('  JSON preview:', credentialsJson.substring(0, 500));
+        }
+        throw new Error(`Failed to parse GOOGLE_APPLICATION_CREDENTIALS_JSON: ${parseError.message}. The JSON might be double-encoded or invalid. Please check that you copied the entire JSON object from the credentials file, including the opening { and closing }.`);
       }
       
       console.log('  Credentials parsed. Type:', credentials.type, 'Project ID:', credentials.project_id);
