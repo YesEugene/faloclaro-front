@@ -28,6 +28,39 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Update or create subscription to "paid" status
+    const { data: existingSubscription } = await supabase
+      .from('subscriptions')
+      .select('id, status')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single();
+
+    if (existingSubscription) {
+      // Update existing subscription to paid
+      await supabase
+        .from('subscriptions')
+        .update({
+          status: 'paid',
+          paid_at: new Date().toISOString(),
+          expires_at: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString(),
+          trial_started_at: null,
+          trial_ends_at: null,
+        })
+        .eq('id', existingSubscription.id);
+    } else {
+      // Create new paid subscription
+      await supabase
+        .from('subscriptions')
+        .insert({
+          user_id: userId,
+          status: 'paid',
+          paid_at: new Date().toISOString(),
+          expires_at: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString(),
+        });
+    }
+
     // Get all lessons (1-60)
     const { data: allLessons, error: lessonsError } = await supabase
       .from('lessons')
