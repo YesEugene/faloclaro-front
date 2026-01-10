@@ -657,18 +657,41 @@ function PaymentsSection() {
 function LessonsSection() {
   const router = useRouter();
   const [lessons, setLessons] = useState<any[]>([]);
+  const [levels, setLevels] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedLevelId, setSelectedLevelId] = useState<string | null>(null); // null = all lessons
   const [selectedLesson, setSelectedLesson] = useState<any | null>(null);
   const [editingLesson, setEditingLesson] = useState<string | null>(null); // Store as JSON string for editing
+  const [showCreateLevel, setShowCreateLevel] = useState(false);
+
+  useEffect(() => {
+    loadLevels();
+    loadLessons();
+  }, []);
 
   useEffect(() => {
     loadLessons();
-  }, []);
+  }, [selectedLevelId]);
+
+  const loadLevels = async () => {
+    try {
+      const response = await fetch('/api/admin/levels');
+      const data = await response.json();
+      if (data.success) {
+        setLevels(data.levels || []);
+      }
+    } catch (err) {
+      console.error('Error loading levels:', err);
+    }
+  };
 
   const loadLessons = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/admin/lessons');
+      const url = selectedLevelId 
+        ? `/api/admin/lessons?level_id=${selectedLevelId}`
+        : '/api/admin/lessons';
+      const response = await fetch(url);
       const data = await response.json();
       if (data.success) {
         setLessons(data.lessons || []);
@@ -677,6 +700,26 @@ function LessonsSection() {
       console.error('Error loading lessons:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleCreateLevel = async (levelData: any) => {
+    try {
+      const response = await fetch('/api/admin/levels', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(levelData),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        setShowCreateLevel(false);
+        loadLevels();
+      } else {
+        alert('Ошибка при создании уровня: ' + (data.error || 'Unknown error'));
+      }
+    } catch (err) {
+      alert('Ошибка при создании уровня');
     }
   };
 
@@ -810,16 +853,19 @@ function LessonsSection() {
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                № Урока
+                № УРОКА
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Название
+                НАЗВАНИЕ
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Заданий
+                УРОВЕНЬ
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Действия
+                ЗАДАНИЙ
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                ДЕЙСТВИЯ
               </th>
             </tr>
           </thead>
@@ -840,6 +886,11 @@ function LessonsSection() {
                     {dayInfo.title?.ru || dayInfo.title || 'Без названия'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {lesson.levels 
+                      ? `${lesson.levels.level_number} Уровень`
+                      : 'Нет уровня'}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {tasks.length || 0}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
@@ -855,6 +906,162 @@ function LessonsSection() {
             })}
           </tbody>
         </table>
+      </div>
+
+      {/* Create Level Modal */}
+      {showCreateLevel && (
+        <CreateLevelModal
+          onSave={handleCreateLevel}
+          onCancel={() => setShowCreateLevel(false)}
+          existingLevels={levels}
+        />
+      )}
+    </div>
+  );
+}
+
+// Create Level Modal Component
+function CreateLevelModal({ onSave, onCancel, existingLevels }: {
+  onSave: (levelData: any) => void;
+  onCancel: () => void;
+  existingLevels: any[];
+}) {
+  const [levelNumber, setLevelNumber] = useState<string>('');
+  const [nameRu, setNameRu] = useState<string>('');
+  const [nameEn, setNameEn] = useState<string>('');
+  const [descriptionRu, setDescriptionRu] = useState<string>('');
+  const [descriptionEn, setDescriptionEn] = useState<string>('');
+  const [error, setError] = useState<string>('');
+
+  const handleSave = () => {
+    if (!levelNumber.trim()) {
+      setError('Пожалуйста, укажите номер уровня');
+      return;
+    }
+
+    if (!nameRu.trim() && !nameEn.trim()) {
+      setError('Пожалуйста, укажите название уровня хотя бы на одном языке');
+      return;
+    }
+
+    const existingNumbers = existingLevels.map(l => l.level_number);
+    if (existingNumbers.includes(parseInt(levelNumber))) {
+      setError(`Уровень с номером ${levelNumber} уже существует`);
+      return;
+    }
+
+    onSave({
+      level_number: parseInt(levelNumber),
+      name_ru: nameRu.trim() || undefined,
+      name_en: nameEn.trim() || undefined,
+      description_ru: descriptionRu.trim() || undefined,
+      description_en: descriptionEn.trim() || undefined,
+      order_index: parseInt(levelNumber),
+    });
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+        <div className="p-6 border-b border-gray-200">
+          <div className="flex justify-between items-center">
+            <h2 className="text-xl font-bold text-gray-900">Создание уровня</h2>
+            <button
+              onClick={onCancel}
+              className="text-gray-400 hover:text-gray-600"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+        <div className="p-6 space-y-4">
+          {error && (
+            <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-sm text-red-800">{error}</p>
+            </div>
+          )}
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Номер уровня *
+            </label>
+            <input
+              type="number"
+              value={levelNumber}
+              onChange={(e) => setLevelNumber(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              placeholder="1"
+              min="1"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Название (RU) *
+              </label>
+              <input
+                type="text"
+                value={nameRu}
+                onChange={(e) => setNameRu(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                placeholder="Уровень 1"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Название (EN) *
+              </label>
+              <input
+                type="text"
+                value={nameEn}
+                onChange={(e) => setNameEn(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                placeholder="Level 1"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Описание (RU)
+              </label>
+              <textarea
+                value={descriptionRu}
+                onChange={(e) => setDescriptionRu(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg h-24"
+                placeholder="Описание уровня..."
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Описание (EN)
+              </label>
+              <textarea
+                value={descriptionEn}
+                onChange={(e) => setDescriptionEn(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg h-24"
+                placeholder="Level description..."
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-2 pt-4 border-t border-gray-200">
+            <button
+              onClick={onCancel}
+              className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+            >
+              Отмена
+            </button>
+            <button
+              onClick={handleSave}
+              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+            >
+              Создать уровень
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
