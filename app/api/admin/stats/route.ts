@@ -13,23 +13,26 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Get user progress for all lessons
+    // Get all lessons first to calculate total
+    const { data: allLessons, error: lessonsError } = await supabase
+      .from('lessons')
+      .select('id, day_number, yaml_content')
+      .order('day_number', { ascending: true });
+
+    if (lessonsError) {
+      console.error('Error fetching lessons:', lessonsError);
+      return NextResponse.json(
+        { error: 'Failed to fetch lessons' },
+        { status: 500 }
+      );
+    }
+
+    const totalLessons = allLessons?.length || 0;
+
+    // Get user progress for all lessons (without join to avoid issues)
     const { data: progress, error: progressError } = await supabase
       .from('user_progress')
-      .select(`
-        *,
-        lesson:lessons!user_progress_lesson_id_fkey (
-          id,
-          day_number,
-          yaml_content
-        ),
-        task_progress (
-          task_id,
-          status,
-          completed_at,
-          completion_data
-        )
-      `)
+      .select('*, task_progress (*)')
       .eq('user_id', userId);
 
     if (progressError) {
@@ -43,30 +46,15 @@ export async function GET(request: NextRequest) {
     console.log('User progress loaded:', {
       userId,
       progressCount: progress?.length || 0,
-      progress: progress?.map((p: any) => ({
-        lessonId: p.lesson_id,
-        dayNumber: p.lesson?.day_number,
-        status: p.status,
-        taskProgressCount: p.task_progress?.length || 0,
-      })),
+      allLessonsCount: totalLessons,
     });
-
-    // Get all lessons to calculate total and create complete progress map
-    const { data: allLessons } = await supabase
-      .from('lessons')
-      .select('id, day_number')
-      .order('day_number', { ascending: true });
-
-    const totalLessons = allLessons?.length || 0;
 
     // Create a map of progress by lesson_id for quick lookup
     const progressMap = new Map<string, any>();
     (progress || []).forEach((p: any) => {
-      const lessonId = p.lesson?.id || p.lesson_id;
+      const lessonId = p.lesson_id;
       if (lessonId) {
         progressMap.set(lessonId, p);
-      } else {
-        console.warn('Progress entry without lesson_id or lesson:', p);
       }
     });
 
@@ -80,7 +68,10 @@ export async function GET(request: NextRequest) {
         if (existingProgress) {
           const taskProgress = existingProgress.task_progress || [];
           const completedTasks = taskProgress.filter((tp: any) => tp.status === 'completed').length;
-          const totalTasks = 5; // Each lesson has 5 tasks
+          // Get total tasks from yaml_content or default to 5
+          const yamlContent = lesson.yaml_content || {};
+          const tasksArray = Array.isArray(yamlContent.tasks) ? yamlContent.tasks : [];
+          const totalTasks = tasksArray.length > 0 ? tasksArray.length : 5;
 
           lessonsProgress.push({
             day_number: lesson.day_number,
@@ -94,6 +85,10 @@ export async function GET(request: NextRequest) {
           });
         } else {
           // Lesson not started
+          const yamlContent = lesson.yaml_content || {};
+          const tasksArray = Array.isArray(yamlContent.tasks) ? yamlContent.tasks : [];
+          const totalTasks = tasksArray.length > 0 ? tasksArray.length : 5;
+          
           lessonsProgress.push({
             day_number: lesson.day_number,
             lesson_id: lesson.id,
@@ -101,7 +96,7 @@ export async function GET(request: NextRequest) {
             started_at: null,
             completed_at: null,
             completed_tasks: 0,
-            total_tasks: 5,
+            total_tasks: totalTasks,
             task_progress: [],
           });
         }
