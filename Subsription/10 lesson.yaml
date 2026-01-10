@@ -1,0 +1,396 @@
+day:
+  number: 10
+  title:
+    ru: "Здоровье и помощь"
+    en: "Health and help"
+  subtitle:
+    ru: "Понимаем, когда кому-то нужна помощь"
+    en: "Understanding when someone needs help"
+
+tasks:
+
+# =========================================================
+# TASK 1 — VOCABULARY
+# =========================================================
+  - task_id: 1
+    type: vocabulary
+    title:
+      ru: "Слова и фразы"
+      en: "Words and phrases"
+    subtitle:
+      ru: "Здоровье и помощь"
+      en: "Health and help"
+    estimated_time: "~10"
+    show_timer: true
+    show_audio_settings: true
+    completion_rule: "auto_after_audio_10_min"
+
+    card_format:
+      show_word: true
+      show_transcription: true
+      show_example_sentence: true
+      show_word_translation_ru: true
+      show_sentence_translation_ru: true
+      show_sentence_translation_en: true
+
+    content:
+      cards:
+        - word: "Médico"
+          transcription: "[ˈmɛdiku]"
+          example_sentence: "Preciso de um médico."
+          sentence_translation_ru: "Мне нужен врач."
+          sentence_translation_en: "I need a doctor."
+          word_translation_ru: "врач"
+
+        - word: "Farmácia"
+          transcription: "[fɐɾˈmasjɐ]"
+          example_sentence: "A farmácia está aberta."
+          sentence_translation_ru: "Аптека открыта."
+          sentence_translation_en: "The pharmacy is open."
+          word_translation_ru: "аптека"
+
+        - word: "Ajuda"
+          transcription: "[ɐˈʒudɐ]"
+          example_sentence: "Preciso de ajuda."
+          sentence_translation_ru: "Мне нужна помощь."
+          sentence_translation_en: "I need help."
+          word_translation_ru: "помощь"
+
+        - word: "Doente"
+          transcription: "[duˈẽtɨ]"
+          example_sentence: "Estou doente."
+          sentence_translation_ru: "Я болен(больна)."
+          sentence_translation_en: "I am sick."
+          word_translation_ru: "больной"
+
+        - word: "Dor"
+          transcription: "[doɾ]"
+          example_sentence: "Tenho dor."
+          sentence_translation_ru: "У меня боль."
+          sentence_translation_en: "I have pain."
+          word_translation_ru: "боль"
+
+        - word: "Cabeça"
+          transcription: "[kɐˈbesɐ]"
+          example_sentence: "Dor de cabeça."
+          sentence_translation_ru: "Боль в голове."
+          sentence_translation_en: "Headache."
+          word_translation_ru: "голова"
+
+        - word: "Febre"
+          transcription: "[ˈfɛbɾɨ]"
+          example_sentence: "Tenho febre."
+          sentence_translation_ru: "У меня температура."
+          sentence_translation_en: "I have a fever."
+          word_translation_ru: "температура"
+
+        - word: "Remédio"
+          transcription: "[ʁɨˈmɛdju]"
+          example_sentence: "Preciso de remédio."
+          sentence_translation_ru: "Мне нужно лекарство."
+          sentence_translation_en: "I need medicine."
+          word_translation_ru: "лекарство"
+
+        - word: "Hospital"
+          transcription: "[uʃpiˈtaɫ]"
+          example_sentence: "O hospital é aqui."
+          sentence_translation_ru: "Больница здесь."
+          sentence_translation_en: "The hospital is here."
+          word_translation_ru: "больница"
+
+        - word: "Urgente"
+          transcription: "[uɾˈʒẽtɨ]"
+          example_sentence: "É urgente."
+          sentence_translation_ru: "Это срочно."
+          sentence_translation_en: "It is urgent."
+          word_translation_ru: "срочно"
+
+
+# =========================================================
+# TASK 2 — RULES
+# =========================================================
+  - task_id: 2
+    type: rules
+    title:
+      ru: "Как это сказать"
+      en: "How to say it"
+    subtitle:
+      ru: "Просьба о помощи и здоровье"
+      en: "Asking for help and health"
+
+    structure:
+      blocks_order:
+        - block_1_need
+        - block_2_be_sick
+        - block_3_equivalence
+        - block_4_reinforcement
+        - block_5_speak
+
+    blocks:
+
+      block_1_need:
+        type: explanation
+        title:
+          ru: "Как сказать, что тебе нужно"
+          en: "How to say you need something"
+        explanation_text:
+          ru: "Чтобы сказать, что тебе что-то нужно, используют: Preciso de + слово."
+          en: "To say you need something, use: Preciso de + word."
+        examples:
+          - text: "Preciso de ajuda."
+            audio: true
+          - text: "Preciso de um médico."
+            audio: true
+
+      block_2_be_sick:
+        type: explanation
+        title:
+          ru: "Как сказать, что ты болен"
+          en: "How to say you are sick"
+        explanation_text:
+          ru: "Чтобы сказать, что ты болен, используют: Estou doente."
+          en: "To say you are sick, use: Estou doente."
+        examples:
+          - text: "Estou doente."
+            audio: true
+          - text: "Tenho dor."
+            audio: true
+
+      block_3_equivalence:
+        type: comparison
+        title:
+          ru: "Примеры"
+          en: "Examples"
+        comparison_card:
+          - text: "Preciso de ajuda."
+            audio: true
+          - text: "Estou doente."
+            audio: true
+        note:
+          ru: "Обе фразы говорят о проблеме."
+          en: "Both phrases express a problem."
+
+      block_4_reinforcement:
+        type: reinforcement
+
+        task_1:
+          format: single_choice
+          audio: "Preciso de um médico."
+          question:
+            ru: "Что хочет человек?"
+            en: "What does the person want?"
+          options:
+            - text:
+                ru: "Врача"
+                en: "A doctor"
+              correct: true
+            - text:
+                ru: "Билет"
+                en: "A ticket"
+              correct: false
+            - text:
+                ru: "Еду"
+                en: "Food"
+              correct: false
+
+        task_2:
+          format: situation_to_phrase
+          situation_text:
+            ru: "Ты болен и хочешь сказать это."
+            en: "You are sick and want to say it."
+          options:
+            - text: "Estou doente."
+              correct: true
+            - text: "É barato."
+              correct: false
+            - text: "Obrigado."
+              correct: false
+
+      block_5_speak:
+        type: speak_out_loud
+        title:
+          ru: "Скажи вслух"
+          en: "Speak out loud"
+        instruction_text:
+          ru: "Скажи: Preciso de ajuda. Estou doente."
+          en: "Say: Preciso de ajuda. Estou doente."
+        action_button:
+          text:
+            ru: "✔ Я сказал(а) вслух"
+            en: "✔ I said it out loud"
+          completes_task: true
+
+
+# =========================================================
+# TASK 3 — LISTENING
+# =========================================================
+  - task_id: 3
+    type: listening_comprehension
+    title:
+      ru: "Предложения и понимание"
+      en: "Listening and understanding"
+    subtitle:
+      ru: "Слушай и пойми проблему"
+      en: "Listen and understand the problem"
+
+    ui_rules:
+      audio_plays_first: true
+      show_text_after_answer: true
+
+    items:
+      - item_id: 1
+        audio: "Tenho dor de cabeça."
+        text_hidden_before_answer: true
+        question:
+          ru: "Что у человека?"
+          en: "What does the person have?"
+        options:
+          - text:
+              ru: "Боль в голове"
+              en: "A headache"
+            correct: true
+          - text:
+              ru: "Температура"
+              en: "A fever"
+            correct: false
+          - text:
+              ru: "Встреча"
+              en: "A meeting"
+            correct: false
+
+      - item_id: 2
+        audio: "Preciso de um médico."
+        text_hidden_before_answer: true
+        question:
+          ru: "Что ему нужно?"
+          en: "What does he need?"
+        options:
+          - text:
+              ru: "Врач"
+              en: "A doctor"
+            correct: true
+          - text:
+              ru: "Автобус"
+              en: "A bus"
+            correct: false
+          - text:
+              ru: "Кофе"
+              en: "Coffee"
+            correct: false
+
+      - item_id: 3
+        audio: "É urgente."
+        text_hidden_before_answer: true
+        question:
+          ru: "Как это?"
+          en: "How is it?"
+        options:
+          - text:
+              ru: "Срочно"
+              en: "Urgent"
+            correct: true
+          - text:
+              ru: "Дёшево"
+              en: "Cheap"
+            correct: false
+          - text:
+              ru: "Открыто"
+              en: "Open"
+            correct: false
+
+
+# =========================================================
+# TASK 4 — ATTENTION
+# =========================================================
+  - task_id: 4
+    type: attention
+    title:
+      ru: "Внимательность"
+      en: "Attention"
+    subtitle:
+      ru: "Пойми, что происходит"
+      en: "Understand what is happening"
+
+    items:
+      - item_id: 1
+        audio: "Preciso de ajuda."
+        question:
+          ru: "В какой ситуации это говорят?"
+          en: "In what situation is this said?"
+        options:
+          - text:
+              ru: "Когда нужна помощь"
+              en: "When someone needs help"
+            correct: true
+          - text:
+              ru: "Когда платят"
+              en: "When paying"
+            correct: false
+          - text:
+              ru: "Когда прощаются"
+              en: "When saying goodbye"
+            correct: false
+
+      - item_id: 2
+        audio: "Estou doente."
+        question:
+          ru: "Что происходит?"
+          en: "What is happening?"
+        options:
+          - text:
+              ru: "Человек болен"
+              en: "The person is sick"
+            correct: true
+          - text:
+              ru: "Он покупает"
+              en: "He is buying"
+            correct: false
+          - text:
+              ru: "Он едет"
+              en: "He is traveling"
+            correct: false
+
+
+# =========================================================
+# TASK 5 — WRITING
+# =========================================================
+  - task_id: 5
+    type: writing_optional
+    title:
+      ru: "Письмо"
+      en: "Writing"
+    subtitle:
+      ru: "Сообщи о проблеме"
+      en: "Tell the problem"
+
+    instruction:
+      ru: "Заполни фразы."
+      en: "Complete the sentences."
+
+    main_task:
+      format: template_fill
+      template:
+        - "Estou ___."
+        - "Preciso de ___."
+      hints:
+        - "doente"
+        - "ajuda"
+
+    example:
+      show_by_button: true
+      content:
+        - "Estou doente."
+        - "Preciso de ajuda."
+
+    alternative:
+      title:
+        ru: "Можно сказать вслух"
+        en: "You can say it out loud"
+      instruction:
+        ru: "Скажи: Estou doente. Preciso de ajuda."
+        en: "Say: Estou doente. Preciso de ajuda."
+      action_button:
+        text:
+          ru: "✔ Я сказал(а) вслух"
+          en: "✔ I said it out loud"
+        completes_task: true

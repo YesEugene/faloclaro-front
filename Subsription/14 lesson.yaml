@@ -1,0 +1,396 @@
+day:
+  number: 14
+  title:
+    ru: "Свободное время и хобби"
+    en: "Free time and hobbies"
+  subtitle:
+    ru: "Понимаем, чем люди любят заниматься"
+    en: "Understanding what people like to do"
+
+tasks:
+
+# =========================================================
+# TASK 1 — VOCABULARY
+# =========================================================
+  - task_id: 1
+    type: vocabulary
+    title:
+      ru: "Слова и фразы"
+      en: "Words and phrases"
+    subtitle:
+      ru: "Хобби и свободное время"
+      en: "Hobbies and free time"
+    estimated_time: "~10"
+    show_timer: true
+    show_audio_settings: true
+    completion_rule: "auto_after_audio_10_min"
+
+    card_format:
+      show_word: true
+      show_transcription: true
+      show_example_sentence: true
+      show_word_translation_ru: true
+      show_sentence_translation_ru: true
+      show_sentence_translation_en: true
+
+    content:
+      cards:
+        - word: "Tempo livre"
+          transcription: "[ˈtẽpu ˈlivɾɨ]"
+          example_sentence: "No tempo livre descanso."
+          sentence_translation_ru: "В свободное время я отдыхаю."
+          sentence_translation_en: "In my free time I relax."
+          word_translation_ru: "свободное время"
+
+        - word: "Descansar"
+          transcription: "[dɨʃkɐ̃ˈsaɾ]"
+          example_sentence: "Gosto de descansar."
+          sentence_translation_ru: "Мне нравится отдыхать."
+          sentence_translation_en: "I like to rest."
+          word_translation_ru: "отдыхать"
+
+        - word: "Ler"
+          transcription: "[leɾ]"
+          example_sentence: "Gosto de ler."
+          sentence_translation_ru: "Мне нравится читать."
+          sentence_translation_en: "I like to read."
+          word_translation_ru: "читать"
+
+        - word: "Ver"
+          transcription: "[veɾ]"
+          example_sentence: "Gosto de ver filmes."
+          sentence_translation_ru: "Мне нравится смотреть фильмы."
+          sentence_translation_en: "I like to watch movies."
+          word_translation_ru: "смотреть"
+
+        - word: "Filme"
+          transcription: "[ˈfilmɨ]"
+          example_sentence: "O filme é bom."
+          sentence_translation_ru: "Фильм хороший."
+          sentence_translation_en: "The movie is good."
+          word_translation_ru: "фильм"
+
+        - word: "Música"
+          transcription: "[ˈmuzikɐ]"
+          example_sentence: "Gosto de música."
+          sentence_translation_ru: "Мне нравится музыка."
+          sentence_translation_en: "I like music."
+          word_translation_ru: "музыка"
+
+        - word: "Caminhar"
+          transcription: "[kɐmiˈɲaɾ]"
+          example_sentence: "Gosto de caminhar."
+          sentence_translation_ru: "Мне нравится гулять."
+          sentence_translation_en: "I like to walk."
+          word_translation_ru: "гулять"
+
+        - word: "Desporto"
+          transcription: "[dɨʃˈpɔɾtu]"
+          example_sentence: "Gosto de desporto."
+          sentence_translation_ru: "Мне нравится спорт."
+          sentence_translation_en: "I like sports."
+          word_translation_ru: "спорт"
+
+        - word: "Amigos"
+          transcription: "[ɐˈmiɡuʃ]"
+          example_sentence: "Saio com amigos."
+          sentence_translation_ru: "Я встречаюсь с друзьями."
+          sentence_translation_en: "I go out with friends."
+          word_translation_ru: "друзья"
+
+        - word: "Sair"
+          transcription: "[sɐˈiɾ]"
+          example_sentence: "Gosto de sair."
+          sentence_translation_ru: "Мне нравится выходить."
+          sentence_translation_en: "I like to go out."
+          word_translation_ru: "выходить"
+
+
+# =========================================================
+# TASK 2 — RULES
+# =========================================================
+  - task_id: 2
+    type: rules
+    title:
+      ru: "Как это сказать"
+      en: "How to say it"
+    subtitle:
+      ru: "Говорим о том, что нам нравится"
+      en: "Talking about what we like"
+
+    structure:
+      blocks_order:
+        - block_1_like
+        - block_2_free_time
+        - block_3_equivalence
+        - block_4_reinforcement
+        - block_5_speak
+
+    blocks:
+
+      block_1_like:
+        type: explanation
+        title:
+          ru: "Как сказать «мне нравится»"
+          en: "How to say 'I like'"
+        explanation_text:
+          ru: "Чтобы сказать, что тебе что-то нравится, используют: Gosto de + действие или вещь."
+          en: "To say you like something, use: Gosto de + action or thing."
+        examples:
+          - text: "Gosto de ler."
+            audio: true
+          - text: "Gosto de música."
+            audio: true
+
+      block_2_free_time:
+        type: explanation
+        title:
+          ru: "Свободное время"
+          en: "Free time"
+        explanation_text:
+          ru: "Чтобы сказать, что ты делаешь в свободное время, используют: No tempo livre + действие."
+          en: "To say what you do in your free time, use: No tempo livre + action."
+        examples:
+          - text: "No tempo livre descanso."
+            audio: true
+          - text: "No tempo livre leio."
+            audio: true
+
+      block_3_equivalence:
+        type: comparison
+        title:
+          ru: "Примеры"
+          en: "Examples"
+        comparison_card:
+          - text: "Gosto de ler."
+            audio: true
+          - text: "No tempo livre leio."
+            audio: true
+        note:
+          ru: "Обе фразы говорят о твоих занятиях."
+          en: "Both talk about what you do."
+
+      block_4_reinforcement:
+        type: reinforcement
+
+        task_1:
+          format: single_choice
+          audio: "Gosto de música."
+          question:
+            ru: "Что нравится человеку?"
+            en: "What does the person like?"
+          options:
+            - text:
+                ru: "Музыка"
+                en: "Music"
+              correct: true
+            - text:
+                ru: "Фильм"
+                en: "A movie"
+              correct: false
+            - text:
+                ru: "Работа"
+                en: "Work"
+              correct: false
+
+        task_2:
+          format: situation_to_phrase
+          situation_text:
+            ru: "Ты хочешь сказать, что любишь читать."
+            en: "You want to say you like reading."
+          options:
+            - text: "Gosto de ler."
+              correct: true
+            - text: "Gosto de sair."
+              correct: false
+            - text: "No tempo livre."
+              correct: false
+
+      block_5_speak:
+        type: speak_out_loud
+        title:
+          ru: "Скажи вслух"
+          en: "Speak out loud"
+        instruction_text:
+          ru: "Скажи: Gosto de ler. No tempo livre descanso."
+          en: "Say: Gosto de ler. No tempo livre descanso."
+        action_button:
+          text:
+            ru: "✔ Я сказал(а) вслух"
+            en: "✔ I said it out loud"
+          completes_task: true
+
+
+# =========================================================
+# TASK 3 — LISTENING
+# =========================================================
+  - task_id: 3
+    type: listening_comprehension
+    title:
+      ru: "Предложения и понимание"
+      en: "Listening and understanding"
+    subtitle:
+      ru: "Слушай и пойми, что человек любит"
+      en: "Listen and understand what the person likes"
+
+    ui_rules:
+      audio_plays_first: true
+      show_text_after_answer: true
+
+    items:
+      - item_id: 1
+        audio: "Gosto de música."
+        text_hidden_before_answer: true
+        question:
+          ru: "Что нравится человеку?"
+          en: "What does the person like?"
+        options:
+          - text:
+              ru: "Музыка"
+              en: "Music"
+            correct: true
+          - text:
+              ru: "Фильмы"
+              en: "Movies"
+            correct: false
+          - text:
+              ru: "Работа"
+              en: "Work"
+            correct: false
+
+      - item_id: 2
+        audio: "No tempo livre descanso."
+        text_hidden_before_answer: true
+        question:
+          ru: "Что он делает?"
+          en: "What does he do?"
+        options:
+          - text:
+              ru: "Отдыхает"
+              en: "Rests"
+            correct: true
+          - text:
+              ru: "Работает"
+              en: "Works"
+            correct: false
+          - text:
+              ru: "Учится"
+              en: "Studies"
+            correct: false
+
+      - item_id: 3
+        audio: "Gosto de sair com amigos."
+        text_hidden_before_answer: true
+        question:
+          ru: "С кем он любит выходить?"
+          en: "Who does he like to go out with?"
+        options:
+          - text:
+              ru: "С друзьями"
+              en: "With friends"
+            correct: true
+          - text:
+              ru: "С коллегами"
+              en: "With colleagues"
+            correct: false
+          - text:
+              ru: "С семьёй"
+              en: "With family"
+            correct: false
+
+
+# =========================================================
+# TASK 4 — ATTENTION
+# =========================================================
+  - task_id: 4
+    type: attention
+    title:
+      ru: "Внимательность"
+      en: "Attention"
+    subtitle:
+      ru: "Пойми, что человек любит"
+      en: "Understand what the person likes"
+
+    items:
+      - item_id: 1
+        audio: "Gosto de ler."
+        question:
+          ru: "О чём это?"
+          en: "What is this about?"
+        options:
+          - text:
+              ru: "Хобби"
+              en: "A hobby"
+            correct: true
+          - text:
+              ru: "Работа"
+              en: "Work"
+            correct: false
+          - text:
+              ru: "Проблема"
+              en: "A problem"
+            correct: false
+
+      - item_id: 2
+        audio: "No tempo livre caminho."
+        question:
+          ru: "Когда это происходит?"
+          en: "When does this happen?"
+        options:
+          - text:
+              ru: "В свободное время"
+              en: "In free time"
+            correct: true
+          - text:
+              ru: "На работе"
+              en: "At work"
+            correct: false
+          - text:
+              ru: "В школе"
+              en: "At school"
+            correct: false
+
+
+# =========================================================
+# TASK 5 — WRITING
+# =========================================================
+  - task_id: 5
+    type: writing_optional
+    title:
+      ru: "Письмо"
+      en: "Writing"
+    subtitle:
+      ru: "Скажи, что тебе нравится"
+      en: "Say what you like"
+
+    instruction:
+      ru: "Заполни фразы."
+      en: "Complete the sentences."
+
+    main_task:
+      format: template_fill
+      template:
+        - "Gosto de ___."
+        - "No tempo livre ___."
+      hints:
+        - "ler"
+        - "descansar"
+
+    example:
+      show_by_button: true
+      content:
+        - "Gosto de ler."
+        - "No tempo livre descanso."
+
+    alternative:
+      title:
+        ru: "Можно сказать вслух"
+        en: "You can say it out loud"
+      instruction:
+        ru: "Скажи: Gosto de ler. No tempo livre descanso."
+        en: "Say: Gosto de ler. No tempo livre descanso."
+      action_button:
+        text:
+          ru: "✔ Я сказал(а) вслух"
+          en: "✔ I said it out loud"
+        completes_task: true

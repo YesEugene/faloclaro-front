@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface ReinforcementBlockEditorProps {
   block: any;
@@ -26,6 +26,50 @@ export default function ReinforcementBlockEditor({ block, onChange, lessonDay }:
   const [task2, setTask2] = useState<any>(content.task_2 || null);
   const [showTask1Editor, setShowTask1Editor] = useState(false);
   const [showTask2Editor, setShowTask2Editor] = useState(false);
+  const [generatingAudio, setGeneratingAudio] = useState<{ task1: boolean; task2: boolean }>({ task1: false, task2: false });
+  const [isPlayingAudio, setIsPlayingAudio] = useState<{ task1: boolean; task2: boolean }>({ task1: false, task2: false });
+  const [audioUrls, setAudioUrls] = useState<{ task1: string | null; task2: string | null }>({ task1: null, task2: null });
+
+  // Check for existing audio URLs when tasks change
+  useEffect(() => {
+    const checkAudioUrls = async () => {
+      const urls: { task1: string | null; task2: string | null } = { task1: null, task2: null };
+      
+      // Check task1
+      if (task1?.audio_url) {
+        urls.task1 = task1.audio_url;
+      } else if (task1?.audio && task1.audio.trim()) {
+        try {
+          const response = await fetch(`/api/phrases?text=${encodeURIComponent(task1.audio.trim())}`);
+          const data = await response.json();
+          if (data.success && data.exists && data.audioUrl) {
+            urls.task1 = data.audioUrl;
+          }
+        } catch (error) {
+          console.error('Error checking audio for task1:', error);
+        }
+      }
+      
+      // Check task2
+      if (task2?.audio_url) {
+        urls.task2 = task2.audio_url;
+      } else if (task2?.audio && task2.audio.trim()) {
+        try {
+          const response = await fetch(`/api/phrases?text=${encodeURIComponent(task2.audio.trim())}`);
+          const data = await response.json();
+          if (data.success && data.exists && data.audioUrl) {
+            urls.task2 = data.audioUrl;
+          }
+        } catch (error) {
+          console.error('Error checking audio for task2:', error);
+        }
+      }
+      
+      setAudioUrls(urls);
+    };
+    
+    checkAudioUrls();
+  }, [task1, task2]);
 
   const updateBlock = (updates: any) => {
     onChange({
@@ -61,7 +105,75 @@ export default function ReinforcementBlockEditor({ block, onChange, lessonDay }:
     if (confirm('Вы уверены, что хотите удалить задание 2?')) {
       setTask2(null);
       updateBlock({ task_2: null });
+      setAudioUrls(prev => ({ ...prev, task2: null }));
     }
+  };
+
+  const handleGenerateAudio = async (taskNumber: 1 | 2) => {
+    const task = taskNumber === 1 ? task1 : task2;
+    if (!task || !task.audio || !task.audio.trim()) {
+      alert('Пожалуйста, сначала добавьте текст аудио');
+      return;
+    }
+
+    const taskKey = taskNumber === 1 ? 'task1' : 'task2';
+    setGeneratingAudio(prev => ({ ...prev, [taskKey]: true }));
+
+    try {
+      const response = await fetch('/api/admin/audio/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          text: task.audio.trim(),
+          lessonId: lessonDay.toString(),
+          taskId: 2, // Rules task
+          blockId: block.block_id || block.block_type || 'reinforcement',
+          itemId: `task_${taskNumber}_audio_${Date.now()}`,
+        }),
+      });
+
+      const data = await response.json();
+      if (data.success && data.audioUrl) {
+        // Update task with audio_url
+        const updatedTask = {
+          ...task,
+          audio_url: data.audioUrl,
+        };
+        
+        if (taskNumber === 1) {
+          setTask1(updatedTask);
+          updateBlock({ task_1: updatedTask });
+          setAudioUrls(prev => ({ ...prev, task1: data.audioUrl }));
+        } else {
+          setTask2(updatedTask);
+          updateBlock({ task_2: updatedTask });
+          setAudioUrls(prev => ({ ...prev, task2: data.audioUrl }));
+        }
+      } else {
+        alert('Ошибка при генерации аудио: ' + (data.error || 'Unknown error'));
+      }
+    } catch (error) {
+      console.error('Error generating audio:', error);
+      alert('Ошибка при генерации аудио');
+    } finally {
+      setGeneratingAudio(prev => ({ ...prev, [taskKey]: false }));
+    }
+  };
+
+  const handlePlayAudio = (taskNumber: 1 | 2) => {
+    const task = taskNumber === 1 ? task1 : task2;
+    const taskKey = taskNumber === 1 ? 'task1' : 'task2';
+    const audioUrl = audioUrls[taskKey] || task?.audio_url;
+    if (!audioUrl) return;
+
+    setIsPlayingAudio(prev => ({ ...prev, [taskKey]: true }));
+    const audio = new Audio(audioUrl);
+    audio.play().catch(err => {
+      console.error('Error playing audio:', err);
+      setIsPlayingAudio(prev => ({ ...prev, [taskKey]: false }));
+    });
+    audio.onended = () => setIsPlayingAudio(prev => ({ ...prev, [taskKey]: false }));
+    audio.onerror = () => setIsPlayingAudio(prev => ({ ...prev, [taskKey]: false }));
   };
 
   return (
@@ -85,6 +197,24 @@ export default function ReinforcementBlockEditor({ block, onChange, lessonDay }:
               </button>
             ) : (
               <div className="flex gap-2">
+                {(audioUrls.task1 || task1.audio_url) && (
+                  <button
+                    onClick={() => handlePlayAudio(1)}
+                    disabled={isPlayingAudio.task1}
+                    className="px-2 py-1 text-blue-600 hover:text-blue-800 text-sm"
+                    title="Воспроизвести аудио"
+                  >
+                    {isPlayingAudio.task1 ? '⏸️' : '▶️'}
+                  </button>
+                )}
+                <button
+                  onClick={() => handleGenerateAudio(1)}
+                  disabled={generatingAudio.task1 || !task1.audio?.trim() || task1.format !== 'single_choice'}
+                  className="px-3 py-1 text-green-600 hover:text-green-800 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  title="Сгенерировать аудио"
+                >
+                  {generatingAudio.task1 ? '⏳' : '🎵 Генерировать'}
+                </button>
                 <button
                   onClick={() => setShowTask1Editor(true)}
                   className="px-3 py-1 text-blue-600 hover:text-blue-800 text-sm font-medium"
@@ -103,10 +233,15 @@ export default function ReinforcementBlockEditor({ block, onChange, lessonDay }:
 
           {task1 && (
             <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
-              <p className="font-medium text-gray-900 mb-2">
-                {task1.format === 'single_choice' && 'Одиночный выбор'}
-                {task1.format === 'situation_to_phrase' && 'Ситуация к фразе'}
-              </p>
+              <div className="flex items-center gap-2 mb-2">
+                <p className="font-medium text-gray-900">
+                  {task1.format === 'single_choice' && 'Одиночный выбор'}
+                  {task1.format === 'situation_to_phrase' && 'Ситуация к фразе'}
+                </p>
+                {(audioUrls.task1 || task1.audio_url) && (
+                  <span className="text-sm text-blue-600">🎵 Аудио</span>
+                )}
+              </div>
               {task1.audio && (
                 <p className="text-sm text-gray-600 mb-1">Аудио: {task1.audio}</p>
               )}
@@ -137,6 +272,24 @@ export default function ReinforcementBlockEditor({ block, onChange, lessonDay }:
               </button>
             ) : (
               <div className="flex gap-2">
+                {(audioUrls.task2 || task2.audio_url) && (
+                  <button
+                    onClick={() => handlePlayAudio(2)}
+                    disabled={isPlayingAudio.task2}
+                    className="px-2 py-1 text-blue-600 hover:text-blue-800 text-sm"
+                    title="Воспроизвести аудио"
+                  >
+                    {isPlayingAudio.task2 ? '⏸️' : '▶️'}
+                  </button>
+                )}
+                <button
+                  onClick={() => handleGenerateAudio(2)}
+                  disabled={generatingAudio.task2 || !task2.audio?.trim() || task2.format !== 'single_choice'}
+                  className="px-3 py-1 text-green-600 hover:text-green-800 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  title="Сгенерировать аудио"
+                >
+                  {generatingAudio.task2 ? '⏳' : '🎵 Генерировать'}
+                </button>
                 <button
                   onClick={() => setShowTask2Editor(true)}
                   className="px-3 py-1 text-blue-600 hover:text-blue-800 text-sm font-medium"
@@ -155,10 +308,15 @@ export default function ReinforcementBlockEditor({ block, onChange, lessonDay }:
 
           {task2 && (
             <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
-              <p className="font-medium text-gray-900 mb-2">
-                {task2.format === 'single_choice' && 'Одиночный выбор'}
-                {task2.format === 'situation_to_phrase' && 'Ситуация к фразе'}
-              </p>
+              <div className="flex items-center gap-2 mb-2">
+                <p className="font-medium text-gray-900">
+                  {task2.format === 'single_choice' && 'Одиночный выбор'}
+                  {task2.format === 'situation_to_phrase' && 'Ситуация к фразе'}
+                </p>
+                {(audioUrls.task2 || task2.audio_url) && (
+                  <span className="text-sm text-blue-600">🎵 Аудио</span>
+                )}
+              </div>
               {task2.audio && (
                 <p className="text-sm text-gray-600 mb-1">Аудио: {task2.audio}</p>
               )}
@@ -216,6 +374,9 @@ function ReinforcementTaskEditor({ task, taskNumber, lessonDay, onSave, onCancel
 }) {
   const [format, setFormat] = useState<string>(task?.format || 'single_choice');
   const [audio, setAudio] = useState<string>(task?.audio || '');
+  const [audioUrl, setAudioUrl] = useState<string | null>(task?.audio_url || null);
+  const [audioExists, setAudioExists] = useState<boolean>(!!task?.audio_url);
+  const [isPlayingAudio, setIsPlayingAudio] = useState<boolean>(false);
   const [question, setQuestion] = useState<{ ru: string; en: string }>({
     ru: typeof task?.question === 'string' ? '' : (task?.question?.ru || ''),
     en: typeof task?.question === 'string' ? '' : (task?.question?.en || ''),
@@ -227,6 +388,42 @@ function ReinforcementTaskEditor({ task, taskNumber, lessonDay, onSave, onCancel
   const [options, setOptions] = useState<any[]>(task?.options || []);
   const [showOptionEditor, setShowOptionEditor] = useState(false);
   const [editingOptionIndex, setEditingOptionIndex] = useState<number | null>(null);
+
+  // Check for existing audio when task or audio text changes
+  useEffect(() => {
+    const checkAudio = async () => {
+      // Prioritize audio_url from task if it exists
+      if (task?.audio_url) {
+        setAudioUrl(task.audio_url);
+        setAudioExists(true);
+        return;
+      }
+      
+      // Otherwise check database
+      if (audio && audio.trim()) {
+        try {
+          const response = await fetch(`/api/phrases?text=${encodeURIComponent(audio.trim())}`);
+          const data = await response.json();
+          if (data.success && data.exists && data.audioUrl) {
+            setAudioUrl(data.audioUrl);
+            setAudioExists(true);
+          } else {
+            setAudioUrl(null);
+            setAudioExists(false);
+          }
+        } catch (error) {
+          console.error('Error checking audio:', error);
+          setAudioUrl(null);
+          setAudioExists(false);
+        }
+      } else {
+        setAudioUrl(null);
+        setAudioExists(false);
+      }
+    };
+    
+    checkAudio();
+  }, [task?.audio_url, audio]);
 
   const handleAddOption = () => {
     setEditingOptionIndex(options.length);
@@ -257,6 +454,20 @@ function ReinforcementTaskEditor({ task, taskNumber, lessonDay, onSave, onCancel
     }
   };
 
+  const handlePlayAudio = () => {
+    const urlToPlay = audioUrl || task?.audio_url;
+    if (!urlToPlay) return;
+
+    setIsPlayingAudio(true);
+    const audio = new Audio(urlToPlay);
+    audio.play().catch(err => {
+      console.error('Error playing audio:', err);
+      setIsPlayingAudio(false);
+    });
+    audio.onended = () => setIsPlayingAudio(false);
+    audio.onerror = () => setIsPlayingAudio(false);
+  };
+
   const handleSave = () => {
     if (!audio.trim() && format === 'single_choice') {
       alert('Пожалуйста, введите аудио текст для проигрывания');
@@ -281,6 +492,7 @@ function ReinforcementTaskEditor({ task, taskNumber, lessonDay, onSave, onCancel
     const taskData: any = {
       format,
       audio: audio.trim() || undefined,
+      audio_url: audioUrl || task?.audio_url || undefined,
       options,
     };
 
@@ -335,7 +547,7 @@ function ReinforcementTaskEditor({ task, taskNumber, lessonDay, onSave, onCancel
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Аудио текст для проигрывания (PT) *
               </label>
-              <div className="flex gap-2 mb-2">
+              <div className="flex gap-2 mb-2 items-center">
                 <input
                   type="text"
                   value={audio}
@@ -343,6 +555,17 @@ function ReinforcementTaskEditor({ task, taskNumber, lessonDay, onSave, onCancel
                   className="flex-1 px-3 py-2 border border-gray-300 rounded-lg"
                   placeholder="Preciso de ajuda."
                 />
+                {audioExists && audioUrl && (
+                  <button
+                    type="button"
+                    onClick={handlePlayAudio}
+                    disabled={isPlayingAudio}
+                    className="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm flex items-center gap-2"
+                    title="Воспроизвести аудио"
+                  >
+                    {isPlayingAudio ? '⏸️' : '▶️'} Play
+                  </button>
+                )}
                 <button
                   type="button"
                   onClick={async () => {
@@ -365,8 +588,9 @@ function ReinforcementTaskEditor({ task, taskNumber, lessonDay, onSave, onCancel
                       });
 
                       const data = await response.json();
-                      if (data.success) {
-                        // Audio generated successfully - icon will appear automatically
+                      if (data.success && data.audioUrl) {
+                        setAudioUrl(data.audioUrl);
+                        setAudioExists(true);
                       } else {
                         alert('Ошибка при генерации аудио: ' + (data.error || 'Unknown error'));
                       }
@@ -409,8 +633,9 @@ function ReinforcementTaskEditor({ task, taskNumber, lessonDay, onSave, onCancel
                         });
 
                         const data = await response.json();
-                        if (data.success) {
-                          // Audio uploaded successfully - icon will appear automatically
+                        if (data.success && data.audioUrl) {
+                          setAudioUrl(data.audioUrl);
+                          setAudioExists(true);
                         } else {
                           alert('Ошибка при загрузке аудио: ' + (data.error || 'Unknown error'));
                         }

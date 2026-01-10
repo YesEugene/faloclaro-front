@@ -343,7 +343,7 @@ function LessonEditorContent() {
               const task1 = block.content?.task_1 || block.task_1;
               const task2 = block.content?.task_2 || block.task_2;
               
-              if (task1?.audio && task1.audio.trim() && !task1.audio_url) {
+              if (task1?.audio && task1.audio.trim() && !task1.audio_url && task1.format === 'single_choice') {
                 try {
                   const response = await fetch('/api/admin/audio/generate', {
                     method: 'POST',
@@ -358,7 +358,15 @@ function LessonEditorContent() {
                   });
                   const data = await response.json();
                   if (data.success && data.audioUrl) {
+                    // Update task1 with audio_url
                     task1.audio_url = data.audioUrl;
+                    // Ensure block.content exists and update it
+                    if (!block.content) {
+                      block.content = {};
+                    }
+                    block.content.task_1 = task1;
+                    // Also update block.task_1 for backward compatibility
+                    block.task_1 = task1;
                     successCount++;
                   } else {
                     errorCount++;
@@ -369,7 +377,7 @@ function LessonEditorContent() {
                 await new Promise(resolve => setTimeout(resolve, 200));
               }
               
-              if (task2?.audio && task2.audio.trim() && !task2.audio_url) {
+              if (task2?.audio && task2.audio.trim() && !task2.audio_url && task2.format === 'single_choice') {
                 try {
                   const response = await fetch('/api/admin/audio/generate', {
                     method: 'POST',
@@ -384,7 +392,15 @@ function LessonEditorContent() {
                   });
                   const data = await response.json();
                   if (data.success && data.audioUrl) {
+                    // Update task2 with audio_url
                     task2.audio_url = data.audioUrl;
+                    // Ensure block.content exists and update it
+                    if (!block.content) {
+                      block.content = {};
+                    }
+                    block.content.task_2 = task2;
+                    // Also update block.task_2 for backward compatibility
+                    block.task_2 = task2;
                     successCount++;
                   } else {
                     errorCount++;

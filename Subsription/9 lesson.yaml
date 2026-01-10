@@ -1,0 +1,396 @@
+day:
+  number: 9
+  title:
+    ru: "Работа и занятия"
+    en: "Work and daily activities"
+  subtitle:
+    ru: "Понимаем, чем человек занимается"
+    en: "Understanding what people do"
+
+tasks:
+
+# =========================================================
+# TASK 1 — VOCABULARY
+# =========================================================
+  - task_id: 1
+    type: vocabulary
+    title:
+      ru: "Слова и фразы"
+      en: "Words and phrases"
+    subtitle:
+      ru: "Работа и учёба"
+      en: "Work and study"
+    estimated_time: "~10"
+    show_timer: true
+    show_audio_settings: true
+    completion_rule: "auto_after_audio_10_min"
+
+    card_format:
+      show_word: true
+      show_transcription: true
+      show_example_sentence: true
+      show_word_translation_ru: true
+      show_sentence_translation_ru: true
+      show_sentence_translation_en: true
+
+    content:
+      cards:
+        - word: "Trabalho"
+          transcription: "[tɾɐˈbaʎu]"
+          example_sentence: "Eu trabalho."
+          sentence_translation_ru: "Я работаю."
+          sentence_translation_en: "I work."
+          word_translation_ru: "работа / работаю"
+
+        - word: "Estudo"
+          transcription: "[iʃˈtudu]"
+          example_sentence: "Eu estudo português."
+          sentence_translation_ru: "Я учу португальский."
+          sentence_translation_en: "I study Portuguese."
+          word_translation_ru: "учусь"
+
+        - word: "Escola"
+          transcription: "[iʃˈkɔlɐ]"
+          example_sentence: "A escola é aqui."
+          sentence_translation_ru: "Школа здесь."
+          sentence_translation_en: "The school is here."
+          word_translation_ru: "школа"
+
+        - word: "Escritório"
+          transcription: "[iʃkɾiˈtɔɾju]"
+          example_sentence: "O escritório é grande."
+          sentence_translation_ru: "Офис большой."
+          sentence_translation_en: "The office is big."
+          word_translation_ru: "офис"
+
+        - word: "Emprego"
+          transcription: "[ẽˈpɾɛɡu]"
+          example_sentence: "Tenho um emprego."
+          sentence_translation_ru: "У меня есть работа."
+          sentence_translation_en: "I have a job."
+          word_translation_ru: "работа (место)"
+
+        - word: "Professor"
+          transcription: "[pɾufɛˈsoɾ]"
+          example_sentence: "O professor ensina."
+          sentence_translation_ru: "Учитель преподаёт."
+          sentence_translation_en: "The teacher teaches."
+          word_translation_ru: "преподаватель"
+
+        - word: "Aula"
+          transcription: "[ˈawlɐ]"
+          example_sentence: "Tenho aula hoje."
+          sentence_translation_ru: "У меня сегодня урок."
+          sentence_translation_en: "I have a class today."
+          word_translation_ru: "урок"
+
+        - word: "Reunião"
+          transcription: "[ʁewniˈɐ̃w]"
+          example_sentence: "Tenho uma reunião."
+          sentence_translation_ru: "У меня встреча."
+          sentence_translation_en: "I have a meeting."
+          word_translation_ru: "встреча"
+
+        - word: "Projeto"
+          transcription: "[pɾuˈʒɛtu]"
+          example_sentence: "O projeto é importante."
+          sentence_translation_ru: "Проект важный."
+          sentence_translation_en: "The project is important."
+          word_translation_ru: "проект"
+
+        - word: "Agora"
+          transcription: "[ɐˈɡɔɾɐ]"
+          example_sentence: "Agora trabalho."
+          sentence_translation_ru: "Сейчас я работаю."
+          sentence_translation_en: "Now I work."
+          word_translation_ru: "сейчас"
+
+
+# =========================================================
+# TASK 2 — RULES
+# =========================================================
+  - task_id: 2
+    type: rules
+    title:
+      ru: "Как это сказать"
+      en: "How to say it"
+    subtitle:
+      ru: "Работа и учёба"
+      en: "Work and study"
+
+    structure:
+      blocks_order:
+        - block_1_work_study
+        - block_2_now_today
+        - block_3_equivalence
+        - block_4_reinforcement
+        - block_5_speak
+
+    blocks:
+
+      block_1_work_study:
+        type: explanation
+        title:
+          ru: "Работать или учиться"
+          en: "To work or to study"
+        explanation_text:
+          ru: "Чтобы сказать, что ты работаешь или учишься, используют: Trabalho / Estudo."
+          en: "To say what you do, use: Trabalho / Estudo."
+        examples:
+          - text: "Eu trabalho."
+            audio: true
+          - text: "Eu estudo."
+            audio: true
+
+      block_2_now_today:
+        type: explanation
+        title:
+          ru: "Сегодня и сейчас"
+          en: "Today and now"
+        explanation_text:
+          ru: "Hoje — сегодня. Agora — сейчас."
+          en: "Hoje means today. Agora means now."
+        examples:
+          - text: "Hoje trabalho."
+            audio: true
+          - text: "Agora estudo."
+            audio: true
+
+      block_3_equivalence:
+        type: comparison
+        title:
+          ru: "Примеры"
+          en: "Examples"
+        comparison_card:
+          - text: "Hoje trabalho."
+            audio: true
+          - text: "Agora estudo."
+            audio: true
+        note:
+          ru: "Оба говорят о том, что человек делает."
+          en: "Both talk about what the person is doing."
+
+      block_4_reinforcement:
+        type: reinforcement
+
+        task_1:
+          format: single_choice
+          audio: "Eu estudo."
+          question:
+            ru: "Что делает человек?"
+            en: "What does the person do?"
+          options:
+            - text:
+                ru: "Учится"
+                en: "Studies"
+              correct: true
+            - text:
+                ru: "Работает"
+                en: "Works"
+              correct: false
+            - text:
+                ru: "Отдыхает"
+                en: "Rests"
+              correct: false
+
+        task_2:
+          format: situation_to_phrase
+          situation_text:
+            ru: "Ты хочешь сказать, что сейчас работаешь."
+            en: "You want to say you are working now."
+          options:
+            - text: "Agora trabalho."
+              correct: true
+            - text: "Hoje descanso."
+              correct: false
+            - text: "Bom dia."
+              correct: false
+
+      block_5_speak:
+        type: speak_out_loud
+        title:
+          ru: "Скажи вслух"
+          en: "Speak out loud"
+        instruction_text:
+          ru: "Скажи: Hoje trabalho. Agora estudo."
+          en: "Say: Hoje trabalho. Agora estudo."
+        action_button:
+          text:
+            ru: "✔ Я сказал(а) вслух"
+            en: "✔ I said it out loud"
+          completes_task: true
+
+
+# =========================================================
+# TASK 3 — LISTENING
+# =========================================================
+  - task_id: 3
+    type: listening_comprehension
+    title:
+      ru: "Предложения и понимание"
+      en: "Listening and understanding"
+    subtitle:
+      ru: "Слушай и пойми, что делает человек"
+      en: "Listen and understand what the person does"
+
+    ui_rules:
+      audio_plays_first: true
+      show_text_after_answer: true
+
+    items:
+      - item_id: 1
+        audio: "Hoje trabalho no escritório."
+        text_hidden_before_answer: true
+        question:
+          ru: "Где он работает?"
+          en: "Where does he work?"
+        options:
+          - text:
+              ru: "В офисе"
+              en: "In the office"
+            correct: true
+          - text:
+              ru: "В школе"
+              en: "At school"
+            correct: false
+          - text:
+              ru: "В кафе"
+              en: "In a café"
+            correct: false
+
+      - item_id: 2
+        audio: "Agora estudo português."
+        text_hidden_before_answer: true
+        question:
+          ru: "Что он делает?"
+          en: "What is he doing?"
+        options:
+          - text:
+              ru: "Учится"
+              en: "Studying"
+            correct: true
+          - text:
+              ru: "Работает"
+              en: "Working"
+            correct: false
+          - text:
+              ru: "Отдыхает"
+              en: "Resting"
+            correct: false
+
+      - item_id: 3
+        audio: "Tenho uma reunião."
+        text_hidden_before_answer: true
+        question:
+          ru: "Что у него есть?"
+          en: "What does he have?"
+        options:
+          - text:
+              ru: "Встреча"
+              en: "A meeting"
+            correct: true
+          - text:
+              ru: "Билет"
+              en: "A ticket"
+            correct: false
+          - text:
+              ru: "Цена"
+              en: "A price"
+            correct: false
+
+
+# =========================================================
+# TASK 4 — ATTENTION
+# =========================================================
+  - task_id: 4
+    type: attention
+    title:
+      ru: "Внимательность"
+      en: "Attention"
+    subtitle:
+      ru: "Пойми ситуацию"
+      en: "Understand the situation"
+
+    items:
+      - item_id: 1
+        audio: "Agora estudo."
+        question:
+          ru: "Что происходит?"
+          en: "What is happening?"
+        options:
+          - text:
+              ru: "Учёба"
+              en: "Studying"
+            correct: true
+          - text:
+              ru: "Работа"
+              en: "Working"
+            correct: false
+          - text:
+              ru: "Отдых"
+              en: "Resting"
+            correct: false
+
+      - item_id: 2
+        audio: "Tenho uma reunião."
+        question:
+          ru: "Что это?"
+          en: "What is this?"
+        options:
+          - text:
+              ru: "Рабочая встреча"
+              en: "A work meeting"
+            correct: true
+          - text:
+              ru: "Покупка"
+              en: "A purchase"
+            correct: false
+          - text:
+              ru: "Поездка"
+              en: "A trip"
+            correct: false
+
+
+# =========================================================
+# TASK 5 — WRITING
+# =========================================================
+  - task_id: 5
+    type: writing_optional
+    title:
+      ru: "Письмо"
+      en: "Writing"
+    subtitle:
+      ru: "Собери фразу"
+      en: "Build a sentence"
+
+    instruction:
+      ru: "Заполни фразы."
+      en: "Complete the sentences."
+
+    main_task:
+      format: template_fill
+      template:
+        - "Hoje ___."
+        - "Agora ___."
+      hints:
+        - "trabalho"
+        - "estudo"
+
+    example:
+      show_by_button: true
+      content:
+        - "Hoje trabalho."
+        - "Agora estudo."
+
+    alternative:
+      title:
+        ru: "Можно сказать вслух"
+        en: "You can say it out loud"
+      instruction:
+        ru: "Скажи: Hoje trabalho. Agora estudo."
+        en: "Say: Hoje trabalho. Agora estudo."
+      action_button:
+        text:
+          ru: "✔ Я сказал(а) вслух"
+          en: "✔ I said it out loud"
+        completes_task: true
