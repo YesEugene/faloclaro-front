@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import BlockEditor from '@/components/admin/block-editors/BlockEditor';
 
 interface RulesTaskEditorProps {
   task: any;
@@ -334,42 +335,3 @@ export default function RulesTaskEditor({ task, onChange, lessonDay }: RulesTask
     </div>
   );
 }
-
-// Block Editor Component (placeholder - will be implemented)
-function BlockEditor({ blockKey, block, lessonDay, onSave, onCancel }: {
-  blockKey: string;
-  block: any;
-  lessonDay: number;
-  onSave: (block: any) => void;
-  onCancel: () => void;
-}) {
-  return (
-    <div className="space-y-6">
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold text-gray-900">
-            Редактирование блока: {blockKey} ({block.type})
-          </h2>
-          <div className="flex gap-2">
-            <button
-              onClick={() => onSave(block)}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              Сохранить
-            </button>
-            <button
-              onClick={onCancel}
-              className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
-            >
-              Отмена
-            </button>
-          </div>
-        </div>
-        <p className="text-gray-600">
-          Редактор блока типа "{block.type}" будет реализован в следующем шаге.
-        </p>
-      </div>
-    </div>
-  );
-}
-

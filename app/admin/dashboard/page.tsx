@@ -655,6 +655,7 @@ function PaymentsSection() {
 
 // Lessons Section Component
 function LessonsSection() {
+  const router = useRouter();
   const [lessons, setLessons] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedLesson, setSelectedLesson] = useState<any | null>(null);
