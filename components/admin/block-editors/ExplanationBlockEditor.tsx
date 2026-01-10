@@ -9,18 +9,38 @@ interface ExplanationBlockEditorProps {
 }
 
 export default function ExplanationBlockEditor({ block, onChange, lessonDay }: ExplanationBlockEditorProps) {
-  const [examples, setExamples] = useState<any[]>(block.examples || []);
-  const [hints, setHints] = useState<any[]>(block.hint || []);
+  // Support both old structure (block.examples) and new structure (block.content.examples)
+  const getContent = () => {
+    if (block.content && typeof block.content === 'object') {
+      return block.content;
+    }
+    // Old structure: convert to new structure
+    return {
+      title: block.title || { ru: '', en: '' },
+      explanation_text: block.explanation_text || { ru: '', en: '' },
+      examples: block.examples || [],
+      hint: block.hint || [],
+    };
+  };
+
+  const content = getContent();
+  const [examples, setExamples] = useState<any[]>(content.examples || []);
+  const [hints, setHints] = useState<any[]>(content.hint || []);
   const [showAddExample, setShowAddExample] = useState(false);
   const [showAddHint, setShowAddHint] = useState(false);
   const [editingExampleIndex, setEditingExampleIndex] = useState<number | null>(null);
   const [editingHintIndex, setEditingHintIndex] = useState<number | null>(null);
 
-  const updateBlock = () => {
+  const updateBlock = (updates: any) => {
     onChange({
       ...block,
-      examples,
-      hint: hints,
+      block_type: block.block_type || 'how_to_say',
+      content: {
+        ...content,
+        ...updates,
+        examples,
+        hint: hints,
+      },
     });
   };
 
@@ -42,10 +62,7 @@ export default function ExplanationBlockEditor({ block, onChange, lessonDay }: E
       newExamples.push(example);
     }
     setExamples(newExamples);
-    onChange({
-      ...block,
-      examples: newExamples,
-    });
+    updateBlock({ examples: newExamples });
     setShowAddExample(false);
     setEditingExampleIndex(null);
   };
@@ -54,10 +71,7 @@ export default function ExplanationBlockEditor({ block, onChange, lessonDay }: E
     if (confirm('Вы уверены, что хотите удалить этот пример?')) {
       const newExamples = examples.filter((_, i) => i !== index);
       setExamples(newExamples);
-      onChange({
-        ...block,
-        examples: newExamples,
-      });
+      updateBlock({ examples: newExamples });
     }
   };
 
@@ -79,10 +93,7 @@ export default function ExplanationBlockEditor({ block, onChange, lessonDay }: E
       newHints.push(hint);
     }
     setHints(newHints);
-    onChange({
-      ...block,
-      hint: newHints,
-    });
+    updateBlock({ hint: newHints });
     setShowAddHint(false);
     setEditingHintIndex(null);
   };
@@ -91,10 +102,7 @@ export default function ExplanationBlockEditor({ block, onChange, lessonDay }: E
     if (confirm('Вы уверены, что хотите удалить эту подсказку?')) {
       const newHints = hints.filter((_, i) => i !== index);
       setHints(newHints);
-      onChange({
-        ...block,
-        hint: newHints,
-      });
+      updateBlock({ hint: newHints });
     }
   };
 
@@ -110,12 +118,10 @@ export default function ExplanationBlockEditor({ block, onChange, lessonDay }: E
             </label>
             <input
               type="text"
-              value={typeof block.title === 'string' ? block.title : (block.title?.ru || '')}
+              value={typeof content.title === 'string' ? content.title : (content.title?.ru || '')}
               onChange={(e) => {
-                const title = block.title || {};
-                onChange({
-                  ...block,
-                  title: { ...title, ru: e.target.value },
+                updateBlock({
+                  title: { ...content.title, ru: e.target.value },
                 });
               }}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg"
@@ -128,12 +134,10 @@ export default function ExplanationBlockEditor({ block, onChange, lessonDay }: E
             </label>
             <input
               type="text"
-              value={typeof block.title === 'string' ? '' : (block.title?.en || '')}
+              value={typeof content.title === 'string' ? '' : (content.title?.en || '')}
               onChange={(e) => {
-                const title = block.title || {};
-                onChange({
-                  ...block,
-                  title: { ...title, en: e.target.value },
+                updateBlock({
+                  title: { ...content.title, en: e.target.value },
                 });
               }}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg"
@@ -152,12 +156,10 @@ export default function ExplanationBlockEditor({ block, onChange, lessonDay }: E
               Текст (RU) *
             </label>
             <textarea
-              value={typeof block.explanation_text === 'string' ? block.explanation_text : (block.explanation_text?.ru || '')}
+              value={typeof content.explanation_text === 'string' ? content.explanation_text : (content.explanation_text?.ru || '')}
               onChange={(e) => {
-                const explanation_text = block.explanation_text || {};
-                onChange({
-                  ...block,
-                  explanation_text: { ...explanation_text, ru: e.target.value },
+                updateBlock({
+                  explanation_text: { ...content.explanation_text, ru: e.target.value },
                 });
               }}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg h-32"
@@ -169,12 +171,10 @@ export default function ExplanationBlockEditor({ block, onChange, lessonDay }: E
               Текст (EN) *
             </label>
             <textarea
-              value={typeof block.explanation_text === 'string' ? '' : (block.explanation_text?.en || '')}
+              value={typeof content.explanation_text === 'string' ? '' : (content.explanation_text?.en || '')}
               onChange={(e) => {
-                const explanation_text = block.explanation_text || {};
-                onChange({
-                  ...block,
-                  explanation_text: { ...explanation_text, en: e.target.value },
+                updateBlock({
+                  explanation_text: { ...content.explanation_text, en: e.target.value },
                 });
               }}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg h-32"

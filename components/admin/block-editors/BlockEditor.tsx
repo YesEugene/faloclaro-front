@@ -26,7 +26,11 @@ export default function BlockEditor({ blockKey, block, lessonDay, onSave, onCanc
   };
 
   const renderEditor = () => {
-    switch (editedBlock.type) {
+    // Support both old structure (type) and new structure (block_type)
+    const blockType = editedBlock.block_type || editedBlock.type;
+    
+    switch (blockType) {
+      case 'how_to_say':
       case 'explanation':
         return (
           <ExplanationBlockEditor
@@ -62,7 +66,7 @@ export default function BlockEditor({ blockKey, block, lessonDay, onSave, onCanc
       default:
         return (
           <div className="bg-white rounded-lg shadow-md p-6">
-            <p className="text-gray-600">Редактор блока типа "{editedBlock.type}" еще не реализован</p>
+            <p className="text-gray-600">Редактор блока типа "{blockType}" еще не реализован</p>
           </div>
         );
     }
@@ -74,7 +78,7 @@ export default function BlockEditor({ blockKey, block, lessonDay, onSave, onCanc
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <h1 className="text-xl font-bold text-gray-900">
-              Редактирование блока: {blockKey} ({block.type})
+              Редактирование блока: {blockKey} ({block.block_type || block.type})
             </h1>
             <div className="flex gap-2">
               <button
