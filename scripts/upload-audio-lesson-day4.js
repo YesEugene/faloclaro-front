@@ -95,6 +95,7 @@ function extractTextFromFilename(filename) {
     'lesson-4-pode-ajudar.mp3': 'Pode ajudar?',
     'lesson-4-ajudar.mp3': 'Ajudar',
     'lesson-4-pode-ajudar-agora.mp3': 'Pode ajudar agora?',
+    'lesson-4-sim-posso-ajudar.mp3': 'Sim, posso ajudar.',
     'lesson-4-obrigado.mp3': 'Obrigado',
     'lesson-4-obrigado-pela-ajuda.mp3': 'Obrigado pela ajuda.',
     'lesson-4-obrigada.mp3': 'Obrigada',

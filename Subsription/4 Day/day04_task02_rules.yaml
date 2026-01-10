@@ -4,3 +4,170 @@ task:
   title:
     ru: "Как это сказать"
     en: "How to say it"
+  subtitle:
+    ru: "Просьбы и ответы"
+    en: "Requests and responses"
+  estimated_time: "≈5"
+  show_timer: false
+  show_settings: false
+  completion_message:
+    ru: "Уровень прогресса: Разогрев"
+    en: "Progress level: Warm-up"
+
+structure:
+  blocks_order:
+    - block_1_asking_for_help
+    - block_2_responses
+    - block_3_thanks
+    - block_4_reinforcement
+    - block_5_speak_out_loud
+
+blocks:
+  block_1_asking_for_help:
+    type: explanation
+    title:
+      ru: "Как попросить о помощи"
+      en: "How to ask for help"
+    explanation_text:
+      ru: |
+        Чтобы попросить о помощи, используй:
+        **Preciso de ajuda** — мне нужна помощь
+        **Pode ajudar?** — можешь помочь?
+      en: |
+        To ask for help, use:
+        **Preciso de ajuda** — I need help
+        **Pode ajudar?** — can you help?
+    examples:
+      - text: "Preciso de ajuda."
+        audio: true
+        pause_after_audio_sec: 1.5
+      - text: "Pode ajudar?"
+        audio: true
+        pause_after_audio_sec: 1.5
+      - text: "Pode ajudar agora?"
+        audio: true
+        pause_after_audio_sec: 1.5
+    hint:
+      - ru: "Preciso — «Мне нужно»"
+        en: "Preciso means «I need»"
+      - ru: "Ajuda — «Помощь»"
+        en: "Ajuda means «Help»"
+      - ru: "Pode ajudar? — «Можешь помочь?»"
+        en: "Pode ajudar? means «Can you help?»"
+
+  block_2_responses:
+    type: explanation
+    title:
+      ru: "Как ответить на просьбу"
+      en: "How to respond to a request"
+    explanation_text:
+      ru: |
+        На просьбу можно ответить по-разному:
+        **Sim** — да
+        **Hoje não** — сегодня нет / не сегодня
+        **Só amanhã** — только завтра
+      en: |
+        You can respond to a request in different ways:
+        **Sim** — yes
+        **Hoje não** — not today
+        **Só amanhã** — only tomorrow
+    examples:
+      - text: "Sim, posso ajudar."
+        audio: true
+        pause_after_audio_sec: 1.5
+      - text: "Hoje não posso."
+        audio: true
+        pause_after_audio_sec: 1.5
+      - text: "Só amanhã."
+        audio: true
+        pause_after_audio_sec: 1.5
+    hint:
+      - ru: "Hoje não — «Сегодня нет»"
+        en: "Hoje não means «Not today»"
+      - ru: "Só — «Только»"
+        en: "Só means «Only»"
+      - ru: "Amanhã — «Завтра»"
+        en: "Amanhã means «Tomorrow»"
+
+  block_3_thanks:
+    type: comparison
+    title:
+      ru: "Как поблагодарить"
+      en: "How to thank"
+    comparison_card:
+      - text: "Obrigado pela ajuda."
+        audio: true
+      - text: "Obrigada!"
+        audio: true
+    note:
+      ru: |
+        **Obrigado** — спасибо (говорит мужчина)
+        **Obrigada** — спасибо (говорит женщина)
+      en: |
+        **Obrigado** — thank you (said by a man)
+        **Obrigada** — thank you (said by a woman)
+
+  block_4_reinforcement:
+    type: reinforcement
+
+    task_1:
+      format: single_choice
+      audio: "Preciso de ajuda."
+      question:
+        ru: "О чём говорит человек?"
+        en: "What is the person saying?"
+      options:
+        - text:
+            ru: "Просит о помощи"
+            en: "Asking for help"
+          correct: true
+        - text:
+            ru: "Благодарит"
+            en: "Thanking"
+          correct: false
+        - text:
+            ru: "Отказывает"
+            en: "Refusing"
+          correct: false
+
+    task_2:
+      format: single_choice
+      audio: "Hoje não posso."
+      question:
+        ru: "Что означает эта фраза?"
+        en: "What does this phrase mean?"
+      options:
+        - text:
+            ru: "Сегодня не могу"
+            en: "I can't today"
+          correct: true
+        - text:
+            ru: "Завтра смогу"
+            en: "I can tomorrow"
+          correct: false
+        - text:
+            ru: "Спасибо"
+            en: "Thank you"
+          correct: false
+
+  block_5_speak_out_loud:
+    type: speak_out_loud
+    title:
+      ru: "Скажи вслух"
+      en: "Speak out loud"
+    instruction_text:
+      ru: |
+        Попробуй сказать эти фразы вслух:
+        **Preciso de ajuda.**
+        **Pode ajudar?**
+        **Obrigado pela ajuda.**
+      en: |
+        Try to say these phrases out loud:
+        **Preciso de ajuda.**
+        **Pode ajudar?**
+        **Obrigado pela ajuda.**
+    action_button:
+      text:
+        ru: "✔ Я сказал(а) вслух"
+        en: "✔ I said it out loud"
+      completes_task: true
