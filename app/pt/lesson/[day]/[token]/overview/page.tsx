@@ -684,22 +684,19 @@ function OverviewPageContent() {
                   // For first 3 lessons, if unlocked but no token, use current token (they're free)
                   const lessonToken = userTokens.get(lessonDay) || (isUnlocked && lessonDay <= 3 ? token : null);
                   // Show all published lessons, but only allow navigation if unlocked
-                  const lessonUrl = (isUnlocked || isCompleted) && lessonToken
+                  const canNavigate = (isUnlocked || isCompleted) && lessonToken;
+                  const lessonUrl = canNavigate
                     ? `/pt/lesson/${lessonDay}/${lessonToken}/overview`
                     : '#';
 
-                  const LessonCard = (isUnlocked || isCompleted) && lessonToken ? Link : 'div';
-                  const cardProps = (isUnlocked || isCompleted) && lessonToken 
-                    ? { href: lessonUrl }
-                    : {};
-
                   return (
-                    <LessonCard
-                      key={lessonDay}
-                      {...cardProps}
-                      style={cardStyle}
-                      className={`transition-all ${(isUnlocked || isCompleted) && lessonToken ? 'hover:opacity-80 cursor-pointer' : 'cursor-not-allowed opacity-60'}`}
-                    >
+                    <div key={lessonDay}>
+                      {canNavigate ? (
+                        <Link
+                          href={lessonUrl}
+                          style={cardStyle}
+                          className="transition-all hover:opacity-80 cursor-pointer"
+                        >
                       {/* Icon above number */}
                       <div className="flex-shrink-0 mb-2">
                         <Image
@@ -714,7 +711,29 @@ function OverviewPageContent() {
                       <span className="text-sm font-medium text-gray-700 text-center mt-auto">
                         {lessonDay} {appLanguage === 'ru' ? 'Урок' : appLanguage === 'en' ? 'Lesson' : 'Lição'}
                       </span>
-                    </Link>
+                        </Link>
+                      ) : (
+                        <div
+                          style={cardStyle}
+                          className="transition-all cursor-not-allowed opacity-60"
+                        >
+                          {/* Icon above number */}
+                          <div className="flex-shrink-0 mb-2">
+                            <Image
+                              src={iconSrc}
+                              alt={isCompleted ? 'Completed' : isCurrentLesson ? 'Current' : isUnlocked ? 'Unlocked' : 'Locked'}
+                              width={24}
+                              height={24}
+                              className="w-6 h-6"
+                            />
+                          </div>
+                          {/* Lesson number - positioned below middle */}
+                          <span className="text-sm font-medium text-gray-700 text-center mt-auto">
+                            {lessonDay} {appLanguage === 'ru' ? 'Урок' : appLanguage === 'en' ? 'Lesson' : 'Lição'}
+                          </span>
+                        </div>
+                      )}
+                    </div>
                   );
                 })}
               </div>
