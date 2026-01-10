@@ -626,18 +626,33 @@ function LessonsSection() {
 
   const handleEditLesson = (lesson: any) => {
     setSelectedLesson(lesson);
-    setEditingLesson(JSON.parse(JSON.stringify(lesson.yaml_content || {})));
+    // Convert yaml_content to JSON string for editing
+    const yamlContent = lesson.yaml_content || {};
+    setEditingLesson(JSON.stringify(yamlContent, null, 2));
   };
 
   const handleSaveLesson = async () => {
     if (!selectedLesson || !editingLesson) return;
+
+    // Validate JSON before saving
+    let parsedContent;
+    try {
+      if (typeof editingLesson === 'string') {
+        parsedContent = JSON.parse(editingLesson);
+      } else {
+        parsedContent = editingLesson;
+      }
+    } catch (err) {
+      alert('Ошибка: Неверный формат JSON. Проверьте синтаксис.');
+      return;
+    }
 
     try {
       const response = await fetch(`/api/admin/lessons/${selectedLesson.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          yaml_content: editingLesson,
+          yaml_content: parsedContent,
         }),
       });
 
@@ -683,22 +698,41 @@ function LessonsSection() {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <textarea
-            value={JSON.stringify(editingLesson, null, 2)}
-            onChange={(e) => {
-              try {
-                setEditingLesson(JSON.parse(e.target.value));
-              } catch (err) {
-                // Invalid JSON, keep as is
-              }
-            }}
-            className="w-full h-96 px-4 py-2 border border-gray-300 rounded-lg font-mono text-sm text-black"
-            style={{ fontFamily: 'monospace' }}
-          />
-          <p className="text-xs text-gray-500 mt-2">
-            Внимание: Изменения в формате JSON. Убедитесь в корректности синтаксиса перед сохранением.
-          </p>
+        <div className="bg-white rounded-lg shadow-md p-6 space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Содержимое урока (JSON)
+            </label>
+            <textarea
+              value={typeof editingLesson === 'string' ? editingLesson : JSON.stringify(editingLesson, null, 2)}
+              onChange={(e) => {
+                // Store as string for editing, parse on save
+                setEditingLesson(e.target.value);
+              }}
+              className="w-full h-96 px-4 py-2 border border-gray-300 rounded-lg font-mono text-sm text-black"
+              style={{ fontFamily: 'monospace' }}
+            />
+            <p className="text-xs text-gray-500 mt-2">
+              Внимание: Изменения в формате JSON. Убедитесь в корректности синтаксиса перед сохранением.
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={handleSaveLesson}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Сохранить
+            </button>
+            <button
+              onClick={() => {
+                setSelectedLesson(null);
+                setEditingLesson(null);
+              }}
+              className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+            >
+              Отмена
+            </button>
+          </div>
         </div>
       </div>
     );
