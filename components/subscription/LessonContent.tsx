@@ -23,6 +23,7 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
   const [currentTaskIndex, setCurrentTaskIndex] = useState(0);
   const [timerData, setTimerData] = useState<{ elapsed: number; required: number } | null>(null);
   const [userProgress, setUserProgress] = useState(initialUserProgress);
+  const [totalLessons, setTotalLessons] = useState<number>(0);
   
   // Update userProgress when initialUserProgress changes
   useEffect(() => {
@@ -454,7 +455,11 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
                 }}
               >
                 <span className="text-gray-700">
-                  {appLanguage === 'ru' ? '← Меню курса' : appLanguage === 'en' ? '← Course menu' : '← Menu do curso'}
+                  {appLanguage === 'ru' 
+                    ? `← УРОК ${lesson.day_number}${totalLessons > 0 ? `/${totalLessons}` : ''}` 
+                    : appLanguage === 'en' 
+                    ? `← LESSON ${lesson.day_number}${totalLessons > 0 ? `/${totalLessons}` : ''}` 
+                    : `← LIÇÃO ${lesson.day_number}${totalLessons > 0 ? `/${totalLessons}` : ''}`}
                 </span>
               </button>
               {/* Dictionary button - only for vocabulary task */}
