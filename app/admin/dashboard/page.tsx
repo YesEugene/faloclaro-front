@@ -226,6 +226,30 @@ function UsersSection() {
     }
   };
 
+  const handleDeleteUser = async (userId: string, userEmail: string) => {
+    if (!confirm(`Вы уверены, что хотите удалить пользователя "${userEmail}"? Это действие нельзя отменить.`)) {
+      return;
+    }
+
+    try {
+      setError('');
+      setSuccess('');
+      const response = await fetch(`/api/admin/users/${userId}`, {
+        method: 'DELETE',
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        setSuccess(`Пользователь ${userEmail} успешно удален`);
+        loadUsers(); // Reload users list
+      } else {
+        setError(data.error || 'Ошибка при удалении пользователя');
+      }
+    } catch (err) {
+      setError('Ошибка при удалении пользователя');
+    }
+  };
+
   if (loading) {
     return <div className="text-gray-600">Загрузка пользователей...</div>;
   }
@@ -357,12 +381,23 @@ function UsersSection() {
                   >
                     Отправить приглашение
                   </button>
+                  {(user.subscription_status !== 'active' && user.subscription_status !== 'paid') && (
+                    <>
+                      <span className="text-gray-300">|</span>
+                      <button
+                        onClick={() => handleGiveFullAccess(user.id)}
+                        className="text-green-600 hover:text-green-800 font-medium"
+                      >
+                        Дать полный доступ
+                      </button>
+                    </>
+                  )}
                   <span className="text-gray-300">|</span>
                   <button
-                    onClick={() => handleGiveFullAccess(user.id)}
-                    className="text-green-600 hover:text-green-800 font-medium"
+                    onClick={() => handleDeleteUser(user.id, user.email)}
+                    className="text-red-600 hover:text-red-800 font-medium"
                   >
-                    Дать полный доступ
+                    Удалить
                   </button>
                 </td>
               </tr>
@@ -380,6 +415,7 @@ function StatsSection() {
   const [usersStats, setUsersStats] = useState<Map<string, any>>(new Map());
   const [loadingUsers, setLoadingUsers] = useState(true);
   const [loadingStats, setLoadingStats] = useState<Map<string, boolean>>(new Map());
+  const [expandedUsers, setExpandedUsers] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     loadUsers();
@@ -393,10 +429,7 @@ function StatsSection() {
       if (data.success) {
         const usersList = data.users || [];
         setUsers(usersList);
-        // Load stats for all users
-        usersList.forEach((user: any) => {
-          loadUserStats(user.id);
-        });
+        // Don't load stats automatically - only when expanded
       }
     } catch (err) {
       console.error('Error loading users:', err);
@@ -422,6 +455,20 @@ function StatsSection() {
     }
   };
 
+  const toggleUserExpanded = (userId: string) => {
+    const newExpanded = new Set(expandedUsers);
+    if (newExpanded.has(userId)) {
+      newExpanded.delete(userId);
+    } else {
+      newExpanded.add(userId);
+      // Load stats when expanding if not already loaded
+      if (!usersStats.has(userId)) {
+        loadUserStats(userId);
+      }
+    }
+    setExpandedUsers(newExpanded);
+  };
+
   if (loadingUsers) {
     return <div className="text-gray-600">Загрузка пользователей...</div>;
   }
@@ -432,118 +479,157 @@ function StatsSection() {
       {users.length === 0 ? (
         <p className="text-gray-600">Нет пользователей</p>
       ) : (
-        <div className="space-y-6">
+        <div className="space-y-4">
           {users.map((user) => {
             const stats = usersStats.get(user.id);
             const isLoading = loadingStats.get(user.id);
+            const isExpanded = expandedUsers.has(user.id);
+            const subscriptionStatus = user.subscription_status || 'trial';
+            const isFullAccess = subscriptionStatus === 'active' || subscriptionStatus === 'paid';
+
+            // Get key stats for collapsed view
+            const startedCount = stats?.startedLessons || 0;
+            const completedCount = stats?.completedLessons || 0;
 
             return (
-              <div key={user.id} className="bg-white rounded-lg shadow-md p-6">
-                <div className="mb-4 pb-4 border-b border-gray-200">
-                  <h3 className="text-lg font-semibold text-gray-900">{user.email}</h3>
-                  <p className="text-sm text-gray-500">
-                    Подписка: {user.subscription_status || 'trial'} | 
-                    Язык: {user.language_preference || 'ru'}
-                  </p>
-                </div>
-
-                {isLoading ? (
-                  <div className="text-gray-600">Загрузка статистики...</div>
-                ) : stats ? (
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      <div>
-                        <p className="text-sm text-gray-600">Всего уроков</p>
-                        <p className="text-2xl font-bold text-gray-900">{stats.totalLessons || 0}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-600">Начато</p>
-                        <p className="text-2xl font-bold text-yellow-600">{stats.startedLessons || 0}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-600">Завершено</p>
-                        <p className="text-2xl font-bold text-green-600">{stats.completedLessons || 0}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-600">Прогресс</p>
-                        <p className="text-2xl font-bold text-blue-600">
-                          {stats.completedLessons > 0 && stats.totalLessons > 0 
-                            ? Math.round((stats.completedLessons / stats.totalLessons) * 100) 
-                            : 0}%
-                        </p>
+              <div key={user.id} className="bg-white rounded-lg shadow-md overflow-hidden">
+                {/* Collapsed Header - Always Visible */}
+                <div
+                  onClick={() => toggleUserExpanded(user.id)}
+                  className="p-4 cursor-pointer hover:bg-gray-50 transition-colors"
+                >
+                  <div className="flex justify-between items-center">
+                    <div className="flex-1">
+                      <h3 className="text-lg font-semibold text-gray-900">{user.email}</h3>
+                      <div className="flex items-center gap-4 mt-2">
+                        <span className={`text-sm font-medium ${
+                          isFullAccess ? 'text-green-600' : 'text-orange-600'
+                        }`}>
+                          {isFullAccess ? 'Полный доступ' : 'Триал'}
+                        </span>
+                        <span className="text-sm text-gray-600">
+                          Начато: <span className="font-semibold text-gray-900">{startedCount}</span>
+                        </span>
+                        <span className="text-sm text-gray-600">
+                          Пройдено: <span className="font-semibold text-gray-900">{completedCount}</span>
+                        </span>
                       </div>
                     </div>
+                    <div className="text-gray-400">
+                      {isExpanded ? '▼' : '▶'}
+                    </div>
+                  </div>
+                </div>
 
-                    {stats.lessons && stats.lessons.length > 0 && (
-                      <div>
-                        <h4 className="font-semibold mb-3 text-gray-900">По урокам:</h4>
-                        <div className="overflow-x-auto">
-                          <table className="min-w-full divide-y divide-gray-200">
-                            <thead className="bg-gray-50">
-                              <tr>
-                                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                                  Урок
-                                </th>
-                                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                                  Статус
-                                </th>
-                                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                                  Дата начала
-                                </th>
-                                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                                  Дата завершения
-                                </th>
-                                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                                  Заданий завершено
-                                </th>
-                              </tr>
-                            </thead>
-                            <tbody className="bg-white divide-y divide-gray-200">
-                              {stats.lessons
-                                .filter((lesson: any) => lesson.status !== 'not_started')
-                                .map((lesson: any) => (
-                                <tr key={lesson.day_number || lesson.lesson_id}>
-                                  <td className="px-4 py-2 text-sm text-gray-900">
-                                    Урок {lesson.day_number || 'N/A'}
-                                  </td>
-                                  <td className="px-4 py-2 text-sm">
-                                    <span className={`px-2 py-1 rounded text-xs ${
-                                      lesson.status === 'completed' 
-                                        ? 'bg-green-100 text-green-800'
-                                        : lesson.status === 'in_progress'
-                                        ? 'bg-yellow-100 text-yellow-800'
-                                        : 'bg-gray-100 text-gray-800'
-                                    }`}>
-                                      {lesson.status === 'completed' ? 'Завершено' :
-                                       lesson.status === 'in_progress' ? 'В процессе' : 'Не начато'}
-                                    </span>
-                                  </td>
-                                  <td className="px-4 py-2 text-sm text-gray-500">
-                                    {lesson.started_at ? new Date(lesson.started_at).toLocaleDateString('ru-RU') : '-'}
-                                  </td>
-                                  <td className="px-4 py-2 text-sm text-gray-500">
-                                    {lesson.completed_at ? new Date(lesson.completed_at).toLocaleDateString('ru-RU') : '-'}
-                                  </td>
-                                  <td className="px-4 py-2 text-sm text-gray-900">
-                                    {lesson.completed_tasks || 0}/{lesson.total_tasks || 5}
-                                  </td>
-                                </tr>
-                              ))}
-                              {stats.lessons.filter((lesson: any) => lesson.status !== 'not_started').length === 0 && (
-                                <tr>
-                                  <td colSpan={5} className="px-4 py-4 text-center text-sm text-gray-500">
-                                    Нет начатых уроков
-                                  </td>
-                                </tr>
-                              )}
-                            </tbody>
-                          </table>
+                {/* Expanded Content - Only when expanded */}
+                {isExpanded && (
+                  <div className="border-t border-gray-200 p-6">
+                    <div className="mb-4 pb-4 border-b border-gray-200">
+                      <p className="text-sm text-gray-500">
+                        Подписка: {subscriptionStatus} | 
+                        Язык: {user.language_preference || 'ru'}
+                      </p>
+                    </div>
+
+                    {isLoading ? (
+                      <div className="text-gray-600">Загрузка статистики...</div>
+                    ) : stats ? (
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                          <div>
+                            <p className="text-sm text-gray-600">Всего уроков</p>
+                            <p className="text-2xl font-bold text-gray-900">{stats.totalLessons || 0}</p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-600">Начато</p>
+                            <p className="text-2xl font-bold text-yellow-600">{stats.startedLessons || 0}</p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-600">Завершено</p>
+                            <p className="text-2xl font-bold text-green-600">{stats.completedLessons || 0}</p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-600">Прогресс</p>
+                            <p className="text-2xl font-bold text-blue-600">
+                              {stats.completedLessons > 0 && stats.totalLessons > 0 
+                                ? Math.round((stats.completedLessons / stats.totalLessons) * 100) 
+                                : 0}%
+                            </p>
+                          </div>
                         </div>
+
+                        {stats.lessons && stats.lessons.length > 0 && (
+                          <div>
+                            <h4 className="font-semibold mb-3 text-gray-900">По урокам:</h4>
+                            <div className="overflow-x-auto">
+                              <table className="min-w-full divide-y divide-gray-200">
+                                <thead className="bg-gray-50">
+                                  <tr>
+                                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                                      Урок
+                                    </th>
+                                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                                      Статус
+                                    </th>
+                                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                                      Дата начала
+                                    </th>
+                                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                                      Дата завершения
+                                    </th>
+                                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                                      Заданий завершено
+                                    </th>
+                                  </tr>
+                                </thead>
+                                <tbody className="bg-white divide-y divide-gray-200">
+                                  {stats.lessons
+                                    .filter((lesson: any) => lesson.status !== 'not_started')
+                                    .map((lesson: any) => (
+                                    <tr key={lesson.day_number || lesson.lesson_id}>
+                                      <td className="px-4 py-2 text-sm text-gray-900">
+                                        Урок {lesson.day_number || 'N/A'}
+                                      </td>
+                                      <td className="px-4 py-2 text-sm">
+                                        <span className={`px-2 py-1 rounded text-xs ${
+                                          lesson.status === 'completed' 
+                                            ? 'bg-green-100 text-green-800'
+                                            : lesson.status === 'in_progress'
+                                            ? 'bg-yellow-100 text-yellow-800'
+                                            : 'bg-gray-100 text-gray-800'
+                                        }`}>
+                                          {lesson.status === 'completed' ? 'Завершено' :
+                                           lesson.status === 'in_progress' ? 'В процессе' : 'Не начато'}
+                                        </span>
+                                      </td>
+                                      <td className="px-4 py-2 text-sm text-gray-500">
+                                        {lesson.started_at ? new Date(lesson.started_at).toLocaleDateString('ru-RU') : '-'}
+                                      </td>
+                                      <td className="px-4 py-2 text-sm text-gray-500">
+                                        {lesson.completed_at ? new Date(lesson.completed_at).toLocaleDateString('ru-RU') : '-'}
+                                      </td>
+                                      <td className="px-4 py-2 text-sm text-gray-900">
+                                        {lesson.completed_tasks || 0}/{lesson.total_tasks || 5}
+                                      </td>
+                                    </tr>
+                                  ))}
+                                  {stats.lessons.filter((lesson: any) => lesson.status !== 'not_started').length === 0 && (
+                                    <tr>
+                                      <td colSpan={5} className="px-4 py-4 text-center text-sm text-gray-500">
+                                        Нет начатых уроков
+                                      </td>
+                                    </tr>
+                                  )}
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        )}
                       </div>
+                    ) : (
+                      <p className="text-gray-600">Статистика не найдена</p>
                     )}
                   </div>
-                ) : (
-                  <p className="text-gray-600">Статистика не найдена</p>
                 )}
               </div>
             );
