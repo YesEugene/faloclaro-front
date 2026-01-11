@@ -929,8 +929,8 @@ export default function VocabularyTaskPlayer({
         )}
       </div>
 
-      {/* Audio Player Controls - Previous, Play/Pause, Next, Settings */}
-      <div className="flex items-center justify-center gap-4 mb-6">
+      {/* Audio Player Controls - Previous, Play/Pause, Next */}
+      <div className="flex items-center justify-center gap-4 mb-4">
         {/* Previous Card Button - Left */}
         <button
           onClick={handlePreviousCard}
@@ -947,7 +947,7 @@ export default function VocabularyTaskPlayer({
         <button
           onClick={handlePlayPause}
           disabled={!currentAudioUrl}
-          className="p-4 rounded-full disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+          className="p-4 rounded-full disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center mx-auto"
           style={{ backgroundColor: clusterColor, width: '56px', height: '56px' }}
           aria-label={isPlaying ? 'Pause' : 'Play'}
         >
@@ -974,8 +974,10 @@ export default function VocabularyTaskPlayer({
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
         </button>
+      </div>
 
-        {/* Settings Icon - Right of Next button */}
+      {/* Settings Button - Below Play button, centered */}
+      <div className="flex items-center justify-center mb-6">
         <button
           onClick={() => setShowSettings(!showSettings)}
           className="transition-opacity hover:opacity-80 rounded-full flex items-center justify-center border-none p-0 cursor-pointer"
