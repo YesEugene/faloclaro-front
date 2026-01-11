@@ -281,10 +281,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
   // Handle speak out loud completion
   const handleSpeakOutLoudComplete = () => {
     setSpeakOutLoudCompleted(true);
-    // Auto-complete if all blocks are done
-    if (checkAllBlocksCompleted()) {
-      handleFinalComplete();
-    }
+    // Don't auto-complete - let user click "All tasks completed" button explicitly
   };
   
   // Handle replay - reset all progress
@@ -693,26 +690,25 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
               dangerouslySetInnerHTML={{ __html: processInstructionText(getInstructionText(block, appLanguage)) }}
             />
             
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                if (!speakOutLoudCompleted) {
+            {!speakOutLoudCompleted ? (
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
                   handleSpeakOutLoudComplete();
-                } else {
-                  handleReplay();
-                }
-              }}
-              className={`w-full py-4 rounded-lg font-semibold text-lg transition-colors ${
-                !speakOutLoudCompleted
-                  ? 'bg-blue-600 text-white hover:bg-blue-700'
-                  : 'bg-green-600 text-white hover:bg-green-700'
-              }`}
-            >
-              {!speakOutLoudCompleted
-                ? (getTranslatedText(block.action_button?.text, appLanguage) || (appLanguage === 'ru' ? '✔ Я сказал(а) вслух' : '✔ I said it out loud'))
-                : (appLanguage === 'ru' ? 'Пройти заново' : 'Replay')}
-            </button>
+                }}
+                className="w-full py-4 rounded-lg font-semibold text-lg transition-colors bg-blue-600 text-white hover:bg-blue-700"
+              >
+                {getTranslatedText(block.action_button?.text, appLanguage) || (appLanguage === 'ru' ? '✔ Я сказал(а) вслух' : '✔ I said it out loud')}
+              </button>
+            ) : (
+              <div className="w-full py-4 rounded-lg font-semibold text-lg bg-green-600 text-white flex items-center justify-center">
+                <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                {appLanguage === 'ru' ? 'Выполнено' : 'Completed'}
+              </div>
+            )}
           </div>
         );
 
