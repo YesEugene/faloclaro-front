@@ -527,9 +527,15 @@ function OverviewPageContent() {
       <div className="max-w-md mx-auto px-4 py-6">
         {/* Lesson Header - New Format */}
         <div className="mb-6">
-          {/* УРОК X/60 (время) - поднят выше на 5px */}
-          <div className="flex items-center gap-2 mb-3" style={{ marginTop: '-5px' }}>
-            <span className="text-lg font-bold text-black">
+          {/* УРОК X/60 - на черной плашке (размер как кнопка "← Назад к заданиям") */}
+          <div className="flex items-center gap-2 mb-3">
+            <span 
+              className="px-4 py-2 rounded-[10px] text-white font-medium text-sm"
+              style={{ 
+                backgroundColor: '#000000',
+                display: 'inline-block',
+              }}
+            >
               {appLanguage === 'ru' ? 'УРОК' : appLanguage === 'en' ? 'LESSON' : 'LIÇÃO'} {lesson.day_number}{allLessons.length > 0 ? `/${allLessons.length}` : ''}
             </span>
             {dayInfo.estimated_time && (
@@ -539,8 +545,8 @@ function OverviewPageContent() {
             )}
           </div>
 
-          {/* Заголовок урока - увеличен на 5 кеглей */}
-          <h1 className="font-bold text-black mb-2 text-left" style={{ fontSize: '29px' }}>
+          {/* Заголовок урока - уменьшенное межстрочное расстояние при переносе на две строки */}
+          <h1 className="font-bold text-black mb-2 text-left leading-tight" style={{ fontSize: '29px', lineHeight: '1.2' }}>
             {getDayTitle(dayInfo, appLanguage)}
           </h1>
 
