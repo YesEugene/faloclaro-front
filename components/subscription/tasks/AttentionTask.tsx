@@ -665,9 +665,9 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
 
             {/* Next Button - Right */}
             {/* If task is completed AND on last item: show next task button (green), else: show next item button (blue) or complete button */}
-            {localIsCompleted && currentItemIndex === items.length - 1 ? (
+            {(localIsCompleted || isCompleted) && currentItemIndex === items.length - 1 ? (
               // Task completed AND on last item - show next task button (green, active) if available, otherwise empty
-              onNextTask ? (
+              onNextTask && canGoNext ? (
                 <button
                   onClick={onNextTask}
                   className="w-10 h-10 rounded-full bg-green-500 hover:bg-green-600 transition-colors flex items-center justify-center"
