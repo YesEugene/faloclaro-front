@@ -1085,38 +1085,55 @@ export default function VocabularyTaskPlayer({
 
             {/* Next Button - Right */}
             {/* Timer is optional: next task button is always active on last card, words continue looping for 10 minutes */}
-            {currentCardIndex === cards.length - 1 ? (
-              // On last card - show next task button (green, always active)
-              // Button appears if onNextTask exists, regardless of canGoNext
-              onNextTask ? (
-                <button
-                  onClick={onNextTask}
-                  className="w-10 h-10 rounded-full bg-green-500 hover:bg-green-600 transition-colors flex items-center justify-center"
-                  aria-label={t.nextTask}
-                >
-                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
+            {(() => {
+              const isLastCard = currentCardIndex === cards.length - 1;
+              const shouldShowNextTaskButton = isLastCard && onNextTask;
+              
+              // Debug logging for button visibility
+              if (isLastCard) {
+                console.log('🔍 Last card reached - Button visibility check:', {
+                  isLastCard,
+                  currentCardIndex,
+                  cardsLength: cards.length,
+                  hasOnNextTask: !!onNextTask,
+                  canGoNext,
+                  shouldShowNextTaskButton,
+                });
+              }
+              
+              return isLastCard ? (
+                // On last card - show next task button (green, always active)
+                // Button appears if onNextTask exists, regardless of canGoNext
+                onNextTask ? (
+                  <button
+                    onClick={onNextTask}
+                    className="w-10 h-10 rounded-full bg-green-500 hover:bg-green-600 transition-colors flex items-center justify-center"
+                    aria-label={t.nextTask}
+                  >
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                ) : (
+                  <div className="w-10 h-10"></div>
+                )
               ) : (
-                <div className="w-10 h-10"></div>
-              )
-            ) : (
-              // Not on last card - show next card button (blue, always active)
-              currentCardIndex < cards.length - 1 ? (
-                <button
-                  onClick={handleNextCard}
-                  className="w-10 h-10 rounded-full bg-blue-600 hover:bg-blue-700 transition-colors flex items-center justify-center"
-                  aria-label={t.next}
-                >
-                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
-              ) : (
-                <div className="w-10 h-10"></div>
-              )
-            )}
+                // Not on last card - show next card button (blue, always active)
+                currentCardIndex < cards.length - 1 ? (
+                  <button
+                    onClick={handleNextCard}
+                    className="w-10 h-10 rounded-full bg-blue-600 hover:bg-blue-700 transition-colors flex items-center justify-center"
+                    aria-label={t.next}
+                  >
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                ) : (
+                  <div className="w-10 h-10"></div>
+                )
+              );
+            })()}
           </div>
         </div>
       </div>
