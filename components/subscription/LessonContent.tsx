@@ -30,6 +30,26 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
     setUserProgress(initialUserProgress);
   }, [initialUserProgress]);
 
+  // Load total number of published lessons
+  useEffect(() => {
+    const loadTotalLessons = async () => {
+      try {
+        const { count, error } = await supabase
+          .from('lessons')
+          .select('*', { count: 'exact', head: true })
+          .eq('is_published', true);
+          
+        if (!error && count !== null) {
+          setTotalLessons(count);
+        }
+      } catch (err) {
+        console.error('Error loading total lessons:', err);
+      }
+    };
+
+    loadTotalLessons();
+  }, []);
+
   // Track if we've initialized to prevent auto-switching after task completion
   const initializedRef = useRef(false);
   const currentTaskIdRef = useRef<number | null>(null);
