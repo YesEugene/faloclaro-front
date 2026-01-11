@@ -548,7 +548,7 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
       {/* Complete button is now integrated into the bottom panel logic */}
 
       {/* Progress Bar - Above navigation panel */}
-      <div className="fixed bottom-[69px] left-0 right-0 z-30" style={{ height: '33px' }}>
+      <div className="fixed left-0 right-0 z-30" style={{ bottom: '69px', height: '33px' }}>
         <div className="max-w-md mx-auto relative" style={{ height: '100%' }}>
           {/* Progress Bar - Full height with green and gray sections */}
           <div className="absolute inset-0 flex">
@@ -580,7 +580,7 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
       </div>
 
       {/* Navigation Panel - Fixed at bottom (Unified navigation: items within task OR tasks) */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-30" style={{ borderRadius: '0px', borderTopLeftRadius: '0px', borderTopRightRadius: '0px', borderBottomRightRadius: '0px', borderBottomLeftRadius: '0px', height: '69px', verticalAlign: 'bottom', marginBottom: '0px', opacity: 1, color: 'rgba(0, 0, 0, 1)' }}>
+      <div className="fixed bottom-0 left-0 right-0 bg-white z-30" style={{ borderRadius: '0px', borderTopLeftRadius: '0px', borderTopRightRadius: '0px', borderBottomRightRadius: '0px', borderBottomLeftRadius: '0px', height: '69px', verticalAlign: 'bottom', marginBottom: '0px', opacity: 1, color: 'rgba(0, 0, 0, 1)' }}>
         <div className="max-w-md mx-auto pt-3 pb-3" style={{ paddingBottom: 'env(safe-area-inset-bottom, 12px)', height: '69px', color: 'rgba(0, 0, 0, 1)', paddingLeft: '16px', paddingRight: '16px' }}>
           <div className="flex items-center justify-between gap-4">
             {/* Previous Button - Left */}

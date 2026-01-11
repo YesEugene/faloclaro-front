@@ -366,7 +366,7 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
       )}
 
       {/* Progress Bar - Above navigation panel */}
-      <div className="fixed bottom-[69px] left-0 right-0 z-30" style={{ height: '33px' }}>
+      <div className="fixed left-0 right-0 z-30" style={{ bottom: '69px', height: '33px' }}>
         <div className="max-w-md mx-auto relative" style={{ height: '100%' }}>
           {/* Progress Bar - Full height with green and gray sections */}
           <div className="absolute inset-0 flex">
