@@ -501,7 +501,7 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
                     fontWeight: 500,
                   }}
                 >
-                  {appLanguage === 'ru' ? 'Словарь списком' : appLanguage === 'en' ? 'Dictionary list' : 'Lista de dicionário'}
+                  {appLanguage === 'ru' ? 'СЛОВАРЬ' : appLanguage === 'en' ? 'DICTIONARY' : 'DICIONÁRIO'}
                 </button>
               )}
             </div>
