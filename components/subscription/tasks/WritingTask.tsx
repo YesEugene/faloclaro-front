@@ -291,20 +291,19 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
                       replay: true,
                     });
                   } else {
-                    // First click - mark as completed
+                    // First click - complete immediately without intermediate state
+                    // Set speakOutLoud and complete task in one action
                     setSpeakOutLoud(true);
-                    // If button completes task, complete immediately with speakOutLoud flag
-                    if (alternative.action_button?.completes_task) {
-                      handleComplete(true); // Pass true to force completion with speakOutLoud
-                    }
+                    // Always complete task when button is clicked (if completes_task is true or not specified)
+                    handleComplete(true); // Pass true to force completion with speakOutLoud
                   }
                 }}
                 disabled={false}
                 className="w-full px-4 py-3 rounded-lg font-medium transition-colors"
                 style={{
                   height: '55px',
-                  backgroundColor: speakOutLoud || isCompleted ? 'rgb(34, 197, 94)' : 'rgb(237, 243, 255)',
-                  color: speakOutLoud || isCompleted ? 'white' : 'rgb(55, 65, 81)',
+                  backgroundColor: isCompleted && !isReplaying && speakOutLoud ? 'rgb(34, 197, 94)' : 'rgb(237, 243, 255)',
+                  color: isCompleted && !isReplaying && speakOutLoud ? 'white' : 'rgb(55, 65, 81)',
                   border: 'none'
                 }}
               >
