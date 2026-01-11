@@ -78,6 +78,7 @@ export default function VocabularyTaskPlayer({
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const repeatTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isRepeatingRef = useRef(false);
+  const isUserControlledRef = useRef(false); // Track if user manually clicked Play/Pause
   
   // Update local completion state when prop changes
   useEffect(() => {
@@ -414,9 +415,19 @@ export default function VocabularyTaskPlayer({
 
     try {
       if (isPlaying) {
+        // User clicked Pause - stop playback and prevent auto-repeat
+        isUserControlledRef.current = true;
         audioRef.current.pause();
         setIsPlaying(false);
+        // Clear any pending repeat timeouts
+        if (repeatTimeoutRef.current) {
+          clearTimeout(repeatTimeoutRef.current);
+          repeatTimeoutRef.current = null;
+        }
+        isRepeatingRef.current = false;
       } else {
+        // User clicked Play - start playback with repeat settings
+        isUserControlledRef.current = true;
         if (audioRef.current.src !== audioUrls[currentCard.word]) {
           audioRef.current.src = audioUrls[currentCard.word];
           audioRef.current.load();
@@ -429,6 +440,7 @@ export default function VocabularyTaskPlayer({
       }
     } catch (error) {
       console.error('Play/Pause error:', error);
+      isUserControlledRef.current = false;
     }
   }, [isPlaying, currentCard, audioUrls, playAudioSafely]);
 
@@ -475,8 +487,12 @@ export default function VocabularyTaskPlayer({
             
             currentIndexRef.current = nextIndex;
             
-            // Auto-play next card after switching
+            // Auto-play next card after switching (only if user hasn't paused)
             setTimeout(async () => {
+              if (isUserControlledRef.current) {
+                // User paused, don't auto-play
+                return;
+              }
               const nextCard = cards[nextIndex];
               if (audioRef.current && nextCard?.word) {
                 const audioUrl = audioUrls[nextCard.word];
@@ -528,8 +544,13 @@ export default function VocabularyTaskPlayer({
             }
             currentIndexRef.current = nextIndex;
             
-            // Auto-play next card after switching
+            // Auto-play next card after switching (only if user hasn't paused)
             setTimeout(async () => {
+              if (isUserControlledRef.current) {
+                // User paused, don't auto-play
+                isRepeatingRef.current = false;
+                return;
+              }
               const nextCard = cards[nextIndex];
               if (audioRef.current && nextCard?.word) {
                 const audioUrl = audioUrls[nextCard.word];
@@ -562,7 +583,8 @@ export default function VocabularyTaskPlayer({
       // If not infinite and not reached max repeats, continue repeating current card
       const pauseDelay = pauseBetweenRepeats * 1000;
       repeatTimeoutRef.current = setTimeout(async () => {
-        if (!audioRef.current) {
+        if (!audioRef.current || isUserControlledRef.current) {
+          // Don't auto-repeat if user manually paused
           isRepeatingRef.current = false;
           return;
         }
@@ -587,11 +609,32 @@ export default function VocabularyTaskPlayer({
     const audio = audioRef.current;
     if (!audio) return;
 
-    const handlePlaying = () => setIsPlaying(true);
-    const handlePause = () => setIsPlaying(false);
-    const handleEnded = () => handleAudioEnded();
+    // Only update isPlaying from events if it's not user-controlled
+    // This prevents "jumping" between Play/Pause during auto-repeat
+    const handlePlaying = () => {
+      // Only update if user hasn't manually paused
+      if (!isUserControlledRef.current || isPlaying) {
+        setIsPlaying(true);
+      }
+    };
+    
+    const handlePause = () => {
+      // Only update if user manually paused
+      if (isUserControlledRef.current) {
+        setIsPlaying(false);
+        isUserControlledRef.current = false; // Reset after handling
+      }
+    };
+    
+    const handleEnded = () => {
+      // Reset user control flag when audio ends naturally
+      isUserControlledRef.current = false;
+      handleAudioEnded();
+    };
+    
     const handleError = () => {
       setIsPlaying(false);
+      isUserControlledRef.current = false;
       console.error('Audio error');
     };
 
@@ -606,7 +649,7 @@ export default function VocabularyTaskPlayer({
       audio.removeEventListener('ended', handleEnded);
       audio.removeEventListener('error', handleError);
     };
-  }, [handleAudioEnded]);
+  }, [handleAudioEnded, isPlaying]);
 
   // Apply playback speed
   useEffect(() => {
