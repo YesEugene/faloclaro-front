@@ -546,13 +546,13 @@ function OverviewPageContent() {
           </div>
 
           {/* Заголовок урока - уменьшенное межстрочное расстояние при переносе на две строки */}
-          <h1 className="font-bold text-black mb-2 text-left leading-tight" style={{ fontSize: '29px', lineHeight: '1.2' }}>
+          <h1 className="font-bold text-black text-left leading-tight" style={{ fontSize: '29px', lineHeight: '1.2', marginBottom: '10px' }}>
             {getDayTitle(dayInfo, appLanguage)}
           </h1>
 
-          {/* Описание урока - поднят ближе к заголовку на 10px */}
+          {/* Описание урока - 10px отступ от заголовка */}
           {getDaySubtitle(dayInfo, appLanguage) && (
-            <p className="text-gray-700 mb-6 text-left" style={{ marginTop: '-10px' }}>
+            <p className="text-gray-700 mb-6 text-left">
               {getDaySubtitle(dayInfo, appLanguage)}
             </p>
           )}
