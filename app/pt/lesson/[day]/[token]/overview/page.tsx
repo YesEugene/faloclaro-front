@@ -666,22 +666,24 @@ function OverviewPageContent() {
                   const levelTextColor = isCurrentLevel ? '#000000' : '#FFFFFF'; // Black text on green, white text on black
 
                   return (
-                    <div key={level.id} className="flex-shrink-0 flex items-center gap-3">
-                      {/* Level Card - Black (or green if current) - stays in place */}
+                    <div key={level.id} className="flex-shrink-0">
+                      {/* Level Card - Black (or green if current) - expands horizontally to the right */}
                       <div
                         style={{
                           backgroundColor: levelBackgroundColor,
                           borderRadius: '12px',
-                          padding: '12px 16px',
-                          width: '100px',
+                          padding: isExpanded ? '12px 16px' : '12px 16px',
+                          width: isExpanded ? 'auto' : '100px',
+                          minWidth: '100px',
                           height: '100px',
                           display: 'flex',
-                          flexDirection: 'column',
-                          alignItems: 'center',
-                          justifyContent: 'center',
+                          flexDirection: isExpanded ? 'row' : 'column',
+                          alignItems: isExpanded ? 'center' : 'center',
+                          justifyContent: isExpanded ? 'flex-start' : 'center',
                           cursor: 'pointer',
                           transition: 'all 0.3s ease',
                           flexShrink: 0,
+                          gap: isExpanded ? '12px' : '0',
                         }}
                         onClick={() => {
                           const newExpanded = new Set(expandedLevels);
@@ -695,7 +697,7 @@ function OverviewPageContent() {
                         className="hover:opacity-90"
                       >
                         {/* Level Number and Title - Always visible */}
-                        <div className="flex flex-col items-center">
+                        <div className="flex flex-col items-center flex-shrink-0">
                           <span 
                             className="text-3xl font-bold"
                             style={{ color: levelTextColor, lineHeight: '1.2' }}
@@ -709,11 +711,10 @@ function OverviewPageContent() {
                             {appLanguage === 'ru' ? 'УРОВЕНЬ' : 'LEVEL'}
                           </span>
                         </div>
-                      </div>
 
-                      {/* Expanded Lessons - Opens to the right (horizontally) */}
-                      {isExpanded && (
-                        <div className="flex gap-2 items-center flex-shrink-0">
+                        {/* Expanded Lessons - Inside the level card, opens to the right */}
+                        {isExpanded && (
+                          <div className="flex gap-2 items-center flex-shrink-0">
                           {levelLessons.length > 0 ? (
                             levelLessons.map((publishedLesson: any) => {
                                 // Render lesson card with smaller size inside level card
@@ -834,6 +835,7 @@ function OverviewPageContent() {
                             )}
                           </div>
                         )}
+                      </div>
                     </div>
                   );
                 })}
@@ -850,21 +852,23 @@ function OverviewPageContent() {
                   const levelTextColor = isCurrentLevel ? '#000000' : '#FFFFFF';
 
                   return (
-                    <div className="flex-shrink-0 flex items-center gap-3">
+                    <div className="flex-shrink-0">
                       <div
                         style={{
                           backgroundColor: levelBackgroundColor,
                           borderRadius: '12px',
-                          padding: '12px 16px',
-                          width: '100px',
+                          padding: isExpanded ? '12px 16px' : '12px 16px',
+                          width: isExpanded ? 'auto' : '100px',
+                          minWidth: '100px',
                           height: '100px',
                           display: 'flex',
-                          flexDirection: 'column',
-                          alignItems: 'center',
-                          justifyContent: 'center',
+                          flexDirection: isExpanded ? 'row' : 'column',
+                          alignItems: isExpanded ? 'center' : 'center',
+                          justifyContent: isExpanded ? 'flex-start' : 'center',
                           cursor: 'pointer',
                           transition: 'all 0.3s ease',
                           flexShrink: 0,
+                          gap: isExpanded ? '12px' : '0',
                         }}
                         onClick={() => {
                           const newExpanded = new Set(expandedLevels);
@@ -878,15 +882,14 @@ function OverviewPageContent() {
                         className="hover:opacity-90"
                       >
                         <span 
-                          className="text-xs font-medium"
+                          className="text-xs font-medium flex-shrink-0"
                           style={{ color: levelTextColor }}
                         >
                           {appLanguage === 'ru' ? 'БЕЗ УРОВНЯ' : 'NO LEVEL'}
                         </span>
-                      </div>
 
-                      {isExpanded && (
-                        <div className="flex gap-2 items-center flex-shrink-0">
+                        {isExpanded && (
+                          <div className="flex gap-2 items-center flex-shrink-0">
                             {noLevelLessons.map((publishedLesson: any) => {
                               const lessonDay = publishedLesson.day_number;
                               const isUnlocked = isLessonUnlocked(lessonDay);
@@ -981,8 +984,9 @@ function OverviewPageContent() {
                                 </div>
                               );
                             })}
-                        </div>
-                      )}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   );
                 })()}
