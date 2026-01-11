@@ -44,9 +44,9 @@ tasks:
 
         - word: "Cliente"
           transcription: "[kliˈẽtɨ]"
-          example_sentence: "O cliente."
-          sentence_translation_ru: "Клиент."
-          sentence_translation_en: "The client."
+          example_sentence: "O cliente espera."
+          sentence_translation_ru: "Клиент ждёт."
+          sentence_translation_en: "The client is waiting."
           word_translation_ru: "клиент"
 
         - word: "Amigo"
@@ -84,19 +84,19 @@ tasks:
           sentence_translation_en: "My daughter."
           word_translation_ru: "дочь"
 
-        - word: "Pessoa conhecida"
-          transcription: "[pɨˈsoɐ kuɲɨˈsidɐ]"
-          example_sentence: "Uma pessoa conhecida."
-          sentence_translation_ru: "Знакомый человек."
-          sentence_translation_en: "A known person."
-          word_translation_ru: "знакомый"
-
         - word: "Pessoa nova"
           transcription: "[pɨˈsoɐ ˈnovɐ]"
           example_sentence: "Uma pessoa nova."
           sentence_translation_ru: "Новый человек."
           sentence_translation_en: "A new person."
           word_translation_ru: "новый человек"
+
+        - word: "Pessoa conhecida"
+          transcription: "[pɨˈsoɐ kuɲɨˈsidɐ]"
+          example_sentence: "Uma pessoa conhecida."
+          sentence_translation_ru: "Знакомый человек."
+          sentence_translation_en: "A known person."
+          word_translation_ru: "знакомый человек"
 
         - word: "Gente"
           transcription: "[ˈʒẽtɨ]"
@@ -107,7 +107,7 @@ tasks:
 
 
 # =========================================================
-# TASK 2 — RULES
+# TASK 2 — RULES (УСИЛЕНО)
 # =========================================================
   - task_id: 2
     type: rules
@@ -131,15 +131,17 @@ tasks:
       block_1_identity:
         type: explanation
         title:
-          ru: "Как сказать, кто человек"
-          en: "How to say who someone is"
+          ru: "Кто этот человек"
+          en: "Who this person is"
         explanation_text:
-          ru: "Чтобы сказать, кто это, используют: É + pessoa."
-          en: "To say who someone is, use: É + person."
+          ru: "Чтобы сказать, кто это, используют: É + pessoa / É + cliente."
+          en: "To say who it is, use: É + person / É + client."
         examples:
           - text: "É um cliente."
             audio: true
           - text: "É uma pessoa."
+            audio: true
+          - text: "É um amigo."
             audio: true
 
       block_2_my_person:
@@ -148,34 +150,36 @@ tasks:
           ru: "Мой и моя"
           en: "My"
         explanation_text:
-          ru: "Чтобы сказать «мой», используют: o meu / a minha."
+          ru: "Чтобы сказать «мой» или «моя», используют: o meu / a minha."
           en: "To say 'my', use: o meu / a minha."
         examples:
           - text: "O meu amigo."
             audio: true
           - text: "A minha filha."
             audio: true
+          - text: "O meu marido."
+            audio: true
 
       block_3_equivalence:
         type: comparison
         title:
-          ru: "Два способа"
-          en: "Two ways"
+          ru: "Два способа сказать о человеке"
+          en: "Two ways to talk about a person"
         comparison_card:
           - text: "É um cliente."
             audio: true
           - text: "O meu cliente."
             audio: true
         note:
-          ru: "Оба говорят о человеке."
-          en: "Both refer to a person."
+          ru: "Оба говорят о человеке, но один — описание, другой — принадлежность."
+          en: "Both refer to a person: one describes, the other shows possession."
 
       block_4_reinforcement:
         type: reinforcement
 
         task_1:
           format: single_choice
-          audio: "A minha filha."
+          audio: "A minha mulher."
           question:
             ru: "Кто это?"
             en: "Who is this?"
@@ -183,26 +187,26 @@ tasks:
             - text:
                 ru: "Дочь"
                 en: "Daughter"
-              correct: true
+              correct: false
             - text:
                 ru: "Жена"
                 en: "Wife"
-              correct: false
+              correct: true
             - text:
-                ru: "Друг"
-                en: "Friend"
+                ru: "Клиент"
+                en: "Client"
               correct: false
 
         task_2:
           format: situation_to_phrase
           situation_text:
-            ru: "Ты хочешь сказать «мой друг»."
-            en: "You want to say 'my friend'."
+            ru: "Ты хочешь сказать «мой сын»."
+            en: "You want to say 'my son'."
           options:
-            - text: "O meu amigo."
-              correct: true
-            - text: "A minha mãe."
+            - text: "A minha filha."
               correct: false
+            - text: "O meu filho."
+              correct: true
             - text: "É uma pessoa."
               correct: false
 
@@ -222,16 +226,16 @@ tasks:
 
 
 # =========================================================
-# TASK 3 — LISTENING
+# TASK 3 — LISTENING (УСИЛЕНО)
 # =========================================================
   - task_id: 3
     type: listening_comprehension
     title:
-      ru: "Предложения и понимание"
-      en: "Listening and understanding"
+      ru: "Мини-сцены"
+      en: "Mini scenes"
     subtitle:
-      ru: "Слушай и пойми, кто это"
-      en: "Listen and understand who it is"
+      ru: "Пойми, о ком говорят"
+      en: "Understand who they are talking about"
 
     ui_rules:
       audio_plays_first: true
@@ -254,45 +258,45 @@ tasks:
               en: "Client"
             correct: false
           - text:
-              ru: "Жена"
-              en: "Wife"
+              ru: "Сын"
+              en: "Son"
             correct: false
 
       - item_id: 2
-        audio: "A minha mulher."
+        audio: "É uma pessoa nova."
         text_hidden_before_answer: true
         question:
           ru: "Кто это?"
           en: "Who is this?"
         options:
           - text:
-              ru: "Жена"
-              en: "Wife"
+              ru: "Новый человек"
+              en: "A new person"
             correct: true
           - text:
-              ru: "Дочь"
-              en: "Daughter"
+              ru: "Семья"
+              en: "Family"
             correct: false
-          - text:
-              ru: "Коллега"
-              en: "Colleague"
-            correct: false
-
-      - item_id: 3
-        audio: "É um cliente."
-        text_hidden_before_answer: true
-        question:
-          ru: "Кто это?"
-          en: "Who is this?"
-        options:
           - text:
               ru: "Клиент"
               en: "Client"
-            correct: true
+            correct: false
+
+      - item_id: 3
+        audio: "O meu marido."
+        text_hidden_before_answer: true
+        question:
+          ru: "Кто это?"
+          en: "Who is this?"
+        options:
           - text:
               ru: "Друг"
               en: "Friend"
             correct: false
+          - text:
+              ru: "Муж"
+              en: "Husband"
+            correct: true
           - text:
               ru: "Сын"
               en: "Son"
@@ -308,11 +312,30 @@ tasks:
       ru: "Внимательность"
       en: "Attention"
     subtitle:
-      ru: "Пойми, о ком говорят"
-      en: "Understand who they talk about"
+      ru: "Узнай, кто это"
+      en: "Recognize who it is"
 
     items:
       - item_id: 1
+        audio: "Uma pessoa conhecida."
+        question:
+          ru: "Кто это?"
+          en: "Who is this?"
+        options:
+          - text:
+              ru: "Знакомый человек"
+              en: "A known person"
+            correct: true
+          - text:
+              ru: "Новый человек"
+              en: "A new person"
+            correct: false
+          - text:
+              ru: "Клиент"
+              en: "Client"
+            correct: false
+
+      - item_id: 2
         audio: "O meu filho."
         question:
           ru: "Кто это?"
@@ -329,25 +352,6 @@ tasks:
           - text:
               ru: "Друг"
               en: "Friend"
-            correct: false
-
-      - item_id: 2
-        audio: "Uma pessoa nova."
-        question:
-          ru: "Кто это?"
-          en: "Who is this?"
-        options:
-          - text:
-              ru: "Новый человек"
-              en: "A new person"
-            correct: true
-          - text:
-              ru: "Семья"
-              en: "Family"
-            correct: false
-          - text:
-              ru: "Коллега"
-              en: "Colleague"
             correct: false
 
 

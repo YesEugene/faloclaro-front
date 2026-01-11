@@ -107,7 +107,7 @@ tasks:
 
 
 # =========================================================
-# TASK 2 — RULES
+# TASK 2 — RULES (УСИЛЕНО)
 # =========================================================
   - task_id: 2
     type: rules
@@ -139,8 +139,13 @@ tasks:
         examples:
           - text: "Hoje trabalho."
             audio: true
-          - text: "Agora descanso."
+          - text: "Amanhã descanso."
             audio: true
+          - text: "Agora trabalho."
+            audio: true
+        hint:
+          - ru: "Hoje — сегодня, Amanhã — завтра, Agora — сейчас"
+            en: "Hoje = today, Amanhã = tomorrow, Agora = now"
 
       block_2_open:
         type: explanation
@@ -155,6 +160,11 @@ tasks:
             audio: true
           - text: "Está fechado."
             audio: true
+          - text: "Hoje está aberto."
+            audio: true
+        hint:
+          - ru: "Está = «сейчас есть»"
+            en: "Está = current state"
 
       block_3_equivalence:
         type: comparison
@@ -167,43 +177,43 @@ tasks:
           - text: "Agora está fechado."
             audio: true
         note:
-          ru: "Обе фразы говорят о времени и состоянии."
-          en: "Both talk about time and status."
+          ru: "Обе фразы соединяют время и состояние."
+          en: "Both connect time and status."
 
       block_4_reinforcement:
         type: reinforcement
 
         task_1:
           format: single_choice
-          audio: "Hoje está aberto."
+          audio: "Agora está fechado."
           question:
-            ru: "Когда это открыто?"
-            en: "When is it open?"
+            ru: "Когда закрыто?"
+            en: "When is it closed?"
           options:
             - text:
                 ru: "Сегодня"
                 en: "Today"
+              correct: false
+            - text:
+                ru: "Сейчас"
+                en: "Now"
               correct: true
             - text:
                 ru: "Завтра"
                 en: "Tomorrow"
               correct: false
-            - text:
-                ru: "Вчера"
-                en: "Yesterday"
-              correct: false
 
         task_2:
           format: situation_to_phrase
           situation_text:
-            ru: "Ты хочешь сказать, что сейчас закрыто."
-            en: "You want to say it is closed now."
+            ru: "Ты хочешь сказать, что сегодня открыто."
+            en: "You want to say it is open today."
           options:
-            - text: "Agora está fechado."
-              correct: true
             - text: "Hoje está aberto."
+              correct: true
+            - text: "Agora está fechado."
               correct: false
-            - text: "Amanhã trabalho."
+            - text: "Amanhã descanso."
               correct: false
 
       block_5_speak:
@@ -222,7 +232,7 @@ tasks:
 
 
 # =========================================================
-# TASK 3 — LISTENING
+# TASK 3 — LISTENING (УСИЛЕНО)
 # =========================================================
   - task_id: 3
     type: listening_comprehension
@@ -231,6 +241,7 @@ tasks:
       en: "Listening and understanding"
     subtitle:
       ru: "Слушай и пойми время"
+      en: "Listen and understand time"
 
     ui_rules:
       audio_plays_first: true
@@ -245,16 +256,16 @@ tasks:
           en: "When is it open?"
         options:
           - text:
+              ru: "Ночью"
+              en: "At night"
+            correct: false
+          - text:
               ru: "Сегодня"
               en: "Today"
             correct: true
           - text:
               ru: "Завтра"
               en: "Tomorrow"
-            correct: false
-          - text:
-              ru: "Ночью"
-              en: "At night"
             correct: false
 
       - item_id: 2
@@ -265,13 +276,13 @@ tasks:
           en: "When is it closed?"
         options:
           - text:
-              ru: "Сейчас"
-              en: "Now"
-            correct: true
-          - text:
               ru: "Сегодня"
               en: "Today"
             correct: false
+          - text:
+              ru: "Сейчас"
+              en: "Now"
+            correct: true
           - text:
               ru: "Завтра"
               en: "Tomorrow"
@@ -285,6 +296,10 @@ tasks:
           en: "What is this about?"
         options:
           - text:
+              ru: "Цена"
+              en: "Price"
+            correct: false
+          - text:
               ru: "Время"
               en: "Time"
             correct: true
@@ -292,14 +307,10 @@ tasks:
               ru: "Место"
               en: "Place"
             correct: false
-          - text:
-              ru: "Цена"
-              en: "Price"
-            correct: false
 
 
 # =========================================================
-# TASK 4 — ATTENTION
+# TASK 4 — ATTENTION (УСИЛЕНО)
 # =========================================================
   - task_id: 4
     type: attention
@@ -308,6 +319,7 @@ tasks:
       en: "Attention"
     subtitle:
       ru: "Пойми, когда"
+      en: "Understand when"
 
     items:
       - item_id: 1
@@ -317,13 +329,13 @@ tasks:
           en: "When is it closed?"
         options:
           - text:
-              ru: "Завтра"
-              en: "Tomorrow"
-            correct: true
-          - text:
               ru: "Сегодня"
               en: "Today"
             correct: false
+          - text:
+              ru: "Завтра"
+              en: "Tomorrow"
+            correct: true
           - text:
               ru: "Сейчас"
               en: "Now"
@@ -336,16 +348,35 @@ tasks:
           en: "What is this about?"
         options:
           - text:
-              ru: "Время"
-              en: "Time"
-            correct: true
-          - text:
               ru: "Человек"
               en: "A person"
             correct: false
           - text:
+              ru: "Время"
+              en: "Time"
+            correct: true
+          - text:
               ru: "Цена"
               en: "Price"
+            correct: false
+
+      - item_id: 3
+        audio: "Agora trabalho."
+        question:
+          ru: "Когда это происходит?"
+          en: "When does it happen?"
+        options:
+          - text:
+              ru: "Сейчас"
+              en: "Now"
+            correct: true
+          - text:
+              ru: "Завтра"
+              en: "Tomorrow"
+            correct: false
+          - text:
+              ru: "Вечером"
+              en: "At night"
             correct: false
 
 
@@ -359,6 +390,7 @@ tasks:
       en: "Writing"
     subtitle:
       ru: "Скажи, когда"
+      en: "Say when"
 
     instruction:
       ru: "Заполни фразы."
@@ -368,7 +400,7 @@ tasks:
       format: template_fill
       template:
         - "Hoje está ___."
-        - "Amanhã ___."
+        - "Agora ___."
       hints:
         - "aberto"
         - "fechado"
@@ -377,15 +409,15 @@ tasks:
       show_by_button: true
       content:
         - "Hoje está aberto."
-        - "Amanhã está fechado."
+        - "Agora está fechado."
 
     alternative:
       title:
         ru: "Можно сказать вслух"
         en: "You can say it out loud"
       instruction:
-        ru: "Скажи: Hoje está aberto. Amanhã está fechado."
-        en: "Say: Hoje está aberto. Amanhã está fechado."
+        ru: "Скажи: Hoje está aberto. Agora está fechado."
+        en: "Say: Hoje está aberto. Agora está fechado."
       action_button:
         text:
           ru: "✔ Я сказал(а) вслух"

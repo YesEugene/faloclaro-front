@@ -964,8 +964,8 @@ export default function VocabularyTaskPlayer({
       </div>
 
       {/* Progress Bar - Above navigation panel */}
-      <div className="fixed left-0 right-0 z-30" style={{ bottom: '69px', height: '33px', margin: 0, padding: 0 }}>
-        <div className="max-w-md mx-auto relative" style={{ height: '100%', margin: 0, padding: 0 }}>
+      <div className="fixed left-0 right-0 z-30 flex justify-center" style={{ bottom: '69px', height: '33px', margin: 0, padding: 0 }}>
+        <div className="w-full max-w-md relative" style={{ height: '100%', margin: 0, padding: 0 }}>
           {/* Progress Bar - Full height with green and gray sections */}
           <div className="absolute inset-0 flex">
             {/* Green section (completed) */}

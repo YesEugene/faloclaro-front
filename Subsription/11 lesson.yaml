@@ -107,7 +107,7 @@ tasks:
 
 
 # =========================================================
-# TASK 2 — RULES
+# TASK 2 — RULES (УСИЛЕНО)
 # =========================================================
   - task_id: 2
     type: rules
@@ -141,6 +141,11 @@ tasks:
             audio: true
           - text: "Preciso de água."
             audio: true
+          - text: "Preciso falar."
+            audio: true
+        hint:
+          - ru: "Preciso de — «мне нужно…»"
+            en: "Preciso de means «I need…»"
 
       block_2_can:
         type: explanation
@@ -153,14 +158,16 @@ tasks:
         examples:
           - text: "Posso ajudar."
             audio: true
-          - text: "Não posso."
+          - text: "Não posso agora."
+            audio: true
+          - text: "Posso falar."
             audio: true
 
       block_3_equivalence:
         type: comparison
         title:
-          ru: "Примеры"
-          en: "Examples"
+          ru: "Просьба и ответ"
+          en: "Request and response"
         comparison_card:
           - text: "Preciso de ajuda."
             audio: true
@@ -175,7 +182,7 @@ tasks:
 
         task_1:
           format: single_choice
-          audio: "Preciso de ajuda."
+          audio: "Tenho um problema."
           question:
             ru: "Что делает человек?"
             en: "What is the person doing?"
@@ -183,26 +190,26 @@ tasks:
             - text:
                 ru: "Просит помощи"
                 en: "Asking for help"
+              correct: false
+            - text:
+                ru: "Говорит о проблеме"
+                en: "Talking about a problem"
               correct: true
             - text:
                 ru: "Благодарит"
                 en: "Thanking"
               correct: false
-            - text:
-                ru: "Прощается"
-                en: "Saying goodbye"
-              correct: false
 
         task_2:
           format: situation_to_phrase
           situation_text:
-            ru: "Ты хочешь сказать, что не можешь."
-            en: "You want to say you can’t."
+            ru: "Ты хочешь вежливо отказаться."
+            en: "You want to refuse politely."
           options:
-            - text: "Não posso."
-              correct: true
             - text: "Posso."
               correct: false
+            - text: "Não posso."
+              correct: true
             - text: "Obrigado."
               correct: false
 
@@ -222,7 +229,7 @@ tasks:
 
 
 # =========================================================
-# TASK 3 — LISTENING
+# TASK 3 — LISTENING (УСИЛЕНО)
 # =========================================================
   - task_id: 3
     type: listening_comprehension
@@ -231,6 +238,7 @@ tasks:
       en: "Listening and understanding"
     subtitle:
       ru: "Слушай и пойми, что нужно"
+      en: "Listen and understand what is needed"
 
     ui_rules:
       audio_plays_first: true
@@ -238,12 +246,16 @@ tasks:
 
     items:
       - item_id: 1
-        audio: "Preciso de ajuda."
+        audio: "Preciso de ajuda agora."
         text_hidden_before_answer: true
         question:
           ru: "Что человеку нужно?"
           en: "What does the person need?"
         options:
+          - text:
+              ru: "Работа"
+              en: "Work"
+            correct: false
           - text:
               ru: "Помощь"
               en: "Help"
@@ -252,29 +264,25 @@ tasks:
               ru: "Еда"
               en: "Food"
             correct: false
-          - text:
-              ru: "Работа"
-              en: "Work"
-            correct: false
 
       - item_id: 2
-        audio: "Estou mal."
+        audio: "Estou mal. Tenho dor."
         text_hidden_before_answer: true
         question:
-          ru: "Как себя чувствует человек?"
-          en: "How does the person feel?"
+          ru: "Что происходит?"
+          en: "What is happening?"
         options:
           - text:
-              ru: "Плохо"
-              en: "Bad"
+              ru: "Человек чувствует себя плохо"
+              en: "The person feels bad"
             correct: true
           - text:
-              ru: "Хорошо"
-              en: "Fine"
+              ru: "Человек благодарит"
+              en: "The person is thanking"
             correct: false
           - text:
-              ru: "Занят"
-              en: "Busy"
+              ru: "Человек спрашивает цену"
+              en: "The person asks for a price"
             correct: false
 
       - item_id: 3
@@ -285,21 +293,21 @@ tasks:
           en: "What is this?"
         options:
           - text:
-              ru: "Предложение помощи"
-              en: "An offer of help"
-            correct: true
-          - text:
               ru: "Жалоба"
               en: "A complaint"
             correct: false
           - text:
-              ru: "Цена"
-              en: "A price"
+              ru: "Предложение помощи"
+              en: "An offer of help"
+            correct: true
+          - text:
+              ru: "Прощание"
+              en: "Goodbye"
             correct: false
 
 
 # =========================================================
-# TASK 4 — ATTENTION
+# TASK 4 — ATTENTION (УСИЛЕНО)
 # =========================================================
   - task_id: 4
     type: attention
@@ -308,6 +316,7 @@ tasks:
       en: "Attention"
     subtitle:
       ru: "Пойми намерение"
+      en: "Recognize the intention"
 
     items:
       - item_id: 1
@@ -317,24 +326,28 @@ tasks:
           en: "What does the person want?"
         options:
           - text:
-              ru: "Поговорить"
-              en: "To talk"
-            correct: true
-          - text:
               ru: "Заплатить"
               en: "To pay"
             correct: false
+          - text:
+              ru: "Поговорить"
+              en: "To talk"
+            correct: true
           - text:
               ru: "Уйти"
               en: "To leave"
             correct: false
 
       - item_id: 2
-        audio: "Não posso."
+        audio: "Não posso agora."
         question:
           ru: "Что это?"
           en: "What is this?"
         options:
+          - text:
+              ru: "Согласие"
+              en: "Agreement"
+            correct: false
           - text:
               ru: "Отказ"
               en: "A refusal"
@@ -343,9 +356,24 @@ tasks:
               ru: "Просьба"
               en: "A request"
             correct: false
+
+      - item_id: 3
+        audio: "Estou bem."
+        question:
+          ru: "Как себя чувствует человек?"
+          en: "How does the person feel?"
+        options:
           - text:
-              ru: "Благодарность"
-              en: "Thanks"
+              ru: "Плохо"
+              en: "Bad"
+            correct: false
+          - text:
+              ru: "Хорошо"
+              en: "Fine"
+            correct: true
+          - text:
+              ru: "Занят"
+              en: "Busy"
             correct: false
 
 

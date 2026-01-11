@@ -10,9 +10,8 @@ day:
 tasks:
 
 # =========================================================
-# TASK 1 — VOCABULARY
+# TASK 1 — VOCABULARY (ТОЛЬКО ПОВТОРЕНИЕ)
 # =========================================================
-# Только слова, которые уже были. Никаких новых.
   - task_id: 1
     type: vocabulary
     title:
@@ -41,7 +40,7 @@ tasks:
 
 
 # =========================================================
-# TASK 2 — RULES
+# TASK 2 — RULES (УСИЛЕНО)
 # =========================================================
   - task_id: 2
     type: rules
@@ -55,74 +54,93 @@ tasks:
     structure:
       blocks_order:
         - block_1_scene
-        - block_2_question
-        - block_3_equivalence
-        - block_4_reinforcement
-        - block_5_speak
+        - block_2_questions
+        - block_3_status
+        - block_4_equivalence
+        - block_5_reinforcement
+        - block_6_speak
 
     blocks:
 
       block_1_scene:
         type: explanation
         title:
-          ru: "Сцена"
-          en: "A scene"
+          ru: "Мини-сцена"
+          en: "A mini scene"
         explanation_text:
-          ru: "В реальной жизни мы слышим фразы вместе. Наша задача — понять, что происходит."
+          ru: "В жизни мы слышим фразы вместе. Наша задача — понять, что происходит."
           en: "In real life we hear phrases together. Our task is to understand what is happening."
         examples:
           - text: "Pode ajudar? Preciso de água."
             audio: true
+          - text: "Pode ajudar? Preciso de ajuda."
+            audio: true
 
-      block_2_question:
+      block_2_questions:
         type: explanation
         title:
-          ru: "Вопросы"
-          en: "Questions"
+          ru: "Как мы понимаем ситуацию"
+          en: "How we understand a situation"
         explanation_text:
-          ru: "Мы используем: Onde? Quando? Quanto? чтобы понять ситуацию."
-          en: "We use: Onde? Quando? Quanto? to understand the situation."
+          ru: "Мы задаём вопросы: Onde? Quando? Quanto?"
+          en: "We ask: Onde? Quando? Quanto?"
         examples:
           - text: "Onde?"
+            audio: true
+          - text: "Quando?"
             audio: true
           - text: "Quanto?"
             audio: true
 
-      block_3_equivalence:
-        type: comparison
+      block_3_status:
+        type: explanation
         title:
-          ru: "Фразы вместе"
-          en: "Phrases together"
-        comparison_card:
+          ru: "Открыто или закрыто"
+          en: "Open or closed"
+        explanation_text:
+          ru: "Иногда нам говорят статус места."
+          en: "Sometimes we are told the status of a place."
+        examples:
           - text: "Hoje está aberto."
             audio: true
           - text: "Agora está fechado."
             audio: true
-        note:
-          ru: "Обе фразы говорят о времени и статусе."
-          en: "Both talk about time and status."
 
-      block_4_reinforcement:
+      block_4_equivalence:
+        type: comparison
+        title:
+          ru: "Два способа — один смысл"
+          en: "Two ways — one meaning"
+        comparison_card:
+          - text: "Pode ajudar?"
+            audio: true
+          - text: "Preciso de ajuda."
+            audio: true
+        note:
+          ru: "Обе фразы означают, что человек просит помощи."
+          en: "Both mean the person is asking for help."
+
+      block_5_reinforcement:
         type: reinforcement
 
         task_1:
           format: single_choice
-          audio: "Hoje está aberto."
+          audio: "Agora está fechado."
           question:
-            ru: "Что это значит?"
-            en: "What does it mean?"
+            ru: "Что это?"
+            en: "What is this?"
           options:
             - text:
-                ru: "Сегодня открыто"
-                en: "Open today"
-              correct: true
-            - text:
-                ru: "Сейчас закрыто"
-                en: "Closed now"
+                ru: "Просьба"
+                en: "A request"
               correct: false
             - text:
-                ru: "Завтра открыто"
-                en: "Open tomorrow"
+                ru: "Информация"
+                en: "Information"
+              correct: true
+            - text:
+                ru: "Цена"
+                en: "A price"
               correct: false
 
         task_2:
@@ -131,14 +149,14 @@ tasks:
             ru: "Ты хочешь узнать цену."
             en: "You want to know the price."
           options:
-            - text: "Quanto?"
-              correct: true
             - text: "Onde?"
               correct: false
+            - text: "Quanto?"
+              correct: true
             - text: "Pode?"
               correct: false
 
-      block_5_speak:
+      block_6_speak:
         type: speak_out_loud
         title:
           ru: "Скажи вслух"
@@ -154,7 +172,7 @@ tasks:
 
 
 # =========================================================
-# TASK 3 — LISTENING
+# TASK 3 — LISTENING (УСИЛЕНО)
 # =========================================================
   - task_id: 3
     type: listening_comprehension
@@ -163,6 +181,7 @@ tasks:
       en: "Mini scenes"
     subtitle:
       ru: "Пойми, что происходит"
+      en: "Understand what is happening"
 
     ui_rules:
       audio_plays_first: true
@@ -170,22 +189,22 @@ tasks:
 
     items:
       - item_id: 1
-        audio: "Pode ajudar? Preciso de água."
+        audio: "Pode ajudar? Preciso de ajuda."
         question:
           ru: "Что происходит?"
           en: "What is happening?"
         options:
           - text:
+              ru: "Благодарность"
+              en: "Thanks"
+            correct: false
+          - text:
               ru: "Просьба"
               en: "A request"
             correct: true
           - text:
-              ru: "Прощание"
-              en: "Goodbye"
-            correct: false
-          - text:
-              ru: "Благодарность"
-              en: "Thanks"
+              ru: "Цена"
+              en: "A price"
             correct: false
 
       - item_id: 2
@@ -195,16 +214,16 @@ tasks:
           en: "What is this?"
         options:
           - text:
-              ru: "Информация о времени"
-              en: "Time information"
-            correct: true
-          - text:
-              ru: "Цена"
-              en: "A price"
-            correct: false
-          - text:
               ru: "Просьба"
               en: "A request"
+            correct: false
+          - text:
+              ru: "Информация"
+              en: "Information"
+            correct: true
+          - text:
+              ru: "Благодарность"
+              en: "Thanks"
             correct: false
 
       - item_id: 3
@@ -214,21 +233,21 @@ tasks:
           en: "What does the person want?"
         options:
           - text:
+              ru: "Помощь"
+              en: "Help"
+            correct: false
+          - text:
               ru: "Узнать цену"
               en: "To know the price"
             correct: true
           - text:
-              ru: "Узнать время"
-              en: "To know the time"
-            correct: false
-          - text:
-              ru: "Попросить помощи"
-              en: "To ask for help"
+              ru: "Время"
+              en: "The time"
             correct: false
 
 
 # =========================================================
-# TASK 4 — ATTENTION
+# TASK 4 — ATTENTION (УСИЛЕНО)
 # =========================================================
   - task_id: 4
     type: attention
@@ -237,6 +256,7 @@ tasks:
       en: "Attention"
     subtitle:
       ru: "Узнай ситуацию"
+      en: "Recognize the situation"
 
     items:
       - item_id: 1
@@ -246,16 +266,16 @@ tasks:
           en: "What is this?"
         options:
           - text:
-              ru: "Информация"
-              en: "Information"
-            correct: true
-          - text:
               ru: "Просьба"
               en: "A request"
             correct: false
           - text:
-              ru: "Благодарность"
-              en: "Thanks"
+              ru: "Информация"
+              en: "Information"
+            correct: true
+          - text:
+              ru: "Цена"
+              en: "A price"
             correct: false
 
       - item_id: 2
@@ -265,16 +285,35 @@ tasks:
           en: "What is this?"
         options:
           - text:
+              ru: "Прощание"
+              en: "Goodbye"
+            correct: false
+          - text:
               ru: "Просьба"
               en: "A request"
             correct: true
+          - text:
+              ru: "Информация"
+              en: "Information"
+            correct: false
+
+      - item_id: 3
+        audio: "Hoje está aberto."
+        question:
+          ru: "Что это?"
+          en: "What is this?"
+        options:
           - text:
               ru: "Цена"
               en: "A price"
             correct: false
           - text:
-              ru: "Прощание"
-              en: "Goodbye"
+              ru: "Информация"
+              en: "Information"
+            correct: true
+          - text:
+              ru: "Просьба"
+              en: "A request"
             correct: false
 
 

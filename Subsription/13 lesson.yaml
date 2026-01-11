@@ -4,13 +4,13 @@ day:
     ru: "Просьбы и ответы"
     en: "Requests and responses"
   subtitle:
-    ru: "Понимаем диалоги"
+    ru: "Понимаем короткие диалоги"
     en: "Understanding short dialogues"
 
 tasks:
 
 # =========================================================
-# TASK 1 — VOCABULARY
+# TASK 1 — VOCABULARY (без изменения структуры, только используй как есть)
 # =========================================================
   - task_id: 1
     type: vocabulary
@@ -30,6 +30,7 @@ tasks:
       show_transcription: true
       show_example_sentence: true
       show_word_translation_ru: true
+      show_word_translation_en: true
       show_sentence_translation_ru: true
       show_sentence_translation_en: true
 
@@ -41,62 +42,7 @@ tasks:
           sentence_translation_ru: "Вы можете помочь?"
           sentence_translation_en: "Can you help?"
           word_translation_ru: "можно / можешь"
-
-        - word: "Sim"
-          transcription: "[sĩ]"
-          example_sentence: "Sim, posso."
-          sentence_translation_ru: "Да, могу."
-          sentence_translation_en: "Yes, I can."
-          word_translation_ru: "да"
-
-        - word: "Não"
-          transcription: "[nɐ̃w̃]"
-          example_sentence: "Não posso."
-          sentence_translation_ru: "Я не могу."
-          sentence_translation_en: "I can’t."
-          word_translation_ru: "нет"
-
-        - word: "Por favor"
-          transcription: "[puɾ fɐˈvoɾ]"
-          example_sentence: "Ajuda, por favor."
-          sentence_translation_ru: "Помоги, пожалуйста."
-          sentence_translation_en: "Help, please."
-          word_translation_ru: "пожалуйста"
-
-        - word: "Obrigado"
-          transcription: "[ubɾiˈɡadu]"
-          example_sentence: "Obrigado."
-          sentence_translation_ru: "Спасибо."
-          sentence_translation_en: "Thank you."
-          word_translation_ru: "спасибо"
-
-        - word: "Desculpa"
-          transcription: "[dɨʃˈkulpɐ]"
-          example_sentence: "Desculpa."
-          sentence_translation_ru: "Извини."
-          sentence_translation_en: "Sorry."
-          word_translation_ru: "извини"
-
-        - word: "Agora"
-          transcription: "[ɐˈɡɔɾɐ]"
-          example_sentence: "Agora, por favor."
-          sentence_translation_ru: "Сейчас, пожалуйста."
-          sentence_translation_en: "Now, please."
-          word_translation_ru: "сейчас"
-
-        - word: "Amanhã"
-          transcription: "[ɐmɐˈɲɐ]"
-          example_sentence: "Amanhã posso."
-          sentence_translation_ru: "Завтра могу."
-          sentence_translation_en: "Tomorrow I can."
-          word_translation_ru: "завтра"
-
-        - word: "Ajuda"
-          transcription: "[ɐˈʒudɐ]"
-          example_sentence: "Preciso de ajuda."
-          sentence_translation_ru: "Мне нужна помощь."
-          sentence_translation_en: "I need help."
-          word_translation_ru: "помощь"
+          word_translation_en: "can"
 
         - word: "Posso"
           transcription: "[ˈposu]"
@@ -104,10 +50,75 @@ tasks:
           sentence_translation_ru: "Я могу помочь."
           sentence_translation_en: "I can help."
           word_translation_ru: "могу"
+          word_translation_en: "I can"
+
+        - word: "Não posso"
+          transcription: "[nɐ̃w̃ ˈposu]"
+          example_sentence: "Não posso agora."
+          sentence_translation_ru: "Я не могу сейчас."
+          sentence_translation_en: "I can't now."
+          word_translation_ru: "не могу"
+          word_translation_en: "I can't"
+
+        - word: "Por favor"
+          transcription: "[puɾ fɐˈvoɾ]"
+          example_sentence: "Pode ajudar, por favor?"
+          sentence_translation_ru: "Вы можете помочь, пожалуйста?"
+          sentence_translation_en: "Can you help, please?"
+          word_translation_ru: "пожалуйста"
+          word_translation_en: "please"
+
+        - word: "Obrigado"
+          transcription: "[ubɾiˈɡadu]"
+          example_sentence: "Obrigado pela ajuda."
+          sentence_translation_ru: "Спасибо за помощь."
+          sentence_translation_en: "Thanks for the help."
+          word_translation_ru: "спасибо"
+          word_translation_en: "thank you"
+
+        - word: "Desculpa"
+          transcription: "[dɨʃˈkulpɐ]"
+          example_sentence: "Desculpa, não posso."
+          sentence_translation_ru: "Извини, я не могу."
+          sentence_translation_en: "Sorry, I can't."
+          word_translation_ru: "извини"
+          word_translation_en: "sorry"
+
+        - word: "Agora"
+          transcription: "[ɐˈɡɔɾɐ]"
+          example_sentence: "Agora posso."
+          sentence_translation_ru: "Сейчас могу."
+          sentence_translation_en: "I can now."
+          word_translation_ru: "сейчас"
+          word_translation_en: "now"
+
+        - word: "Amanhã"
+          transcription: "[ɐmɐˈɲɐ]"
+          example_sentence: "Amanhã posso."
+          sentence_translation_ru: "Завтра могу."
+          sentence_translation_en: "I can tomorrow."
+          word_translation_ru: "завтра"
+          word_translation_en: "tomorrow"
+
+        - word: "Ajuda"
+          transcription: "[ɐˈʒudɐ]"
+          example_sentence: "Preciso de ajuda."
+          sentence_translation_ru: "Мне нужна помощь."
+          sentence_translation_en: "I need help."
+          word_translation_ru: "помощь"
+          word_translation_en: "help"
+
+        - word: "Pode ser"
+          transcription: "[ˈpɔdɨ seɾ]"
+          example_sentence: "Pode ser amanhã."
+          sentence_translation_ru: "Можно завтра."
+          sentence_translation_en: "Tomorrow is okay."
+          word_translation_ru: "можно"
+          word_translation_en: "that works"
 
 
 # =========================================================
-# TASK 2 — RULES
+# TASK 2 — RULES (усилено)
 # =========================================================
   - task_id: 2
     type: rules
@@ -115,16 +126,17 @@ tasks:
       ru: "Как это сказать"
       en: "How to say it"
     subtitle:
-      ru: "Просьба и ответ"
-      en: "Request and response"
+      ru: "Просьбы и ответы"
+      en: "Requests and responses"
 
     structure:
       blocks_order:
         - block_1_request
-        - block_2_response
-        - block_3_equivalence
-        - block_4_reinforcement
-        - block_5_speak
+        - block_2_accept
+        - block_3_refuse
+        - block_4_equivalence
+        - block_5_reinforcement
+        - block_6_speak
 
     blocks:
 
@@ -134,84 +146,123 @@ tasks:
           ru: "Как попросить"
           en: "How to ask"
         explanation_text:
-          ru: "Чтобы вежливо попросить, используют: Pode…? Por favor."
-          en: "To ask politely, use: Pode…? Por favor."
+          ru: |
+            Чтобы вежливо попросить, говорят:
+            Pode…? ou Pode… por favor?
+          en: |
+            To ask politely, say:
+            Pode…? or Pode… por favor?
         examples:
+          - text: "Pode ajudar?"
+            audio: true
           - text: "Pode ajudar, por favor?"
             audio: true
+          - text: "Pode ajudar agora?"
+            audio: true
+          - text: "Pode enviar a mensagem?"
+            audio: true
+        hint:
+          - ru: "Pode — это «можете?»"
+            en: "Pode means «can you?»"
 
-      block_2_response:
+      block_2_accept:
         type: explanation
         title:
-          ru: "Как ответить"
-          en: "How to answer"
+          ru: "Как согласиться"
+          en: "How to agree"
         explanation_text:
-          ru: "Чтобы ответить, используют: Sim, posso. / Não posso."
-          en: "To answer, use: Sim, posso. / Não posso."
+          ru: |
+            Чтобы согласиться, говорят:
+            Posso. / Sim, posso. / Pode ser.
+          en: |
+            To agree, say:
+            Posso. / Sim, posso. / Pode ser.
         examples:
+          - text: "Posso."
+            audio: true
           - text: "Sim, posso."
             audio: true
-          - text: "Não posso."
+          - text: "Pode ser."
             audio: true
 
-      block_3_equivalence:
+      block_3_refuse:
+        type: explanation
+        title:
+          ru: "Как отказаться"
+          en: "How to refuse"
+        explanation_text:
+          ru: |
+            Чтобы вежливо отказаться, говорят:
+            Não posso. / Não posso agora. / Não posso hoje.
+          en: |
+            To refuse politely, say:
+            Não posso. / Não posso agora. / Não posso hoje.
+        examples:
+          - text: "Não posso."
+            audio: true
+          - text: "Não posso agora."
+            audio: true
+          - text: "Não posso hoje."
+            audio: true
+
+      block_4_equivalence:
         type: comparison
         title:
-          ru: "Диалог"
-          en: "Dialogue"
+          ru: "Два варианта — один смысл"
+          en: "Two options — one meaning"
         comparison_card:
           - text: "Pode ajudar?"
             audio: true
-          - text: "Sim, posso."
+          - text: "Preciso de ajuda."
             audio: true
         note:
-          ru: "Просьба и ответ."
-          en: "A request and a response."
+          ru: "Обе фразы выражают просьбу о помощи."
+          en: "Both phrases express a request for help."
 
-      block_4_reinforcement:
+      block_5_reinforcement:
         type: reinforcement
 
         task_1:
           format: single_choice
-          audio: "Pode ajudar?"
+          audio: "Preciso de ajuda agora."
           question:
-            ru: "Что это?"
-            en: "What is this?"
+            ru: "Что хочет человек?"
+            en: "What does the person want?"
           options:
             - text:
-                ru: "Просьба"
-                en: "A request"
-              correct: true
-            - text:
-                ru: "Благодарность"
-                en: "Thanks"
+                ru: "Сообщение"
+                en: "A message"
               correct: false
             - text:
-                ru: "Прощание"
-                en: "Goodbye"
+                ru: "Помощь"
+                en: "Help"
+              correct: true
+            - text:
+                ru: "Ответ"
+                en: "An answer"
               correct: false
 
         task_2:
           format: situation_to_phrase
           situation_text:
-            ru: "Ты хочешь сказать, что можешь."
-            en: "You want to say you can."
+            ru: "Ты хочешь вежливо попросить помочь."
+            en: "You want to ask for help politely."
           options:
-            - text: "Posso."
+            - text: "Obrigado."
+              correct: false
+            - text: "Pode ajudar, por favor?"
               correct: true
             - text: "Não posso."
               correct: false
-            - text: "Obrigado."
-              correct: false
 
-      block_5_speak:
+      block_6_speak:
         type: speak_out_loud
         title:
           ru: "Скажи вслух"
           en: "Speak out loud"
         instruction_text:
-          ru: "Скажи: Pode ajudar? Sim, posso."
-          en: "Say: Pode ajudar? Sim, posso."
+          ru: "Скажи: Pode ajudar, por favor? Posso."
+          en: "Say: Pode ajudar, por favor? Posso."
         action_button:
           text:
             ru: "✔ Я сказал(а) вслух"
@@ -220,15 +271,16 @@ tasks:
 
 
 # =========================================================
-# TASK 3 — LISTENING
+# TASK 3 — LISTENING (усилено: больше сцен)
 # =========================================================
   - task_id: 3
     type: listening_comprehension
     title:
-      ru: "Предложения и понимание"
-      en: "Listening and understanding"
+      ru: "Предложения и диалоги"
+      en: "Listening and dialogues"
     subtitle:
-      ru: "Слушай диалог"
+      ru: "Пойми, что происходит"
+      en: "Understand what is happening"
 
     ui_rules:
       audio_plays_first: true
@@ -236,32 +288,34 @@ tasks:
 
     items:
       - item_id: 1
-        audio: "Pode ajudar? Sim, posso."
-        text_hidden_before_answer: true
+        audio: "Pode ajudar agora? Sim, posso."
         question:
           ru: "Что происходит?"
           en: "What is happening?"
         options:
           - text:
-              ru: "Просьба и согласие"
-              en: "A request and agreement"
-            correct: true
-          - text:
               ru: "Просьба и отказ"
               en: "A request and refusal"
             correct: false
+          - text:
+              ru: "Просьба и согласие"
+              en: "A request and agreement"
+            correct: true
           - text:
               ru: "Благодарность"
               en: "Thanks"
             correct: false
 
       - item_id: 2
-        audio: "Pode agora? Não posso."
-        text_hidden_before_answer: true
+        audio: "Pode amanhã? Não posso."
         question:
           ru: "Что это?"
           en: "What is this?"
         options:
+          - text:
+              ru: "Прощание"
+              en: "Goodbye"
+            correct: false
           - text:
               ru: "Просьба и отказ"
               en: "A request and refusal"
@@ -270,14 +324,29 @@ tasks:
               ru: "Просьба и согласие"
               en: "A request and agreement"
             correct: false
+
+      - item_id: 3
+        audio: "Preciso de ajuda. Pode ajudar?"
+        question:
+          ru: "Что хочет человек?"
+          en: "What does the person want?"
+        options:
           - text:
-              ru: "Прощание"
-              en: "Goodbye"
+              ru: "Помощь"
+              en: "Help"
+            correct: true
+          - text:
+              ru: "Информацию"
+              en: "Information"
+            correct: false
+          - text:
+              ru: "Цена"
+              en: "Price"
             correct: false
 
 
 # =========================================================
-# TASK 4 — ATTENTION
+# TASK 4 — ATTENTION (усилено: больше ситуаций)
 # =========================================================
   - task_id: 4
     type: attention
@@ -285,50 +354,70 @@ tasks:
       ru: "Внимательность"
       en: "Attention"
     subtitle:
-      ru: "Пойми диалог"
+      ru: "Узнай намерение"
+      en: "Recognize the intention"
 
     items:
       - item_id: 1
-        audio: "Pode amanhã? Sim."
+        audio: "Pode ajudar, por favor?"
         question:
           ru: "Что это?"
           en: "What is this?"
         options:
-          - text:
-              ru: "Просьба и согласие"
-              en: "A request and agreement"
-            correct: true
-          - text:
-              ru: "Просьба и отказ"
-              en: "A request and refusal"
-            correct: false
           - text:
               ru: "Благодарность"
               en: "Thanks"
             correct: false
+          - text:
+              ru: "Просьба"
+              en: "A request"
+            correct: true
+          - text:
+              ru: "Прощание"
+              en: "Goodbye"
+            correct: false
 
       - item_id: 2
-        audio: "Pode agora? Não."
+        audio: "Não posso agora."
         question:
           ru: "Что это?"
           en: "What is this?"
         options:
           - text:
-              ru: "Просьба и отказ"
-              en: "A request and refusal"
-            correct: true
-          - text:
-              ru: "Просьба и согласие"
-              en: "A request and agreement"
+              ru: "Согласие"
+              en: "Agreement"
             correct: false
           - text:
-              ru: "Приветствие"
-              en: "Greeting"
+              ru: "Отказ"
+              en: "A refusal"
+            correct: true
+          - text:
+              ru: "Просьба"
+              en: "A request"
+            correct: false
+
+      - item_id: 3
+        audio: "Pode ser amanhã."
+        question:
+          ru: "Что это?"
+          en: "What is this?"
+        options:
+          - text:
+              ru: "Благодарность"
+              en: "Thanks"
+            correct: false
+          - text:
+              ru: "Согласие"
+              en: "Agreement"
+            correct: true
+          - text:
+              ru: "Отказ"
+              en: "Refusal"
             correct: false
 
 
 # =========================================================
-# TASK 5 — WRITING
+# TASK 5 — WRITING (без изменения структуры)
 # =========================================================
   - task_id: 5
     type: writing_optional
@@ -340,8 +429,8 @@ tasks:
       en: "Build a dialogue"
 
     instruction:
-      ru: "Заполни фразы."
-      en: "Complete the sentences."
+      ru: "Заполни диалог."
+      en: "Complete the dialogue."
 
     main_task:
       format: template_fill
