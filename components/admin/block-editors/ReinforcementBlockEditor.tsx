@@ -454,6 +454,20 @@ function ReinforcementTaskEditor({ task, taskNumber, lessonDay, onSave, onCancel
     }
   };
 
+  const handleMoveOptionUp = (index: number) => {
+    if (index === 0) return;
+    const newOptions = [...options];
+    [newOptions[index - 1], newOptions[index]] = [newOptions[index], newOptions[index - 1]];
+    setOptions(newOptions);
+  };
+
+  const handleMoveOptionDown = (index: number) => {
+    if (index === options.length - 1) return;
+    const newOptions = [...options];
+    [newOptions[index], newOptions[index + 1]] = [newOptions[index + 1], newOptions[index]];
+    setOptions(newOptions);
+  };
+
   const handlePlayAudio = () => {
     const urlToPlay = audioUrl || task?.audio_url;
     if (!urlToPlay) return;
@@ -751,7 +765,25 @@ function ReinforcementTaskEditor({ task, taskNumber, lessonDay, onSave, onCancel
                           </span>
                         </div>
                       </div>
-                      <div className="flex gap-2">
+                      <div className="flex gap-2 items-center">
+                        <button
+                          onClick={() => handleMoveOptionUp(index)}
+                          disabled={index === 0}
+                          className="px-2 py-1 text-gray-700 hover:text-gray-900 hover:bg-gray-100 text-lg font-bold disabled:opacity-30 disabled:cursor-not-allowed rounded border border-gray-300"
+                          title="Переместить вверх"
+                          style={{ minWidth: '32px', height: '32px' }}
+                        >
+                          ↑
+                        </button>
+                        <button
+                          onClick={() => handleMoveOptionDown(index)}
+                          disabled={index === options.length - 1}
+                          className="px-2 py-1 text-gray-700 hover:text-gray-900 hover:bg-gray-100 text-lg font-bold disabled:opacity-30 disabled:cursor-not-allowed rounded border border-gray-300"
+                          title="Переместить вниз"
+                          style={{ minWidth: '32px', height: '32px' }}
+                        >
+                          ↓
+                        </button>
                         <button
                           onClick={() => handleEditOption(index)}
                           className="px-3 py-1 text-blue-600 hover:text-blue-800 text-sm font-medium"
