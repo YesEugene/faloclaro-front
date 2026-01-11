@@ -223,13 +223,13 @@ export default function ExplanationBlockEditor({ block, onChange, lessonDay }: E
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       {/* Block Title */}
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Название блока</h2>
-        <div className="grid grid-cols-2 gap-4">
+      <div className="bg-white rounded-lg shadow-md p-3">
+        <h2 className="text-base font-semibold text-gray-900 mb-2">Название блока</h2>
+        <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-xs font-medium text-gray-700 mb-1">
               Название (RU) *
             </label>
             <input
@@ -240,12 +240,12 @@ export default function ExplanationBlockEditor({ block, onChange, lessonDay }: E
                   title: { ...content.title, ru: e.target.value },
                 });
               }}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg"
               placeholder="Как попросить о помощи"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-xs font-medium text-gray-700 mb-1">
               Название (EN) *
             </label>
             <input
@@ -256,7 +256,7 @@ export default function ExplanationBlockEditor({ block, onChange, lessonDay }: E
                   title: { ...content.title, en: e.target.value },
                 });
               }}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg"
               placeholder="How to ask for help"
             />
           </div>
@@ -264,11 +264,11 @@ export default function ExplanationBlockEditor({ block, onChange, lessonDay }: E
       </div>
 
       {/* Explanation Text */}
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Текст объяснения</h2>
-        <div className="grid grid-cols-2 gap-4">
+      <div className="bg-white rounded-lg shadow-md p-3">
+        <h2 className="text-base font-semibold text-gray-900 mb-2">Текст объяснения</h2>
+        <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-xs font-medium text-gray-700 mb-1">
               Текст (RU) *
             </label>
             <textarea
@@ -278,12 +278,12 @@ export default function ExplanationBlockEditor({ block, onChange, lessonDay }: E
                   explanation_text: { ...content.explanation_text, ru: e.target.value },
                 });
               }}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg h-32"
+              className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg h-20 resize-y"
               placeholder="Чтобы попросить о помощи, используй:&#10;Preciso de ajuda — мне нужна помощь&#10;Pode ajudar? — можешь помочь?"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-xs font-medium text-gray-700 mb-1">
               Текст (EN) *
             </label>
             <textarea
@@ -293,7 +293,7 @@ export default function ExplanationBlockEditor({ block, onChange, lessonDay }: E
                   explanation_text: { ...content.explanation_text, en: e.target.value },
                 });
               }}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg h-32"
+              className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-lg h-20 resize-y"
               placeholder="To ask for help, use:&#10;Preciso de ajuda — I need help&#10;Pode ajudar? — can you help?"
             />
           </div>
@@ -301,7 +301,7 @@ export default function ExplanationBlockEditor({ block, onChange, lessonDay }: E
       </div>
 
       {/* Examples */}
-      <div className="bg-white rounded-lg shadow-md p-6">
+      <div className="bg-white rounded-lg shadow-md p-3">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-semibold text-gray-900">Примеры с аудио ({examples.length})</h2>
           <button
@@ -380,7 +380,7 @@ export default function ExplanationBlockEditor({ block, onChange, lessonDay }: E
       </div>
 
       {/* Hints */}
-      <div className="bg-white rounded-lg shadow-md p-6">
+      <div className="bg-white rounded-lg shadow-md p-3">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-semibold text-gray-900">Подсказки ({hints.length})</h2>
           <button
