@@ -973,34 +973,35 @@ export default function VocabularyTaskPlayer({
       </div>
 
       {/* Audio Player Controls - Previous, Play/Pause, Next */}
-      <div className="flex items-center justify-center gap-4 mb-4">
+      <div className="flex items-center justify-center gap-2 mb-4">
         {/* Previous Card Button - Left */}
         <button
           onClick={handlePreviousCard}
           disabled={currentCardIndex === 0}
-          className="w-12 h-12 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+          className="rounded-full bg-gray-200 hover:bg-gray-300 transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+          style={{ width: '48px', height: '48px' }}
           aria-label={t.previous}
         >
-          <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
         </button>
 
-        {/* Play/Pause Button - Center */}
+        {/* Play/Pause Button - Center (larger) */}
         <button
           onClick={handlePlayPause}
           disabled={!currentAudioUrl}
-          className="p-4 rounded-full disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center mx-auto"
-          style={{ backgroundColor: clusterColor, width: '56px', height: '56px' }}
+          className="rounded-full disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+          style={{ backgroundColor: clusterColor, width: '72px', height: '72px' }}
           aria-label={isPlaying ? 'Pause' : 'Play'}
         >
           {isPlaying ? (
-            <svg className="w-8 h-8" fill="black" viewBox="0 0 20 20" style={{ display: 'block', margin: '0 auto' }}>
+            <svg className="w-10 h-10" fill="black" viewBox="0 0 20 20" style={{ display: 'block', margin: '0 auto' }}>
               <rect x="6" y="3" width="3.5" height="14" rx="0.75" />
               <rect x="10.5" y="3" width="3.5" height="14" rx="0.75" />
             </svg>
           ) : (
-            <svg className="w-8 h-8" fill="black" viewBox="0 0 20 20">
+            <svg className="w-10 h-10" fill="black" viewBox="0 0 20 20">
               <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
             </svg>
           )}
@@ -1010,10 +1011,11 @@ export default function VocabularyTaskPlayer({
         <button
           onClick={handleNextCard}
           disabled={currentCardIndex === cards.length - 1}
-          className="w-12 h-12 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+          className="rounded-full bg-gray-200 hover:bg-gray-300 transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+          style={{ width: '48px', height: '48px' }}
           aria-label={t.next}
         >
-          <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
         </button>
@@ -1025,8 +1027,8 @@ export default function VocabularyTaskPlayer({
           onClick={() => setShowSettings(!showSettings)}
           className="transition-opacity hover:opacity-80 rounded-full flex items-center justify-center border-none p-0 cursor-pointer"
           style={{ 
-            width: '56px',
-            height: '56px',
+            width: '48px',
+            height: '48px',
             background: 'transparent'
           }}
           aria-label={t.settings}
@@ -1034,7 +1036,7 @@ export default function VocabularyTaskPlayer({
           <img 
             src="/Img/settings.svg" 
             alt={t.settings}
-            style={{ width: '56px', height: '56px', display: 'block' }}
+            style={{ width: '48px', height: '48px', display: 'block' }}
           />
         </button>
       </div>
