@@ -666,24 +666,22 @@ function OverviewPageContent() {
                   const levelTextColor = isCurrentLevel ? '#000000' : '#FFFFFF'; // Black text on green, white text on black
 
                   return (
-                    <div key={level.id} className="flex-shrink-0">
-                      {/* Level Card - Black (or green if current) with lessons inside when expanded */}
+                    <div key={level.id} className="flex-shrink-0 flex items-center gap-3">
+                      {/* Level Card - Black (or green if current) - stays in place */}
                       <div
                         style={{
                           backgroundColor: levelBackgroundColor,
                           borderRadius: '12px',
-                          padding: isExpanded ? '16px 12px' : '12px 20px',
-                          minWidth: isExpanded ? 'auto' : '100px',
-                          width: isExpanded ? 'auto' : '100px',
-                          minHeight: isExpanded ? 'auto' : '100px',
-                          height: isExpanded ? 'auto' : '100px',
+                          padding: '12px 16px',
+                          width: '100px',
+                          height: '100px',
                           display: 'flex',
                           flexDirection: 'column',
                           alignItems: 'center',
-                          justifyContent: isExpanded ? 'flex-start' : 'center',
+                          justifyContent: 'center',
                           cursor: 'pointer',
                           transition: 'all 0.3s ease',
-                          position: 'relative',
+                          flexShrink: 0,
                         }}
                         onClick={() => {
                           const newExpanded = new Set(expandedLevels);
@@ -697,10 +695,7 @@ function OverviewPageContent() {
                         className="hover:opacity-90"
                       >
                         {/* Level Number and Title - Always visible */}
-                        <div 
-                          className="flex flex-col items-center"
-                          style={{ marginBottom: isExpanded ? '12px' : '0' }}
-                        >
+                        <div className="flex flex-col items-center">
                           <span 
                             className="text-3xl font-bold"
                             style={{ color: levelTextColor, lineHeight: '1.2' }}
@@ -714,12 +709,13 @@ function OverviewPageContent() {
                             {appLanguage === 'ru' ? 'УРОВЕНЬ' : 'LEVEL'}
                           </span>
                         </div>
+                      </div>
 
-                        {/* Expanded Lessons - Inside the level card on black/green background */}
-                        {isExpanded && (
-                          <div className="flex flex-wrap gap-2 justify-center w-full" style={{ marginTop: '8px' }}>
-                            {levelLessons.length > 0 ? (
-                              levelLessons.map((publishedLesson: any) => {
+                      {/* Expanded Lessons - Opens to the right (horizontally) */}
+                      {isExpanded && (
+                        <div className="flex gap-2 items-center flex-shrink-0">
+                          {levelLessons.length > 0 ? (
+                            levelLessons.map((publishedLesson: any) => {
                                 // Render lesson card with smaller size inside level card
                                 const lessonDay = publishedLesson.day_number;
                                 const isUnlocked = isLessonUnlocked(lessonDay);
@@ -838,7 +834,6 @@ function OverviewPageContent() {
                             )}
                           </div>
                         )}
-                      </div>
                     </div>
                   );
                 })}
@@ -855,20 +850,21 @@ function OverviewPageContent() {
                   const levelTextColor = isCurrentLevel ? '#000000' : '#FFFFFF';
 
                   return (
-                    <div className="flex-shrink-0">
+                    <div className="flex-shrink-0 flex items-center gap-3">
                       <div
                         style={{
                           backgroundColor: levelBackgroundColor,
                           borderRadius: '12px',
-                          padding: isExpanded ? '16px' : '12px 20px',
-                          minWidth: isExpanded ? 'auto' : '120px',
-                          minHeight: isExpanded ? 'auto' : '120px',
+                          padding: '12px 16px',
+                          width: '100px',
+                          height: '100px',
                           display: 'flex',
                           flexDirection: 'column',
                           alignItems: 'center',
-                          justifyContent: isExpanded ? 'flex-start' : 'center',
+                          justifyContent: 'center',
                           cursor: 'pointer',
                           transition: 'all 0.3s ease',
+                          flexShrink: 0,
                         }}
                         onClick={() => {
                           const newExpanded = new Set(expandedLevels);
@@ -887,9 +883,10 @@ function OverviewPageContent() {
                         >
                           {appLanguage === 'ru' ? 'БЕЗ УРОВНЯ' : 'NO LEVEL'}
                         </span>
+                      </div>
 
-                        {isExpanded && (
-                          <div className="flex flex-wrap gap-2 justify-center w-full mt-4">
+                      {isExpanded && (
+                        <div className="flex gap-2 items-center flex-shrink-0">
                             {noLevelLessons.map((publishedLesson: any) => {
                               const lessonDay = publishedLesson.day_number;
                               const isUnlocked = isLessonUnlocked(lessonDay);
@@ -934,7 +931,7 @@ function OverviewPageContent() {
                                   lessonCardStyle.border = '1px solid #E5E7EB';
                                   lessonCardStyle.opacity = 0.6;
                                 }
-                              
+                                
                               const lessonToken = userTokens.get(lessonDay) || (isUnlocked ? token : null);
                               const canNavigate = (isUnlocked || isCompleted) && lessonToken;
                               const lessonUrl = canNavigate
@@ -984,9 +981,8 @@ function OverviewPageContent() {
                                 </div>
                               );
                             })}
-                          </div>
-                        )}
-                      </div>
+                        </div>
+                      )}
                     </div>
                   );
                 })()}
