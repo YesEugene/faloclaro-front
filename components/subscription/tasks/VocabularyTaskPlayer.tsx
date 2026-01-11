@@ -973,7 +973,7 @@ export default function VocabularyTaskPlayer({
       </div>
 
       {/* Audio Player Controls - Previous, Play/Pause, Next */}
-      <div className="flex items-center justify-center gap-2 mb-4">
+      <div className="flex items-center justify-center mb-4" style={{ gap: '10px' }}>
         {/* Previous Card Button - Left */}
         <button
           onClick={handlePreviousCard}
@@ -1029,7 +1029,8 @@ export default function VocabularyTaskPlayer({
           style={{ 
             width: '48px',
             height: '48px',
-            background: 'transparent'
+            background: 'transparent',
+            marginTop: '10px'
           }}
           aria-label={t.settings}
         >
