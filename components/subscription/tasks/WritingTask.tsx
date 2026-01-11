@@ -303,29 +303,36 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
                 </div>
               )}
 
-              <button
-                onClick={() => {
-                  if (localIsCompleted && !isReplaying && speakOutLoud) {
-                    handleReplay();
-                  } else {
-                    // First click - complete immediately without intermediate state
+              {!speakOutLoud ? (
+                <button
+                  onClick={() => {
+                    // First click - complete immediately
                     setSpeakOutLoud(true);
                     handleComplete(true); // Pass true to force completion with speakOutLoud
-                  }
-                }}
-                disabled={false}
-                className="w-full px-4 py-3 rounded-lg font-medium transition-colors"
-                style={{
-                  height: '55px',
-                  backgroundColor: localIsCompleted && !isReplaying && speakOutLoud ? 'rgb(34, 197, 94)' : 'rgb(237, 243, 255)',
-                  color: localIsCompleted && !isReplaying && speakOutLoud ? 'white' : 'rgb(55, 65, 81)',
-                  border: 'none'
-                }}
-              >
-                {localIsCompleted && !isReplaying && speakOutLoud
-                  ? (appLanguage === 'ru' ? 'Пройти заново' : appLanguage === 'en' ? 'Replay' : 'Repetir')
-                  : (getTranslatedText(alternative.action_button?.text, appLanguage) || (appLanguage === 'ru' ? '✔ Я сказал(а) вслух' : appLanguage === 'en' ? '✔ I said it out loud' : '✔ Disse em voz alta'))}
-              </button>
+                  }}
+                  className="w-full py-4 rounded-lg font-semibold text-lg transition-colors bg-blue-600 text-white hover:bg-blue-700"
+                  style={{
+                    height: '55px'
+                  }}
+                >
+                  {getTranslatedText(alternative.action_button?.text, appLanguage) || (appLanguage === 'ru' ? '✔ Я сказал(а) вслух' : appLanguage === 'en' ? '✔ I said it out loud' : '✔ Disse em voz alta')}
+                </button>
+              ) : (
+                <div 
+                  className="w-full py-4 rounded-lg font-semibold text-lg flex items-center justify-center"
+                  style={{
+                    height: '55px',
+                    backgroundColor: '#F1F2F6',
+                    border: '1px solid #E5E7EB',
+                    color: '#109929'
+                  }}
+                >
+                  <svg className="w-6 h-6 mr-2" fill="none" stroke="#109929" viewBox="0 0 24 24" strokeWidth={3}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  {appLanguage === 'ru' ? 'Выполнено' : appLanguage === 'en' ? 'Completed' : 'Concluído'}
+                </div>
+              )}
             </div>
           )}
 
