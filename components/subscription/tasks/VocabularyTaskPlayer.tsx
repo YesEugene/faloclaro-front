@@ -632,6 +632,18 @@ export default function VocabularyTaskPlayer({
     });
   };
 
+  // Handle next task - complete current task first, then navigate
+  const handleNextTask = () => {
+    // Complete current task if not already completed
+    if (!localIsCompleted && !isCompleted) {
+      handleComplete();
+    }
+    // Navigate to next task
+    if (onNextTask) {
+      onNextTask();
+    }
+  };
+
 
   const handleNextCard = () => {
     if (audioRef.current && !audioRef.current.paused) {
@@ -1111,7 +1123,7 @@ export default function VocabularyTaskPlayer({
                 // Button appears if onNextTask exists, regardless of canGoNext
                 onNextTask ? (
                   <button
-                    onClick={onNextTask}
+                    onClick={handleNextTask}
                     className="w-10 h-10 rounded-full bg-green-500 hover:bg-green-600 transition-colors flex items-center justify-center"
                     aria-label={t.nextTask}
                   >
