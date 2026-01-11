@@ -352,18 +352,9 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
   };
 
   const isTaskUnlocked = (taskIndex: number) => {
-    // First task is always unlocked
-    if (taskIndex === 0) return true;
-    
-    // If task is already completed, it should be accessible for replay
-    const currentTask = tasks[taskIndex];
-    const currentProgress = getTaskProgress(currentTask?.task_id);
-    if (currentProgress?.status === 'completed') return true;
-    
-    // Otherwise, check if previous task is completed
-    const previousTask = tasks[taskIndex - 1];
-    const previousProgress = getTaskProgress(previousTask?.task_id);
-    return previousProgress?.status === 'completed';
+    // All tasks are always unlocked - user can proceed to any task at any time
+    // Timer is optional, so tasks don't need to be completed before proceeding
+    return true;
   };
 
   const formatTime = (ms: number) => {
@@ -520,7 +511,7 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
             onComplete={(completionData) => handleTaskComplete(currentTask.task_id, completionData)}
             onNext={handleNextTask}
             onPrevious={handlePreviousTask}
-            canGoNext={currentTaskIndex < tasks.length - 1 && isTaskUnlocked(currentTaskIndex + 1)}
+            canGoNext={currentTaskIndex < tasks.length - 1}
             canGoPrevious={currentTaskIndex > 0}
             onBackToTasks={() => router.push(`/pt/lesson/${lesson.day_number}/${token}/overview`)}
             onDictionaryList={() => {
