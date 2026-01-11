@@ -501,7 +501,60 @@ export default function VocabularyTaskPlayer({
         return newRepeat;
       }
 
-      // If infinite mode or not reached max repeats, continue repeating
+      // If infinite mode, auto-advance to next card (loop through all cards)
+      if (repeatCount === 'infinite') {
+        const pauseDelay = pauseBetweenRepeats * 1000;
+        repeatTimeoutRef.current = setTimeout(() => {
+          if (!audioRef.current) {
+            isRepeatingRef.current = false;
+            return;
+          }
+          
+          // Auto-advance to next card (loop through all cards)
+          setCurrentCardIndex((prevIndex) => {
+            let nextIndex: number;
+            if (isRandomMode) {
+              nextIndex = Math.floor(Math.random() * cards.length);
+            } else {
+              nextIndex = prevIndex + 1;
+              if (nextIndex >= cards.length) {
+                nextIndex = 0; // Wrap around to first card for infinite loop
+              }
+            }
+            currentIndexRef.current = nextIndex;
+            
+            // Auto-play next card after switching
+            setTimeout(async () => {
+              const nextCard = cards[nextIndex];
+              if (audioRef.current && nextCard?.word) {
+                const audioUrl = audioUrls[nextCard.word];
+                if (audioUrl) {
+                  audioRef.current.src = audioUrl;
+                  audioRef.current.load();
+                  const success = await playAudioSafely(audioRef.current);
+                  if (success) {
+                    setIsPlaying(true);
+                    setCurrentRepeat(0); // Reset repeat counter for new card
+                  } else {
+                    setIsPlaying(false);
+                  }
+                } else {
+                  setIsPlaying(false);
+                }
+              } else {
+                setIsPlaying(false);
+              }
+              isRepeatingRef.current = false;
+            }, 100);
+            
+            return nextIndex;
+          });
+        }, pauseDelay);
+        
+        return newRepeat;
+      }
+
+      // If not infinite and not reached max repeats, continue repeating current card
       const pauseDelay = pauseBetweenRepeats * 1000;
       repeatTimeoutRef.current = setTimeout(async () => {
         if (!audioRef.current) {
