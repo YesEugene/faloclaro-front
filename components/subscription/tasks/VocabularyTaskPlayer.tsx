@@ -434,8 +434,8 @@ export default function VocabularyTaskPlayer({
         }, 300);
       } else {
         // User clicked Play - start playback with repeat settings
-        isUserControlledRef.current = true; // Keep this true - user is controlling
-        ignoreEventsRef.current = true; // Ignore events permanently while user controls
+        isUserControlledRef.current = true; // User is controlling - allow repeats but prevent button state changes
+        ignoreEventsRef.current = true; // Ignore playing/pause events to prevent button state changes
         if (audioRef.current.src !== audioUrls[currentCard.word]) {
           audioRef.current.src = audioUrls[currentCard.word];
           audioRef.current.load();
@@ -444,7 +444,8 @@ export default function VocabularyTaskPlayer({
         if (success) {
           setIsPlaying(true); // Set to Pause state immediately
           setCurrentRepeat(0);
-          // Never reset ignoreEventsRef or isUserControlledRef - user is in control
+          // Keep isUserControlledRef true so handleAudioEnded knows user is playing
+          // Keep ignoreEventsRef true to prevent playing/pause events from changing button
         } else {
           ignoreEventsRef.current = false;
           isUserControlledRef.current = false;
@@ -461,7 +462,14 @@ export default function VocabularyTaskPlayer({
     if (!audioRef.current || !currentCard) return;
     
     // If user manually paused, don't continue repeating
-    if (isUserControlledRef.current && !isPlaying) {
+    // Check actual audio state, not isPlaying (which might be stale in closure)
+    if (isUserControlledRef.current && audioRef.current.paused) {
+      // User paused - stop all repeats
+      if (repeatTimeoutRef.current) {
+        clearTimeout(repeatTimeoutRef.current);
+        repeatTimeoutRef.current = null;
+      }
+      isRepeatingRef.current = false;
       return;
     }
     
@@ -481,7 +489,7 @@ export default function VocabularyTaskPlayer({
         // Auto-advance to next card after a short delay
         setTimeout(() => {
           // If user paused, don't auto-advance
-          if (isUserControlledRef.current && !isPlaying) {
+          if (isUserControlledRef.current && audioRef.current?.paused) {
             return;
           }
           if (audioRef.current && !audioRef.current.paused) {
@@ -511,7 +519,7 @@ export default function VocabularyTaskPlayer({
             // Auto-play next card after switching (only if user hasn't paused)
             setTimeout(async () => {
               // If user paused, don't auto-play
-              if (isUserControlledRef.current && !isPlaying) {
+              if (isUserControlledRef.current && audioRef.current?.paused) {
                 return;
               }
               const nextCard = cards[nextIndex];
@@ -568,7 +576,7 @@ export default function VocabularyTaskPlayer({
             // Auto-play next card after switching (only if user hasn't paused)
             setTimeout(async () => {
               // If user paused, don't auto-play
-              if (isUserControlledRef.current && !isPlaying) {
+              if (isUserControlledRef.current && audioRef.current?.paused) {
                 isRepeatingRef.current = false;
                 return;
               }
@@ -599,7 +607,7 @@ export default function VocabularyTaskPlayer({
       const pauseDelay = pauseBetweenRepeats * 1000;
       repeatTimeoutRef.current = setTimeout(async () => {
         // If user paused, don't continue repeating
-        if (!audioRef.current || (isUserControlledRef.current && !isPlaying)) {
+        if (!audioRef.current || (isUserControlledRef.current && audioRef.current.paused)) {
           isRepeatingRef.current = false;
           return;
         }
