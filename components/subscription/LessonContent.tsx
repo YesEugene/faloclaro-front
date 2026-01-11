@@ -496,10 +496,11 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
                     params.set('phraseType', 'word');
                     router.push(`/phrases?${params.toString()}`);
                   }}
-                  className="px-4 py-2 rounded-[10px] bg-white border-2 border-gray-300 text-black hover:bg-gray-50 transition-colors text-center font-medium"
+                  className="px-4 py-2 rounded-[10px] bg-white border-2 border-gray-300 text-black hover:bg-gray-50 transition-colors text-center"
                   style={{ 
                     width: 'calc(50% - 5px)',
                     transform: 'translateY(1px)',
+                    fontSize: '12px',
                     fontWeight: 500,
                   }}
                 >
