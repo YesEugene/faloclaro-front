@@ -460,8 +460,8 @@ export default function VocabularyTaskPlayer({
   const handleAudioEnded = useCallback(() => {
     if (!audioRef.current || !currentCard) return;
     
-    // Don't handle audio ended if user is manually controlling
-    if (isUserControlledRef.current) {
+    // If user manually paused, don't continue repeating
+    if (isUserControlledRef.current && !isPlaying) {
       return;
     }
     
@@ -475,22 +475,17 @@ export default function VocabularyTaskPlayer({
 
       // If reached max repeats (and not infinite), switch to next card
       if (newRepeat >= maxRepeats && repeatCount !== 'infinite') {
-        // Don't change state if user is controlling
-        if (!isUserControlledRef.current) {
-          setIsPlaying(false);
-        }
+        // Don't change button state, but stop repeating
         isRepeatingRef.current = false;
         
         // Auto-advance to next card after a short delay
         setTimeout(() => {
-          if (isUserControlledRef.current) {
-            return; // Don't auto-advance if user is controlling
+          // If user paused, don't auto-advance
+          if (isUserControlledRef.current && !isPlaying) {
+            return;
           }
           if (audioRef.current && !audioRef.current.paused) {
             audioRef.current.pause();
-            if (!isUserControlledRef.current) {
-              setIsPlaying(false);
-            }
           }
           if (repeatTimeoutRef.current) {
             clearTimeout(repeatTimeoutRef.current);
@@ -515,8 +510,8 @@ export default function VocabularyTaskPlayer({
             
             // Auto-play next card after switching (only if user hasn't paused)
             setTimeout(async () => {
-              if (isUserControlledRef.current) {
-                // User paused, don't auto-play
+              // If user paused, don't auto-play
+              if (isUserControlledRef.current && !isPlaying) {
                 return;
               }
               const nextCard = cards[nextIndex];
@@ -527,10 +522,7 @@ export default function VocabularyTaskPlayer({
                   audioRef.current.load();
                   const success = await playAudioSafely(audioRef.current);
                   if (success) {
-                    // Don't change state if user is controlling
-                    if (!isUserControlledRef.current) {
-                      setIsPlaying(true);
-                    }
+                    // Don't change button state, but audio will play
                     console.log(`✅ Auto-playing next card ${nextIndex + 1}/${cards.length}: "${nextCard.word}"`);
                   } else {
                     console.warn(`⚠️  Failed to auto-play next card: "${nextCard.word}"`);
@@ -575,8 +567,8 @@ export default function VocabularyTaskPlayer({
             
             // Auto-play next card after switching (only if user hasn't paused)
             setTimeout(async () => {
-              if (isUserControlledRef.current) {
-                // User paused, don't auto-play
+              // If user paused, don't auto-play
+              if (isUserControlledRef.current && !isPlaying) {
                 isRepeatingRef.current = false;
                 return;
               }
@@ -588,24 +580,9 @@ export default function VocabularyTaskPlayer({
                   audioRef.current.load();
                   const success = await playAudioSafely(audioRef.current);
                   if (success) {
-                    // Don't change state if user is controlling
-                    if (!isUserControlledRef.current) {
-                      setIsPlaying(true);
-                    }
+                    // Don't change button state, but audio will play
                     setCurrentRepeat(0); // Reset repeat counter for new card
-                  } else {
-                    if (!isUserControlledRef.current) {
-                      setIsPlaying(false);
-                    }
                   }
-                } else {
-                  if (!isUserControlledRef.current) {
-                    setIsPlaying(false);
-                  }
-                }
-              } else {
-                if (!isUserControlledRef.current) {
-                  setIsPlaying(false);
                 }
               }
               isRepeatingRef.current = false;
@@ -621,24 +598,18 @@ export default function VocabularyTaskPlayer({
       // If not infinite and not reached max repeats, continue repeating current card
       const pauseDelay = pauseBetweenRepeats * 1000;
       repeatTimeoutRef.current = setTimeout(async () => {
-        if (!audioRef.current || isUserControlledRef.current) {
-          // Don't auto-repeat if user manually paused
+        // If user paused, don't continue repeating
+        if (!audioRef.current || (isUserControlledRef.current && !isPlaying)) {
           isRepeatingRef.current = false;
           return;
         }
         const success = await playAudioSafely(audioRef.current);
         if (success) {
-          // Don't change state if user is controlling
-          if (!isUserControlledRef.current) {
-            setIsPlaying(true);
-          }
+          // Don't change button state, but audio will play
           setTimeout(() => {
             isRepeatingRef.current = false;
           }, 300);
         } else {
-          if (!isUserControlledRef.current) {
-            setIsPlaying(false);
-          }
           isRepeatingRef.current = false;
         }
       }, pauseDelay);
@@ -673,11 +644,9 @@ export default function VocabularyTaskPlayer({
     };
     
     const handleEnded = () => {
-      // Don't reset user control flag - let handleAudioEnded handle it
-      // Only call handleAudioEnded if user is not controlling
-      if (!isUserControlledRef.current) {
-        handleAudioEnded();
-      }
+      // Always call handleAudioEnded to handle repeats
+      // It will check if user paused internally
+      handleAudioEnded();
     };
     
     const handleError = () => {
