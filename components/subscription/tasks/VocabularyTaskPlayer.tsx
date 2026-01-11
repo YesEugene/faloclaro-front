@@ -73,7 +73,6 @@ export default function VocabularyTaskPlayer({
   const [showSettings, setShowSettings] = useState(false);
   const [isRandomMode, setIsRandomMode] = useState(false);
   const [localIsCompleted, setLocalIsCompleted] = useState(isCompleted);
-  const [isRepeatEnabled, setIsRepeatEnabled] = useState(false); // New: Repeat button state
   
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -436,12 +435,7 @@ export default function VocabularyTaskPlayer({
   const handleAudioEnded = useCallback(() => {
     if (!audioRef.current || !currentCard) return;
     
-    // If repeat is not enabled, just stop playing
-    if (!isRepeatEnabled) {
-      setIsPlaying(false);
-      return;
-    }
-    
+    // Always use repeat settings (repeatCount, pauseBetweenRepeats)
     if (isRepeatingRef.current) return;
     isRepeatingRef.current = true;
 
@@ -586,7 +580,7 @@ export default function VocabularyTaskPlayer({
 
       return newRepeat;
     });
-  }, [repeatCount, pauseBetweenRepeats, playAudioSafely, currentCard, currentCardIndex, cards, isRandomMode, audioUrls, isRepeatEnabled]);
+  }, [repeatCount, pauseBetweenRepeats, playAudioSafely, currentCard, currentCardIndex, cards, isRandomMode, audioUrls]);
 
   // Audio event listeners
   useEffect(() => {
@@ -935,26 +929,18 @@ export default function VocabularyTaskPlayer({
         )}
       </div>
 
-      {/* Play/Pause Button, Repeat Button, and Settings Icon - Center (navigation moved to bottom panel) */}
+      {/* Audio Player Controls - Previous, Play/Pause, Next, Settings */}
       <div className="flex items-center justify-center gap-4 mb-6">
-        <div className="w-12 h-12"></div> {/* Spacer for left */}
-        
-        {/* Repeat Button - Left of Play button */}
+        {/* Previous Card Button - Left */}
         <button
-          onClick={() => setIsRepeatEnabled(!isRepeatEnabled)}
-          className="transition-opacity hover:opacity-80 rounded-full flex items-center justify-center border-none p-0 cursor-pointer"
-          style={{ 
-            width: '56px',
-            height: '56px',
-            background: 'transparent'
-          }}
-          aria-label={isRepeatEnabled ? 'Disable repeat' : 'Enable repeat'}
+          onClick={handlePreviousCard}
+          disabled={currentCardIndex === 0}
+          className="w-12 h-12 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+          aria-label={t.previous}
         >
-          <img 
-            src={isRepeatEnabled ? "/Img/repeat ON.svg" : "/Img/repeat.svg"}
-            alt={isRepeatEnabled ? 'Repeat enabled' : 'Repeat disabled'}
-            style={{ width: '56px', height: '56px', display: 'block' }}
-          />
+          <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
         </button>
 
         {/* Play/Pause Button - Center */}
@@ -977,7 +963,19 @@ export default function VocabularyTaskPlayer({
           )}
         </button>
 
-        {/* Settings Icon - Right of Play button */}
+        {/* Next Card Button - Right */}
+        <button
+          onClick={handleNextCard}
+          disabled={currentCardIndex === cards.length - 1}
+          className="w-12 h-12 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+          aria-label={t.next}
+        >
+          <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+
+        {/* Settings Icon - Right of Next button */}
         <button
           onClick={() => setShowSettings(!showSettings)}
           className="transition-opacity hover:opacity-80 rounded-full flex items-center justify-center border-none p-0 cursor-pointer"
@@ -994,8 +992,6 @@ export default function VocabularyTaskPlayer({
             style={{ width: '56px', height: '56px', display: 'block' }}
           />
         </button>
-
-        <div className="w-12 h-12"></div> {/* Spacer for right */}
       </div>
 
       {/* Progress Bar - Above navigation panel */}
@@ -1034,57 +1030,21 @@ export default function VocabularyTaskPlayer({
       <div className="fixed bottom-0 left-0 right-0 bg-white z-30" style={{ borderRadius: '0px', borderTopLeftRadius: '0px', borderTopRightRadius: '0px', borderBottomRightRadius: '0px', borderBottomLeftRadius: '0px', height: '69px', verticalAlign: 'bottom', marginBottom: '0px', opacity: 1, color: 'rgba(0, 0, 0, 1)' }}>
         <div className="max-w-md mx-auto pt-3 pb-3" style={{ paddingBottom: 'env(safe-area-inset-bottom, 12px)', height: '69px', color: 'rgba(0, 0, 0, 1)', paddingLeft: '16px', paddingRight: '16px' }}>
           <div className="flex items-center justify-between gap-4">
-            {/* Previous Button - Left */}
-            {/* Always show previous button if there's somewhere to go back */}
-            {(() => {
-              // If task is completed AND on last card AND can go to previous task - show previous task button
-              if (localIsCompleted && currentCardIndex === cards.length - 1 && canGoPrevious && onPreviousTask) {
-                return (
-                  <button
-                    onClick={onPreviousTask}
-                    className="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors flex items-center justify-center"
-                    aria-label={t.previousTask}
-                  >
-                    <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                    </svg>
-                  </button>
-                );
-              }
-              
-              // If we're on first card (index 0) but can go to previous task - show previous task button
-              if (currentCardIndex === 0 && canGoPrevious && onPreviousTask) {
-                return (
-                  <button
-                    onClick={onPreviousTask}
-                    className="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors flex items-center justify-center"
-                    aria-label={t.previousTask}
-                  >
-                    <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                    </svg>
-                  </button>
-                );
-              }
-              
-              // Otherwise, if we can go to previous card - show previous card button
-              if (currentCardIndex > 0) {
-                return (
-                  <button
-                    onClick={handlePreviousCard}
-                    className="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors flex items-center justify-center"
-                    aria-label={t.previous}
-                  >
-                    <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                    </svg>
-                  </button>
-                );
-              }
-              
-              // If nothing to go back to - show empty spacer to maintain layout
-              return <div className="w-10 h-10"></div>;
-            })()}
+            {/* Previous Task Button - Left */}
+            {/* Only show previous task button, no card navigation */}
+            {canGoPrevious && onPreviousTask ? (
+              <button
+                onClick={onPreviousTask}
+                className="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors flex items-center justify-center"
+                aria-label={t.previousTask}
+              >
+                <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+            ) : (
+              <div className="w-10 h-10"></div>
+            )}
 
             {/* Task Title - Center */}
             <div className="flex-1 text-center">
@@ -1123,57 +1083,21 @@ export default function VocabularyTaskPlayer({
               </p>
             </div>
 
-            {/* Next Button - Right */}
-            {/* Timer is optional: next task button is always active on last card, words continue looping for 10 minutes */}
-            {(() => {
-              const isLastCard = currentCardIndex === cards.length - 1;
-              const shouldShowNextTaskButton = isLastCard && onNextTask;
-              
-              // Debug logging for button visibility
-              if (isLastCard) {
-                console.log('🔍 Last card reached - Button visibility check:', {
-                  isLastCard,
-                  currentCardIndex,
-                  cardsLength: cards.length,
-                  hasOnNextTask: !!onNextTask,
-                  canGoNext,
-                  shouldShowNextTaskButton,
-                });
-              }
-              
-              return isLastCard ? (
-                // On last card - show next task button (green, always active)
-                // Button appears if onNextTask exists, regardless of canGoNext
-                onNextTask ? (
-                  <button
-                    onClick={handleNextTask}
-                    className="w-10 h-10 rounded-full bg-green-500 hover:bg-green-600 transition-colors flex items-center justify-center"
-                    aria-label={t.nextTask}
-                  >
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </button>
-                ) : (
-                  <div className="w-10 h-10"></div>
-                )
-              ) : (
-                // Not on last card - show next card button (blue, always active)
-                currentCardIndex < cards.length - 1 ? (
-                  <button
-                    onClick={handleNextCard}
-                    className="w-10 h-10 rounded-full bg-blue-600 hover:bg-blue-700 transition-colors flex items-center justify-center"
-                    aria-label={t.next}
-                  >
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </button>
-                ) : (
-                  <div className="w-10 h-10"></div>
-                )
-              );
-            })()}
+            {/* Next Task Button - Right */}
+            {/* Only show next task button, no card navigation */}
+            {canGoNext && onNextTask ? (
+              <button
+                onClick={handleNextTask}
+                className="w-10 h-10 rounded-full bg-green-500 hover:bg-green-600 transition-colors flex items-center justify-center"
+                aria-label={t.nextTask}
+              >
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            ) : (
+              <div className="w-10 h-10"></div>
+            )}
           </div>
         </div>
       </div>
