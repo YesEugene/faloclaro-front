@@ -10,7 +10,7 @@ day:
 tasks:
 
 # =========================================================
-# TASK 1 — VOCABULARY (10–15 слов)
+# TASK 1 — VOCABULARY (канон: RU + EN переводы слов)
 # =========================================================
   - task_id: 1
     type: vocabulary
@@ -30,6 +30,7 @@ tasks:
       show_transcription: true
       show_example_sentence: true
       show_word_translation_ru: true
+      show_word_translation_en: true
       show_sentence_translation_ru: true
       show_sentence_translation_en: true
 
@@ -41,6 +42,7 @@ tasks:
           sentence_translation_ru: "Я хочу кофе."
           sentence_translation_en: "I want a coffee."
           word_translation_ru: "кофе"
+          word_translation_en: "coffee"
 
         - word: "Água"
           transcription: "[ˈaɡwɐ]"
@@ -48,6 +50,7 @@ tasks:
           sentence_translation_ru: "Я хочу воду."
           sentence_translation_en: "I want water."
           word_translation_ru: "вода"
+          word_translation_en: "water"
 
         - word: "Pão"
           transcription: "[pɐ̃w]"
@@ -55,6 +58,7 @@ tasks:
           sentence_translation_ru: "Я хочу хлеб."
           sentence_translation_en: "I want bread."
           word_translation_ru: "хлеб"
+          word_translation_en: "bread"
 
         - word: "Menu"
           transcription: "[mɨˈnu]"
@@ -62,6 +66,7 @@ tasks:
           sentence_translation_ru: "Меню, пожалуйста."
           sentence_translation_en: "The menu, please."
           word_translation_ru: "меню"
+          word_translation_en: "menu"
 
         - word: "Conta"
           transcription: "[ˈkõtɐ]"
@@ -69,6 +74,7 @@ tasks:
           sentence_translation_ru: "Счёт, пожалуйста."
           sentence_translation_en: "The bill, please."
           word_translation_ru: "счёт"
+          word_translation_en: "bill"
 
         - word: "Quero"
           transcription: "[ˈkɛɾu]"
@@ -76,6 +82,7 @@ tasks:
           sentence_translation_ru: "Я хочу кофе."
           sentence_translation_en: "I want a coffee."
           word_translation_ru: "хочу"
+          word_translation_en: "I want"
 
         - word: "Com"
           transcription: "[kõ]"
@@ -83,6 +90,7 @@ tasks:
           sentence_translation_ru: "Кофе с сахаром."
           sentence_translation_en: "Coffee with sugar."
           word_translation_ru: "с"
+          word_translation_en: "with"
 
         - word: "Sem"
           transcription: "[sẽ]"
@@ -90,6 +98,7 @@ tasks:
           sentence_translation_ru: "Кофе без сахара."
           sentence_translation_en: "Coffee without sugar."
           word_translation_ru: "без"
+          word_translation_en: "without"
 
         - word: "Açúcar"
           transcription: "[ɐˈsukaɾ]"
@@ -97,6 +106,7 @@ tasks:
           sentence_translation_ru: "С сахаром."
           sentence_translation_en: "With sugar."
           word_translation_ru: "сахар"
+          word_translation_en: "sugar"
 
         - word: "Leite"
           transcription: "[ˈlɐjtɨ]"
@@ -104,10 +114,11 @@ tasks:
           sentence_translation_ru: "Кофе с молоком."
           sentence_translation_en: "Coffee with milk."
           word_translation_ru: "молоко"
+          word_translation_en: "milk"
 
 
 # =========================================================
-# TASK 2 — RULES (как Day 5)
+# TASK 2 — RULES (6 блоков как канон)
 # =========================================================
   - task_id: 2
     type: rules
@@ -121,76 +132,76 @@ tasks:
     structure:
       blocks_order:
         - block_1_want
-        - block_2_with_without
-        - block_3_equivalence
-        - block_4_reinforcement
-        - block_5_speak
+        - block_2_food
+        - block_3_with_without
+        - block_4_equivalence
+        - block_5_reinforcement
+        - block_6_speak
 
     blocks:
 
       block_1_want:
         type: explanation
         title:
-          ru: "Как сказать, что ты хочешь"
-          en: "How to say what you want"
+          ru: "Как попросить"
+          en: "How to ask"
         explanation_text:
-          ru: "Чтобы сделать заказ, используют: Quero + еда или напиток."
-          en: "To order something, use: Quero + food or drink."
+          ru: "Для заказа используют: Quero…"
+          en: "To order, use: Quero…"
         examples:
-          - text: "Quero um café."
-            audio: true
-          - text: "Quero pão."
-            audio: true
+          - { text: "Quero um café.", audio: true }
+          - { text: "Quero pão.", audio: true }
+        hint:
+          - { ru: "Quero = я хочу", en: "Quero = I want" }
 
-      block_2_with_without:
+      block_2_food:
+        type: explanation
+        title:
+          ru: "Что заказать"
+          en: "What to order"
+        explanation_text:
+          ru: "Можно добавить еду или напиток."
+          en: "Add food or a drink."
+        examples:
+          - { text: "Quero um café.", audio: true }
+          - { text: "Quero água.", audio: true }
+
+      block_3_with_without:
         type: explanation
         title:
           ru: "С или без"
           en: "With or without"
         explanation_text:
-          ru: "Чтобы уточнить заказ, используют: com или sem."
-          en: "To specify an order, use: com or sem."
+          ru: "Используют: com / sem."
+          en: "Use: com / sem."
         examples:
-          - text: "Café com açúcar."
-            audio: true
-          - text: "Café sem açúcar."
-            audio: true
+          - { text: "Café com açúcar.", audio: true }
+          - { text: "Café sem açúcar.", audio: true }
 
-      block_3_equivalence:
+      block_4_equivalence:
         type: comparison
         title:
-          ru: "Два варианта — один смысл"
-          en: "Two options — one meaning"
+          ru: "Два способа заказать"
+          en: "Two ways to order"
         comparison_card:
-          - text: "Quero um café."
-            audio: true
-          - text: "Café, por favor."
-            audio: true
+          - { text: "Quero um café.", audio: true }
+          - { text: "Café, por favor.", audio: true }
         note:
-          ru: "Обе фразы используются, чтобы сделать заказ."
-          en: "Both are used to order something."
+          ru: "Обе фразы используются для заказа."
+          en: "Both are used to order."
 
-      block_4_reinforcement:
+      block_5_reinforcement:
         type: reinforcement
         task_1:
           format: single_choice
           audio: "Quero um café sem açúcar."
           question:
-            ru: "Что хочет человек?"
-            en: "What does the person want?"
+            ru: "Что заказывают?"
+            en: "What is ordered?"
           options:
-            - text:
-                ru: "Кофе без сахара"
-                en: "Coffee without sugar"
-              correct: true
-            - text:
-                ru: "Счёт"
-                en: "The bill"
-              correct: false
-            - text:
-                ru: "Воду"
-                en: "Water"
-              correct: false
+            - { text: { ru: "Кофе без сахара", en: "Coffee without sugar" }, correct: true }
+            - { text: { ru: "Воду", en: "Water" }, correct: false }
+            - { text: { ru: "Счёт", en: "The bill" }, correct: false }
 
         task_2:
           format: situation_to_phrase
@@ -198,14 +209,11 @@ tasks:
             ru: "Ты хочешь попросить счёт."
             en: "You want to ask for the bill."
           options:
-            - text: "A conta, por favor."
-              correct: true
-            - text: "Quero café."
-              correct: false
-            - text: "Obrigado."
-              correct: false
+            - { text: "A conta, por favor.", correct: true }
+            - { text: "Quero café.", correct: false }
+            - { text: "Obrigado.", correct: false }
 
-      block_5_speak:
+      block_6_speak:
         type: speak_out_loud
         title:
           ru: "Скажи вслух"
@@ -221,86 +229,55 @@ tasks:
 
 
 # =========================================================
-# TASK 3 — LISTENING (3 вопроса)
+# TASK 3 — LISTENING (3 блока)
 # =========================================================
   - task_id: 3
     type: listening_comprehension
     title:
-      ru: "Предложения и понимание"
-      en: "Listening and understanding"
+      ru: "Мини-сцены"
+      en: "Mini scenes"
     subtitle:
-      ru: "Слушай заказ и пойми его"
-      en: "Listen to the order and understand it"
+      ru: "Пойми заказ"
+      en: "Understand the order"
 
     ui_rules:
       audio_plays_first: true
       show_text_after_answer: true
-      one_clear_correct_answer: true
 
     items:
       - item_id: 1
         audio: "Quero um café com leite."
-        text_hidden_before_answer: true
         question:
-          ru: "Что заказывает человек?"
-          en: "What does the person order?"
+          ru: "Что он заказывает?"
+          en: "What does he order?"
         options:
-          - text:
-              ru: "Кофе с молоком"
-              en: "Coffee with milk"
-            correct: true
-          - text:
-              ru: "Воду"
-              en: "Water"
-            correct: false
-          - text:
-              ru: "Счёт"
-              en: "The bill"
-            correct: false
+          - { text: { ru: "Кофе с молоком", en: "Coffee with milk" }, correct: true }
+          - { text: { ru: "Воду", en: "Water" }, correct: false }
+          - { text: { ru: "Счёт", en: "The bill" }, correct: false }
 
       - item_id: 2
         audio: "Quero água."
-        text_hidden_before_answer: true
         question:
           ru: "Что он хочет?"
           en: "What does he want?"
         options:
-          - text:
-              ru: "Воду"
-              en: "Water"
-            correct: true
-          - text:
-              ru: "Кофе"
-              en: "Coffee"
-            correct: false
-          - text:
-              ru: "Меню"
-              en: "Menu"
-            correct: false
+          - { text: { ru: "Воду", en: "Water" }, correct: true }
+          - { text: { ru: "Кофе", en: "Coffee" }, correct: false }
+          - { text: { ru: "Меню", en: "Menu" }, correct: false }
 
       - item_id: 3
         audio: "A conta, por favor."
-        text_hidden_before_answer: true
         question:
           ru: "Что происходит?"
           en: "What is happening?"
         options:
-          - text:
-              ru: "Человек просит счёт"
-              en: "The person is asking for the bill"
-            correct: true
-          - text:
-              ru: "Человек делает заказ"
-              en: "The person is ordering"
-            correct: false
-          - text:
-              ru: "Человек благодарит"
-              en: "The person is thanking"
-            correct: false
+          - { text: { ru: "Просят счёт", en: "Asking for the bill" }, correct: true }
+          - { text: { ru: "Заказывают", en: "Ordering" }, correct: false }
+          - { text: { ru: "Благодарят", en: "Thanking" }, correct: false }
 
 
 # =========================================================
-# TASK 4 — ATTENTION (2 ситуации)
+# TASK 4 — ATTENTION (3 блока)
 # =========================================================
   - task_id: 4
     type: attention
@@ -308,51 +285,43 @@ tasks:
       ru: "Внимательность"
       en: "Attention"
     subtitle:
-      ru: "Пойми, что здесь происходит"
-      en: "Understand what is happening"
+      ru: "Пойми ситуацию"
+      en: "Understand the situation"
 
     items:
       - item_id: 1
         audio: "Quero um café."
         question:
-          ru: "В какой ситуации это говорят?"
-          en: "In what situation is this said?"
+          ru: "Что это?"
+          en: "What is this?"
         options:
-          - text:
-              ru: "Заказ в кафе"
-              en: "Ordering in a café"
-            correct: true
-          - text:
-              ru: "Прощание"
-              en: "Saying goodbye"
-            correct: false
-          - text:
-              ru: "Извинение"
-              en: "Apologizing"
-            correct: false
+          - { text: { ru: "Заказ", en: "An order" }, correct: true }
+          - { text: { ru: "Прощание", en: "Goodbye" }, correct: false }
+          - { text: { ru: "Извинение", en: "Apology" }, correct: false }
 
       - item_id: 2
         audio: "A conta, por favor."
         question:
-          ru: "Что хочет человек?"
-          en: "What does the person want?"
+          ru: "Что это?"
+          en: "What is this?"
         options:
-          - text:
-              ru: "Оплатить"
-              en: "To pay"
-            correct: true
-          - text:
-              ru: "Заказать"
-              en: "To order"
-            correct: false
-          - text:
-              ru: "Уйти"
-              en: "To leave"
-            correct: false
+          - { text: { ru: "Просьба оплатить", en: "Asking to pay" }, correct: true }
+          - { text: { ru: "Заказ", en: "An order" }, correct: false }
+          - { text: { ru: "Цена", en: "Price" }, correct: false }
+
+      - item_id: 3
+        audio: "Café sem açúcar."
+        question:
+          ru: "Что это?"
+          en: "What is this?"
+        options:
+          - { text: { ru: "Уточнение заказа", en: "Order detail" }, correct: true }
+          - { text: { ru: "Счёт", en: "The bill" }, correct: false }
+          - { text: { ru: "Напиток", en: "A drink" }, correct: false }
 
 
 # =========================================================
-# TASK 5 — WRITING
+# TASK 5 — WRITING (канон)
 # =========================================================
   - task_id: 5
     type: writing_optional
@@ -364,8 +333,8 @@ tasks:
       en: "Build an order"
 
     instruction:
-      ru: "Заполни фразу, как в кафе."
-      en: "Complete the phrase as in a café."
+      ru: "Заполни шаблон."
+      en: "Fill in the template."
 
     main_task:
       format: template_fill

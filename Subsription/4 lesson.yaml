@@ -1,0 +1,248 @@
+day:
+  number: 4
+  title:
+    ru: "Просьбы и ответы"
+    en: "Requests and responses"
+  subtitle:
+    ru: "Понимаем намерение и отвечаем"
+    en: "Understanding intention and responding"
+  estimated_time: "15–25"
+
+tasks:
+
+# =========================================================
+# TASK 1 — VOCABULARY
+# =========================================================
+  - task_id: 1
+    type: vocabulary
+    title:
+      ru: "Слова и фразы"
+      en: "Words and phrases"
+    subtitle:
+      ru: "Просьбы и ответы"
+      en: "Requests and responses"
+    estimated_time: "≈10"
+    completion_rule: "auto_after_audio_10_min"
+
+    ui:
+      show_audio_settings: true
+      show_timer: true
+      allow_repeat: true
+
+    card_format:
+      show_word: true
+      show_transcription: true
+      show_example_sentence: true
+      show_word_translation_ru: true
+      show_word_translation_en: true
+      show_sentence_translation_ru: true
+      show_sentence_translation_en: true
+
+    content:
+      cards:
+        - { word: "Preciso", transcription: "[pɾɨˈsizu]", example_sentence: "Preciso de ajuda.", sentence_translation_ru: "Мне нужна помощь.", sentence_translation_en: "I need help.", word_translation_ru: "нужно / мне нужно", word_translation_en: "need" }
+        - { word: "Ajuda", transcription: "[ɐˈʒudɐ]", example_sentence: "Preciso de ajuda.", sentence_translation_ru: "Мне нужна помощь.", sentence_translation_en: "I need help.", word_translation_ru: "помощь", word_translation_en: "help" }
+        - { word: "Pode", transcription: "[ˈpɔdɨ]", example_sentence: "Pode ajudar?", sentence_translation_ru: "Можешь помочь?", sentence_translation_en: "Can you help?", word_translation_ru: "можешь / можно", word_translation_en: "can" }
+        - { word: "Ajudar", transcription: "[ɐʒuˈdaɾ]", example_sentence: "Pode ajudar?", sentence_translation_ru: "Можешь помочь?", sentence_translation_en: "Can you help?", word_translation_ru: "помогать", word_translation_en: "to help" }
+        - { word: "Pode ajudar?", transcription: "[ˈpɔdɨ ɐʒuˈdaɾ]", example_sentence: "Pode ajudar agora?", sentence_translation_ru: "Можешь помочь сейчас?", sentence_translation_en: "Can you help now?", word_translation_ru: "можешь помочь?", word_translation_en: "can you help?" }
+        - { word: "Obrigado", transcription: "[ubɾiˈɡadu]", example_sentence: "Obrigado pela ajuda.", sentence_translation_ru: "Спасибо за помощь.", sentence_translation_en: "Thank you for the help.", word_translation_ru: "спасибо (м.)", word_translation_en: "thank you (m.)" }
+        - { word: "Obrigada", transcription: "[ubɾiˈɡadɐ]", example_sentence: "Obrigada!", sentence_translation_ru: "Спасибо!", sentence_translation_en: "Thank you!", word_translation_ru: "спасибо (ж.)", word_translation_en: "thank you (f.)" }
+        - { word: "Hoje não", transcription: "[ˈoʒɨ nɐ̃w]", example_sentence: "Hoje não posso.", sentence_translation_ru: "Сегодня не могу.", sentence_translation_en: "I can't today.", word_translation_ru: "сегодня нет", word_translation_en: "not today" }
+        - { word: "Só", transcription: "[sɔ]", example_sentence: "Só amanhã.", sentence_translation_ru: "Только завтра.", sentence_translation_en: "Only tomorrow.", word_translation_ru: "только", word_translation_en: "only" }
+        - { word: "Resposta", transcription: "[ʁɨʃˈpɔʃtɐ]", example_sentence: "Esta é a resposta.", sentence_translation_ru: "Это ответ.", sentence_translation_en: "This is the answer.", word_translation_ru: "ответ", word_translation_en: "answer" }
+
+
+# =========================================================
+# TASK 2 — RULES
+# =========================================================
+  - task_id: 2
+    type: rules
+    title:
+      ru: "Как это сказать"
+      en: "How to say it"
+    subtitle:
+      ru: "Просьбы и ответы"
+      en: "Requests and responses"
+
+    structure:
+      blocks_order:
+        - block_1_asking
+        - block_2_responses
+        - block_3_thanks
+        - block_4_reinforcement
+        - block_5_speak
+
+    blocks:
+
+      block_1_asking:
+        type: explanation
+        title:
+          ru: "Как попросить"
+          en: "How to ask"
+        explanation_text:
+          ru: "Используй: Preciso de ajuda или Pode ajudar?"
+          en: "Use: Preciso de ajuda or Pode ajudar?"
+        examples:
+          - { text: "Preciso de ajuda.", audio: true }
+          - { text: "Pode ajudar?", audio: true }
+
+      block_2_responses:
+        type: explanation
+        title:
+          ru: "Как ответить"
+          en: "How to respond"
+        explanation_text:
+          ru: "Можно сказать: Sim, Hoje não, Só amanhã."
+          en: "You can say: Sim, Hoje não, Só amanhã."
+        examples:
+          - { text: "Sim.", audio: true }
+          - { text: "Hoje não.", audio: true }
+          - { text: "Só amanhã.", audio: true }
+
+      block_3_thanks:
+        type: comparison
+        title:
+          ru: "Как поблагодарить"
+          en: "How to thank"
+        comparison_card:
+          - { text: "Obrigado pela ajuda.", audio: true }
+          - { text: "Obrigada!", audio: true }
+        note:
+          ru: "Obrigado — мужчина, Obrigada — женщина."
+          en: "Obrigado — man, Obrigada — woman."
+
+      block_4_reinforcement:
+        type: reinforcement
+        task_1:
+          format: single_choice
+          audio: "Preciso de ajuda."
+          question:
+            ru: "Что это?"
+            en: "What is this?"
+          options:
+            - { text: { ru: "Просьба", en: "A request" }, correct: true }
+            - { text: { ru: "Благодарность", en: "Thanks" }, correct: false }
+            - { text: { ru: "Отказ", en: "Refusal" }, correct: false }
+
+        task_2:
+          format: single_choice
+          audio: "Hoje não."
+          question:
+            ru: "Что это значит?"
+            en: "What does it mean?"
+          options:
+            - { text: { ru: "Сегодня нет", en: "Not today" }, correct: true }
+            - { text: { ru: "Завтра", en: "Tomorrow" }, correct: false }
+            - { text: { ru: "Спасибо", en: "Thank you" }, correct: false }
+
+      block_5_speak:
+        type: speak_out_loud
+        title:
+          ru: "Скажи вслух"
+          en: "Speak out loud"
+        instruction_text:
+          ru: "Скажи: Preciso de ajuda. Pode ajudar? Obrigado."
+          en: "Say: Preciso de ajuda. Pode ajudar? Obrigado."
+        action_button:
+          text:
+            ru: "✔ Я сказал(а) вслух"
+            en: "✔ I said it out loud"
+          completes_task: true
+
+
+# =========================================================
+# TASK 3 — LISTENING
+# =========================================================
+  - task_id: 3
+    type: listening_comprehension
+    title:
+      ru: "Слушай и пойми"
+      en: "Listen and understand"
+
+    ui_rules:
+      audio_plays_first: true
+      show_text_after_answer: true
+
+    items:
+      - item_id: 1
+        audio: "Pode ajudar?"
+        question:
+          ru: "Что это?"
+          en: "What is this?"
+        options:
+          - { text: { ru: "Просьба", en: "A request" }, correct: true }
+          - { text: { ru: "Благодарность", en: "Thanks" }, correct: false }
+          - { text: { ru: "Ответ", en: "Answer" }, correct: false }
+
+      - item_id: 2
+        audio: "Obrigado."
+        question:
+          ru: "Что это?"
+          en: "What is this?"
+        options:
+          - { text: { ru: "Благодарность", en: "Thanks" }, correct: true }
+          - { text: { ru: "Просьба", en: "Request" }, correct: false }
+          - { text: { ru: "Отказ", en: "Refusal" }, correct: false }
+
+      - item_id: 3
+        audio: "Hoje não."
+        question:
+          ru: "Что это?"
+          en: "What is this?"
+        options:
+          - { text: { ru: "Отказ", en: "Refusal" }, correct: true }
+          - { text: { ru: "Просьба", en: "Request" }, correct: false }
+          - { text: { ru: "Спасибо", en: "Thanks" }, correct: false }
+
+
+# =========================================================
+# TASK 4 — ATTENTION
+# =========================================================
+  - task_id: 4
+    type: attention
+    title:
+      ru: "Внимательность"
+      en: "Attention"
+
+    items:
+      - item_id: 1
+        audio: "Obrigado pela ajuda."
+        question:
+          ru: "Что это?"
+          en: "What is this?"
+        options:
+          - { text: { ru: "Благодарность", en: "Thanks" }, correct: true }
+          - { text: { ru: "Просьба", en: "Request" }, correct: false }
+          - { text: { ru: "Отказ", en: "Refusal" }, correct: false }
+
+      - item_id: 2
+        audio: "Preciso de ajuda."
+        question:
+          ru: "Что это?"
+          en: "What is this?"
+        options:
+          - { text: { ru: "Просьба", en: "Request" }, correct: true }
+          - { text: { ru: "Спасибо", en: "Thanks" }, correct: false }
+          - { text: { ru: "Ответ", en: "Answer" }, correct: false }
+
+
+# =========================================================
+# TASK 5 — WRITING
+# =========================================================
+  - task_id: 5
+    type: writing_optional
+    title:
+      ru: "Ответ"
+      en: "Reply"
+
+    main_task:
+      format: template_fill
+      template:
+        - "Hoje não."
+        - "Só amanhã."
+
+    example:
+      show_by_button: true
+      content:
+        - "Hoje não."
+        - "Só amanhã."

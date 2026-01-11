@@ -10,7 +10,7 @@ day:
 tasks:
 
 # =========================================================
-# TASK 1 — VOCABULARY
+# TASK 1 — VOCABULARY (канон: RU + EN переводы слов)
 # =========================================================
   - task_id: 1
     type: vocabulary
@@ -24,12 +24,12 @@ tasks:
     show_timer: true
     show_audio_settings: true
     completion_rule: "auto_after_audio_10_min"
-
     card_format:
       show_word: true
       show_transcription: true
       show_example_sentence: true
       show_word_translation_ru: true
+      show_word_translation_en: true
       show_sentence_translation_ru: true
       show_sentence_translation_en: true
 
@@ -41,6 +41,7 @@ tasks:
           sentence_translation_ru: "Я хочу билет."
           sentence_translation_en: "I want a ticket."
           word_translation_ru: "билет"
+          word_translation_en: "ticket"
 
         - word: "Autocarro"
           transcription: "[awtuˈkaʁu]"
@@ -48,13 +49,15 @@ tasks:
           sentence_translation_ru: "Автобус приезжает."
           sentence_translation_en: "The bus arrives."
           word_translation_ru: "автобус"
+          word_translation_en: "bus"
 
         - word: "Comboio"
           transcription: "[kõˈbɔju]"
-          example_sentence: "O comboio chega."
-          sentence_translation_ru: "Поезд приезжает."
-          sentence_translation_en: "The train arrives."
+          example_sentence: "O comboio parte."
+          sentence_translation_ru: "Поезд отправляется."
+          sentence_translation_en: "The train departs."
           word_translation_ru: "поезд"
+          word_translation_en: "train"
 
         - word: "Estação"
           transcription: "[iʃtɐˈsɐ̃w]"
@@ -62,6 +65,7 @@ tasks:
           sentence_translation_ru: "Станция здесь."
           sentence_translation_en: "The station is here."
           word_translation_ru: "станция"
+          word_translation_en: "station"
 
         - word: "Plataforma"
           transcription: "[plɐtɐˈfɔɾmɐ]"
@@ -69,6 +73,7 @@ tasks:
           sentence_translation_ru: "Платформа 2."
           sentence_translation_en: "Platform 2."
           word_translation_ru: "платформа"
+          word_translation_en: "platform"
 
         - word: "Vai"
           transcription: "[vaj]"
@@ -76,6 +81,7 @@ tasks:
           sentence_translation_ru: "Поезд идёт в Лиссабон."
           sentence_translation_en: "The train goes to Lisbon."
           word_translation_ru: "идёт / едет"
+          word_translation_en: "goes"
 
         - word: "Para"
           transcription: "[ˈpaɾɐ]"
@@ -83,6 +89,7 @@ tasks:
           sentence_translation_ru: "Едет в Лиссабон."
           sentence_translation_en: "Goes to Lisbon."
           word_translation_ru: "в (направление)"
+          word_translation_en: "to (direction)"
 
         - word: "Chega"
           transcription: "[ˈʃeɡɐ]"
@@ -90,6 +97,7 @@ tasks:
           sentence_translation_ru: "Поезд прибывает."
           sentence_translation_en: "The train arrives."
           word_translation_ru: "прибывает"
+          word_translation_en: "arrives"
 
         - word: "Parte"
           transcription: "[ˈpaɾtɨ]"
@@ -97,6 +105,7 @@ tasks:
           sentence_translation_ru: "Автобус отправляется."
           sentence_translation_en: "The bus departs."
           word_translation_ru: "отправляется"
+          word_translation_en: "departs"
 
         - word: "Destino"
           transcription: "[dɨʃˈtinu]"
@@ -104,10 +113,11 @@ tasks:
           sentence_translation_ru: "Какой пункт назначения?"
           sentence_translation_en: "What is the destination?"
           word_translation_ru: "пункт назначения"
+          word_translation_en: "destination"
 
 
 # =========================================================
-# TASK 2 — RULES
+# TASK 2 — RULES (канон: 6 насыщенных блоков)
 # =========================================================
   - task_id: 2
     type: rules
@@ -120,89 +130,93 @@ tasks:
 
     structure:
       blocks_order:
-        - block_1_want_ticket
-        - block_2_go_to
-        - block_3_equivalence
-        - block_4_reinforcement
-        - block_5_speak
+        - block_1_ticket
+        - block_2_direction
+        - block_3_arrival_departure
+        - block_4_equivalence
+        - block_5_reinforcement
+        - block_6_speak
 
     blocks:
 
-      block_1_want_ticket:
+      block_1_ticket:
         type: explanation
         title:
           ru: "Как попросить билет"
           en: "How to ask for a ticket"
         explanation_text:
-          ru: "Чтобы купить билет, говорят: Quero um bilhete."
-          en: "To buy a ticket, say: Quero um bilhete."
+          ru: "Чтобы купить билет, используют: Quero um bilhete."
+          en: "To buy a ticket, use: Quero um bilhete."
         examples:
-          - text: "Quero um bilhete."
-            audio: true
+          - { text: "Quero um bilhete.", audio: true }
+          - { text: "Quero um bilhete para Lisboa.", audio: true }
+        hint:
+          - { ru: "Quero = я хочу", en: "Quero = I want" }
 
-      block_2_go_to:
+      block_2_direction:
         type: explanation
         title:
-          ru: "Куда едет транспорт"
-          en: "Where transport goes"
+          ru: "Куда едет"
+          en: "Where it goes"
         explanation_text:
-          ru: "Чтобы сказать направление, используют: vai para + место."
-          en: "To say direction, use: vai para + place."
+          ru: "Направление: vai para + место."
+          en: "Direction: vai para + place."
         examples:
-          - text: "O comboio vai para Lisboa."
-            audio: true
+          - { text: "O comboio vai para Lisboa.", audio: true }
+          - { text: "O autocarro vai para a estação.", audio: true }
+        hint:
+          - { ru: "para = в, к", en: "para = to" }
 
-      block_3_equivalence:
+      block_3_arrival_departure:
+        type: explanation
+        title:
+          ru: "Прибытие и отправление"
+          en: "Arrival and departure"
+        explanation_text:
+          ru: "Chega = прибывает. Parte = отправляется."
+          en: "Chega = arrives. Parte = departs."
+        examples:
+          - { text: "O comboio chega.", audio: true }
+          - { text: "O autocarro parte.", audio: true }
+        hint:
+          - { ru: "Это статус движения", en: "These describe movement status" }
+
+      block_4_equivalence:
         type: comparison
         title:
           ru: "Вопрос и ответ"
           en: "Question and answer"
         comparison_card:
-          - text: "Para onde vai?"
-            audio: true
-          - text: "Vai para Lisboa."
-            audio: true
+          - { text: "Para onde vai?", audio: true }
+          - { text: "Vai para Lisboa.", audio: true }
         note:
-          ru: "Первая фраза — вопрос, вторая — ответ."
-          en: "The first is a question, the second is an answer."
+          ru: "Обе фразы про направление."
+          en: "Both are about direction."
 
-      block_4_reinforcement:
+      block_5_reinforcement:
         type: reinforcement
-
         task_1:
           format: single_choice
-          audio: "Quero um bilhete."
+          audio: "O comboio vai para Lisboa."
           question:
-            ru: "Что хочет человек?"
-            en: "What does the person want?"
+            ru: "Что это?"
+            en: "What is this?"
           options:
-            - text:
-                ru: "Билет"
-                en: "A ticket"
-              correct: true
-            - text:
-                ru: "Поезд"
-                en: "A train"
-              correct: false
-            - text:
-                ru: "Станцию"
-                en: "A station"
-              correct: false
+            - { text: { ru: "Маршрут", en: "A route" }, correct: true }
+            - { text: { ru: "Цена", en: "A price" }, correct: false }
+            - { text: { ru: "Прощание", en: "Goodbye" }, correct: false }
 
         task_2:
           format: situation_to_phrase
           situation_text:
-            ru: "Ты хочешь узнать, куда едет поезд."
-            en: "You want to know where the train goes."
+            ru: "Ты хочешь купить билет."
+            en: "You want to buy a ticket."
           options:
-            - text: "Para onde vai?"
-              correct: true
-            - text: "Quanto custa?"
-              correct: false
-            - text: "A conta, por favor."
-              correct: false
+            - { text: "Quero um bilhete.", correct: true }
+            - { text: "O comboio chega.", correct: false }
+            - { text: "Para onde vai?", correct: false }
 
-      block_5_speak:
+      block_6_speak:
         type: speak_out_loud
         title:
           ru: "Скажи вслух"
@@ -218,16 +232,16 @@ tasks:
 
 
 # =========================================================
-# TASK 3 — LISTENING
+# TASK 3 — LISTENING (канон: 3 блока)
 # =========================================================
   - task_id: 3
     type: listening_comprehension
     title:
-      ru: "Предложения и понимание"
-      en: "Listening and understanding"
+      ru: "Мини-сцены"
+      en: "Mini scenes"
     subtitle:
-      ru: "Слушай и пойми маршрут"
-      en: "Listen and understand the route"
+      ru: "Пойми маршрут"
+      en: "Understand the route"
 
     ui_rules:
       audio_plays_first: true
@@ -235,68 +249,38 @@ tasks:
 
     items:
       - item_id: 1
-        audio: "O comboio vai para Lisboa."
-        text_hidden_before_answer: true
-        question:
-          ru: "Куда идёт поезд?"
-          en: "Where does the train go?"
-        options:
-          - text:
-              ru: "В Лиссабон"
-              en: "To Lisbon"
-            correct: true
-          - text:
-              ru: "В магазин"
-              en: "To a shop"
-            correct: false
-          - text:
-              ru: "Домой"
-              en: "Home"
-            correct: false
-
-      - item_id: 2
         audio: "Quero um bilhete."
-        text_hidden_before_answer: true
         question:
           ru: "Что хочет человек?"
           en: "What does the person want?"
         options:
-          - text:
-              ru: "Билет"
-              en: "A ticket"
-            correct: true
-          - text:
-              ru: "Кофе"
-              en: "Coffee"
-            correct: false
-          - text:
-              ru: "Счёт"
-              en: "The bill"
-            correct: false
+          - { text: { ru: "Билет", en: "A ticket" }, correct: true }
+          - { text: { ru: "Поезд", en: "A train" }, correct: false }
+          - { text: { ru: "Станцию", en: "A station" }, correct: false }
+
+      - item_id: 2
+        audio: "O comboio vai para Lisboa."
+        question:
+          ru: "Куда едет?"
+          en: "Where does it go?"
+        options:
+          - { text: { ru: "В Лиссабон", en: "To Lisbon" }, correct: true }
+          - { text: { ru: "В Порту", en: "To Porto" }, correct: false }
+          - { text: { ru: "В школу", en: "To school" }, correct: false }
 
       - item_id: 3
-        audio: "Plataforma 2."
-        text_hidden_before_answer: true
+        audio: "O autocarro parte."
         question:
-          ru: "Что это?"
-          en: "What is this?"
+          ru: "Что происходит?"
+          en: "What is happening?"
         options:
-          - text:
-              ru: "Номер платформы"
-              en: "A platform number"
-            correct: true
-          - text:
-              ru: "Цена"
-              en: "A price"
-            correct: false
-          - text:
-              ru: "Меню"
-              en: "A menu"
-            correct: false
+          - { text: { ru: "Отправление", en: "Departure" }, correct: true }
+          - { text: { ru: "Прибытие", en: "Arrival" }, correct: false }
+          - { text: { ru: "Покупка", en: "Purchase" }, correct: false }
 
 
 # =========================================================
-# TASK 4 — ATTENTION
+# TASK 4 — ATTENTION (канон: 3 блока)
 # =========================================================
   - task_id: 4
     type: attention
@@ -304,51 +288,43 @@ tasks:
       ru: "Внимательность"
       en: "Attention"
     subtitle:
-      ru: "Пойми, что происходит"
-      en: "Understand what is happening"
+      ru: "Определи ситуацию"
+      en: "Identify the situation"
 
     items:
       - item_id: 1
-        audio: "Quero um bilhete."
-        question:
-          ru: "В какой ситуации это говорят?"
-          en: "In what situation is this said?"
-        options:
-          - text:
-              ru: "Покупка билета"
-              en: "Buying a ticket"
-            correct: true
-          - text:
-              ru: "Прощание"
-              en: "Saying goodbye"
-            correct: false
-          - text:
-              ru: "Жалоба"
-              en: "A complaint"
-            correct: false
-
-      - item_id: 2
-        audio: "O comboio vai para Lisboa."
+        audio: "Plataforma 2."
         question:
           ru: "Что это?"
           en: "What is this?"
         options:
-          - text:
-              ru: "Информация о маршруте"
-              en: "Route information"
-            correct: true
-          - text:
-              ru: "Цена"
-              en: "A price"
-            correct: false
-          - text:
-              ru: "Просьба"
-              en: "A request"
-            correct: false
+          - { text: { ru: "Платформа", en: "Platform" }, correct: true }
+          - { text: { ru: "Цена", en: "Price" }, correct: false }
+          - { text: { ru: "Прощание", en: "Goodbye" }, correct: false }
+
+      - item_id: 2
+        audio: "O comboio chega."
+        question:
+          ru: "Что происходит?"
+          en: "What is happening?"
+        options:
+          - { text: { ru: "Прибытие", en: "Arrival" }, correct: true }
+          - { text: { ru: "Отправление", en: "Departure" }, correct: false }
+          - { text: { ru: "Маршрут", en: "Route" }, correct: false }
+
+      - item_id: 3
+        audio: "Para onde vai?"
+        question:
+          ru: "Что это?"
+          en: "What is this?"
+        options:
+          - { text: { ru: "Вопрос", en: "A question" }, correct: true }
+          - { text: { ru: "Ответ", en: "An answer" }, correct: false }
+          - { text: { ru: "Цена", en: "A price" }, correct: false }
 
 
 # =========================================================
-# TASK 5 — WRITING
+# TASK 5 — WRITING (канон: конструктор)
 # =========================================================
   - task_id: 5
     type: writing_optional
@@ -360,8 +336,8 @@ tasks:
       en: "Build a sentence"
 
     instruction:
-      ru: "Заполни фразы."
-      en: "Complete the sentences."
+      ru: "Заполни шаблоны."
+      en: "Fill in the templates."
 
     main_task:
       format: template_fill

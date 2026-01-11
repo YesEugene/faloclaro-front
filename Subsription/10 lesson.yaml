@@ -41,6 +41,7 @@ tasks:
           sentence_translation_ru: "Человек здесь."
           sentence_translation_en: "The person is here."
           word_translation_ru: "человек"
+          word_translation_en: "person"
 
         - word: "Cliente"
           transcription: "[kliˈẽtɨ]"
@@ -48,6 +49,7 @@ tasks:
           sentence_translation_ru: "Клиент ждёт."
           sentence_translation_en: "The client is waiting."
           word_translation_ru: "клиент"
+          word_translation_en: "client"
 
         - word: "Amigo"
           transcription: "[ɐˈmiɡu]"
@@ -55,6 +57,7 @@ tasks:
           sentence_translation_ru: "Мой друг."
           sentence_translation_en: "My friend."
           word_translation_ru: "друг"
+          word_translation_en: "friend"
 
         - word: "Mulher"
           transcription: "[muˈʎɛɾ]"
@@ -62,6 +65,7 @@ tasks:
           sentence_translation_ru: "Моя жена."
           sentence_translation_en: "My wife."
           word_translation_ru: "жена"
+          word_translation_en: "wife"
 
         - word: "Marido"
           transcription: "[mɐˈɾidu]"
@@ -69,6 +73,7 @@ tasks:
           sentence_translation_ru: "Мой муж."
           sentence_translation_en: "My husband."
           word_translation_ru: "муж"
+          word_translation_en: "husband"
 
         - word: "Filho"
           transcription: "[ˈfiʎu]"
@@ -76,6 +81,7 @@ tasks:
           sentence_translation_ru: "Мой сын."
           sentence_translation_en: "My son."
           word_translation_ru: "сын"
+          word_translation_en: "son"
 
         - word: "Filha"
           transcription: "[ˈfiʎɐ]"
@@ -83,6 +89,7 @@ tasks:
           sentence_translation_ru: "Моя дочь."
           sentence_translation_en: "My daughter."
           word_translation_ru: "дочь"
+          word_translation_en: "daughter"
 
         - word: "Pessoa nova"
           transcription: "[pɨˈsoɐ ˈnovɐ]"
@@ -90,6 +97,7 @@ tasks:
           sentence_translation_ru: "Новый человек."
           sentence_translation_en: "A new person."
           word_translation_ru: "новый человек"
+          word_translation_en: "new person"
 
         - word: "Pessoa conhecida"
           transcription: "[pɨˈsoɐ kuɲɨˈsidɐ]"
@@ -97,6 +105,7 @@ tasks:
           sentence_translation_ru: "Знакомый человек."
           sentence_translation_en: "A known person."
           word_translation_ru: "знакомый человек"
+          word_translation_en: "a known person"
 
         - word: "Gente"
           transcription: "[ˈʒẽtɨ]"
@@ -104,6 +113,7 @@ tasks:
           sentence_translation_ru: "Много людей."
           sentence_translation_en: "Many people."
           word_translation_ru: "люди"
+          word_translation_en: "people"
 
 
 # =========================================================

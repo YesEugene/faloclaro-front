@@ -41,6 +41,7 @@ tasks:
           sentence_translation_ru: "Открыто."
           sentence_translation_en: "It is open."
           word_translation_ru: "открыто"
+          word_translation_en: "open"
 
         - word: "Fechado"
           transcription: "[fɨˈʃadu]"
@@ -48,6 +49,7 @@ tasks:
           sentence_translation_ru: "Закрыто."
           sentence_translation_en: "It is closed."
           word_translation_ru: "закрыто"
+          word_translation_en: "closed"
 
         - word: "Horário"
           transcription: "[oˈɾaɾju]"
@@ -55,6 +57,7 @@ tasks:
           sentence_translation_ru: "Расписание здесь."
           sentence_translation_en: "The schedule is here."
           word_translation_ru: "расписание"
+          word_translation_en: "schedule / opening hours"
 
         - word: "Preço"
           transcription: "[ˈpɾɛsu]"
@@ -62,6 +65,7 @@ tasks:
           sentence_translation_ru: "Цена низкая."
           sentence_translation_en: "The price is low."
           word_translation_ru: "цена"
+          word_translation_en: "price"
 
         - word: "Entrada"
           transcription: "[ẽˈtɾadɐ]"
@@ -69,6 +73,7 @@ tasks:
           sentence_translation_ru: "Вход здесь."
           sentence_translation_en: "Entrance here."
           word_translation_ru: "вход"
+          word_translation_en: "entrance"
 
         - word: "Gratuito"
           transcription: "[ɡɾɐˈtitu]"
@@ -76,6 +81,7 @@ tasks:
           sentence_translation_ru: "Это бесплатно."
           sentence_translation_en: "It is free."
           word_translation_ru: "бесплатно"
+          word_translation_en: "free"
 
         - word: "Hoje"
           transcription: "[ˈoʒɨ]"
@@ -83,6 +89,7 @@ tasks:
           sentence_translation_ru: "Сегодня открыто."
           sentence_translation_en: "Open today."
           word_translation_ru: "сегодня"
+          word_translation_en: "today"
 
         - word: "Amanhã"
           transcription: "[ɐmɐˈɲɐ]"
@@ -90,6 +97,7 @@ tasks:
           sentence_translation_ru: "Завтра закрыто."
           sentence_translation_en: "Closed tomorrow."
           word_translation_ru: "завтра"
+          word_translation_en: "tomorrow"
 
         - word: "Agora"
           transcription: "[ɐˈɡɔɾɐ]"
@@ -97,6 +105,7 @@ tasks:
           sentence_translation_ru: "Сейчас открыто."
           sentence_translation_en: "Open now."
           word_translation_ru: "сейчас"
+          word_translation_en: "now"
 
         - word: "Euro"
           transcription: "[ˈewɾu]"
@@ -104,6 +113,7 @@ tasks:
           sentence_translation_ru: "10 евро."
           sentence_translation_en: "10 euros."
           word_translation_ru: "евро"
+          word_translation_en: "euro"
 
 
 # =========================================================

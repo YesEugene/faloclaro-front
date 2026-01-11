@@ -10,7 +10,7 @@ day:
 tasks:
 
 # =========================================================
-# TASK 1 — VOCABULARY
+# TASK 1 — VOCABULARY (канон: RU + EN переводы слов)
 # =========================================================
   - task_id: 1
     type: vocabulary
@@ -30,6 +30,7 @@ tasks:
       show_transcription: true
       show_example_sentence: true
       show_word_translation_ru: true
+      show_word_translation_en: true
       show_sentence_translation_ru: true
       show_sentence_translation_en: true
 
@@ -41,6 +42,7 @@ tasks:
           sentence_translation_ru: "Магазин открыт."
           sentence_translation_en: "The shop is open."
           word_translation_ru: "магазин"
+          word_translation_en: "shop"
 
         - word: "Comprar"
           transcription: "[kõˈpɾaɾ]"
@@ -48,6 +50,7 @@ tasks:
           sentence_translation_ru: "Я хочу купить хлеб."
           sentence_translation_en: "I want to buy bread."
           word_translation_ru: "покупать"
+          word_translation_en: "to buy"
 
         - word: "Preço"
           transcription: "[ˈpɾɛsu]"
@@ -55,6 +58,7 @@ tasks:
           sentence_translation_ru: "Какая цена?"
           sentence_translation_en: "What is the price?"
           word_translation_ru: "цена"
+          word_translation_en: "price"
 
         - word: "Barato"
           transcription: "[bɐˈɾatu]"
@@ -62,6 +66,7 @@ tasks:
           sentence_translation_ru: "Это дёшево."
           sentence_translation_en: "It is cheap."
           word_translation_ru: "дешёвый"
+          word_translation_en: "cheap"
 
         - word: "Caro"
           transcription: "[ˈkaɾu]"
@@ -69,6 +74,7 @@ tasks:
           sentence_translation_ru: "Это дорого."
           sentence_translation_en: "It is expensive."
           word_translation_ru: "дорогой"
+          word_translation_en: "expensive"
 
         - word: "Euro"
           transcription: "[ˈɛwɾu]"
@@ -76,6 +82,7 @@ tasks:
           sentence_translation_ru: "Стоит 10 евро."
           sentence_translation_en: "It costs 10 euros."
           word_translation_ru: "евро"
+          word_translation_en: "euro"
 
         - word: "Custa"
           transcription: "[ˈkuʃtɐ]"
@@ -83,6 +90,7 @@ tasks:
           sentence_translation_ru: "Стоит 5 евро."
           sentence_translation_en: "It costs 5 euros."
           word_translation_ru: "стоит"
+          word_translation_en: "costs"
 
         - word: "Quanto custa?"
           transcription: "[ˈkwɐ̃tu ˈkuʃtɐ]"
@@ -90,6 +98,7 @@ tasks:
           sentence_translation_ru: "Сколько стоит книга?"
           sentence_translation_en: "How much does the book cost?"
           word_translation_ru: "сколько стоит?"
+          word_translation_en: "how much is it?"
 
         - word: "Este"
           transcription: "[ˈɛʃtɨ]"
@@ -97,6 +106,7 @@ tasks:
           sentence_translation_ru: "Эта книга."
           sentence_translation_en: "This book."
           word_translation_ru: "этот"
+          word_translation_en: "this"
 
         - word: "Livro"
           transcription: "[ˈlivɾu]"
@@ -104,10 +114,11 @@ tasks:
           sentence_translation_ru: "Книга стоит 10 евро."
           sentence_translation_en: "The book costs 10 euros."
           word_translation_ru: "книга"
+          word_translation_en: "book"
 
 
 # =========================================================
-# TASK 2 — RULES
+# TASK 2 — RULES (канон: 6 блоков)
 # =========================================================
   - task_id: 2
     type: rules
@@ -120,76 +131,77 @@ tasks:
 
     structure:
       blocks_order:
-        - block_1_how_much
-        - block_2_expensive
-        - block_3_equivalence
-        - block_4_reinforcement
-        - block_5_speak
+        - block_1_price
+        - block_2_answer
+        - block_3_evaluation
+        - block_4_equivalence
+        - block_5_reinforcement
+        - block_6_speak
 
     blocks:
 
-      block_1_how_much:
+      block_1_price:
         type: explanation
         title:
           ru: "Как спросить цену"
           en: "How to ask the price"
         explanation_text:
-          ru: "Чтобы спросить цену, используют: Quanto custa?"
-          en: "To ask the price, use: Quanto custa?"
+          ru: "Используют: Quanto custa?"
+          en: "Use: Quanto custa?"
         examples:
-          - text: "Quanto custa este livro?"
-            audio: true
+          - { text: "Quanto custa este livro?", audio: true }
+          - { text: "Quanto custa?", audio: true }
+        hint:
+          - { ru: "custa = стоит", en: "custa = costs" }
 
-      block_2_expensive:
+      block_2_answer:
+        type: explanation
+        title:
+          ru: "Как сказать цену"
+          en: "How to say the price"
+        explanation_text:
+          ru: "Используют: Custa + число + euros."
+          en: "Use: Custa + number + euros."
+        examples:
+          - { text: "Custa 10 euros.", audio: true }
+          - { text: "Custa 5 euros.", audio: true }
+
+      block_3_evaluation:
         type: explanation
         title:
           ru: "Дорого или дёшево"
           en: "Expensive or cheap"
         explanation_text:
-          ru: "Чтобы сказать, что что-то дорого или дёшево, используют: É caro / É barato."
-          en: "To say something is expensive or cheap, use: É caro / É barato."
+          ru: "Оценка: É caro / É barato."
+          en: "Evaluation: É caro / É barato."
         examples:
-          - text: "É caro."
-            audio: true
-          - text: "É barato."
-            audio: true
+          - { text: "É caro.", audio: true }
+          - { text: "É barato.", audio: true }
 
-      block_3_equivalence:
+      block_4_equivalence:
         type: comparison
         title:
           ru: "Вопрос и ответ"
           en: "Question and answer"
         comparison_card:
-          - text: "Quanto custa?"
-            audio: true
-          - text: "Custa 10 euros."
-            audio: true
+          - { text: "Quanto custa?", audio: true }
+          - { text: "Custa 10 euros.", audio: true }
         note:
-          ru: "Первая фраза — вопрос, вторая — ответ."
-          en: "The first is a question, the second is an answer."
+          ru: "Обе фразы говорят о цене."
+          en: "Both talk about the price."
 
-      block_4_reinforcement:
+      block_5_reinforcement:
         type: reinforcement
-
         task_1:
           format: single_choice
           audio: "Custa 5 euros."
           question:
-            ru: "О чём говорит человек?"
-            en: "What is the person saying?"
+            ru: "Что это?"
+            en: "What is this?"
           options:
-            - text:
-                ru: "О цене"
-                en: "About the price"
-              correct: true
-            - text:
-                ru: "О магазине"
-                en: "About the shop"
-              correct: false
-            - text:
-                ru: "О времени"
-                en: "About time"
-              correct: false
+            - { text: { ru: "Цена", en: "A price" }, correct: true }
+            - { text: { ru: "Магазин", en: "A shop" }, correct: false }
+            - { text: { ru: "Время", en: "Time" }, correct: false }
 
         task_2:
           format: situation_to_phrase
@@ -197,21 +209,18 @@ tasks:
             ru: "Ты хочешь спросить цену."
             en: "You want to ask the price."
           options:
-            - text: "Quanto custa?"
-              correct: true
-            - text: "É caro."
-              correct: false
-            - text: "Obrigado."
-              correct: false
+            - { text: "Quanto custa?", correct: true }
+            - { text: "É caro.", correct: false }
+            - { text: "Obrigado.", correct: false }
 
-      block_5_speak:
+      block_6_speak:
         type: speak_out_loud
         title:
           ru: "Скажи вслух"
           en: "Speak out loud"
         instruction_text:
-          ru: "Скажи: Quanto custa este livro? É caro."
-          en: "Say: Quanto custa este livro? É caro."
+          ru: "Скажи: Quanto custa este livro? Custa 10 euros."
+          en: "Say: Quanto custa este livro? Custa 10 euros."
         action_button:
           text:
             ru: "✔ Я сказал(а) вслух"
@@ -220,16 +229,16 @@ tasks:
 
 
 # =========================================================
-# TASK 3 — LISTENING
+# TASK 3 — LISTENING (3 блока)
 # =========================================================
   - task_id: 3
     type: listening_comprehension
     title:
-      ru: "Предложения и понимание"
-      en: "Listening and understanding"
+      ru: "Мини-сцены"
+      en: "Mini scenes"
     subtitle:
-      ru: "Слушай и пойми цену"
-      en: "Listen and understand the price"
+      ru: "Пойми цену"
+      en: "Understand the price"
 
     ui_rules:
       audio_plays_first: true
@@ -238,67 +247,37 @@ tasks:
     items:
       - item_id: 1
         audio: "Quanto custa este livro?"
-        text_hidden_before_answer: true
         question:
           ru: "О чём вопрос?"
           en: "What is the question about?"
         options:
-          - text:
-              ru: "О цене"
-              en: "About the price"
-            correct: true
-          - text:
-              ru: "О времени"
-              en: "About time"
-            correct: false
-          - text:
-              ru: "О месте"
-              en: "About the place"
-            correct: false
+          - { text: { ru: "О цене", en: "About the price" }, correct: true }
+          - { text: { ru: "О времени", en: "About time" }, correct: false }
+          - { text: { ru: "О месте", en: "About the place" }, correct: false }
 
       - item_id: 2
         audio: "Custa 10 euros."
-        text_hidden_before_answer: true
         question:
           ru: "Что мы узнали?"
           en: "What did we learn?"
         options:
-          - text:
-              ru: "Цену"
-              en: "The price"
-            correct: true
-          - text:
-              ru: "Название"
-              en: "The name"
-            correct: false
-          - text:
-              ru: "Время"
-              en: "The time"
-            correct: false
+          - { text: { ru: "Цену", en: "The price" }, correct: true }
+          - { text: { ru: "Название", en: "The name" }, correct: false }
+          - { text: { ru: "Время", en: "The time" }, correct: false }
 
       - item_id: 3
         audio: "É barato."
-        text_hidden_before_answer: true
         question:
-          ru: "Что это значит?"
-          en: "What does it mean?"
+          ru: "Что это?"
+          en: "What is this?"
         options:
-          - text:
-              ru: "Это дёшево"
-              en: "It is cheap"
-            correct: true
-          - text:
-              ru: "Это дорого"
-              en: "It is expensive"
-            correct: false
-          - text:
-              ru: "Это закрыто"
-              en: "It is closed"
-            correct: false
+          - { text: { ru: "Оценка цены", en: "Price evaluation" }, correct: true }
+          - { text: { ru: "Вопрос", en: "A question" }, correct: false }
+          - { text: { ru: "Место", en: "A place" }, correct: false }
 
 
 # =========================================================
-# TASK 4 — ATTENTION
+# TASK 4 — ATTENTION (3 блока)
 # =========================================================
   - task_id: 4
     type: attention
@@ -311,46 +290,38 @@ tasks:
 
     items:
       - item_id: 1
-        text: "Preço: 10 euros."
+        audio: "Custa 10 euros."
         question:
-          ru: "Сколько стоит?"
-          en: "How much does it cost?"
+          ru: "Что это?"
+          en: "What is this?"
         options:
-          - text:
-              ru: "10 евро"
-              en: "10 euros"
-            correct: true
-          - text:
-              ru: "Бесплатно"
-              en: "Free"
-            correct: false
-          - text:
-              ru: "Закрыто"
-              en: "Closed"
-            correct: false
+          - { text: { ru: "Цена", en: "A price" }, correct: true }
+          - { text: { ru: "Магазин", en: "A shop" }, correct: false }
+          - { text: { ru: "Прощание", en: "Goodbye" }, correct: false }
 
       - item_id: 2
-        text: "É caro."
+        audio: "É caro."
         question:
-          ru: "Что это значит?"
-          en: "What does it mean?"
+          ru: "Что это?"
+          en: "What is this?"
         options:
-          - text:
-              ru: "Дорого"
-              en: "Expensive"
-            correct: true
-          - text:
-              ru: "Дёшево"
-              en: "Cheap"
-            correct: false
-          - text:
-              ru: "Бесплатно"
-              en: "Free"
-            correct: false
+          - { text: { ru: "Оценка", en: "Evaluation" }, correct: true }
+          - { text: { ru: "Цена", en: "Price" }, correct: false }
+          - { text: { ru: "Вопрос", en: "Question" }, correct: false }
+
+      - item_id: 3
+        audio: "Quanto custa?"
+        question:
+          ru: "Что это?"
+          en: "What is this?"
+        options:
+          - { text: { ru: "Вопрос", en: "A question" }, correct: true }
+          - { text: { ru: "Ответ", en: "An answer" }, correct: false }
+          - { text: { ru: "Оценка", en: "Evaluation" }, correct: false }
 
 
 # =========================================================
-# TASK 5 — WRITING
+# TASK 5 — WRITING (канон)
 # =========================================================
   - task_id: 5
     type: writing_optional
@@ -362,8 +333,8 @@ tasks:
       en: "Tell the price"
 
     instruction:
-      ru: "Заполни фразу."
-      en: "Complete the sentence."
+      ru: "Заполни шаблон."
+      en: "Fill in the template."
 
     main_task:
       format: template_fill

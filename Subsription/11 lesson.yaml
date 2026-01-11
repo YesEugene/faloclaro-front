@@ -41,6 +41,7 @@ tasks:
           sentence_translation_ru: "Мне нужна помощь."
           sentence_translation_en: "I need help."
           word_translation_ru: "мне нужно"
+          word_translation_en: "I need"
 
         - word: "Ajuda"
           transcription: "[ɐˈʒudɐ]"
@@ -48,6 +49,7 @@ tasks:
           sentence_translation_ru: "Мне нужна помощь."
           sentence_translation_en: "I need help."
           word_translation_ru: "помощь"
+          word_translation_en: "help"
 
         - word: "Problema"
           transcription: "[pɾuˈblɛmɐ]"
@@ -55,6 +57,7 @@ tasks:
           sentence_translation_ru: "У меня проблема."
           sentence_translation_en: "I have a problem."
           word_translation_ru: "проблема"
+          word_translation_en: "problem"
 
         - word: "Não"
           transcription: "[nɐ̃w̃]"
@@ -62,6 +65,7 @@ tasks:
           sentence_translation_ru: "Я не могу."
           sentence_translation_en: "I can’t."
           word_translation_ru: "не"
+          word_translation_en: "no / not"
 
         - word: "Posso"
           transcription: "[ˈposu]"
@@ -69,6 +73,7 @@ tasks:
           sentence_translation_ru: "Я могу помочь."
           sentence_translation_en: "I can help."
           word_translation_ru: "могу"
+          word_translation_en: "I can"
 
         - word: "Ajuda agora"
           transcription: "[ɐˈʒudɐ ɐˈɡɔɾɐ]"
@@ -76,6 +81,7 @@ tasks:
           sentence_translation_ru: "Мне нужна помощь сейчас."
           sentence_translation_en: "I need help now."
           word_translation_ru: "помощь сейчас"
+          word_translation_en: "help now"
 
         - word: "Dor"
           transcription: "[doɾ]"
@@ -83,6 +89,7 @@ tasks:
           sentence_translation_ru: "У меня боль."
           sentence_translation_en: "I have pain."
           word_translation_ru: "боль"
+          word_translation_en: "pain"
 
         - word: "Mal"
           transcription: "[mal]"
@@ -90,6 +97,7 @@ tasks:
           sentence_translation_ru: "Мне плохо."
           sentence_translation_en: "I feel bad."
           word_translation_ru: "плохо"
+          word_translation_en: "bad"
 
         - word: "Bem"
           transcription: "[bɐ̃j̃]"
@@ -97,6 +105,7 @@ tasks:
           sentence_translation_ru: "Мне хорошо."
           sentence_translation_en: "I am fine."
           word_translation_ru: "хорошо"
+          word_translation_en: "fine / well"
 
         - word: "Preciso falar"
           transcription: "[pɾɨˈsizu fɐˈlaɾ]"
@@ -104,6 +113,7 @@ tasks:
           sentence_translation_ru: "Мне нужно поговорить."
           sentence_translation_en: "I need to talk."
           word_translation_ru: "мне нужно поговорить"
+          word_translation_en: "I need to talk"
 
 
 # =========================================================

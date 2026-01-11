@@ -41,6 +41,7 @@ tasks:
           sentence_translation_ru: "Сегодня я работаю."
           sentence_translation_en: "Today I work."
           word_translation_ru: "сегодня"
+          word_translation_en: "today"
 
         - word: "Amanhã"
           transcription: "[ɐmɐˈɲɐ]"
@@ -48,6 +49,7 @@ tasks:
           sentence_translation_ru: "Завтра я отдыхаю."
           sentence_translation_en: "Tomorrow I rest."
           word_translation_ru: "завтра"
+          word_translation_en: "tomorrow"
 
         - word: "Agora"
           transcription: "[ɐˈɡɔɾɐ]"
@@ -55,6 +57,7 @@ tasks:
           sentence_translation_ru: "Сейчас я работаю."
           sentence_translation_en: "Now I work."
           word_translation_ru: "сейчас"
+          word_translation_en: "now"
 
         - word: "De manhã"
           transcription: "[dɨ mɐˈɲɐ]"
@@ -62,6 +65,7 @@ tasks:
           sentence_translation_ru: "Я работаю утром."
           sentence_translation_en: "I work in the morning."
           word_translation_ru: "утром"
+          word_translation_en: "in the morning"
 
         - word: "À tarde"
           transcription: "[a ˈtaɾdɨ]"
@@ -69,6 +73,7 @@ tasks:
           sentence_translation_ru: "Я отдыхаю днём."
           sentence_translation_en: "I rest in the afternoon."
           word_translation_ru: "днём"
+          word_translation_en: "in the afternoon"
 
         - word: "À noite"
           transcription: "[a ˈnojtɨ]"
@@ -76,6 +81,7 @@ tasks:
           sentence_translation_ru: "Я сплю ночью."
           sentence_translation_en: "I sleep at night."
           word_translation_ru: "вечером / ночью"
+          word_translation_en: "at night"
 
         - word: "Horário"
           transcription: "[oˈɾaɾju]"
@@ -83,6 +89,7 @@ tasks:
           sentence_translation_ru: "Расписание здесь."
           sentence_translation_en: "The schedule is here."
           word_translation_ru: "расписание"
+          word_translation_en: "schedule"
 
         - word: "Aberto"
           transcription: "[ɐˈbɛɾtu]"
@@ -90,6 +97,7 @@ tasks:
           sentence_translation_ru: "Открыто."
           sentence_translation_en: "It is open."
           word_translation_ru: "открыто"
+          word_translation_en: "open"
 
         - word: "Fechado"
           transcription: "[fɨˈʃadu]"
@@ -97,6 +105,7 @@ tasks:
           sentence_translation_ru: "Закрыто."
           sentence_translation_en: "It is closed."
           word_translation_ru: "закрыто"
+          word_translation_en: "closed"
 
         - word: "Hoje à tarde"
           transcription: "[ˈoʒɨ a ˈtaɾdɨ]"
@@ -104,6 +113,7 @@ tasks:
           sentence_translation_ru: "Сегодня днём я работаю."
           sentence_translation_en: "This afternoon I work."
           word_translation_ru: "сегодня днём"
+          word_translation_en: "this afternoon"
 
 
 # =========================================================
