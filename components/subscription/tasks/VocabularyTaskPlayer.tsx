@@ -79,6 +79,7 @@ export default function VocabularyTaskPlayer({
   const repeatTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isRepeatingRef = useRef(false);
   const isUserControlledRef = useRef(false); // Track if user manually clicked Play/Pause
+  const ignoreEventsRef = useRef(false); // Ignore audio events immediately after user click
   
   // Update local completion state when prop changes
   useEffect(() => {
@@ -417,6 +418,7 @@ export default function VocabularyTaskPlayer({
       if (isPlaying) {
         // User clicked Pause - stop playback and prevent auto-repeat
         isUserControlledRef.current = true;
+        ignoreEventsRef.current = true; // Ignore events for a short time
         audioRef.current.pause();
         setIsPlaying(false);
         // Clear any pending repeat timeouts
@@ -425,9 +427,15 @@ export default function VocabularyTaskPlayer({
           repeatTimeoutRef.current = null;
         }
         isRepeatingRef.current = false;
+        // Reset ignore flag after a short delay
+        setTimeout(() => {
+          ignoreEventsRef.current = false;
+          isUserControlledRef.current = false;
+        }, 300);
       } else {
         // User clicked Play - start playback with repeat settings
         isUserControlledRef.current = true;
+        ignoreEventsRef.current = true; // Ignore events for a short time
         if (audioRef.current.src !== audioUrls[currentCard.word]) {
           audioRef.current.src = audioUrls[currentCard.word];
           audioRef.current.load();
@@ -436,11 +444,20 @@ export default function VocabularyTaskPlayer({
         if (success) {
           setIsPlaying(true);
           setCurrentRepeat(0);
+          // Reset ignore flag after audio starts playing
+          setTimeout(() => {
+            ignoreEventsRef.current = false;
+            // Keep isUserControlledRef as true so button stays in Pause state
+          }, 500);
+        } else {
+          ignoreEventsRef.current = false;
+          isUserControlledRef.current = false;
         }
       }
     } catch (error) {
       console.error('Play/Pause error:', error);
       isUserControlledRef.current = false;
+      ignoreEventsRef.current = false;
     }
   }, [isPlaying, currentCard, audioUrls, playAudioSafely]);
 
@@ -612,17 +629,24 @@ export default function VocabularyTaskPlayer({
     // Only update isPlaying from events if it's not user-controlled
     // This prevents "jumping" between Play/Pause during auto-repeat
     const handlePlaying = () => {
+      // Ignore events immediately after user click
+      if (ignoreEventsRef.current) {
+        return;
+      }
       // Only update if user hasn't manually paused
-      if (!isUserControlledRef.current || isPlaying) {
+      if (!isUserControlledRef.current) {
         setIsPlaying(true);
       }
     };
     
     const handlePause = () => {
-      // Only update if user manually paused
-      if (isUserControlledRef.current) {
+      // Ignore events immediately after user click
+      if (ignoreEventsRef.current) {
+        return;
+      }
+      // Only update if not user-controlled (e.g., audio ended naturally)
+      if (!isUserControlledRef.current) {
         setIsPlaying(false);
-        isUserControlledRef.current = false; // Reset after handling
       }
     };
     
@@ -973,7 +997,7 @@ export default function VocabularyTaskPlayer({
       </div>
 
       {/* Audio Player Controls - Previous, Play/Pause, Next */}
-      <div className="flex items-center justify-center mb-4" style={{ gap: '10px' }}>
+      <div className="flex items-center justify-center mb-4" style={{ gap: '20px' }}>
         {/* Previous Card Button - Left */}
         <button
           onClick={handlePreviousCard}
@@ -1030,7 +1054,7 @@ export default function VocabularyTaskPlayer({
             width: '48px',
             height: '48px',
             background: 'transparent',
-            marginTop: '10px'
+            marginTop: '20px'
           }}
           aria-label={t.settings}
         >
