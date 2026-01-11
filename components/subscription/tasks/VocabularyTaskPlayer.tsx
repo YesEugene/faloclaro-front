@@ -80,6 +80,7 @@ export default function VocabularyTaskPlayer({
   const isRepeatingRef = useRef(false);
   const isUserControlledRef = useRef(false); // Track if user manually clicked Play/Pause
   const ignoreEventsRef = useRef(false); // Ignore audio events immediately after user click
+  const userPausedRef = useRef(false); // Track if user manually paused (separate from audio.paused)
   
   // Update local completion state when prop changes
   useEffect(() => {
@@ -418,6 +419,7 @@ export default function VocabularyTaskPlayer({
       if (isPlaying) {
         // User clicked Pause - stop playback and prevent auto-repeat
         isUserControlledRef.current = true;
+        userPausedRef.current = true; // Mark that user manually paused
         ignoreEventsRef.current = true; // Ignore events for a short time
         audioRef.current.pause();
         setIsPlaying(false);
@@ -435,6 +437,7 @@ export default function VocabularyTaskPlayer({
       } else {
         // User clicked Play - start playback with repeat settings
         isUserControlledRef.current = true; // User is controlling - allow repeats but prevent button state changes
+        userPausedRef.current = false; // User is playing, not paused
         ignoreEventsRef.current = true; // Ignore playing/pause events to prevent button state changes
         if (audioRef.current.src !== audioUrls[currentCard.word]) {
           audioRef.current.src = audioUrls[currentCard.word];
@@ -449,6 +452,7 @@ export default function VocabularyTaskPlayer({
         } else {
           ignoreEventsRef.current = false;
           isUserControlledRef.current = false;
+          userPausedRef.current = false;
         }
       }
     } catch (error) {
@@ -462,9 +466,9 @@ export default function VocabularyTaskPlayer({
     if (!audioRef.current || !currentCard) return;
     
     // If user manually paused, don't continue repeating
-    // Check actual audio state, not isPlaying (which might be stale in closure)
-    if (isUserControlledRef.current && audioRef.current.paused) {
-      // User paused - stop all repeats
+    // Use userPausedRef instead of audio.paused (audio.paused is true when audio ends naturally)
+    if (isUserControlledRef.current && userPausedRef.current) {
+      // User manually paused - stop all repeats
       if (repeatTimeoutRef.current) {
         clearTimeout(repeatTimeoutRef.current);
         repeatTimeoutRef.current = null;
@@ -489,7 +493,7 @@ export default function VocabularyTaskPlayer({
         // Auto-advance to next card after a short delay
         setTimeout(() => {
           // If user paused, don't auto-advance
-          if (isUserControlledRef.current && audioRef.current?.paused) {
+          if (isUserControlledRef.current && userPausedRef.current) {
             return;
           }
           if (audioRef.current && !audioRef.current.paused) {
@@ -519,7 +523,7 @@ export default function VocabularyTaskPlayer({
             // Auto-play next card after switching (only if user hasn't paused)
             setTimeout(async () => {
               // If user paused, don't auto-play
-              if (isUserControlledRef.current && audioRef.current?.paused) {
+              if (isUserControlledRef.current && userPausedRef.current) {
                 return;
               }
               const nextCard = cards[nextIndex];
@@ -576,7 +580,7 @@ export default function VocabularyTaskPlayer({
             // Auto-play next card after switching (only if user hasn't paused)
             setTimeout(async () => {
               // If user paused, don't auto-play
-              if (isUserControlledRef.current && audioRef.current?.paused) {
+              if (isUserControlledRef.current && userPausedRef.current) {
                 isRepeatingRef.current = false;
                 return;
               }
@@ -607,7 +611,7 @@ export default function VocabularyTaskPlayer({
       const pauseDelay = pauseBetweenRepeats * 1000;
       repeatTimeoutRef.current = setTimeout(async () => {
         // If user paused, don't continue repeating
-        if (!audioRef.current || (isUserControlledRef.current && audioRef.current.paused)) {
+        if (!audioRef.current || (isUserControlledRef.current && userPausedRef.current)) {
           isRepeatingRef.current = false;
           return;
         }
