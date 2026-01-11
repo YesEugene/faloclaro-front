@@ -429,7 +429,11 @@ function StatsSection() {
       if (data.success) {
         const usersList = data.users || [];
         setUsers(usersList);
-        // Don't load stats automatically - only when expanded
+        // Load basic stats (started/completed counts) for all users immediately
+        // so they can be shown in collapsed state
+        usersList.forEach((user: any) => {
+          loadUserStats(user.id, true); // true = load only basic stats
+        });
       }
     } catch (err) {
       console.error('Error loading users:', err);
@@ -438,13 +442,25 @@ function StatsSection() {
     }
   };
 
-  const loadUserStats = async (userId: string) => {
+  const loadUserStats = async (userId: string, basicOnly: boolean = false) => {
     try {
       setLoadingStats(prev => new Map(prev).set(userId, true));
       const response = await fetch(`/api/admin/stats?userId=${userId}`);
       const data = await response.json();
       if (data.success && data.stats) {
-        setUsersStats(prev => new Map(prev).set(userId, data.stats));
+        // If we already have stats for this user and we're loading basic stats,
+        // merge them to preserve detailed stats if they exist
+        if (basicOnly && usersStats.has(userId)) {
+          const existingStats = usersStats.get(userId);
+          setUsersStats(prev => new Map(prev).set(userId, {
+            ...existingStats,
+            startedLessons: data.stats.startedLessons,
+            completedLessons: data.stats.completedLessons,
+            totalLessons: data.stats.totalLessons,
+          }));
+        } else {
+          setUsersStats(prev => new Map(prev).set(userId, data.stats));
+        }
       } else {
         console.error('Failed to load stats for user:', userId, data);
       }
@@ -461,9 +477,11 @@ function StatsSection() {
       newExpanded.delete(userId);
     } else {
       newExpanded.add(userId);
-      // Load stats when expanding if not already loaded
-      if (!usersStats.has(userId)) {
-        loadUserStats(userId);
+      // Load full stats when expanding (including lessons details)
+      // Basic stats (started/completed counts) should already be loaded
+      const currentStats = usersStats.get(userId);
+      if (!currentStats || !currentStats.lessons) {
+        loadUserStats(userId, false); // false = load full stats including lessons
       }
     }
     setExpandedUsers(newExpanded);

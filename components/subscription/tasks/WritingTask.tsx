@@ -25,6 +25,7 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
   const [speakOutLoud, setSpeakOutLoud] = useState(savedSpeakOutLoud || false);
   const [showExample, setShowExample] = useState(false);
   const [isReplaying, setIsReplaying] = useState(false);
+  const [localIsCompleted, setLocalIsCompleted] = useState(isCompleted);
 
   // Get progress message based on completed tasks
   const getProgressMessage = (completed: number, total: number) => {
@@ -65,6 +66,13 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
       setHasLoadedSavedData(true);
     }
   }, [savedWrittenText, savedSpeakOutLoud, hasLoadedSavedData]);
+
+  // Update local completion state when prop changes
+  useEffect(() => {
+    if (!isReplaying) {
+      setLocalIsCompleted(isCompleted);
+    }
+  }, [isCompleted, isReplaying]);
   
   // Save answers to completion_data whenever they change (for persistence)
   useEffect(() => {
@@ -88,6 +96,7 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
         setSpeakOutLoud(true);
       }
       
+      setLocalIsCompleted(true);
       onComplete({
         writtenText: (forceSpeakOutLoud || speakOutLoud) ? null : writtenText,
         speakOutLoud: forceSpeakOutLoud || speakOutLoud,
@@ -95,6 +104,24 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
       });
       setIsReplaying(false);
     }
+  };
+
+  const handleReplay = () => {
+    setWrittenText('');
+    setSpeakOutLoud(false);
+    setShowExample(false);
+    setIsReplaying(true);
+    setLocalIsCompleted(false);
+    
+    onComplete({
+      writtenText: '',
+      speakOutLoud: false,
+      replay: true,
+    });
+    
+    setTimeout(() => {
+      setIsReplaying(false);
+    }, 100);
   };
 
   // Don't hide task when completed - show it so user can replay
@@ -278,23 +305,11 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
 
               <button
                 onClick={() => {
-                  if (isCompleted && !isReplaying && speakOutLoud) {
-                    // Replay mode - reset everything
-                    setWrittenText('');
-                    setSpeakOutLoud(false);
-                    setShowExample(false);
-                    setIsReplaying(true);
-                    // Clear saved data when replaying
-                    onComplete({
-                      writtenText: '',
-                      speakOutLoud: false,
-                      replay: true,
-                    });
+                  if (localIsCompleted && !isReplaying && speakOutLoud) {
+                    handleReplay();
                   } else {
                     // First click - complete immediately without intermediate state
-                    // Set speakOutLoud and complete task in one action
                     setSpeakOutLoud(true);
-                    // Always complete task when button is clicked (if completes_task is true or not specified)
                     handleComplete(true); // Pass true to force completion with speakOutLoud
                   }
                 }}
@@ -302,12 +317,12 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
                 className="w-full px-4 py-3 rounded-lg font-medium transition-colors"
                 style={{
                   height: '55px',
-                  backgroundColor: isCompleted && !isReplaying && speakOutLoud ? 'rgb(34, 197, 94)' : 'rgb(237, 243, 255)',
-                  color: isCompleted && !isReplaying && speakOutLoud ? 'white' : 'rgb(55, 65, 81)',
+                  backgroundColor: localIsCompleted && !isReplaying && speakOutLoud ? 'rgb(34, 197, 94)' : 'rgb(237, 243, 255)',
+                  color: localIsCompleted && !isReplaying && speakOutLoud ? 'white' : 'rgb(55, 65, 81)',
                   border: 'none'
                 }}
               >
-                {isCompleted && !isReplaying && speakOutLoud
+                {localIsCompleted && !isReplaying && speakOutLoud
                   ? (appLanguage === 'ru' ? 'Пройти заново' : appLanguage === 'en' ? 'Replay' : 'Repetir')
                   : (getTranslatedText(alternative.action_button?.text, appLanguage) || (appLanguage === 'ru' ? '✔ Я сказал(а) вслух' : appLanguage === 'en' ? '✔ I said it out loud' : '✔ Disse em voz alta'))}
               </button>
@@ -335,30 +350,20 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
       {!alternative.action_button && (
         <button
           onClick={() => {
-            if (!isCompleted || isReplaying) {
+            if (!localIsCompleted || isReplaying) {
               handleComplete();
             } else {
-              // If already completed, allow replay by resetting
-              setWrittenText('');
-              setSpeakOutLoud(false);
-              setShowExample(false);
-              setIsReplaying(true);
-              // Clear saved data when replaying
-              onComplete({
-                writtenText: '',
-                speakOutLoud: false,
-                replay: true,
-              });
+              handleReplay();
             }
           }}
-          disabled={isCompleted && !isReplaying}
+          disabled={localIsCompleted && !isReplaying}
           className={`w-full py-3 rounded-lg font-medium transition-colors ${
-            isCompleted && !isReplaying
+            localIsCompleted && !isReplaying
               ? 'bg-green-600 text-white hover:bg-green-700'
               : 'bg-green-600 text-white hover:bg-green-700'
           }`}
         >
-          {isCompleted && !isReplaying
+          {localIsCompleted && !isReplaying
             ? (appLanguage === 'ru' ? 'Пройти заново' : appLanguage === 'en' ? 'Replay' : 'Repetir')
             : (appLanguage === 'ru' ? 'Завершить' : appLanguage === 'en' ? 'Complete' : 'Concluir')}
         </button>
@@ -455,7 +460,7 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
 
             {/* Next Button - Right */}
             {/* If task is completed: show next task button (green), else: empty (completion handled by button in content) */}
-            {isCompleted ? (
+            {localIsCompleted ? (
               // Task completed - show next task button (green, active)
               canGoNext && onNextTask ? (
                 <button

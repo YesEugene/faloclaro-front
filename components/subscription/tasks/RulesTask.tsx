@@ -23,43 +23,6 @@ interface RulesTaskProps {
 
 export default function RulesTask({ task, language, onComplete, isCompleted, savedAnswers, savedShowResults, savedSpeakOutLoudCompleted, onNextTask, onPreviousTask, canGoNext = false, canGoPrevious = false, progressCompleted = 0, progressTotal = 5 }: RulesTaskProps) {
   const { language: appLanguage } = useAppLanguage();
-  // Use ref to track if we've initialized to prevent reset on re-render
-  const initializedRef = useRef(false);
-  const lastBlockIndexRef = useRef<number | null>(null);
-  
-  // Initialize with saved block index if available, otherwise start from last block if task is completed
-  const [currentBlockIndex, setCurrentBlockIndex] = useState(() => {
-    // If task is completed and we have saved data, try to restore the last block index
-    if (isCompleted && savedSpeakOutLoudCompleted) {
-      // If speak out loud was completed, we were on the last block
-      const blocksOrder = task?.structure?.blocks_order || [];
-      const lastIndex = blocksOrder.length > 0 ? blocksOrder.length - 1 : 0;
-      lastBlockIndexRef.current = lastIndex;
-      initializedRef.current = true;
-      return lastIndex;
-    }
-    initializedRef.current = true;
-    return 0;
-  });
-  
-  // Prevent reset of currentBlockIndex when isCompleted changes after user interaction
-  useEffect(() => {
-    // If we've already initialized and user is on a block, don't reset
-    if (initializedRef.current && lastBlockIndexRef.current !== null && currentBlockIndex === lastBlockIndexRef.current) {
-      // User is on the last block, keep them there even if isCompleted changes
-      return;
-    }
-    // Only update if we haven't initialized yet and task is completed
-    if (!initializedRef.current && isCompleted && savedSpeakOutLoudCompleted) {
-      const blocksOrder = task?.structure?.blocks_order || [];
-      if (blocksOrder.length > 0) {
-        const lastIndex = blocksOrder.length - 1;
-        setCurrentBlockIndex(lastIndex);
-        lastBlockIndexRef.current = lastIndex;
-        initializedRef.current = true;
-      }
-    }
-  }, [isCompleted, savedSpeakOutLoudCompleted, task?.structure?.blocks_order, currentBlockIndex]);
   const [audioUrls, setAudioUrls] = useState<{ [key: string]: string }>({});
   const [isPlayingAudio, setIsPlayingAudio] = useState<{ [key: string]: boolean }>({});
   const [selectedAnswers, setSelectedAnswers] = useState<{ [key: string]: string | null }>(savedAnswers || {});
@@ -67,25 +30,20 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
   const [speakOutLoudCompleted, setSpeakOutLoudCompleted] = useState(savedSpeakOutLoudCompleted || false);
   const [isReplaying, setIsReplaying] = useState(false);
   const [localIsCompleted, setLocalIsCompleted] = useState(isCompleted);
-  const [hasUserInteracted, setHasUserInteracted] = useState(false);
   
   const audioRefs = useRef<{ [key: string]: HTMLAudioElement }>({});
   
   // Load saved answers and state from completion_data if task was already completed
-  // Only load once on mount, not on every prop change
   const [hasLoadedSavedData, setHasLoadedSavedData] = useState(false);
   useEffect(() => {
     if (!hasLoadedSavedData) {
       if (savedAnswers && Object.keys(savedAnswers).length > 0) {
-        console.log('📥 Loading saved answers:', savedAnswers);
         setSelectedAnswers(savedAnswers);
       }
       if (savedShowResults && Object.keys(savedShowResults).length > 0) {
-        console.log('📥 Loading saved showResults:', savedShowResults);
         setShowResults(savedShowResults);
       }
       if (savedSpeakOutLoudCompleted) {
-        console.log('📥 Loading saved speakOutLoudCompleted: true');
         setSpeakOutLoudCompleted(true);
       }
       setHasLoadedSavedData(true);
@@ -93,13 +51,10 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
   }, [savedAnswers, savedShowResults, savedSpeakOutLoudCompleted, hasLoadedSavedData]);
 
   // Update local completion state when prop changes
-  // But don't reset if we're in replay mode
   useEffect(() => {
     if (!isReplaying) {
       setLocalIsCompleted(isCompleted);
     }
-    // Don't reset currentBlockIndex when isCompleted changes
-    // User should stay on the current block after completing
   }, [isCompleted, isReplaying]);
 
   // Get progress message based on completed tasks
@@ -122,11 +77,8 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
   };
 
   // Parse task structure
-  // Support both old structure (blocks object) and new structure (blocks array)
   const getBlocksStructure = () => {
     if (Array.isArray(task.blocks)) {
-      // New structure: blocks is an array
-      // Convert array to object for backward compatibility
       const blocksObj: { [key: string]: any } = {};
       const blocksOrder: string[] = [];
       
@@ -135,7 +87,6 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
         blocksObj[blockId] = {
           ...block,
           type: block.block_type || block.type || 'explanation',
-          // Ensure content is extracted correctly
           examples: block.content?.examples || block.examples,
           comparison_card: block.content?.comparison_card || block.comparison_card,
           task_1: block.content?.task_1 || block.task_1,
@@ -158,7 +109,6 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
         },
       };
     } else if (task.blocks && typeof task.blocks === 'object' && !Array.isArray(task.blocks)) {
-      // Old structure: blocks is an object
       const structure = task.structure || {};
       const blocksOrder = structure.blocks_order || Object.keys(task.blocks);
       return {
@@ -167,7 +117,6 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
         structure,
       };
     }
-    // Fallback: empty structure
     return {
       blocks: {},
       blocksOrder: [],
@@ -175,31 +124,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
     };
   };
 
-  const { blocks, blocksOrder, structure } = getBlocksStructure();
-
-  // Don't auto-reset - let user explicitly click "Пройти заново" to reset
-
-  // Debug: Log task structure
-  useEffect(() => {
-    console.log('🔍 RulesTask Debug:', {
-      hasTask: !!task,
-      taskType: task?.type,
-      hasStructure: !!task?.structure,
-      hasBlocks: !!task?.blocks,
-      blocksOrder: blocksOrder,
-      blocksKeys: Object.keys(blocks),
-      currentBlockIndex,
-      currentBlockKey: blocksOrder[currentBlockIndex],
-      currentBlock: blocksOrder[currentBlockIndex] ? blocks[blocksOrder[currentBlockIndex]] : null,
-      isCompleted,
-      isReplaying,
-      fullTask: task
-    });
-  }, [task, blocksOrder, blocks, currentBlockIndex, isCompleted, isReplaying]);
-
-  // Get current block
-  const currentBlockKey = blocksOrder[currentBlockIndex];
-  const currentBlock = currentBlockKey ? blocks[currentBlockKey] : null;
+  const { blocks, blocksOrder } = getBlocksStructure();
 
   // Load audio URLs for all text examples
   useEffect(() => {
@@ -207,7 +132,6 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
       const urls: { [key: string]: string } = {};
       const textsToLoad: string[] = [];
 
-      // Collect all texts that need audio
       blocksOrder.forEach((blockKey: string) => {
         const block = blocks[blockKey];
         if (!block) return;
@@ -228,14 +152,15 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
           if (block.task_1?.audio) {
             textsToLoad.push(block.task_1.audio);
           }
+          if (block.task_2?.audio) {
+            textsToLoad.push(block.task_2.audio);
+          }
         }
       });
 
-      // Load audio URLs from database or Storage
       for (const text of textsToLoad) {
-        if (urls[text]) continue; // Already loaded
+        if (urls[text]) continue;
 
-        // Try to find in phrases table
         try {
           const { data: phraseArray } = await supabase
             .from('phrases')
@@ -249,37 +174,6 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
           }
         } catch (error) {
           console.warn(`Error loading audio for "${text}":`, error);
-        }
-
-        // Fallback to Storage
-        const sanitizeForUrl = (text: string) => {
-          return text
-            .toLowerCase()
-            .trim()
-            .replace(/[^\w\s\-àáâãäåèéêëìíîïòóôõöùúûüçñ]/g, '')
-            .replace(/[àáâãäå]/g, 'a')
-            .replace(/[èéêë]/g, 'e')
-            .replace(/[ìíîï]/g, 'i')
-            .replace(/[òóôõö]/g, 'o')
-            .replace(/[ùúûü]/g, 'u')
-            .replace(/[ç]/g, 'c')
-            .replace(/[ñ]/g, 'n')
-            .replace(/\s+/g, '-')
-            .replace(/-+/g, '-')
-            .replace(/^-|-$/g, '')
-            .substring(0, 100);
-        };
-
-        const sanitized = sanitizeForUrl(text);
-        const filename = `lesson-1-task2-${sanitized}.mp3`;
-        const storagePath = `lesson-1/${filename}`;
-        
-        const { data: urlData } = supabase.storage
-          .from('audio')
-          .getPublicUrl(storagePath);
-        
-        if (urlData?.publicUrl) {
-          urls[text] = urlData.publicUrl;
         }
       }
 
@@ -299,7 +193,6 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
       return;
     }
 
-    // Stop any currently playing audio
     Object.values(audioRefs.current).forEach(audio => {
       if (audio && !audio.paused) {
         audio.pause();
@@ -307,7 +200,6 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
       }
     });
 
-    // Create or get audio element
     if (!audioRefs.current[text]) {
       const audio = new Audio(audioUrl);
       audio.crossOrigin = 'anonymous';
@@ -324,50 +216,27 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
       };
       audio.onerror = () => {
         setIsPlayingAudio(prev => ({ ...prev, [text]: false }));
-        console.error(`Error playing audio for: "${text}"`);
       };
     } catch (error) {
       setIsPlayingAudio(prev => ({ ...prev, [text]: false }));
-      console.error(`Error playing audio:`, error);
     }
   }, [audioUrls]);
 
   // Handle answer selection for reinforcement tasks
-  const handleAnswerSelect = (taskKey: string, answer: string) => {
+  const handleAnswerSelect = (taskKey: string, answer: string, blockIndex: number) => {
     const updatedAnswers = { ...selectedAnswers, [taskKey]: answer };
     const updatedShowResults = { ...showResults, [taskKey]: true };
     
     setSelectedAnswers(updatedAnswers);
     setShowResults(updatedShowResults);
-    
-    // Check if all tasks in this reinforcement block are completed
-    // We need to check with updated state, not current state
-    const hasTask1 = !!currentBlock.task_1;
-    const hasTask2 = !!currentBlock.task_2;
-    const allTasksCompleted = (!hasTask1 || updatedShowResults['task_1']) && (!hasTask2 || updatedShowResults['task_2']);
-    
-    // Only mark task as completed if this is the LAST block (speak_out_loud block is index 4, which is last)
-    // AND all reinforcement tasks are completed
-    if (currentBlockIndex === blocksOrder.length - 1 && currentBlock.type === 'reinforcement' && allTasksCompleted) {
-      setLocalIsCompleted(true);
-      // Save all answers and state
-      onComplete({
-        selectedAnswers: updatedAnswers, // Save all selected answers
-        showResults: updatedShowResults, // Save all show results
-        speakOutLoudCompleted, // Save speak out loud completion state
-        completedAt: new Date().toISOString(),
-      });
-    }
-    // If this is NOT the last block (e.g., block 4 reinforcement, but block 5 is speak_out_loud),
-    // we should NOT mark task as completed - user should continue to next block
   };
-  
-  // Check if all reinforcement tasks are completed
-  const checkAllReinforcementTasksCompleted = (): boolean => {
-    if (currentBlock.type !== 'reinforcement') return false;
+
+  // Check if all reinforcement tasks in a block are completed
+  const checkBlockReinforcementCompleted = (block: any): boolean => {
+    if (block.type !== 'reinforcement') return false;
     
-    const hasTask1 = !!currentBlock.task_1;
-    const hasTask2 = !!currentBlock.task_2;
+    const hasTask1 = !!block.task_1;
+    const hasTask2 = !!block.task_2;
     
     if (hasTask1 && !showResults['task_1']) return false;
     if (hasTask2 && !showResults['task_2']) return false;
@@ -375,98 +244,98 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
     return true;
   };
 
-  // Handle next block
-  const handleNextBlock = () => {
-    if (currentBlockIndex < blocksOrder.length - 1) {
-      const nextIndex = currentBlockIndex + 1;
-      setCurrentBlockIndex(nextIndex);
-      lastBlockIndexRef.current = nextIndex; // Track the last block user was on
+  // Check if all blocks are completed
+  const checkAllBlocksCompleted = (): boolean => {
+    // Check all reinforcement blocks
+    for (let i = 0; i < blocksOrder.length; i++) {
+      const blockKey = blocksOrder[i];
+      const block = blocks[blockKey];
+      if (block.type === 'reinforcement' && !checkBlockReinforcementCompleted(block)) {
+        return false;
+      }
     }
+    
+    // Check speak out loud block (last block)
+    const lastBlockKey = blocksOrder[blocksOrder.length - 1];
+    const lastBlock = lastBlockKey ? blocks[lastBlockKey] : null;
+    if (lastBlock && lastBlock.type === 'speak_out_loud' && !speakOutLoudCompleted) {
+      return false;
+    }
+    
+    return true;
   };
 
-  // Handle previous block
-  const handlePreviousBlock = () => {
-    if (currentBlockIndex > 0) {
-      setCurrentBlockIndex(prev => prev - 1);
+  // Handle final completion button
+  const handleFinalComplete = () => {
+    if (checkAllBlocksCompleted()) {
+      setLocalIsCompleted(true);
+      onComplete({
+        selectedAnswers,
+        showResults,
+        speakOutLoudCompleted,
+        completedAt: new Date().toISOString(),
+      });
     }
   };
 
   // Handle speak out loud completion
   const handleSpeakOutLoudComplete = () => {
-    console.log('🎯 handleSpeakOutLoudComplete called', {
-      currentBlockIndex,
-      blocksOrderLength: blocksOrder.length,
-      isLastBlock: currentBlockIndex === blocksOrder.length - 1,
-      speakOutLoudCompleted,
-      selectedAnswers,
-      showResults
-    });
     setSpeakOutLoudCompleted(true);
-    // Mark task as completed if this is the last block and last action
-    if (currentBlockIndex === blocksOrder.length - 1) {
-      console.log('✅ Last block completed, calling onComplete');
-      setLocalIsCompleted(true); // Update local state immediately
-      // Complete the task - save all answers and state
-      onComplete({
-        selectedAnswers, // Save all selected answers
-        showResults, // Save all show results
-        speakOutLoudCompleted: true, // Save speak out loud completion
-        completedAt: new Date().toISOString(),
-      });
+    // Auto-complete if all blocks are done
+    if (checkAllBlocksCompleted()) {
+      handleFinalComplete();
     }
   };
   
-  // Handle replay - reset all progress and go to first block
+  // Handle replay - reset all progress
   const handleReplay = () => {
-    console.log('🔄 handleReplay called - resetting task');
-    setHasUserInteracted(true); // Mark that user explicitly clicked replay
-    setCurrentBlockIndex(0);
-    lastBlockIndexRef.current = 0; // Reset tracked block index
     setSpeakOutLoudCompleted(false);
     setSelectedAnswers({});
     setShowResults({});
     setIsReplaying(true);
-    setLocalIsCompleted(false); // Reset local completion state
+    setLocalIsCompleted(false);
+    // Clear saved data
+    onComplete({
+      selectedAnswers: {},
+      showResults: {},
+      speakOutLoudCompleted: false,
+      replay: true,
+    });
+    setTimeout(() => {
+      setIsReplaying(false);
+    }, 100);
   };
 
-  // Render block based on type
-  const renderBlock = () => {
-    if (!currentBlock) return null;
+  // Render a single block based on type
+  const renderBlock = (block: any, blockIndex: number) => {
+    if (!block) return null;
 
-    // Support both old structure (type) and new structure (block_type)
-    const blockType = currentBlock.block_type || currentBlock.type;
-    
-    // Ensure blockType is a string, not an object
+    const blockType = block.block_type || block.type;
     const normalizedBlockType = typeof blockType === 'string' ? blockType : 'explanation';
     
-    // Ensure currentBlock has required structure
     if (!normalizedBlockType || normalizedBlockType === 'unknown') {
       return (
         <div className="text-center text-red-600">
           {appLanguage === 'ru' ? 'Ошибка: тип блока не определен' : 'Error: block type is undefined'}
-          <pre className="mt-2 text-xs bg-gray-100 p-2 rounded overflow-auto">
-            {JSON.stringify(currentBlock, null, 2)}
-          </pre>
         </div>
       );
     }
 
     switch (normalizedBlockType) {
       case 'explanation':
-    return (
-          <div className="space-y-4">
-            {/* Block indicator - above title */}
+        return (
+          <div key={blockIndex} className="space-y-4 mb-8">
             <div className="text-sm text-gray-500 mb-2">
               {appLanguage === 'ru' 
-                ? `Блок ${currentBlockIndex + 1} / ${blocksOrder.length}`
-                : `Block ${currentBlockIndex + 1} / ${blocksOrder.length}`}
+                ? `Блок ${blockIndex + 1} / ${blocksOrder.length}`
+                : `Block ${blockIndex + 1} / ${blocksOrder.length}`}
             </div>
-            <h3 className="text-xl font-bold text-black mb-4">{getBlockTitle(currentBlock, appLanguage)}</h3>
-            <p className="text-gray-700 whitespace-pre-line mb-4">{getBlockExplanationText(currentBlock, appLanguage)}</p>
+            <h3 className="text-xl font-bold text-black mb-4">{getBlockTitle(block, appLanguage)}</h3>
+            <p className="text-gray-700 whitespace-pre-line mb-4">{getBlockExplanationText(block, appLanguage)}</p>
             
-            {currentBlock.examples && currentBlock.examples.length > 0 && (
+            {block.examples && block.examples.length > 0 && (
               <div className="space-y-3">
-                {currentBlock.examples.map((example: any, index: number) => (
+                {block.examples.map((example: any, index: number) => (
                   <div 
                     key={index} 
                     className="p-4"
@@ -513,7 +382,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
               </div>
             )}
 
-            {currentBlock.hint && currentBlock.hint.length > 0 && (
+            {block.hint && block.hint.length > 0 && (
               <div 
                 className="rounded-lg p-4 mt-4"
                 style={{ 
@@ -523,33 +392,32 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                   backgroundColor: '#F4F5F8'
                 }}
               >
-                <p className="text-sm font-semibold mb-2" style={{ color: 'rgba(0, 0, 0, 1)', backgroundClip: 'unset', WebkitBackgroundClip: 'unset' }}>
+                <p className="text-sm font-semibold mb-2" style={{ color: 'rgba(0, 0, 0, 1)' }}>
                   {appLanguage === 'ru' ? 'Подсказка:' : 'Hint:'}
                 </p>
                 <ul className="list-disc list-inside space-y-1">
-                  {currentBlock.hint.map((hint: string | { ru?: string; en?: string }, index: number) => (
+                  {block.hint.map((hint: string | { ru?: string; en?: string }, index: number) => (
                     <li key={index} className="text-sm" style={{ color: 'rgba(0, 0, 0, 1)', marginTop: '2px', marginBottom: '2px' }}>{getHintText(hint, appLanguage)}</li>
                   ))}
                 </ul>
               </div>
             )}
-      </div>
-    );
+          </div>
+        );
 
       case 'comparison':
         return (
-          <div className="space-y-4">
-            {/* Block indicator - above title */}
+          <div key={blockIndex} className="space-y-4 mb-8">
             <div className="text-sm text-gray-500 mb-2">
               {appLanguage === 'ru' 
-                ? `Блок ${currentBlockIndex + 1} / ${blocksOrder.length}`
-                : `Block ${currentBlockIndex + 1} / ${blocksOrder.length}`}
+                ? `Блок ${blockIndex + 1} / ${blocksOrder.length}`
+                : `Block ${blockIndex + 1} / ${blocksOrder.length}`}
             </div>
-            <h3 className="text-xl font-bold text-black mb-4">{getBlockTitle(currentBlock, appLanguage)}</h3>
+            <h3 className="text-xl font-bold text-black mb-4">{getBlockTitle(block, appLanguage)}</h3>
             
-            {currentBlock.comparison_card && (
+            {block.comparison_card && (
               <div className="grid grid-cols-1 gap-4">
-                {currentBlock.comparison_card.map((card: any, index: number) => (
+                {block.comparison_card.map((card: any, index: number) => (
                   <div 
                     key={index} 
                     className="p-4"
@@ -596,7 +464,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
               </div>
             )}
 
-            {currentBlock.note && (
+            {block.note && (
               <div 
                 className="rounded-lg p-4 mt-4"
                 style={{ 
@@ -606,23 +474,21 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                   backgroundColor: '#F4F5F8'
                 }}
               >
-                <p className="text-sm text-gray-700 whitespace-pre-line">{getBlockNote(currentBlock, appLanguage)}</p>
+                <p className="text-sm text-gray-700 whitespace-pre-line">{getBlockNote(block, appLanguage)}</p>
               </div>
             )}
           </div>
         );
 
       case 'reinforcement':
-  return (
-    <div className="space-y-6">
-            {/* Block indicator - above title */}
+        return (
+          <div key={blockIndex} className="space-y-6 mb-8">
             <div className="text-sm text-gray-500 mb-2">
               {appLanguage === 'ru' 
-                ? `Блок ${currentBlockIndex + 1} / ${blocksOrder.length}`
-                : `Block ${currentBlockIndex + 1} / ${blocksOrder.length}`}
+                ? `Блок ${blockIndex + 1} / ${blocksOrder.length}`
+                : `Block ${blockIndex + 1} / ${blocksOrder.length}`}
             </div>
             
-            {/* Block title */}
             <h2 className="text-xl font-bold text-black mb-4">
               {appLanguage === 'ru' 
                 ? 'Проверим, понятен ли смысл'
@@ -630,19 +496,19 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
             </h2>
             
             {/* Task 1: Single Choice */}
-            {currentBlock.task_1 && (
+            {block.task_1 && (
               <div className="space-y-4">
-                <p className="text-lg font-semibold text-black mb-4">{getQuestionText(currentBlock.task_1, appLanguage)}</p>
+                <p className="text-lg font-semibold text-black mb-4">{getQuestionText(block.task_1, appLanguage)}</p>
                 
-                {currentBlock.task_1.audio && (
+                {block.task_1.audio && (
                   <div className="flex items-center justify-center mb-4">
                     <button
-                      onClick={() => playAudio(currentBlock.task_1.audio)}
-                      disabled={isPlayingAudio[currentBlock.task_1.audio]}
+                      onClick={() => playAudio(block.task_1.audio)}
+                      disabled={isPlayingAudio[block.task_1.audio]}
                       className="p-4 rounded-full transition-colors"
                       style={{ backgroundColor: '#F4F5F8' }}
                     >
-                      {isPlayingAudio[currentBlock.task_1.audio] ? (
+                      {isPlayingAudio[block.task_1.audio] ? (
                         <svg className="w-10 h-10 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
                           <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
                         </svg>
@@ -655,13 +521,11 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                   </div>
                 )}
                 
-            <div className="space-y-2">
-                  {currentBlock.task_1.options?.map((option: any, index: number) => {
+                <div className="space-y-2">
+                  {block.task_1.options?.map((option: any, index: number) => {
                     const taskKey = 'task_1';
-                    // Always ensure optionText is a string, never an object
                     let optionText: string = getTranslatedText(option.text, appLanguage);
                     if (!optionText || typeof optionText !== 'string') {
-                      // Fallback if getTranslatedText returns invalid value
                       if (typeof option.text === 'string') {
                         optionText = option.text;
                       } else if (option.text && typeof option.text === 'object') {
@@ -677,7 +541,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                     return (
                       <button
                         key={index}
-                        onClick={() => handleAnswerSelect(taskKey, optionText)}
+                        onClick={() => handleAnswerSelect(taskKey, optionText, blockIndex)}
                         disabled={showResult}
                         className={`w-full text-left p-4 rounded-lg transition-colors ${
                           showResult
@@ -685,7 +549,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                               ? 'bg-green-100 border-2 border-green-500'
                               : isSelected && !isCorrect
                               ? 'bg-red-100 border-2 border-red-500'
-                              : 'bg-white border-0' // Невыбранные варианты остаются белыми
+                              : 'bg-white border-0'
                             : 'bg-white border-0'
                         }`}
                         style={{
@@ -694,7 +558,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                                 ? 'rgb(220 252 231)' 
                                 : (isSelected && !isCorrect 
                                     ? 'rgb(254 226 226)' 
-                                    : 'white')) // Невыбранные варианты остаются белыми
+                                    : 'white'))
                             : 'white',
                           border: showResult
                             ? (isCorrect 
@@ -710,26 +574,25 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                     );
                   })}
                 </div>
-            </div>
-          )}
+              </div>
+            )}
 
             {/* Task 2: Can be either Single Choice or Situation to Phrase */}
-            {currentBlock.task_2 && (
+            {block.task_2 && (
               <div className="space-y-4 mt-6">
-                {/* Show question if it exists (single_choice format), otherwise show situation_text */}
-                {currentBlock.task_2.question ? (
+                {block.task_2.question ? (
                   <>
-                    <p className="text-lg font-semibold text-black mb-4">{getQuestionText(currentBlock.task_2, appLanguage)}</p>
+                    <p className="text-lg font-semibold text-black mb-4">{getQuestionText(block.task_2, appLanguage)}</p>
                     
-                    {currentBlock.task_2.audio && (
+                    {block.task_2.audio && (
                       <div className="flex items-center justify-center mb-4">
                         <button
-                          onClick={() => playAudio(currentBlock.task_2.audio)}
-                          disabled={isPlayingAudio[currentBlock.task_2.audio]}
+                          onClick={() => playAudio(block.task_2.audio)}
+                          disabled={isPlayingAudio[block.task_2.audio]}
                           className="p-4 rounded-full transition-colors"
                           style={{ backgroundColor: '#F4F5F8' }}
                         >
-                          {isPlayingAudio[currentBlock.task_2.audio] ? (
+                          {isPlayingAudio[block.task_2.audio] ? (
                             <svg className="w-10 h-10 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
                               <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
                             </svg>
@@ -743,30 +606,24 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                     )}
                   </>
                 ) : (
-                  <p className="text-lg font-semibold text-black mb-2">{getSituationText(currentBlock.task_2, appLanguage)}</p>
+                  <p className="text-lg font-semibold text-black mb-2">{getSituationText(block.task_2, appLanguage)}</p>
                 )}
                 
-          <div className="space-y-2">
-                  {currentBlock.task_2.options?.map((option: any, index: number) => {
+                <div className="space-y-2">
+                  {block.task_2.options?.map((option: any, index: number) => {
                     const taskKey = 'task_2';
-                    // Handle both formats: translated text (single_choice) and plain Portuguese text (situation_to_phrase)
-                    // Always ensure optionText is a string, never an object
                     let optionText: string;
-                    if (currentBlock.task_2.format === 'single_choice') {
+                    if (block.task_2.format === 'single_choice') {
                       optionText = getTranslatedText(option.text, appLanguage);
                     } else {
-                      // For situation_to_phrase, option.text might be a string or an object
                       if (typeof option.text === 'string') {
                         optionText = option.text;
                       } else if (option.text && typeof option.text === 'object') {
-                        // If it's an object, extract Portuguese text or use getTranslatedText
                         optionText = option.text.pt || option.text.portuguese || getTranslatedText(option.text, appLanguage);
                       } else {
-                        // Fallback if option.text is null/undefined or unexpected type
                         optionText = String(option.text || '');
                       }
                     }
-                    // Ensure optionText is always a string, never null/undefined
                     if (!optionText || typeof optionText !== 'string') {
                       optionText = '';
                     }
@@ -775,100 +632,74 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                     const showResult = showResults[taskKey];
                     
                     return (
-              <button
-                key={index}
-                        onClick={() => handleAnswerSelect(taskKey, optionText)}
-                disabled={showResult}
+                      <button
+                        key={index}
+                        onClick={() => handleAnswerSelect(taskKey, optionText, blockIndex)}
+                        disabled={showResult}
                         className={`w-full text-left p-4 rounded-lg transition-colors ${
-                  showResult
+                          showResult
                             ? isCorrect
-                      ? 'bg-green-100 border-2 border-green-500'
+                              ? 'bg-green-100 border-2 border-green-500'
                               : isSelected && !isCorrect
-                      ? 'bg-red-100 border-2 border-red-500'
-                      : 'bg-white border-0' // Невыбранные варианты остаются белыми
-                    : 'bg-white border-0'
-                }`}
-                style={{
-                  backgroundColor: showResult
-                    ? (isCorrect 
-                        ? 'rgb(220 252 231)' 
-                        : (isSelected && !isCorrect 
-                            ? 'rgb(254 226 226)' 
-                            : 'white')) // Невыбранные варианты остаются белыми
-                    : 'white',
-                  border: showResult
-                    ? (isCorrect 
-                        ? '2px solid rgb(34 197 94)' 
-                        : (isSelected && !isCorrect 
-                            ? '2px solid rgb(239 68 68)' 
-                            : 'none'))
-                    : 'none'
-                }}
-              >
-                {optionText}
-              </button>
+                              ? 'bg-red-100 border-2 border-red-500'
+                              : 'bg-white border-0'
+                            : 'bg-white border-0'
+                        }`}
+                        style={{
+                          backgroundColor: showResult
+                            ? (isCorrect 
+                                ? 'rgb(220 252 231)' 
+                                : (isSelected && !isCorrect 
+                                    ? 'rgb(254 226 226)' 
+                                    : 'white'))
+                            : 'white',
+                          border: showResult
+                            ? (isCorrect 
+                                ? '2px solid rgb(34 197 94)' 
+                                : (isSelected && !isCorrect 
+                                    ? '2px solid rgb(239 68 68)' 
+                                    : 'none'))
+                            : 'none'
+                        }}
+                      >
+                        {optionText}
+                      </button>
                     );
                   })}
                 </div>
               </div>
             )}
-            
-            {/* Show "Пройти заново" button if this is the last block and all tasks are completed */}
-            {currentBlockIndex === blocksOrder.length - 1 && 
-             currentBlock.type === 'reinforcement' && 
-             checkAllReinforcementTasksCompleted() && (
-              <button
-                onClick={handleReplay}
-                className="w-full bg-green-600 text-white py-4 rounded-lg font-semibold text-lg hover:bg-green-700 transition-colors mt-4"
-              >
-                {appLanguage === 'ru' ? 'Пройти заново' : 'Replay'}
-              </button>
-            )}
           </div>
         );
 
       case 'speak_out_loud':
-        // Process instruction_text to make "Olá. Eu sou …" and "Olá. Chamo-me …" bold
         const processInstructionText = (text: string) => {
           if (!text) return text;
-          // Replace "Olá. Eu sou …" with bold version
           let processed = text.replace(/(Olá\.\s*Eu sou\s*…)/gi, '<strong>$1</strong>');
-          // Replace "Olá. Chamo-me …" with bold version
           processed = processed.replace(/(Olá\.\s*Chamo-me\s*…)/gi, '<strong>$1</strong>');
           return processed;
         };
         
         return (
-          <div className="space-y-4">
-            {/* Block indicator - above title */}
+          <div key={blockIndex} className="space-y-4 mb-8">
             <div className="text-sm text-gray-500 mb-2">
               {appLanguage === 'ru' 
-                ? `Блок ${currentBlockIndex + 1} / ${blocksOrder.length}`
-                : `Block ${currentBlockIndex + 1} / ${blocksOrder.length}`}
+                ? `Блок ${blockIndex + 1} / ${blocksOrder.length}`
+                : `Block ${blockIndex + 1} / ${blocksOrder.length}`}
             </div>
-            <h3 className="text-xl font-bold text-black mb-4">{getBlockTitle(currentBlock, appLanguage)}</h3>
+            <h3 className="text-xl font-bold text-black mb-4">{getBlockTitle(block, appLanguage)}</h3>
             <p 
               className="text-gray-700 whitespace-pre-line mb-6"
-              dangerouslySetInnerHTML={{ __html: processInstructionText(getInstructionText(currentBlock, appLanguage)) }}
+              dangerouslySetInnerHTML={{ __html: processInstructionText(getInstructionText(block, appLanguage)) }}
             />
             
             <button
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log('🔘 Button clicked', {
-                  speakOutLoudCompleted,
-                  currentBlockIndex,
-                  blocksOrderLength: blocksOrder.length
-                });
                 if (!speakOutLoudCompleted) {
-                  // First click: mark as completed (last action in last block)
-                  console.log('✅ First click - marking as completed');
                   handleSpeakOutLoudComplete();
-                  // DON'T call handleReplay here - just mark as completed
                 } else {
-                  // Second click: replay (reset to first block)
-                  console.log('🔄 Second click - replaying');
                   handleReplay();
                 }
               }}
@@ -879,30 +710,24 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
               }`}
             >
               {!speakOutLoudCompleted
-                ? (getTranslatedText(currentBlock.action_button?.text, appLanguage) || (appLanguage === 'ru' ? '✔ Я сказал(а) вслух' : '✔ I said it out loud'))
+                ? (getTranslatedText(block.action_button?.text, appLanguage) || (appLanguage === 'ru' ? '✔ Я сказал(а) вслух' : '✔ I said it out loud'))
                 : (appLanguage === 'ru' ? 'Пройти заново' : 'Replay')}
             </button>
-        </div>
+          </div>
         );
 
       default:
         return (
-          <div className="text-center text-red-600">
+          <div key={blockIndex} className="text-center text-red-600">
             {appLanguage === 'ru' 
               ? `Неизвестный тип блока: ${normalizedBlockType}` 
               : `Unknown block type: ${normalizedBlockType}`}
-            <pre className="mt-2 text-xs bg-gray-100 p-2 rounded overflow-auto">
-              {JSON.stringify(currentBlock, null, 2)}
-            </pre>
           </div>
         );
     }
   };
 
-  // Don't hide task when completed - show it so user can replay
-  // The completion block with stars will be shown at the bottom
-  
-  if (!currentBlock) {
+  if (blocksOrder.length === 0) {
     return (
       <div className="text-center text-gray-500">
         {appLanguage === 'ru' ? 'Задание не найдено' : 'Task not found'}
@@ -910,25 +735,50 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
     );
   }
 
-  // Don't auto-reset - let user explicitly click "Пройти заново" to reset
-  // No useEffect needed - user must manually click replay button
+  const allCompleted = checkAllBlocksCompleted();
 
   return (
     <div className="space-y-6 w-full" style={{ paddingBottom: '140px' }}>
-      {/* Block Content - Full width - Always show, even if completed */}
-      <div className="rounded-lg border-2 border-gray-200 p-6 w-full" style={{ backgroundColor: '#F4F5F8' }}>
-        {renderBlock()}
+      {/* All Blocks - Displayed on one page */}
+      <div className="space-y-6">
+        {blocksOrder.map((blockKey: string, index: number) => {
+          const block = blocks[blockKey];
+          return (
+            <div key={blockKey} className="rounded-lg border-2 border-gray-200 p-6 w-full" style={{ backgroundColor: '#F4F5F8' }}>
+              {renderBlock(block, index)}
+            </div>
+          );
+        })}
       </div>
 
-      {/* Navigation buttons removed - now handled by bottom panel */}
+      {/* Final Completion Button - Only show if all blocks are completed */}
+      {allCompleted && !localIsCompleted && (
+        <div className="mt-8">
+          <button
+            onClick={handleFinalComplete}
+            className="w-full bg-green-600 text-white py-4 rounded-lg font-semibold text-lg hover:bg-green-700 transition-colors"
+          >
+            {appLanguage === 'ru' ? 'Все задания выполнены' : 'All tasks completed'}
+          </button>
+        </div>
+      )}
 
+      {/* Replay Button - Show if task is completed */}
+      {localIsCompleted && (
+        <div className="mt-8">
+          <button
+            onClick={handleReplay}
+            className="w-full bg-blue-600 text-white py-4 rounded-lg font-semibold text-lg hover:bg-blue-700 transition-colors"
+          >
+            {appLanguage === 'ru' ? 'Пройти заново' : 'Replay'}
+          </button>
+        </div>
+      )}
 
       {/* Progress Bar - Above navigation panel */}
       <div className="fixed left-0 right-0 z-30 flex justify-center" style={{ bottom: '69px', height: '33px', margin: 0, padding: 0 }}>
         <div className="w-full max-w-md relative" style={{ height: '100%', margin: 0, padding: 0 }}>
-          {/* Progress Bar - Full height with green and gray sections */}
           <div className="absolute inset-0 flex">
-            {/* Green section (completed) */}
             <div
               className="transition-all duration-300"
               style={{ 
@@ -936,7 +786,6 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                 backgroundColor: '#B2FDB0'
               }}
             />
-            {/* Gray section (remaining) */}
             <div
               className="flex-1"
               style={{ 
@@ -945,7 +794,6 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
             />
           </div>
           
-          {/* Progress Text - Overlay on top of progress bar */}
           <div className="relative flex justify-between items-center h-full px-4" style={{ fontSize: '15px', color: 'rgba(23, 23, 23, 1)', zIndex: 1 }}>
             <span>
               {getProgressMessage(progressCompleted, progressTotal)}
@@ -955,63 +803,24 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
         </div>
       </div>
 
-      {/* Navigation Panel - Fixed at bottom (Unified navigation: blocks within task OR tasks) */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white z-30" style={{ borderRadius: '0px', borderTopLeftRadius: '0px', borderTopRightRadius: '0px', borderBottomRightRadius: '0px', borderBottomLeftRadius: '0px', height: '69px', verticalAlign: 'bottom', marginBottom: '0px', opacity: 1, color: 'rgba(0, 0, 0, 1)' }}>
+      {/* Navigation Panel - Fixed at bottom */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white z-30" style={{ borderRadius: '0px', height: '69px', marginBottom: '0px', opacity: 1, color: 'rgba(0, 0, 0, 1)' }}>
         <div className="max-w-md mx-auto pt-3 pb-3" style={{ paddingBottom: 'env(safe-area-inset-bottom, 12px)', height: '69px', color: 'rgba(0, 0, 0, 1)', paddingLeft: '16px', paddingRight: '16px' }}>
           <div className="flex items-center justify-between gap-4">
-            {/* Previous Button - Left */}
-            {/* Always show previous button if available: previous task OR previous block */}
-            {(() => {
-              // If task is completed AND on last block - show previous task button
-              if (localIsCompleted && currentBlockIndex === blocksOrder.length - 1) {
-                if (canGoPrevious && onPreviousTask) {
-                  return (
-                    <button
-                      onClick={onPreviousTask}
-                      className="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors flex items-center justify-center"
-                      aria-label={appLanguage === 'ru' ? 'Предыдущее задание' : 'Previous task'}
-                    >
-                      <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                      </svg>
-                    </button>
-                  );
-                }
-              }
-              
-              // If we're on first block (index 0) but can go to previous task - show previous task button
-              if (currentBlockIndex === 0 && canGoPrevious && onPreviousTask) {
-                return (
-                  <button
-                    onClick={onPreviousTask}
-                    className="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors flex items-center justify-center"
-                    aria-label={appLanguage === 'ru' ? 'Предыдущее задание' : 'Previous task'}
-                  >
-                    <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                    </svg>
-                  </button>
-                );
-              }
-              
-              // If we can go to previous block - show previous block button
-              if (currentBlockIndex > 0) {
-                return (
-                  <button
-                    onClick={handlePreviousBlock}
-                    className="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors flex items-center justify-center"
-                    aria-label={appLanguage === 'ru' ? 'Предыдущий блок' : 'Previous block'}
-                  >
-                    <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                    </svg>
-                  </button>
-                );
-              }
-              
-              // No previous options - show empty spacer
-              return <div className="w-10 h-10"></div>;
-            })()}
+            {/* Previous Task Button */}
+            {canGoPrevious && onPreviousTask ? (
+              <button
+                onClick={onPreviousTask}
+                className="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors flex items-center justify-center"
+                aria-label={appLanguage === 'ru' ? 'Предыдущее задание' : 'Previous task'}
+              >
+                <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+            ) : (
+              <div className="w-10 h-10"></div>
+            )}
 
             {/* Task Title - Center */}
             <div className="flex-1 text-center">
@@ -1041,38 +850,19 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
               </p>
             </div>
 
-            {/* Next Button - Right */}
-            {/* If task is completed AND on last block: show next task button (green), else: show next block button (blue) */}
-            {localIsCompleted && currentBlockIndex === blocksOrder.length - 1 ? (
-              // Task completed AND on last block - show next task button (green, active)
-              canGoNext && onNextTask ? (
-                <button
-                  onClick={onNextTask}
-                  className="w-10 h-10 rounded-full bg-green-500 hover:bg-green-600 transition-colors flex items-center justify-center"
-                  aria-label={appLanguage === 'ru' ? 'Следующее задание' : 'Next task'}
-                >
-                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
-              ) : (
-                <div className="w-10 h-10"></div>
-              )
+            {/* Next Task Button - Only enabled when task is completed */}
+            {localIsCompleted && canGoNext && onNextTask ? (
+              <button
+                onClick={onNextTask}
+                className="w-10 h-10 rounded-full bg-green-500 hover:bg-green-600 transition-colors flex items-center justify-center"
+                aria-label={appLanguage === 'ru' ? 'Следующее задание' : 'Next task'}
+              >
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
             ) : (
-              // Task not completed OR not on last block - show next block button (blue, always active)
-              currentBlockIndex < blocksOrder.length - 1 ? (
-                <button
-                  onClick={handleNextBlock}
-                  className="w-10 h-10 rounded-full bg-blue-600 hover:bg-blue-700 transition-colors flex items-center justify-center"
-                  aria-label={appLanguage === 'ru' ? 'Следующий блок' : 'Next block'}
-                >
-                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
-              ) : (
-                <div className="w-10 h-10"></div>
-              )
+              <div className="w-10 h-10"></div>
             )}
           </div>
         </div>
