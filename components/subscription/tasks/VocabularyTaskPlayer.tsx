@@ -73,6 +73,7 @@ export default function VocabularyTaskPlayer({
   const [showSettings, setShowSettings] = useState(false);
   const [isRandomMode, setIsRandomMode] = useState(false);
   const [localIsCompleted, setLocalIsCompleted] = useState(isCompleted);
+  const [isRepeatEnabled, setIsRepeatEnabled] = useState(false); // New: Repeat button state
   
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -435,6 +436,12 @@ export default function VocabularyTaskPlayer({
   const handleAudioEnded = useCallback(() => {
     if (!audioRef.current || !currentCard) return;
     
+    // If repeat is not enabled, just stop playing
+    if (!isRepeatEnabled) {
+      setIsPlaying(false);
+      return;
+    }
+    
     if (isRepeatingRef.current) return;
     isRepeatingRef.current = true;
 
@@ -579,7 +586,7 @@ export default function VocabularyTaskPlayer({
 
       return newRepeat;
     });
-  }, [repeatCount, pauseBetweenRepeats, playAudioSafely, currentCard, currentCardIndex, cards, isRandomMode, audioUrls]);
+  }, [repeatCount, pauseBetweenRepeats, playAudioSafely, currentCard, currentCardIndex, cards, isRandomMode, audioUrls, isRepeatEnabled]);
 
   // Audio event listeners
   useEffect(() => {
@@ -928,10 +935,32 @@ export default function VocabularyTaskPlayer({
         )}
       </div>
 
-      {/* Play/Pause Button and Settings Icon - Center (navigation moved to bottom panel) */}
+      {/* Play/Pause Button, Repeat Button, and Settings Icon - Center (navigation moved to bottom panel) */}
       <div className="flex items-center justify-center gap-4 mb-6">
         <div className="w-12 h-12"></div> {/* Spacer for left */}
         
+        {/* Repeat Button - Left of Play button */}
+        <button
+          onClick={() => setIsRepeatEnabled(!isRepeatEnabled)}
+          className="transition-opacity hover:opacity-80 rounded-full flex items-center justify-center"
+          style={{ 
+            backgroundColor: isRepeatEnabled ? '#94B7F2' : '#F3F4F8',
+            border: 'none',
+            padding: 0,
+            cursor: 'pointer',
+            width: '56px',
+            height: '56px'
+          }}
+          aria-label={isRepeatEnabled ? 'Disable repeat' : 'Enable repeat'}
+        >
+          <img 
+            src={isRepeatEnabled ? "/Img/repeat ON.svg" : "/Img/repeat.svg"}
+            alt={isRepeatEnabled ? 'Repeat enabled' : 'Repeat disabled'}
+            style={{ width: '56px', height: '56px' }}
+          />
+        </button>
+
+        {/* Play/Pause Button - Center */}
         <button
           onClick={handlePlayPause}
           disabled={!currentAudioUrl}
