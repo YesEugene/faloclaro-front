@@ -924,7 +924,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
 
 
       {/* Progress Bar - Above navigation panel */}
-      <div className="fixed left-0 right-0 z-30" style={{ bottom: '69px', height: '33px' }}>
+      <div className="fixed left-0 right-0 z-30" style={{ bottom: '69px', height: '33px', marginBottom: 0 }}>
         <div className="max-w-md mx-auto relative" style={{ height: '100%' }}>
           {/* Progress Bar - Full height with green and gray sections */}
           <div className="absolute inset-0 flex">

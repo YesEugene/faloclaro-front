@@ -468,15 +468,14 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
             <div className="max-w-md mx-auto px-4 mb-[10px] flex gap-[10px]" style={{ paddingBottom: '10px', position: 'relative', zIndex: 20 }}>
               <button
                 onClick={() => router.push(`/pt/lesson/${lesson.day_number}/${token}/overview`)}
-                className="px-4 py-2 rounded-[10px] transition-colors text-center"
+                className="px-4 py-2 rounded-[10px] bg-white border-2 border-gray-300 text-black hover:bg-gray-50 transition-colors text-center"
                 style={{ 
-                  backgroundColor: '#EDF3FF',
                   width: currentTask?.type === 'vocabulary' ? 'calc(50% - 5px)' : '100%',
                   fontSize: '13px',
                   fontWeight: 500,
                 }}
               >
-                <span className="text-gray-700">
+                <span>
                   {appLanguage === 'ru' 
                     ? `← УРОК ${lesson.day_number}` 
                     : appLanguage === 'en' 
