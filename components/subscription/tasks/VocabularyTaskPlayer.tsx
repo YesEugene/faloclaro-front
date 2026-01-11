@@ -1027,9 +1027,9 @@ export default function VocabularyTaskPlayer({
             </div>
 
             {/* Next Button - Right */}
-            {/* If task is completed AND on last card: show next task button (green), else: show next card button (blue) */}
-            {localIsCompleted && currentCardIndex === cards.length - 1 ? (
-              // Task completed AND on last card - show next task button (green, active)
+            {/* Timer is optional: next task button is always active on last card, words continue looping for 10 minutes */}
+            {currentCardIndex === cards.length - 1 ? (
+              // On last card - show next task button (green, always active)
               canGoNext && onNextTask ? (
                 <button
                   onClick={onNextTask}
@@ -1044,7 +1044,7 @@ export default function VocabularyTaskPlayer({
                 <div className="w-10 h-10"></div>
               )
             ) : (
-              // Task not completed OR not on last card - show next card button (blue, always active)
+              // Not on last card - show next card button (blue, always active)
               currentCardIndex < cards.length - 1 ? (
                 <button
                   onClick={handleNextCard}
