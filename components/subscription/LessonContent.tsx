@@ -472,7 +472,7 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
                 style={{ 
                   backgroundColor: '#EDF3FF',
                   width: currentTask?.type === 'vocabulary' ? 'calc(50% - 5px)' : '100%',
-                  fontSize: '12px',
+                  fontSize: '13px',
                   fontWeight: 500,
                 }}
               >
@@ -500,7 +500,7 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
                   style={{ 
                     width: 'calc(50% - 5px)',
                     transform: 'translateY(1px)',
-                    fontSize: '12px',
+                    fontSize: '13px',
                     fontWeight: 500,
                   }}
                 >
