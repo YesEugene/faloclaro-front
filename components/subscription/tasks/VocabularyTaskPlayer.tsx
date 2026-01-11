@@ -942,21 +942,18 @@ export default function VocabularyTaskPlayer({
         {/* Repeat Button - Left of Play button */}
         <button
           onClick={() => setIsRepeatEnabled(!isRepeatEnabled)}
-          className="transition-opacity hover:opacity-80 rounded-full flex items-center justify-center"
+          className="transition-opacity hover:opacity-80 rounded-full flex items-center justify-center border-none p-0 cursor-pointer"
           style={{ 
-            backgroundColor: isRepeatEnabled ? '#94B7F2' : '#F3F4F8',
-            border: 'none',
-            padding: 0,
-            cursor: 'pointer',
             width: '56px',
-            height: '56px'
+            height: '56px',
+            background: 'transparent'
           }}
           aria-label={isRepeatEnabled ? 'Disable repeat' : 'Enable repeat'}
         >
           <img 
             src={isRepeatEnabled ? "/Img/repeat ON.svg" : "/Img/repeat.svg"}
             alt={isRepeatEnabled ? 'Repeat enabled' : 'Repeat disabled'}
-            style={{ width: '56px', height: '56px' }}
+            style={{ width: '56px', height: '56px', display: 'block' }}
           />
         </button>
 
@@ -983,21 +980,18 @@ export default function VocabularyTaskPlayer({
         {/* Settings Icon - Right of Play button */}
         <button
           onClick={() => setShowSettings(!showSettings)}
-          className="transition-opacity hover:opacity-80 rounded-full flex items-center justify-center"
+          className="transition-opacity hover:opacity-80 rounded-full flex items-center justify-center border-none p-0 cursor-pointer"
           style={{ 
-            backgroundColor: '#F3F4F8',
-            border: 'none',
-            padding: 0,
-            cursor: 'pointer',
             width: '56px',
-            height: '56px'
+            height: '56px',
+            background: 'transparent'
           }}
           aria-label={t.settings}
         >
           <img 
             src="/Img/settings.svg" 
             alt={t.settings}
-            style={{ width: '56px', height: '56px' }}
+            style={{ width: '56px', height: '56px', display: 'block' }}
           />
         </button>
 
