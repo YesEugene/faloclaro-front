@@ -702,9 +702,16 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                 {getTranslatedText(block.action_button?.text, appLanguage) || (appLanguage === 'ru' ? '✔ Я сказал(а) вслух' : '✔ I said it out loud')}
               </button>
             ) : (
-              <div className="w-full py-4 rounded-lg font-semibold text-lg bg-green-600 text-white flex items-center justify-center">
-                <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              <div 
+                className="w-full py-4 rounded-lg font-semibold text-lg flex items-center justify-center"
+                style={{
+                  backgroundColor: '#F1F2F6',
+                  border: '1px solid #E5E7EB',
+                  color: '#109929'
+                }}
+              >
+                <svg className="w-6 h-6 mr-2" fill="none" stroke="#109929" viewBox="0 0 24 24" strokeWidth={3}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
                 {appLanguage === 'ru' ? 'Выполнено' : 'Completed'}
               </div>
