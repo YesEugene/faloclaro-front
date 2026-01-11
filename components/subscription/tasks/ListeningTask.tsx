@@ -58,7 +58,10 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
   // CRITICAL: When task completes, component may remount. Use ref to preserve currentItemIndex.
   useEffect(() => {
     if (!isReplaying) {
-      setLocalIsCompleted(isCompleted);
+      // Only update localIsCompleted if isCompleted prop is true (don't reset if prop becomes false after completion)
+      if (isCompleted) {
+        setLocalIsCompleted(true);
+      }
       // CRITICAL: If component remounted and currentItemIndex was reset to 0,
       // restore it from ref if we have saved answers (meaning we were on a later block)
       if (isCompleted && currentItemIndex === 0 && savedAnswers && Object.keys(savedAnswers).length > 0) {
@@ -525,7 +528,7 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
           </div>
 
           {/* Replay Button - Show only on the last block when task is completed and all items are answered */}
-          {localIsCompleted && allAnswered && currentItemIndex === items.length - 1 && (
+          {(localIsCompleted || isCompleted) && allAnswered && currentItemIndex === items.length - 1 && (
             <button
               onClick={(e) => {
                 e.preventDefault();
@@ -538,7 +541,7 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
                 border: 'none',
               }}
             >
-              {appLanguage === 'ru' ? 'Пройти снова' : appLanguage === 'en' ? 'Replay' : 'Repetir'}
+              {appLanguage === 'ru' ? 'Пройти заново' : appLanguage === 'en' ? 'Replay' : 'Repetir'}
             </button>
           )}
         </div>
@@ -587,7 +590,7 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
             {/* Always show previous button if available: previous task OR previous item/block */}
             {(() => {
               // If task is completed AND on last item - show previous task button
-              if (localIsCompleted && currentItemIndex === items.length - 1) {
+              if ((localIsCompleted || isCompleted) && currentItemIndex === items.length - 1) {
                 if (canGoPrevious && onPreviousTask) {
                   return (
                     <button
@@ -676,11 +679,15 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
 
             {/* Next Button - Right */}
             {/* If task is completed AND on last item: show next task button (green), else: show next item button (blue) or complete button */}
-            {localIsCompleted && currentItemIndex === items.length - 1 ? (
+            {(localIsCompleted || isCompleted) && currentItemIndex === items.length - 1 ? (
               // Task completed AND on last item - show next task button (green, active)
               canGoNext && onNextTask ? (
                 <button
-                  onClick={onNextTask}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    onNextTask();
+                  }}
                   className="w-10 h-10 rounded-full bg-green-500 hover:bg-green-600 transition-colors flex items-center justify-center"
                   aria-label={appLanguage === 'ru' ? 'Следующее задание' : appLanguage === 'en' ? 'Next task' : 'Próxima tarefa'}
                 >
