@@ -409,8 +409,8 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
       </div>
 
       {/* Navigation Panel - Fixed at bottom (Cross-task navigation) */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white z-30" style={{ borderRadius: '0px', borderTopLeftRadius: '0px', borderTopRightRadius: '0px', borderBottomRightRadius: '0px', borderBottomLeftRadius: '0px', height: '69px', verticalAlign: 'bottom', marginBottom: '0px', opacity: 1, color: 'rgba(0, 0, 0, 1)' }}>
-        <div className="max-w-md mx-auto pt-3 pb-3" style={{ paddingBottom: 'env(safe-area-inset-bottom, 12px)', height: '69px', color: 'rgba(0, 0, 0, 1)', paddingLeft: '16px', paddingRight: '16px' }}>
+      <div className="fixed bottom-0 left-0 right-0 bg-black z-30" style={{ borderRadius: '0px', borderTopLeftRadius: '0px', borderTopRightRadius: '0px', borderBottomRightRadius: '0px', borderBottomLeftRadius: '0px', height: '59px', verticalAlign: 'bottom', marginBottom: '0px', opacity: 1, color: 'rgba(255, 255, 255, 1)' }}>
+        <div className="max-w-md mx-auto pt-3 pb-3" style={{ paddingBottom: 'env(safe-area-inset-bottom, 12px)', height: '59px', color: 'rgba(255, 255, 255, 1)', paddingLeft: '16px', paddingRight: '16px' }}>
           <div className="flex items-center justify-between gap-4">
             {/* Previous Button - Left */}
             {/* Always show previous task button if available (WritingTask is single-block, so always check for previous task) */}
@@ -430,7 +430,7 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
 
             {/* Task Title - Center */}
             <div className="flex-1 text-center">
-              <p className="text-sm font-medium" style={{ color: 'rgba(0, 0, 0, 1)' }}>
+              <p className="text-sm font-medium" style={{ color: 'rgba(255, 255, 255, 1)' }}>
                 {(() => {
                   const taskId = task?.task_id || 5;
                   if (appLanguage === 'ru') {
