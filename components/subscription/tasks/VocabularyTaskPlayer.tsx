@@ -93,6 +93,7 @@ export default function VocabularyTaskPlayer({
     console.log('📋 VocabularyTaskPlayer Debug:', {
       cardsCount: cards.length,
       currentCardIndex,
+      isLastCard: currentCardIndex === cards.length - 1,
       cardsArray: cards,
       hasCurrentCard: !!currentCard,
       currentCard: currentCard,
@@ -104,8 +105,11 @@ export default function VocabularyTaskPlayer({
       taskKeys: Object.keys(task),
       taskContentKeys: task.content ? Object.keys(task.content) : [],
       taskContent: task.content,
+      canGoNext,
+      hasOnNextTask: !!onNextTask,
+      willShowNextButton: currentCardIndex === cards.length - 1 && !!onNextTask,
     });
-  }, [cards, currentCardIndex, currentCard, task]);
+  }, [cards, currentCardIndex, currentCard, task, canGoNext, onNextTask]);
   
   // Check show_timer from task.ui or task.show_timer (fallback for backwards compatibility)
   const showTimer = task.ui?.show_timer !== undefined ? task.ui.show_timer : (task.show_timer !== undefined ? task.show_timer : true);
@@ -1083,7 +1087,8 @@ export default function VocabularyTaskPlayer({
             {/* Timer is optional: next task button is always active on last card, words continue looping for 10 minutes */}
             {currentCardIndex === cards.length - 1 ? (
               // On last card - show next task button (green, always active)
-              canGoNext && onNextTask ? (
+              // Button appears if onNextTask exists, regardless of canGoNext
+              onNextTask ? (
                 <button
                   onClick={onNextTask}
                   className="w-10 h-10 rounded-full bg-green-500 hover:bg-green-600 transition-colors flex items-center justify-center"
