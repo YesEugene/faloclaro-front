@@ -575,8 +575,9 @@ export default function VocabularyTaskPlayer({
               audioRef.current.load();
               const success = await playAudioSafely(audioRef.current);
               if (success) {
-                // Don't change button state, but audio will play
-                // Keep repeating current card
+                // Reset isRepeatingRef so handleAudioEnded can be called again when audio ends
+                // This allows infinite repeats to continue
+                isRepeatingRef.current = false;
               } else {
                 isRepeatingRef.current = false;
               }
