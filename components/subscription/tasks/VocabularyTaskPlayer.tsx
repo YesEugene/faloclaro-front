@@ -555,53 +555,37 @@ export default function VocabularyTaskPlayer({
         return newRepeat;
       }
 
-      // If infinite mode, auto-advance to next card (loop through all cards)
+      // If infinite mode, repeat current card infinitely (don't switch to next card)
       if (repeatCount === 'infinite') {
         const pauseDelay = pauseBetweenRepeats * 1000;
-        repeatTimeoutRef.current = setTimeout(() => {
-          if (!audioRef.current) {
+        repeatTimeoutRef.current = setTimeout(async () => {
+          // If user paused, don't continue repeating
+          if (!audioRef.current || (isUserControlledRef.current && userPausedRef.current)) {
             isRepeatingRef.current = false;
             return;
           }
           
-          // Auto-advance to next card (loop through all cards)
-          setCurrentCardIndex((prevIndex) => {
-            let nextIndex: number;
-            if (isRandomMode) {
-              nextIndex = Math.floor(Math.random() * cards.length);
-            } else {
-              nextIndex = prevIndex + 1;
-              if (nextIndex >= cards.length) {
-                nextIndex = 0; // Wrap around to first card for infinite loop
-              }
-            }
-            currentIndexRef.current = nextIndex;
-            
-            // Auto-play next card after switching (only if user hasn't paused)
-            setTimeout(async () => {
-              // If user paused, don't auto-play
-              if (isUserControlledRef.current && userPausedRef.current) {
+          // Repeat current card (don't switch to next card)
+          const currentCardWord = currentCard?.word;
+          if (audioRef.current && currentCardWord) {
+            const audioUrl = audioUrls[currentCardWord];
+            if (audioUrl) {
+              // Reload and replay current card
+              audioRef.current.src = audioUrl;
+              audioRef.current.load();
+              const success = await playAudioSafely(audioRef.current);
+              if (success) {
+                // Don't change button state, but audio will play
+                // Keep repeating current card
+              } else {
                 isRepeatingRef.current = false;
-                return;
               }
-              const nextCard = cards[nextIndex];
-              if (audioRef.current && nextCard?.word) {
-                const audioUrl = audioUrls[nextCard.word];
-                if (audioUrl) {
-                  audioRef.current.src = audioUrl;
-                  audioRef.current.load();
-                  const success = await playAudioSafely(audioRef.current);
-                  if (success) {
-                    // Don't change button state, but audio will play
-                    setCurrentRepeat(0); // Reset repeat counter for new card
-                  }
-                }
-              }
+            } else {
               isRepeatingRef.current = false;
-            }, 100);
-            
-            return nextIndex;
-          });
+            }
+          } else {
+            isRepeatingRef.current = false;
+          }
         }, pauseDelay);
         
         return newRepeat;
