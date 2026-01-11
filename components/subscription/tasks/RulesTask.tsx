@@ -924,28 +924,33 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
 
 
       {/* Progress Bar - Above navigation panel */}
-      <div className="fixed bottom-[69px] left-0 right-0 bg-white z-30" style={{ marginBottom: '0px', borderRadius: '0px', borderTopLeftRadius: '0px', borderTopRightRadius: '0px', borderBottomRightRadius: '0px', borderBottomLeftRadius: '0px', opacity: 1, color: 'rgba(23, 23, 23, 1)', verticalAlign: 'bottom', height: '33px' }}>
-        <div className="max-w-md mx-auto" style={{ paddingTop: '2px', paddingBottom: '0px', paddingLeft: '16px', paddingRight: '16px', background: 'unset', backgroundColor: 'unset' }}>
-          <div className="space-y-2">
-            {/* Progress Text */}
-            <div className="flex justify-between items-center" style={{ fontSize: '15px', color: 'rgba(23, 23, 23, 1)' }}>
-              <span className="text-gray-600" style={{ color: 'rgba(23, 23, 23, 1)' }}>
-                {getProgressMessage(progressCompleted, progressTotal)}
-              </span>
-              <span className="text-gray-600" style={{ color: 'rgba(23, 23, 23, 1)' }}>{Math.round((progressCompleted / progressTotal) * 100)}%</span>
-            </div>
-
-            {/* Progress Bar - Green, 4px thick */}
-            <div className="w-full bg-gray-200 rounded-full" style={{ height: '4px' }}>
-              <div
-                className="rounded-full transition-all duration-300"
-                style={{ 
-                  width: `${(progressCompleted / progressTotal) * 100}%`, 
-                  height: '4px',
-                  backgroundColor: '#2FCD29'
-                }}
-              />
-            </div>
+      <div className="fixed bottom-[69px] left-0 right-0 z-30" style={{ height: '33px' }}>
+        <div className="max-w-md mx-auto relative" style={{ height: '100%' }}>
+          {/* Progress Bar - Full height with green and gray sections */}
+          <div className="absolute inset-0 flex">
+            {/* Green section (completed) */}
+            <div
+              className="transition-all duration-300"
+              style={{ 
+                width: `${(progressCompleted / progressTotal) * 100}%`,
+                backgroundColor: '#B2FDB0'
+              }}
+            />
+            {/* Gray section (remaining) */}
+            <div
+              className="flex-1"
+              style={{ 
+                backgroundColor: '#F4F5F9'
+              }}
+            />
+          </div>
+          
+          {/* Progress Text - Overlay on top of progress bar */}
+          <div className="relative flex justify-between items-center h-full px-4" style={{ fontSize: '15px', color: 'rgba(23, 23, 23, 1)', zIndex: 1 }}>
+            <span>
+              {getProgressMessage(progressCompleted, progressTotal)}
+            </span>
+            <span>{Math.round((progressCompleted / progressTotal) * 100)}%</span>
           </div>
         </div>
       </div>
