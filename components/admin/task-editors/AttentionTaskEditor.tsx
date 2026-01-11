@@ -407,6 +407,22 @@ function AttentionItemEditorModal({ item, lessonDay, onSave, onCancel }: {
     }
   };
 
+  const handleMoveOptionUp = (index: number) => {
+    if (index > 0) {
+      const newOptions = [...options];
+      [newOptions[index - 1], newOptions[index]] = [newOptions[index], newOptions[index - 1]];
+      setOptions(newOptions);
+    }
+  };
+
+  const handleMoveOptionDown = (index: number) => {
+    if (index < options.length - 1) {
+      const newOptions = [...options];
+      [newOptions[index], newOptions[index + 1]] = [newOptions[index + 1], newOptions[index]];
+      setOptions(newOptions);
+    }
+  };
+
   const handleSave = () => {
     if (!audio.trim()) {
       alert('Пожалуйста, введите аудио текст');
@@ -666,6 +682,22 @@ function AttentionItemEditorModal({ item, lessonDay, onSave, onCancel }: {
                         </div>
                       </div>
                       <div className="flex gap-2">
+                        <button
+                          onClick={() => handleMoveOptionUp(index)}
+                          disabled={index === 0}
+                          className="px-2 py-1 text-gray-600 hover:text-gray-800 text-sm font-medium disabled:opacity-30 disabled:cursor-not-allowed"
+                          title="Переместить вверх"
+                        >
+                          ↑
+                        </button>
+                        <button
+                          onClick={() => handleMoveOptionDown(index)}
+                          disabled={index === options.length - 1}
+                          className="px-2 py-1 text-gray-600 hover:text-gray-800 text-sm font-medium disabled:opacity-30 disabled:cursor-not-allowed"
+                          title="Переместить вниз"
+                        >
+                          ↓
+                        </button>
                         <button
                           onClick={() => handleEditOption(index)}
                           className="px-3 py-1 text-blue-600 hover:text-blue-800 text-sm font-medium"
