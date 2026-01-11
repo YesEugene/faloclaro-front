@@ -472,14 +472,16 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
                 style={{ 
                   backgroundColor: '#EDF3FF',
                   width: currentTask?.type === 'vocabulary' ? 'calc(50% - 5px)' : '100%',
+                  fontSize: '12px',
+                  fontWeight: 500,
                 }}
               >
                 <span className="text-gray-700">
                   {appLanguage === 'ru' 
-                    ? `← УРОК ${lesson.day_number}${totalLessons > 0 ? `/${totalLessons}` : ''}` 
+                    ? `← УРОК ${lesson.day_number}` 
                     : appLanguage === 'en' 
-                    ? `← LESSON ${lesson.day_number}${totalLessons > 0 ? `/${totalLessons}` : ''}` 
-                    : `← LIÇÃO ${lesson.day_number}${totalLessons > 0 ? `/${totalLessons}` : ''}`}
+                    ? `← LESSON ${lesson.day_number}` 
+                    : `← LIÇÃO ${lesson.day_number}`}
                 </span>
               </button>
               {/* Dictionary button - only for vocabulary task */}
