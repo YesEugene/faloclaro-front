@@ -1044,7 +1044,7 @@ export default function VocabularyTaskPlayer({
             width: '48px',
             height: '48px',
             background: 'transparent',
-            marginTop: '10px'
+            marginTop: '5px'
           }}
           aria-label={t.settings}
         >
