@@ -412,25 +412,23 @@ export default function SubscriptionLandingPage() {
             </p>
           </div>
 
-          {/* Email Form on Black Background - Width 250px, Height 50px */}
-          <div style={{ 
-            width: '250px',
-            height: '50px',
-            backgroundColor: '#000',
-            borderRadius: '10px',
-            padding: '0',
+          {/* Email Form Container */}
+          <form onSubmit={handleSubmit} style={{ 
             display: 'flex',
+            flexDirection: 'column',
             alignItems: 'center',
             gap: '12px',
             marginBottom: '12px'
           }}>
-            <form onSubmit={handleSubmit} style={{ 
-              width: '100%',
-              height: '100%',
+            {/* Email Input on Black Background - Width 250px, Height 50px */}
+            <div style={{ 
+              width: '250px',
+              height: '50px',
+              backgroundColor: '#000',
+              borderRadius: '10px',
+              padding: '0 8px',
               display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              padding: '0 8px'
+              alignItems: 'center'
             }}>
               <input
                 type="email"
@@ -439,7 +437,7 @@ export default function SubscriptionLandingPage() {
                 placeholder={t.emailPlaceholder}
                 required
                 style={{
-                  flex: 1,
+                  width: '100%',
                   height: '34px',
                   padding: '0 12px',
                   borderRadius: '8px',
@@ -451,27 +449,28 @@ export default function SubscriptionLandingPage() {
                   fontWeight: 400,
                 }}
               />
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                style={{
-                  height: '34px',
-                  padding: '0 20px',
-                  borderRadius: '8px',
-                  border: 'none',
-                  backgroundColor: '#FFF944',
-                  color: '#000',
-                  fontFamily: 'var(--font-tiktok)',
-                  fontSize: '16px',
-                  fontWeight: 700,
-                  cursor: isSubmitting ? 'not-allowed' : 'pointer',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {isSubmitting ? '...' : t.buttonStart}
-              </button>
-            </form>
-          </div>
+            </div>
+            
+            {/* Yellow Button - Below black container, Size from screenshot */}
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              style={{
+                width: '74px',
+                height: '40px',
+                borderRadius: '5px',
+                border: 'none',
+                backgroundColor: '#FFF944',
+                color: '#000',
+                fontFamily: 'var(--font-tiktok)',
+                fontSize: '16px',
+                fontWeight: 700,
+                cursor: isSubmitting ? 'not-allowed' : 'pointer',
+              }}
+            >
+              {isSubmitting ? '...' : t.buttonStart}
+            </button>
+          </form>
           {error && (
             <div style={{ color: '#ff0000', fontSize: '14px', marginBottom: '8px', textAlign: 'center' }}>{error}</div>
           )}
