@@ -431,24 +431,23 @@ export default function SubscriptionLandingPage() {
 
           {/* Email Form Container */}
           <form onSubmit={handleSubmit} style={{ 
-            marginBottom: isMobile ? '10px' : '12px',
-            position: 'relative',
-            display: 'inline-flex',
+            display: 'flex',
+            flexDirection: 'column',
             alignItems: 'center',
             width: isMobile ? '100%' : 'auto',
-            maxWidth: isMobile ? '100%' : '327px'
+            marginBottom: isMobile ? '10px' : '12px'
           }}>
-            {/* Black Container - Extended to cover button area + 5px */}
+            {/* Black Container - Email input only */}
             <div style={{ 
-              width: isMobile ? '100%' : '327px',
-              maxWidth: isMobile ? '100%' : '327px',
+              width: isMobile ? '100%' : '250px',
+              maxWidth: isMobile ? '100%' : '250px',
               height: '54px', // Increased by 4px
               backgroundColor: '#000',
               borderRadius: '10px',
               padding: '0 8px',
               display: 'flex',
               alignItems: 'center',
-              position: 'relative'
+              marginBottom: '12px'
             }}>
               <input
                 type="email"
@@ -457,7 +456,7 @@ export default function SubscriptionLandingPage() {
                 placeholder={t.emailPlaceholder}
                 required
                 style={{
-                  width: isMobile ? 'calc(100% - 90px)' : '234px',
+                  width: '100%',
                   height: '34px',
                   padding: '0 12px',
                   borderRadius: '8px',
@@ -471,14 +470,11 @@ export default function SubscriptionLandingPage() {
               />
             </div>
             
-            {/* Yellow Button - Positioned above black container on the right */}
+            {/* Yellow Button - Below email form */}
             <button
               type="submit"
               disabled={isSubmitting}
               style={{
-                position: 'absolute',
-                right: '5px', // 5px from the end of black container
-                top: '4px', // Centered vertically (54px container - 46px button) / 2 = 4px
                 width: isMobile ? '70px' : '74px',
                 height: isMobile ? '42px' : '46px',
                 borderRadius: '5px',
@@ -489,7 +485,6 @@ export default function SubscriptionLandingPage() {
                 fontSize: isMobile ? '14px' : '16px',
                 fontWeight: 700,
                 cursor: isSubmitting ? 'not-allowed' : 'pointer',
-                zIndex: 10,
               }}
             >
               {isSubmitting ? '...' : t.buttonStart}
