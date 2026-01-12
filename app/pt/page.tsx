@@ -521,49 +521,56 @@ export default function SubscriptionLandingPage() {
       </section>
 
       {/* What is FaloClaro - Light Pink #FFE3E3 */}
-      <section style={{ backgroundColor: '#fff', padding: '60px 20px', display: 'flex', justifyContent: 'center' }}>
+      <section style={{ backgroundColor: '#fff', padding: isMobile ? '40px 0' : '60px 20px', display: 'flex', justifyContent: 'center' }}>
         {/* Pink Card - 868px width with rounded corners */}
         <div style={{ 
-          width: '868px',
+          width: isMobile ? 'calc(100% - 48px)' : '868px',
+          maxWidth: isMobile ? 'calc(100% - 48px)' : '868px',
           backgroundColor: '#FFE3E3',
-          borderRadius: '20px',
-          padding: '40px 50px'
+          borderRadius: isMobile ? '16px' : '20px',
+          padding: isMobile ? '32px 24px' : '40px 50px'
         }}>
           <h2 style={{ 
             fontFamily: 'var(--font-orelega)', 
-            fontSize: '40px', 
+            fontSize: isMobile ? '32px' : '40px', 
             fontWeight: 400, 
             color: '#3A2E1F', 
             marginBottom: '12px',
-            textAlign: 'left'
+            textAlign: isMobile ? 'center' : 'left'
           }}>
             {t.whatIsTitle}
           </h2>
           <p style={{ 
             fontFamily: 'var(--font-tiktok)', 
-            fontSize: '24px', 
+            fontSize: isMobile ? '18px' : '24px', 
             fontWeight: 500, 
             color: '#3A2E1F', 
-            marginBottom: '40px',
-            textAlign: 'left'
+            marginBottom: isMobile ? '30px' : '40px',
+            textAlign: isMobile ? 'center' : 'left'
           }}>
             {t.whatIsSubtitle}
           </p>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', marginBottom: '30px' }}>
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', 
+            gap: isMobile ? '20px' : '60px', 
+            margin: isMobile ? '0' : '0 -30px -20px -30px',
+            padding: isMobile ? '0' : '0 20px 20px 20px'
+          }}>
             {/* The Course - White Card */}
             <div style={{
-              width: '404px',
-              height: '320px',
+              width: isMobile ? '100%' : '404px',
+              height: isMobile ? 'auto' : '320px',
               backgroundColor: '#fff',
               borderRadius: '16px',
-              padding: '24px',
+              padding: '24px 24px 24px 30px',
               display: 'flex',
               flexDirection: 'column'
             }}>
               <h3 style={{ 
                 fontFamily: 'var(--font-tiktok)', 
-                fontSize: '20px', 
+                fontSize: isMobile ? '18px' : '20px', 
                 fontWeight: 600, 
                 color: '#3A2E1F', 
                 marginBottom: '16px',
@@ -582,7 +589,7 @@ export default function SubscriptionLandingPage() {
                 {t.courseItems.map((item, index) => (
                   <li key={index} style={{ 
                     fontFamily: 'var(--font-tiktok)', 
-                    fontSize: '14px', 
+                    fontSize: isMobile ? '12px' : '14px', 
                     fontWeight: 400, 
                     color: '#3A2E1F', 
                     marginBottom: '8px',
@@ -603,7 +610,7 @@ export default function SubscriptionLandingPage() {
 
               <p style={{ 
                 fontFamily: 'var(--font-tiktok)', 
-                fontSize: '10px', 
+                fontSize: isMobile ? '9px' : '10px', 
                 fontWeight: 400, 
                 color: '#3A2E1F',
                 marginBottom: '12px',
@@ -615,14 +622,14 @@ export default function SubscriptionLandingPage() {
               <button
                 onClick={() => router.push('/pt/course')}
                 style={{
-                  width: '116px',
-                  height: '40px',
+                  width: isMobile ? '100%' : '116px',
+                  height: isMobile ? '36px' : '40px',
                   borderRadius: '8px',
                   border: 'none',
                   backgroundColor: '#45C240',
                   color: '#fff',
                   fontFamily: 'var(--font-tiktok)',
-                  fontSize: '14px',
+                  fontSize: isMobile ? '12px' : '14px',
                   fontWeight: 700,
                   cursor: 'pointer',
                   marginTop: 'auto'
@@ -634,17 +641,17 @@ export default function SubscriptionLandingPage() {
 
             {/* The Trainer - White Card */}
             <div style={{
-              width: '404px',
-              height: '320px',
+              width: isMobile ? '100%' : '404px',
+              height: isMobile ? 'auto' : '320px',
               backgroundColor: '#fff',
               borderRadius: '16px',
-              padding: '24px',
+              padding: '24px 24px 24px 30px',
               display: 'flex',
               flexDirection: 'column'
             }}>
               <h3 style={{ 
                 fontFamily: 'var(--font-tiktok)', 
-                fontSize: '20px', 
+                fontSize: isMobile ? '18px' : '20px', 
                 fontWeight: 600, 
                 color: '#3A2E1F', 
                 marginBottom: '16px',
@@ -655,7 +662,7 @@ export default function SubscriptionLandingPage() {
               
               <p style={{ 
                 fontFamily: 'var(--font-tiktok)', 
-                fontSize: '14px', 
+                fontSize: isMobile ? '12px' : '14px', 
                 fontWeight: 400, 
                 color: '#3A2E1F',
                 marginBottom: '12px',
@@ -674,7 +681,7 @@ export default function SubscriptionLandingPage() {
                 {t.trainerItems.map((item, index) => (
                   <li key={index} style={{ 
                     fontFamily: 'var(--font-tiktok)', 
-                    fontSize: '14px', 
+                    fontSize: isMobile ? '12px' : '14px', 
                     fontWeight: 400, 
                     color: '#3A2E1F', 
                     marginBottom: '8px',
@@ -695,7 +702,7 @@ export default function SubscriptionLandingPage() {
 
               <p style={{ 
                 fontFamily: 'var(--font-tiktok)', 
-                fontSize: '10px', 
+                fontSize: isMobile ? '9px' : '10px', 
                 fontWeight: 400, 
                 color: '#3A2E1F',
                 marginBottom: '12px',
@@ -707,14 +714,14 @@ export default function SubscriptionLandingPage() {
               <button
                 onClick={() => router.push('/player')}
                 style={{
-                  width: '116px',
-                  height: '40px',
+                  width: isMobile ? '100%' : '116px',
+                  height: isMobile ? '36px' : '40px',
                   borderRadius: '8px',
                   border: 'none',
                   backgroundColor: '#3B82F6',
                   color: '#fff',
                   fontFamily: 'var(--font-tiktok)',
-                  fontSize: '14px',
+                  fontSize: isMobile ? '12px' : '14px',
                   fontWeight: 700,
                   cursor: 'pointer',
                   marginTop: 'auto'
