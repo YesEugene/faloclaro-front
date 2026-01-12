@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useAppLanguage } from '@/lib/language-context';
@@ -13,6 +13,16 @@ export default function SubscriptionLandingPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const translations = {
     en: {
@@ -310,11 +320,13 @@ export default function SubscriptionLandingPage() {
       }}>
         {/* Header with Logo and Language Selector - ABOVE the card */}
         <div style={{ 
-          width: '868px',
+          width: isMobile ? '100%' : '868px',
+          maxWidth: isMobile ? '100%' : '868px',
           display: 'flex', 
           justifyContent: 'space-between', 
           alignItems: 'flex-start',
-          marginBottom: '20px'
+          marginBottom: isMobile ? '16px' : '20px',
+          padding: isMobile ? '0 16px' : '0'
         }}>
           {/* Logo - Left aligned */}
           <div>
@@ -335,11 +347,13 @@ export default function SubscriptionLandingPage() {
 
         {/* Main Card */}
         <div style={{ 
-          width: '868px',
-          height: '500px',
+          width: isMobile ? '100%' : '868px',
+          maxWidth: isMobile ? '100%' : '868px',
+          height: isMobile ? 'auto' : '500px',
+          minHeight: isMobile ? 'auto' : '500px',
           backgroundColor: '#BDF6BB',
-          borderRadius: '20px',
-          padding: '40px 50px',
+          borderRadius: isMobile ? '16px' : '20px',
+          padding: isMobile ? '32px 24px' : '40px 50px',
           position: 'relative',
           display: 'flex',
           flexDirection: 'column',
@@ -350,10 +364,10 @@ export default function SubscriptionLandingPage() {
           {/* Hero Title */}
           <h1 style={{ 
             fontFamily: 'var(--font-orelega)', 
-            fontSize: '48px', 
+            fontSize: isMobile ? '32px' : '48px', 
             fontWeight: 400, 
             color: '#3A2E1F', 
-            marginBottom: '16px',
+            marginBottom: isMobile ? '12px' : '16px',
             lineHeight: '1.2',
             textAlign: 'center'
           }}>
@@ -363,10 +377,10 @@ export default function SubscriptionLandingPage() {
           {/* Hero Subtitle - Medium weight */}
           <p style={{ 
             fontFamily: 'var(--font-tiktok)', 
-            fontSize: '24px', 
+            fontSize: isMobile ? '18px' : '24px', 
             fontWeight: 500, 
             color: '#3A2E1F', 
-            marginBottom: '20px',
+            marginBottom: isMobile ? '16px' : '20px',
             lineHeight: '1.4',
             textAlign: 'center'
           }}>
@@ -376,10 +390,10 @@ export default function SubscriptionLandingPage() {
           {/* Hero Description - Regular weight, 16px */}
           <p style={{ 
             fontFamily: 'var(--font-tiktok)', 
-            fontSize: '16px', 
+            fontSize: isMobile ? '14px' : '16px', 
             fontWeight: 400, 
             color: '#3A2E1F', 
-            marginBottom: '24px',
+            marginBottom: isMobile ? '20px' : '24px',
             lineHeight: '1.5',
             textAlign: 'center'
           }}>
@@ -387,13 +401,13 @@ export default function SubscriptionLandingPage() {
           </p>
 
           {/* CTA Text - Bold, 16px, reduced line height */}
-          <div style={{ marginBottom: '20px', textAlign: 'center' }}>
+          <div style={{ marginBottom: isMobile ? '16px' : '20px', textAlign: 'center' }}>
             <p style={{ 
               fontFamily: 'var(--font-tiktok)', 
-              fontSize: '16px', 
+              fontSize: isMobile ? '14px' : '16px', 
               fontWeight: 700, 
               color: '#3A2E1F', 
-              marginTop: '54px',
+              marginTop: isMobile ? '24px' : '54px',
               marginBottom: '0',
               paddingLeft: '0px',
               paddingRight: '0px',
@@ -404,7 +418,7 @@ export default function SubscriptionLandingPage() {
             </p>
             <p style={{ 
               fontFamily: 'var(--font-tiktok)', 
-              fontSize: '16px', 
+              fontSize: isMobile ? '14px' : '16px', 
               fontWeight: 700, 
               color: '#3A2E1F', 
               marginTop: '0',
@@ -417,15 +431,18 @@ export default function SubscriptionLandingPage() {
 
           {/* Email Form Container */}
           <form onSubmit={handleSubmit} style={{ 
-            marginBottom: '12px',
+            marginBottom: isMobile ? '10px' : '12px',
             position: 'relative',
             display: 'inline-flex',
-            alignItems: 'center'
+            alignItems: 'center',
+            width: isMobile ? '100%' : 'auto',
+            maxWidth: isMobile ? '100%' : '327px'
           }}>
             {/* Black Container - Extended to cover button area + 5px */}
             <div style={{ 
-              width: '327px', // 250px (input area) + 74px (button) + 5px (gap after button) - 2px (overlap)
-              height: '50px',
+              width: isMobile ? '100%' : '327px',
+              maxWidth: isMobile ? '100%' : '327px',
+              height: '54px', // Increased by 4px
               backgroundColor: '#000',
               borderRadius: '10px',
               padding: '0 8px',
@@ -440,7 +457,7 @@ export default function SubscriptionLandingPage() {
                 placeholder={t.emailPlaceholder}
                 required
                 style={{
-                  width: '234px', // Fixed width for input
+                  width: isMobile ? 'calc(100% - 90px)' : '234px',
                   height: '34px',
                   padding: '0 12px',
                   borderRadius: '8px',
@@ -448,7 +465,7 @@ export default function SubscriptionLandingPage() {
                   backgroundColor: '#000',
                   color: '#fff',
                   fontFamily: 'var(--font-tiktok)',
-                  fontSize: '16px',
+                  fontSize: isMobile ? '14px' : '16px',
                   fontWeight: 400,
                 }}
               />
@@ -461,15 +478,15 @@ export default function SubscriptionLandingPage() {
               style={{
                 position: 'absolute',
                 right: '5px', // 5px from the end of black container
-                top: '2px', // Centered vertically (50px container - 46px button) / 2 = 2px
-                width: '74px',
-                height: '46px',
+                top: '4px', // Centered vertically (54px container - 46px button) / 2 = 4px
+                width: isMobile ? '70px' : '74px',
+                height: isMobile ? '42px' : '46px',
                 borderRadius: '5px',
                 border: 'none',
                 backgroundColor: '#FFF944',
                 color: '#000',
                 fontFamily: 'var(--font-tiktok)',
-                fontSize: '16px',
+                fontSize: isMobile ? '14px' : '16px',
                 fontWeight: 700,
                 cursor: isSubmitting ? 'not-allowed' : 'pointer',
                 zIndex: 10,
@@ -485,10 +502,11 @@ export default function SubscriptionLandingPage() {
           {/* Disclaimer - Regular weight, 10px */}
           <p style={{ 
             fontFamily: 'var(--font-tiktok)', 
-            fontSize: '10px', 
+            fontSize: isMobile ? '9px' : '10px', 
             fontWeight: 400, 
             color: '#3A2E1F',
-            textAlign: 'center'
+            textAlign: 'center',
+            padding: isMobile ? '0 16px' : '0'
           }}>
             {t.disclaimer}
           </p>
