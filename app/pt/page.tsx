@@ -324,7 +324,7 @@ export default function SubscriptionLandingPage() {
     <div className="min-h-screen bg-white" style={{ fontFamily: 'var(--font-tiktok)' }}>
       {/* Hero Section - Light Green #BDF6BB */}
       <section style={{ 
-        padding: '40px 20px', 
+        padding: isMobile ? '10px' : '40px 20px', 
         display: 'flex', 
         flexDirection: 'column',
         alignItems: 'center',
@@ -371,7 +371,8 @@ export default function SubscriptionLandingPage() {
           flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
-          textAlign: 'center'
+          textAlign: 'center',
+          marginBottom: isMobile ? '10px' : '0'
         }}>
           {/* Hero Title */}
           <h1 style={{ 
@@ -521,14 +522,14 @@ export default function SubscriptionLandingPage() {
       </section>
 
       {/* What is FaloClaro - Light Pink #FFE3E3 */}
-      <section style={{ backgroundColor: '#fff', padding: isMobile ? '40px 0' : '60px 20px', display: 'flex', justifyContent: 'center' }}>
+      <section style={{ backgroundColor: '#fff', padding: isMobile ? '10px' : '60px 20px', display: 'flex', justifyContent: 'center' }}>
         {/* Pink Card - 868px width with rounded corners */}
         <div style={{ 
-          width: isMobile ? 'calc(100% - 48px)' : '868px',
-          maxWidth: isMobile ? 'calc(100% - 48px)' : '868px',
+          width: isMobile ? '100%' : '868px',
+          maxWidth: isMobile ? '100%' : '868px',
           backgroundColor: '#FFE3E3',
           borderRadius: isMobile ? '16px' : '20px',
-          padding: isMobile ? '32px 24px' : '40px 20px 20px 20px'
+          padding: isMobile ? '10px' : '40px 20px 20px 20px'
         }}>
           <h2 style={{ 
             fontFamily: 'var(--font-orelega)', 
@@ -537,8 +538,8 @@ export default function SubscriptionLandingPage() {
             color: '#3A2E1F', 
             marginBottom: '12px',
             textAlign: isMobile ? 'center' : 'left',
-            paddingLeft: isMobile ? '0' : '30px',
-            paddingRight: isMobile ? '0' : '30px'
+            paddingLeft: isMobile ? '10px' : '30px',
+            paddingRight: isMobile ? '10px' : '30px'
           }}>
             {t.whatIsTitle}
           </h2>
@@ -547,10 +548,10 @@ export default function SubscriptionLandingPage() {
             fontSize: isMobile ? '18px' : '24px', 
             fontWeight: 500, 
             color: '#3A2E1F', 
-            marginBottom: isMobile ? '30px' : '40px',
+            marginBottom: isMobile ? '20px' : '40px',
             textAlign: isMobile ? 'center' : 'left',
-            paddingLeft: isMobile ? '0' : '30px',
-            paddingRight: isMobile ? '0' : '30px'
+            paddingLeft: isMobile ? '10px' : '30px',
+            paddingRight: isMobile ? '10px' : '30px'
           }}>
             {t.whatIsSubtitle}
           </p>
@@ -558,8 +559,8 @@ export default function SubscriptionLandingPage() {
           <div style={{ 
             display: 'grid', 
             gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', 
-            gap: '20px',
-            marginBottom: '20px'
+            gap: isMobile ? '10px' : '20px',
+            marginBottom: isMobile ? '10px' : '20px'
           }}>
             {/* The Course - White Card */}
             <div style={{
@@ -569,8 +570,8 @@ export default function SubscriptionLandingPage() {
               borderRadius: '16px',
               padding: isMobile ? '24px 24px 24px 30px' : '24px 24px 24px 30px',
               display: 'flex',
-              flexDirection: isMobile ? 'column' : 'row',
-              gap: isMobile ? '0' : '16px'
+              flexDirection: 'row',
+              gap: isMobile ? '12px' : '16px'
             }}>
               {/* Text Content */}
               <div style={{
@@ -624,7 +625,7 @@ export default function SubscriptionLandingPage() {
                 <button
                   onClick={() => router.push('/pt/course')}
                   style={{
-                    width: isMobile ? '100%' : '116px',
+                    width: '116px',
                     height: isMobile ? '36px' : '40px',
                     borderRadius: '8px',
                     border: 'none',
@@ -634,7 +635,8 @@ export default function SubscriptionLandingPage() {
                     fontSize: isMobile ? '12px' : '14px',
                     fontWeight: 700,
                     cursor: 'pointer',
-                    marginTop: 'auto'
+                    marginTop: 'auto',
+                    alignSelf: 'flex-start'
                   }}
                 >
                   {t.courseButton}
@@ -644,17 +646,17 @@ export default function SubscriptionLandingPage() {
               {/* Phone Illustration */}
               <div style={{
                 flexShrink: 0,
-                display: isMobile ? 'block' : 'flex',
-                alignItems: isMobile ? 'flex-start' : 'center'
+                display: 'flex',
+                alignItems: 'center'
               }}>
                 <Image
                   src="/Img/Website/Phone-1.svg"
                   alt="Course"
-                  width={isMobile ? 200 : 129}
-                  height={isMobile ? 120 : 259}
+                  width={isMobile ? 100 : 129}
+                  height={isMobile ? 150 : 259}
                   style={{ 
-                    width: isMobile ? '100%' : '129px',
-                    height: isMobile ? 'auto' : '259px',
+                    width: isMobile ? '100px' : '129px',
+                    height: isMobile ? '150px' : '259px',
                     objectFit: 'contain'
                   }}
                 />
@@ -669,8 +671,8 @@ export default function SubscriptionLandingPage() {
               borderRadius: '16px',
               padding: isMobile ? '24px 24px 24px 30px' : '24px 24px 24px 30px',
               display: 'flex',
-              flexDirection: isMobile ? 'column' : 'row',
-              gap: isMobile ? '0' : '16px'
+              flexDirection: 'row',
+              gap: isMobile ? '12px' : '16px'
             }}>
               {/* Text Content */}
               <div style={{
@@ -735,7 +737,7 @@ export default function SubscriptionLandingPage() {
                 <button
                   onClick={() => router.push('/player')}
                   style={{
-                    width: isMobile ? '100%' : '116px',
+                    width: '116px',
                     height: isMobile ? '36px' : '40px',
                     borderRadius: '8px',
                     border: 'none',
@@ -745,7 +747,8 @@ export default function SubscriptionLandingPage() {
                     fontSize: isMobile ? '12px' : '14px',
                     fontWeight: 700,
                     cursor: 'pointer',
-                    marginTop: 'auto'
+                    marginTop: 'auto',
+                    alignSelf: 'flex-start'
                   }}
                 >
                   {t.trainerButton}
@@ -755,17 +758,17 @@ export default function SubscriptionLandingPage() {
               {/* Phone Illustration */}
               <div style={{
                 flexShrink: 0,
-                display: isMobile ? 'block' : 'flex',
-                alignItems: isMobile ? 'flex-start' : 'center'
+                display: 'flex',
+                alignItems: 'center'
               }}>
                 <Image
                   src="/Img/Website/Phone.svg"
                   alt="Trainer"
-                  width={isMobile ? 200 : 129}
-                  height={isMobile ? 120 : 259}
+                  width={isMobile ? 100 : 129}
+                  height={isMobile ? 150 : 259}
                   style={{ 
-                    width: isMobile ? '100%' : '129px',
-                    height: isMobile ? 'auto' : '259px',
+                    width: isMobile ? '100px' : '129px',
+                    height: isMobile ? '150px' : '259px',
                     objectFit: 'contain'
                   }}
                 />
