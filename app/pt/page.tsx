@@ -549,6 +549,7 @@ export default function SubscriptionLandingPage() {
             fontWeight: 500, 
             color: '#3A2E1F', 
             marginBottom: isMobile ? '20px' : '40px',
+            marginTop: '0px',
             textAlign: isMobile ? 'center' : 'left',
             paddingLeft: isMobile ? '10px' : '30px',
             paddingRight: isMobile ? '10px' : '30px'
@@ -560,7 +561,7 @@ export default function SubscriptionLandingPage() {
             display: 'grid', 
             gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', 
             gap: isMobile ? '10px' : '20px',
-            marginBottom: isMobile ? '10px' : '20px'
+            marginBottom: isMobile ? '10px' : '0px'
           }}>
             {/* The Course - White Card */}
             <div style={{
@@ -603,7 +604,7 @@ export default function SubscriptionLandingPage() {
                       fontSize: isMobile ? '12px' : '14px', 
                       fontWeight: 400, 
                       color: '#3A2E1F', 
-                      marginBottom: '8px',
+                      marginBottom: '0px',
                       textAlign: 'left'
                     }}>
                       → {item}
@@ -715,7 +716,7 @@ export default function SubscriptionLandingPage() {
                       fontSize: isMobile ? '12px' : '14px', 
                       fontWeight: 400, 
                       color: '#3A2E1F', 
-                      marginBottom: '8px',
+                      marginBottom: '0px',
                       textAlign: 'left'
                     }}>
                       → {item}
