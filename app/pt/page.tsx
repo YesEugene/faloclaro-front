@@ -373,7 +373,7 @@ export default function SubscriptionLandingPage() {
             {t.heroSubtitle}
           </p>
 
-          {/* Hero Description - Regular weight */}
+          {/* Hero Description - Regular weight, 16px */}
           <p style={{ 
             fontFamily: 'var(--font-tiktok)', 
             fontSize: '16px', 
@@ -386,32 +386,35 @@ export default function SubscriptionLandingPage() {
             {t.heroDescription}
           </p>
 
-          {/* CTA Text - Bold */}
-          <p style={{ 
-            fontFamily: 'var(--font-tiktok)', 
-            fontSize: '16px', 
-            fontWeight: 700, 
-            color: '#3A2E1F', 
-            marginBottom: '8px',
-            textAlign: 'center'
-          }}>
-            {t.heroCta}
-          </p>
-          <p style={{ 
-            fontFamily: 'var(--font-tiktok)', 
-            fontSize: '16px', 
-            fontWeight: 700, 
-            color: '#3A2E1F', 
-            marginBottom: '24px',
-            textAlign: 'center'
-          }}>
-            {t.heroCtaSub}
-          </p>
+          {/* CTA Text - Bold, 16px, reduced line height */}
+          <div style={{ marginBottom: '20px', textAlign: 'center' }}>
+            <p style={{ 
+              fontFamily: 'var(--font-tiktok)', 
+              fontSize: '16px', 
+              fontWeight: 700, 
+              color: '#3A2E1F', 
+              marginBottom: '0',
+              lineHeight: '1.2',
+              textAlign: 'center'
+            }}>
+              {t.heroCta}
+            </p>
+            <p style={{ 
+              fontFamily: 'var(--font-tiktok)', 
+              fontSize: '16px', 
+              fontWeight: 700, 
+              color: '#3A2E1F', 
+              marginTop: '0',
+              lineHeight: '1.2',
+              textAlign: 'center'
+            }}>
+              {t.heroCtaSub}
+            </p>
+          </div>
 
-          {/* Email Form on Black Background - Height 50px */}
+          {/* Email Form on Black Background - Width 250px, Height 50px */}
           <div style={{ 
-            width: '100%',
-            maxWidth: '440px',
+            width: '250px',
             height: '50px',
             backgroundColor: '#000',
             borderRadius: '10px',
@@ -456,7 +459,7 @@ export default function SubscriptionLandingPage() {
                   padding: '0 20px',
                   borderRadius: '8px',
                   border: 'none',
-                  backgroundColor: '#FFD700',
+                  backgroundColor: '#FFF944',
                   color: '#000',
                   fontFamily: 'var(--font-tiktok)',
                   fontSize: '16px',
@@ -473,10 +476,10 @@ export default function SubscriptionLandingPage() {
             <div style={{ color: '#ff0000', fontSize: '14px', marginBottom: '8px', textAlign: 'center' }}>{error}</div>
           )}
 
-          {/* Disclaimer - Regular weight */}
+          {/* Disclaimer - Regular weight, 10px */}
           <p style={{ 
             fontFamily: 'var(--font-tiktok)', 
-            fontSize: '12px', 
+            fontSize: '10px', 
             fontWeight: 400, 
             color: '#3A2E1F',
             textAlign: 'center'
