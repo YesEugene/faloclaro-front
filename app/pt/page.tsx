@@ -431,23 +431,22 @@ export default function SubscriptionLandingPage() {
 
           {/* Email Form Container */}
           <form onSubmit={handleSubmit} style={{ 
+            marginBottom: isMobile ? '10px' : '12px',
             display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            width: isMobile ? '100%' : 'auto',
-            marginBottom: isMobile ? '10px' : '12px'
+            justifyContent: 'center'
           }}>
-            {/* Black Container - Email input only */}
+            {/* Black Container - Email input and button */}
             <div style={{ 
-              width: isMobile ? '100%' : '250px',
-              maxWidth: isMobile ? '100%' : '250px',
+              width: isMobile ? '100%' : '327px',
+              maxWidth: isMobile ? '100%' : '327px',
               height: '54px', // Increased by 4px
               backgroundColor: '#000',
               borderRadius: '10px',
               padding: '0 8px',
               display: 'flex',
               alignItems: 'center',
-              marginBottom: '12px'
+              gap: '8px',
+              position: 'relative'
             }}>
               <input
                 type="email"
@@ -456,7 +455,7 @@ export default function SubscriptionLandingPage() {
                 placeholder={t.emailPlaceholder}
                 required
                 style={{
-                  width: '100%',
+                  flex: 1,
                   height: '34px',
                   padding: '0 12px',
                   borderRadius: '8px',
@@ -468,27 +467,28 @@ export default function SubscriptionLandingPage() {
                   fontWeight: 400,
                 }}
               />
+              
+              {/* Yellow Button - On black container, on the right */}
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                style={{
+                  width: isMobile ? '70px' : '74px',
+                  height: isMobile ? '42px' : '46px',
+                  borderRadius: '5px',
+                  border: 'none',
+                  backgroundColor: '#FFF944',
+                  color: '#000',
+                  fontFamily: 'var(--font-tiktok)',
+                  fontSize: isMobile ? '14px' : '16px',
+                  fontWeight: 700,
+                  cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                  flexShrink: 0,
+                }}
+              >
+                {isSubmitting ? '...' : t.buttonStart}
+              </button>
             </div>
-            
-            {/* Yellow Button - Below email form */}
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              style={{
-                width: isMobile ? '70px' : '74px',
-                height: isMobile ? '42px' : '46px',
-                borderRadius: '5px',
-                border: 'none',
-                backgroundColor: '#FFF944',
-                color: '#000',
-                fontFamily: 'var(--font-tiktok)',
-                fontSize: isMobile ? '14px' : '16px',
-                fontWeight: 700,
-                cursor: isSubmitting ? 'not-allowed' : 'pointer',
-              }}
-            >
-              {isSubmitting ? '...' : t.buttonStart}
-            </button>
           </form>
           {error && (
             <div style={{ color: '#ff0000', fontSize: '14px', marginBottom: '8px', textAlign: 'center' }}>{error}</div>
