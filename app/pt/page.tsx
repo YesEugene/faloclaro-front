@@ -521,8 +521,14 @@ export default function SubscriptionLandingPage() {
       </section>
 
       {/* What is FaloClaro - Light Pink #FFE3E3 */}
-      <section style={{ backgroundColor: '#FFE3E3', padding: '60px 20px', display: 'flex', justifyContent: 'center' }}>
-        <div style={{ width: '868px' }}>
+      <section style={{ backgroundColor: '#fff', padding: '60px 20px', display: 'flex', justifyContent: 'center' }}>
+        {/* Pink Card - 868px width with rounded corners */}
+        <div style={{ 
+          width: '868px',
+          backgroundColor: '#FFE3E3',
+          borderRadius: '20px',
+          padding: '40px 50px'
+        }}>
           <h2 style={{ 
             fontFamily: 'var(--font-orelega)', 
             fontSize: '40px', 
