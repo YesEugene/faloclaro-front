@@ -490,7 +490,7 @@ export default function SubscriptionLandingPage() {
 
       {/* What is FaloClaro - Light Pink #FFE3E3 */}
       <section style={{ backgroundColor: '#FFE3E3', padding: '60px 20px', display: 'flex', justifyContent: 'center' }}>
-        <div style={{ maxWidth: '500px', width: '100%' }}>
+        <div style={{ width: '868px' }}>
           <h2 style={{ 
             fontFamily: 'var(--font-orelega)', 
             fontSize: '36px', 
@@ -641,7 +641,7 @@ export default function SubscriptionLandingPage() {
 
       {/* Why it works - Light Yellow #FAF7BF */}
       <section style={{ backgroundColor: '#FAF7BF', padding: '60px 20px', display: 'flex', justifyContent: 'center' }}>
-        <div style={{ maxWidth: '500px', width: '100%' }}>
+        <div style={{ width: '868px' }}>
           <h2 style={{ 
             fontFamily: 'var(--font-orelega)', 
             fontSize: '36px', 
@@ -771,7 +771,7 @@ export default function SubscriptionLandingPage() {
 
       {/* How to use the course - Light Green #D5FDEC */}
       <section style={{ backgroundColor: '#D5FDEC', padding: '60px 20px', display: 'flex', justifyContent: 'center' }}>
-        <div style={{ maxWidth: '500px', width: '100%' }}>
+        <div style={{ width: '868px' }}>
           <h2 style={{ 
             fontFamily: 'var(--font-orelega)', 
             fontSize: '36px', 
@@ -887,7 +887,7 @@ export default function SubscriptionLandingPage() {
 
       {/* What you will learn - White */}
       <section style={{ backgroundColor: '#fff', padding: '60px 20px', display: 'flex', justifyContent: 'center' }}>
-        <div style={{ maxWidth: '500px', width: '100%' }}>
+        <div style={{ width: '868px' }}>
           <h2 style={{ 
             fontFamily: 'var(--font-orelega)', 
             fontSize: '36px', 
@@ -964,7 +964,7 @@ export default function SubscriptionLandingPage() {
 
       {/* Start for free - Black */}
       <section style={{ backgroundColor: '#000', padding: '60px 20px', display: 'flex', justifyContent: 'center' }}>
-        <div style={{ maxWidth: '500px', width: '100%' }}>
+        <div style={{ width: '868px' }}>
           <h2 style={{ 
             fontFamily: 'var(--font-orelega)', 
             fontSize: '36px', 
@@ -1078,7 +1078,7 @@ export default function SubscriptionLandingPage() {
 
       {/* About the Creator - White */}
       <section style={{ backgroundColor: '#fff', padding: '60px 20px', display: 'flex', justifyContent: 'center' }}>
-        <div style={{ maxWidth: '500px', width: '100%' }}>
+        <div style={{ width: '868px' }}>
           <div style={{ textAlign: 'center', marginBottom: '30px' }}>
             <Image
               src="/Img/Website/Mask group.png"
@@ -1132,7 +1132,7 @@ export default function SubscriptionLandingPage() {
 
       {/* Contact - Light Gray */}
       <section style={{ backgroundColor: '#f5f5f5', padding: '60px 20px', display: 'flex', justifyContent: 'center' }}>
-        <div style={{ maxWidth: '500px', width: '100%' }}>
+        <div style={{ width: '868px' }}>
           <h2 style={{ 
             fontFamily: 'var(--font-orelega)', 
             fontSize: '36px', 
