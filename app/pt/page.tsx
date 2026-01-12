@@ -439,7 +439,7 @@ export default function SubscriptionLandingPage() {
             <div style={{ 
               width: isMobile ? '100%' : '327px',
               maxWidth: isMobile ? '100%' : '327px',
-              height: '54px', // Increased by 4px
+              height: '62px', // Updated to 62px
               backgroundColor: '#000',
               borderRadius: '10px',
               padding: '0 8px',
