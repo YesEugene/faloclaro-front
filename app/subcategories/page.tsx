@@ -69,10 +69,10 @@ const clusterConfig: Record<string, {
 };
 
 const subcategoryTypes = [
-  { key: 'all', en: 'Select all', ru: 'Выбрать все' },
-  { key: 'word', en: 'Words', ru: 'Слова' },
-  { key: 'short_sentence', en: 'Short sentences', ru: 'Короткие предложения' },
-  { key: 'long_sentence', en: 'Long sentences', ru: 'Длинные предложения' },
+  { key: 'all', en: 'Select all', ru: 'Выбрать все', pt: 'Selecionar tudo' },
+  { key: 'word', en: 'Words', ru: 'Слова', pt: 'Palavras' },
+  { key: 'short_sentence', en: 'Short sentences', ru: 'Короткие предложения', pt: 'Frases curtas' },
+  { key: 'long_sentence', en: 'Long sentences', ru: 'Длинные предложения', pt: 'Frases longas' },
 ];
 
 function SubcategoriesContent() {

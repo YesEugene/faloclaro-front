@@ -184,6 +184,14 @@ function CoursePageContent() {
       current: 'Current',
       locked: 'Locked',
     },
+    pt: {
+      title: 'Curso de Português',
+      subtitle: 'Escolhe uma lição',
+      noLevel: 'Sem Nível',
+      completed: 'Concluído',
+      current: 'Atual',
+      locked: 'Bloqueado',
+    },
   };
 
   const t = translations[appLanguage] || translations.ru;

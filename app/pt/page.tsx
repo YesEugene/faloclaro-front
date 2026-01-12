@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useAppLanguage } from '@/lib/language-context';
+import { LanguageSelector } from '@/components/LanguageSelector';
 
 export default function SubscriptionLandingPage() {
   const router = useRouter();
@@ -300,163 +301,181 @@ export default function SubscriptionLandingPage() {
   return (
     <div className="min-h-screen bg-white" style={{ fontFamily: 'var(--font-tiktok)' }}>
       {/* Hero Section - Light Green #BDF6BB */}
-      <section style={{ backgroundColor: '#BDF6BB', padding: '40px 20px', display: 'flex', justifyContent: 'center' }}>
-        <div style={{ maxWidth: '500px', width: '100%' }}>
-          {/* Logo */}
-          <div style={{ marginBottom: '30px' }}>
-            <Image
-              src="/Img/Website/logo.svg"
-              alt="FaloClaro"
-              width={83}
-              height={37}
-              style={{ display: 'block' }}
-            />
+      <section style={{ 
+        padding: '40px 20px', 
+        display: 'flex', 
+        justifyContent: 'center',
+        backgroundColor: '#fff'
+      }}>
+        <div style={{ 
+          width: '500px',
+          height: '868px',
+          backgroundColor: '#BDF6BB',
+          borderRadius: '16px',
+          padding: '40px 30px',
+          position: 'relative',
+          display: 'flex',
+          flexDirection: 'column'
+        }}>
+          {/* Header with Logo and Language Selector */}
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'flex-start',
+            marginBottom: '40px'
+          }}>
+            {/* Logo - Left aligned */}
+            <div>
+              <Image
+                src="/Img/Website/logo.svg"
+                alt="FaloClaro"
+                width={83}
+                height={37}
+                style={{ display: 'block' }}
+              />
+            </div>
+            
+            {/* Language Selector - Right aligned */}
+            <div>
+              <LanguageSelector />
+            </div>
           </div>
 
-          {/* Hero Title */}
-          <h1 style={{ 
-            fontFamily: 'var(--font-orelega)', 
-            fontSize: '48px', 
-            fontWeight: 400, 
-            color: '#3A2E1F', 
-            marginBottom: '16px',
-            lineHeight: '1.2'
+          {/* Centered Content */}
+          <div style={{ 
+            flex: 1,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            textAlign: 'center'
           }}>
-            {t.heroTitle}
-          </h1>
-          
-          {/* Hero Subtitle */}
-          <p style={{ 
-            fontFamily: 'var(--font-tiktok)', 
-            fontSize: '24px', 
-            fontWeight: 400, 
-            color: '#3A2E1F', 
-            marginBottom: '20px',
-            lineHeight: '1.4'
-          }}>
-            {t.heroSubtitle}
-          </p>
+            {/* Hero Title */}
+            <h1 style={{ 
+              fontFamily: 'var(--font-orelega)', 
+              fontSize: '48px', 
+              fontWeight: 400, 
+              color: '#3A2E1F', 
+              marginBottom: '16px',
+              lineHeight: '1.2',
+              textAlign: 'center'
+            }}>
+              {t.heroTitle}
+            </h1>
+            
+            {/* Hero Subtitle */}
+            <p style={{ 
+              fontFamily: 'var(--font-tiktok)', 
+              fontSize: '24px', 
+              fontWeight: 400, 
+              color: '#3A2E1F', 
+              marginBottom: '20px',
+              lineHeight: '1.4',
+              textAlign: 'center'
+            }}>
+              {t.heroSubtitle}
+            </p>
 
-          {/* Hero Description */}
-          <p style={{ 
-            fontFamily: 'var(--font-tiktok)', 
-            fontSize: '16px', 
-            fontWeight: 400, 
-            color: '#3A2E1F', 
-            marginBottom: '24px',
-            lineHeight: '1.5'
-          }}>
-            {t.heroDescription}
-          </p>
+            {/* Hero Description */}
+            <p style={{ 
+              fontFamily: 'var(--font-tiktok)', 
+              fontSize: '16px', 
+              fontWeight: 400, 
+              color: '#3A2E1F', 
+              marginBottom: '24px',
+              lineHeight: '1.5',
+              textAlign: 'center'
+            }}>
+              {t.heroDescription}
+            </p>
 
-          {/* CTA Text */}
-          <p style={{ 
-            fontFamily: 'var(--font-tiktok)', 
-            fontSize: '16px', 
-            fontWeight: 500, 
-            color: '#3A2E1F', 
-            marginBottom: '8px'
-          }}>
-            {t.heroCta}
-          </p>
-          <p style={{ 
-            fontFamily: 'var(--font-tiktok)', 
-            fontSize: '16px', 
-            fontWeight: 500, 
-            color: '#3A2E1F', 
-            marginBottom: '24px'
-          }}>
-            {t.heroCtaSub}
-          </p>
+            {/* CTA Text */}
+            <p style={{ 
+              fontFamily: 'var(--font-tiktok)', 
+              fontSize: '16px', 
+              fontWeight: 500, 
+              color: '#3A2E1F', 
+              marginBottom: '8px',
+              textAlign: 'center'
+            }}>
+              {t.heroCta}
+            </p>
+            <p style={{ 
+              fontFamily: 'var(--font-tiktok)', 
+              fontSize: '16px', 
+              fontWeight: 500, 
+              color: '#3A2E1F', 
+              marginBottom: '32px',
+              textAlign: 'center'
+            }}>
+              {t.heroCtaSub}
+            </p>
 
-          {/* Email Form */}
-          <form onSubmit={handleSubmit} style={{ marginBottom: '16px' }}>
-            <div style={{ display: 'flex', gap: '12px', marginBottom: '12px' }}>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder={t.emailPlaceholder}
-                required
-                style={{
-                  flex: 1,
-                  padding: '12px 16px',
-                  borderRadius: '8px',
-                  border: 'none',
-                  backgroundColor: '#000',
-                  color: '#fff',
-                  fontFamily: 'var(--font-tiktok)',
-                  fontSize: '16px',
-                  fontWeight: 400,
-                }}
-              />
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                style={{
-                  padding: '12px 24px',
-                  borderRadius: '8px',
-                  border: 'none',
-                  backgroundColor: '#FFD700',
-                  color: '#000',
-                  fontFamily: 'var(--font-tiktok)',
-                  fontSize: '16px',
-                  fontWeight: 700,
-                  cursor: isSubmitting ? 'not-allowed' : 'pointer',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {isSubmitting ? '...' : t.buttonStart}
-              </button>
-            </div>
-            {error && (
-              <div style={{ color: '#ff0000', fontSize: '14px', marginBottom: '8px' }}>{error}</div>
-            )}
-            <button
-              type="button"
-              onClick={() => {
-                const section = document.querySelector('section:nth-of-type(2)');
-                if (section) {
-                  const rect = section.getBoundingClientRect();
-                  window.scrollTo({ top: rect.top + window.scrollY, behavior: 'smooth' });
-                }
-              }}
-              style={{
-                width: '100%',
-                padding: '12px 24px',
-                borderRadius: '8px',
-                border: 'none',
-                backgroundColor: '#FFD700',
-                color: '#000',
-                fontFamily: 'var(--font-tiktok)',
-                fontSize: '16px',
-                fontWeight: 700,
-                cursor: 'pointer',
-                marginBottom: '12px',
-              }}
-            >
-              {t.buttonLearnMore}
-            </button>
-          </form>
+            {/* Email Form - Centered */}
+            <form onSubmit={handleSubmit} style={{ width: '100%', maxWidth: '440px', marginBottom: '16px' }}>
+              <div style={{ display: 'flex', gap: '12px', marginBottom: '12px' }}>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder={t.emailPlaceholder}
+                  required
+                  style={{
+                    flex: 1,
+                    padding: '12px 16px',
+                    borderRadius: '8px',
+                    border: 'none',
+                    backgroundColor: '#000',
+                    color: '#fff',
+                    fontFamily: 'var(--font-tiktok)',
+                    fontSize: '16px',
+                    fontWeight: 400,
+                  }}
+                />
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  style={{
+                    padding: '12px 24px',
+                    borderRadius: '8px',
+                    border: 'none',
+                    backgroundColor: '#FFD700',
+                    color: '#000',
+                    fontFamily: 'var(--font-tiktok)',
+                    fontSize: '16px',
+                    fontWeight: 700,
+                    cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {isSubmitting ? '...' : t.buttonStart}
+                </button>
+              </div>
+              {error && (
+                <div style={{ color: '#ff0000', fontSize: '14px', marginBottom: '8px', textAlign: 'center' }}>{error}</div>
+              )}
+            </form>
 
-          {/* Disclaimer */}
-          <p style={{ 
-            fontFamily: 'var(--font-tiktok)', 
-            fontSize: '12px', 
-            fontWeight: 400, 
-            color: '#3A2E1F',
-            marginBottom: '8px'
-          }}>
-            {t.disclaimer}
-          </p>
-          <p style={{ 
-            fontFamily: 'var(--font-tiktok)', 
-            fontSize: '12px', 
-            fontWeight: 400, 
-            color: '#3A2E1F'
-          }}>
-            {t.noCard}
-          </p>
+            {/* Disclaimer - Centered */}
+            <p style={{ 
+              fontFamily: 'var(--font-tiktok)', 
+              fontSize: '12px', 
+              fontWeight: 400, 
+              color: '#3A2E1F',
+              marginBottom: '8px',
+              textAlign: 'center'
+            }}>
+              {t.disclaimer}
+            </p>
+            <p style={{ 
+              fontFamily: 'var(--font-tiktok)', 
+              fontSize: '12px', 
+              fontWeight: 400, 
+              color: '#3A2E1F',
+              textAlign: 'center'
+            }}>
+              {t.noCard}
+            </p>
+          </div>
         </div>
       </section>
 
