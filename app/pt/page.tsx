@@ -528,7 +528,7 @@ export default function SubscriptionLandingPage() {
           maxWidth: isMobile ? 'calc(100% - 48px)' : '868px',
           backgroundColor: '#FFE3E3',
           borderRadius: isMobile ? '16px' : '20px',
-          padding: isMobile ? '32px 24px' : '40px 50px'
+          padding: isMobile ? '32px 24px' : '40px 20px 20px 20px'
         }}>
           <h2 style={{ 
             fontFamily: 'var(--font-orelega)', 
@@ -536,7 +536,9 @@ export default function SubscriptionLandingPage() {
             fontWeight: 400, 
             color: '#3A2E1F', 
             marginBottom: '12px',
-            textAlign: isMobile ? 'center' : 'left'
+            textAlign: isMobile ? 'center' : 'left',
+            paddingLeft: isMobile ? '0' : '30px',
+            paddingRight: isMobile ? '0' : '30px'
           }}>
             {t.whatIsTitle}
           </h2>
@@ -546,7 +548,9 @@ export default function SubscriptionLandingPage() {
             fontWeight: 500, 
             color: '#3A2E1F', 
             marginBottom: isMobile ? '30px' : '40px',
-            textAlign: isMobile ? 'center' : 'left'
+            textAlign: isMobile ? 'center' : 'left',
+            paddingLeft: isMobile ? '0' : '30px',
+            paddingRight: isMobile ? '0' : '30px'
           }}>
             {t.whatIsSubtitle}
           </p>
@@ -554,9 +558,8 @@ export default function SubscriptionLandingPage() {
           <div style={{ 
             display: 'grid', 
             gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', 
-            gap: isMobile ? '20px' : '60px', 
-            margin: isMobile ? '0' : '0 -30px -20px -30px',
-            padding: isMobile ? '0' : '0 20px 20px 20px'
+            gap: isMobile ? '20px' : '60px',
+            margin: isMobile ? '0' : '0 20px 20px 20px'
           }}>
             {/* The Course - White Card */}
             <div style={{
