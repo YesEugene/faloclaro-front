@@ -558,180 +558,218 @@ export default function SubscriptionLandingPage() {
           <div style={{ 
             display: 'grid', 
             gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', 
-            gap: isMobile ? '20px' : '60px',
-            margin: isMobile ? '0' : '0 20px 20px 20px'
+            gap: '20px',
+            marginBottom: '20px'
           }}>
             {/* The Course - White Card */}
             <div style={{
-              width: isMobile ? '100%' : '404px',
-              height: isMobile ? 'auto' : '320px',
+              width: isMobile ? '100%' : 'auto',
+              height: isMobile ? 'auto' : 'auto',
               backgroundColor: '#fff',
               borderRadius: '16px',
-              padding: '24px 24px 24px 30px',
+              padding: isMobile ? '24px 24px 24px 30px' : '24px 24px 24px 30px',
               display: 'flex',
-              flexDirection: 'column'
+              flexDirection: isMobile ? 'column' : 'row',
+              gap: isMobile ? '0' : '16px'
             }}>
-              <h3 style={{ 
-                fontFamily: 'var(--font-tiktok)', 
-                fontSize: isMobile ? '18px' : '20px', 
-                fontWeight: 600, 
-                color: '#3A2E1F', 
-                marginBottom: '16px',
-                textAlign: 'left'
+              {/* Text Content */}
+              <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                flex: 1
               }}>
-                {t.courseTitle}
-              </h3>
-              
-              <ul style={{ 
-                listStyle: 'none', 
-                padding: 0, 
-                margin: 0, 
-                marginBottom: '16px',
-                textAlign: 'left'
+                <h3 style={{ 
+                  fontFamily: 'var(--font-tiktok)', 
+                  fontSize: isMobile ? '18px' : '20px', 
+                  fontWeight: 600, 
+                  color: '#3A2E1F', 
+                  marginBottom: '16px',
+                  textAlign: 'left'
+                }}>
+                  {t.courseTitle}
+                </h3>
+                
+                <ul style={{ 
+                  listStyle: 'none', 
+                  padding: 0, 
+                  margin: 0, 
+                  marginBottom: '16px',
+                  textAlign: 'left'
+                }}>
+                  {t.courseItems.map((item, index) => (
+                    <li key={index} style={{ 
+                      fontFamily: 'var(--font-tiktok)', 
+                      fontSize: isMobile ? '12px' : '14px', 
+                      fontWeight: 400, 
+                      color: '#3A2E1F', 
+                      marginBottom: '8px',
+                      textAlign: 'left'
+                    }}>
+                      → {item}
+                    </li>
+                  ))}
+                </ul>
+
+                <p style={{ 
+                  fontFamily: 'var(--font-tiktok)', 
+                  fontSize: isMobile ? '9px' : '10px', 
+                  fontWeight: 400, 
+                  color: '#3A2E1F',
+                  marginBottom: '12px',
+                  textAlign: 'left'
+                }}>
+                  {t.courseDescription}
+                </p>
+
+                <button
+                  onClick={() => router.push('/pt/course')}
+                  style={{
+                    width: isMobile ? '100%' : '116px',
+                    height: isMobile ? '36px' : '40px',
+                    borderRadius: '8px',
+                    border: 'none',
+                    backgroundColor: '#45C240',
+                    color: '#fff',
+                    fontFamily: 'var(--font-tiktok)',
+                    fontSize: isMobile ? '12px' : '14px',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    marginTop: 'auto'
+                  }}
+                >
+                  {t.courseButton}
+                </button>
+              </div>
+
+              {/* Phone Illustration */}
+              <div style={{
+                flexShrink: 0,
+                display: isMobile ? 'block' : 'flex',
+                alignItems: isMobile ? 'flex-start' : 'center'
               }}>
-                {t.courseItems.map((item, index) => (
-                  <li key={index} style={{ 
-                    fontFamily: 'var(--font-tiktok)', 
-                    fontSize: isMobile ? '12px' : '14px', 
-                    fontWeight: 400, 
-                    color: '#3A2E1F', 
-                    marginBottom: '8px',
-                    textAlign: 'left'
-                  }}>
-                    → {item}
-                  </li>
-                ))}
-              </ul>
-
-              <Image
-                src="/Img/Website/Phone-1.svg"
-                alt="Course"
-                width={200}
-                height={120}
-                style={{ width: '100%', height: 'auto', marginBottom: '12px', objectFit: 'contain' }}
-              />
-
-              <p style={{ 
-                fontFamily: 'var(--font-tiktok)', 
-                fontSize: isMobile ? '9px' : '10px', 
-                fontWeight: 400, 
-                color: '#3A2E1F',
-                marginBottom: '12px',
-                textAlign: 'left'
-              }}>
-                {t.courseDescription}
-              </p>
-
-              <button
-                onClick={() => router.push('/pt/course')}
-                style={{
-                  width: isMobile ? '100%' : '116px',
-                  height: isMobile ? '36px' : '40px',
-                  borderRadius: '8px',
-                  border: 'none',
-                  backgroundColor: '#45C240',
-                  color: '#fff',
-                  fontFamily: 'var(--font-tiktok)',
-                  fontSize: isMobile ? '12px' : '14px',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  marginTop: 'auto'
-                }}
-              >
-                {t.courseButton}
-              </button>
+                <Image
+                  src="/Img/Website/Phone-1.svg"
+                  alt="Course"
+                  width={isMobile ? 200 : 129}
+                  height={isMobile ? 120 : 259}
+                  style={{ 
+                    width: isMobile ? '100%' : '129px',
+                    height: isMobile ? 'auto' : '259px',
+                    objectFit: 'contain'
+                  }}
+                />
+              </div>
             </div>
 
             {/* The Trainer - White Card */}
             <div style={{
-              width: isMobile ? '100%' : '404px',
-              height: isMobile ? 'auto' : '320px',
+              width: isMobile ? '100%' : 'auto',
+              height: isMobile ? 'auto' : 'auto',
               backgroundColor: '#fff',
               borderRadius: '16px',
-              padding: '24px 24px 24px 30px',
+              padding: isMobile ? '24px 24px 24px 30px' : '24px 24px 24px 30px',
               display: 'flex',
-              flexDirection: 'column'
+              flexDirection: isMobile ? 'column' : 'row',
+              gap: isMobile ? '0' : '16px'
             }}>
-              <h3 style={{ 
-                fontFamily: 'var(--font-tiktok)', 
-                fontSize: isMobile ? '18px' : '20px', 
-                fontWeight: 600, 
-                color: '#3A2E1F', 
-                marginBottom: '16px',
-                textAlign: 'left'
+              {/* Text Content */}
+              <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                flex: 1
               }}>
-                {t.trainerTitle}
-              </h3>
-              
-              <p style={{ 
-                fontFamily: 'var(--font-tiktok)', 
-                fontSize: isMobile ? '12px' : '14px', 
-                fontWeight: 400, 
-                color: '#3A2E1F',
-                marginBottom: '12px',
-                textAlign: 'left'
+                <h3 style={{ 
+                  fontFamily: 'var(--font-tiktok)', 
+                  fontSize: isMobile ? '18px' : '20px', 
+                  fontWeight: 600, 
+                  color: '#3A2E1F', 
+                  marginBottom: '16px',
+                  textAlign: 'left'
+                }}>
+                  {t.trainerTitle}
+                </h3>
+                
+                <p style={{ 
+                  fontFamily: 'var(--font-tiktok)', 
+                  fontSize: isMobile ? '12px' : '14px', 
+                  fontWeight: 400, 
+                  color: '#3A2E1F',
+                  marginBottom: '12px',
+                  textAlign: 'left'
+                }}>
+                  {t.trainerIntro}
+                </p>
+
+                <ul style={{ 
+                  listStyle: 'none', 
+                  padding: 0, 
+                  margin: 0, 
+                  marginBottom: '16px',
+                  textAlign: 'left'
+                }}>
+                  {t.trainerItems.map((item, index) => (
+                    <li key={index} style={{ 
+                      fontFamily: 'var(--font-tiktok)', 
+                      fontSize: isMobile ? '12px' : '14px', 
+                      fontWeight: 400, 
+                      color: '#3A2E1F', 
+                      marginBottom: '8px',
+                      textAlign: 'left'
+                    }}>
+                      → {item}
+                    </li>
+                  ))}
+                </ul>
+
+                <p style={{ 
+                  fontFamily: 'var(--font-tiktok)', 
+                  fontSize: isMobile ? '9px' : '10px', 
+                  fontWeight: 400, 
+                  color: '#3A2E1F',
+                  marginBottom: '12px',
+                  textAlign: 'left'
+                }}>
+                  {t.trainerDescription}
+                </p>
+
+                <button
+                  onClick={() => router.push('/player')}
+                  style={{
+                    width: isMobile ? '100%' : '116px',
+                    height: isMobile ? '36px' : '40px',
+                    borderRadius: '8px',
+                    border: 'none',
+                    backgroundColor: '#3B82F6',
+                    color: '#fff',
+                    fontFamily: 'var(--font-tiktok)',
+                    fontSize: isMobile ? '12px' : '14px',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    marginTop: 'auto'
+                  }}
+                >
+                  {t.trainerButton}
+                </button>
+              </div>
+
+              {/* Phone Illustration */}
+              <div style={{
+                flexShrink: 0,
+                display: isMobile ? 'block' : 'flex',
+                alignItems: isMobile ? 'flex-start' : 'center'
               }}>
-                {t.trainerIntro}
-              </p>
-
-              <ul style={{ 
-                listStyle: 'none', 
-                padding: 0, 
-                margin: 0, 
-                marginBottom: '16px',
-                textAlign: 'left'
-              }}>
-                {t.trainerItems.map((item, index) => (
-                  <li key={index} style={{ 
-                    fontFamily: 'var(--font-tiktok)', 
-                    fontSize: isMobile ? '12px' : '14px', 
-                    fontWeight: 400, 
-                    color: '#3A2E1F', 
-                    marginBottom: '8px',
-                    textAlign: 'left'
-                  }}>
-                    → {item}
-                  </li>
-                ))}
-              </ul>
-
-              <Image
-                src="/Img/Website/Phone.svg"
-                alt="Trainer"
-                width={200}
-                height={120}
-                style={{ width: '100%', height: 'auto', marginBottom: '12px', objectFit: 'contain' }}
-              />
-
-              <p style={{ 
-                fontFamily: 'var(--font-tiktok)', 
-                fontSize: isMobile ? '9px' : '10px', 
-                fontWeight: 400, 
-                color: '#3A2E1F',
-                marginBottom: '12px',
-                textAlign: 'left'
-              }}>
-                {t.trainerDescription}
-              </p>
-
-              <button
-                onClick={() => router.push('/player')}
-                style={{
-                  width: isMobile ? '100%' : '116px',
-                  height: isMobile ? '36px' : '40px',
-                  borderRadius: '8px',
-                  border: 'none',
-                  backgroundColor: '#3B82F6',
-                  color: '#fff',
-                  fontFamily: 'var(--font-tiktok)',
-                  fontSize: isMobile ? '12px' : '14px',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  marginTop: 'auto'
-                }}
-              >
-                {t.trainerButton}
-              </button>
+                <Image
+                  src="/Img/Website/Phone.svg"
+                  alt="Trainer"
+                  width={isMobile ? 200 : 129}
+                  height={isMobile ? 120 : 259}
+                  style={{ 
+                    width: isMobile ? '100%' : '129px',
+                    height: isMobile ? 'auto' : '259px',
+                    objectFit: 'contain'
+                  }}
+                />
+              </div>
             </div>
           </div>
         </div>
