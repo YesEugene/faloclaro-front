@@ -40,18 +40,22 @@ export default function SubscriptionLandingPage() {
       whatIsTitle: 'What is FaloClaro',
       whatIsSubtitle: 'Two parts. One idea.',
       courseTitle: 'The Course',
-      courseDesc: '60 short lessons',
-      courseDesc2: '1-2 lessons per day',
-      courseDesc3: '10-20 minutes a day',
+      courseItems: [
+        '60 short lessons.',
+        '5 tasks per lesson.',
+        '15–20 minutes a day.',
+      ],
+      courseDescription: 'This is the structured path: you move from simple phrases to real situations, step by step.',
       courseButton: 'Start',
       trainerTitle: 'The Trainer',
-      trainerDesc: 'Phrase-repetition space',
-      trainerDesc2: 'Choose a topic',
-      trainerDesc3: 'Choose words or sentences',
-      trainerDesc4: 'Listen and repeat',
+      trainerIntro: 'A phrase-repetition space:',
+      trainerItems: [
+        'Choose a topic',
+        'Choose words or sentences',
+        'Listen and repeat.',
+      ],
+      trainerDescription: 'This is where the language becomes automatic.',
       trainerButton: 'Start',
-      trainerNote: 'The trainer is open and free',
-      courseNote: 'The course gives you direction',
       
       whyWorksTitle: 'Why it works',
       whyWorksSubtitle: 'We don\'t teach rules. We build reflexes.',
@@ -117,18 +121,22 @@ export default function SubscriptionLandingPage() {
       whatIsTitle: 'O que é FaloClaro',
       whatIsSubtitle: 'Duas partes. Uma ideia.',
       courseTitle: 'O Curso',
-      courseDesc: '60 lições curtas',
-      courseDesc2: '1-2 lições por dia',
-      courseDesc3: '10-20 minutos por dia',
+      courseItems: [
+        '60 lições curtas.',
+        '5 tarefas por lição.',
+        '15–20 minutos por dia.',
+      ],
+      courseDescription: 'Este é o caminho estruturado: moves-te de frases simples para situações reais, passo a passo.',
       courseButton: 'Começar',
       trainerTitle: 'O Treinador',
-      trainerDesc: 'Espaço de repetição de frases',
-      trainerDesc2: 'Escolhe um tópico',
-      trainerDesc3: 'Escolhe palavras ou frases',
-      trainerDesc4: 'Ouve e repete',
+      trainerIntro: 'Um espaço de repetição de frases:',
+      trainerItems: [
+        'Escolhe um tópico',
+        'Escolhe palavras ou frases',
+        'Ouve e repete.',
+      ],
+      trainerDescription: 'É aqui que a língua se torna automática.',
       trainerButton: 'Começar',
-      trainerNote: 'O treinador está aberto e grátis',
-      courseNote: 'O curso dá-te direção',
       
       whyWorksTitle: 'Por que funciona',
       whyWorksSubtitle: 'Não ensinamos regras. Construímos reflexos.',
@@ -194,18 +202,22 @@ export default function SubscriptionLandingPage() {
       whatIsTitle: 'Что такое FaloClaro',
       whatIsSubtitle: 'Две части. Одна идея.',
       courseTitle: 'Курс',
-      courseDesc: '60 коротких уроков',
-      courseDesc2: '1-2 урока в день',
-      courseDesc3: '10-20 минут в день',
+      courseItems: [
+        '60 коротких уроков.',
+        '5 заданий в уроке.',
+        '15–20 минут в день.',
+      ],
+      courseDescription: 'Это структурированный путь: ты переходишь от простых фраз к реальным ситуациям, шаг за шагом.',
       courseButton: 'Начать',
       trainerTitle: 'Тренажер',
-      trainerDesc: 'Пространство для повторения фраз',
-      trainerDesc2: 'Выбери тему',
-      trainerDesc3: 'Выбери слова или предложения',
-      trainerDesc4: 'Слушай и повторяй',
+      trainerIntro: 'Пространство для повторения фраз:',
+      trainerItems: [
+        'Выбери тему',
+        'Выбери слова или предложения',
+        'Слушай и повторяй.',
+      ],
+      trainerDescription: 'Здесь язык становится автоматическим.',
       trainerButton: 'Начать',
-      trainerNote: 'Тренажер открыт и бесплатен',
-      courseNote: 'Курс дает направление',
       
       whyWorksTitle: 'Почему это работает',
       whyWorksSubtitle: 'Мы не учим правилам. Мы строим рефлексы.',
@@ -513,58 +525,92 @@ export default function SubscriptionLandingPage() {
         <div style={{ width: '868px' }}>
           <h2 style={{ 
             fontFamily: 'var(--font-orelega)', 
-            fontSize: '36px', 
+            fontSize: '40px', 
             fontWeight: 400, 
             color: '#3A2E1F', 
             marginBottom: '12px',
-            textAlign: 'center'
+            textAlign: 'left'
           }}>
             {t.whatIsTitle}
           </h2>
           <p style={{ 
             fontFamily: 'var(--font-tiktok)', 
-            fontSize: '20px', 
+            fontSize: '24px', 
             fontWeight: 500, 
             color: '#3A2E1F', 
             marginBottom: '40px',
-            textAlign: 'center'
+            textAlign: 'left'
           }}>
             {t.whatIsSubtitle}
           </p>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '30px' }}>
-            {/* The Course */}
-            <div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', marginBottom: '30px' }}>
+            {/* The Course - White Card */}
+            <div style={{
+              width: '404px',
+              height: '320px',
+              backgroundColor: '#fff',
+              borderRadius: '16px',
+              padding: '24px',
+              display: 'flex',
+              flexDirection: 'column'
+            }}>
               <h3 style={{ 
                 fontFamily: 'var(--font-tiktok)', 
-                fontSize: '18px', 
-                fontWeight: 700, 
+                fontSize: '20px', 
+                fontWeight: 600, 
                 color: '#3A2E1F', 
-                marginBottom: '12px'
+                marginBottom: '16px',
+                textAlign: 'left'
               }}>
                 {t.courseTitle}
               </h3>
-              <p style={{ fontFamily: 'var(--font-tiktok)', fontSize: '14px', fontWeight: 400, color: '#3A2E1F', marginBottom: '8px' }}>
-                {t.courseDesc}
-              </p>
-              <p style={{ fontFamily: 'var(--font-tiktok)', fontSize: '14px', fontWeight: 400, color: '#3A2E1F', marginBottom: '8px' }}>
-                {t.courseDesc2}
-              </p>
-              <p style={{ fontFamily: 'var(--font-tiktok)', fontSize: '14px', fontWeight: 400, color: '#3A2E1F', marginBottom: '16px' }}>
-                {t.courseDesc3}
-              </p>
+              
+              <ul style={{ 
+                listStyle: 'none', 
+                padding: 0, 
+                margin: 0, 
+                marginBottom: '16px',
+                textAlign: 'left'
+              }}>
+                {t.courseItems.map((item, index) => (
+                  <li key={index} style={{ 
+                    fontFamily: 'var(--font-tiktok)', 
+                    fontSize: '14px', 
+                    fontWeight: 400, 
+                    color: '#3A2E1F', 
+                    marginBottom: '8px',
+                    textAlign: 'left'
+                  }}>
+                    → {item}
+                  </li>
+                ))}
+              </ul>
+
               <Image
-                src="/Img/Website/Phone.svg"
+                src="/Img/Website/Phone-1.svg"
                 alt="Course"
-                width={150}
-                height={300}
-                style={{ width: '100%', height: 'auto', marginBottom: '12px' }}
+                width={200}
+                height={120}
+                style={{ width: '100%', height: 'auto', marginBottom: '12px', objectFit: 'contain' }}
               />
+
+              <p style={{ 
+                fontFamily: 'var(--font-tiktok)', 
+                fontSize: '10px', 
+                fontWeight: 400, 
+                color: '#3A2E1F',
+                marginBottom: '12px',
+                textAlign: 'left'
+              }}>
+                {t.courseDescription}
+              </p>
+
               <button
                 onClick={() => router.push('/pt/course')}
                 style={{
-                  width: '100%',
-                  padding: '10px',
+                  width: '116px',
+                  height: '40px',
                   borderRadius: '8px',
                   border: 'none',
                   backgroundColor: '#45C240',
@@ -573,47 +619,90 @@ export default function SubscriptionLandingPage() {
                   fontSize: '14px',
                   fontWeight: 700,
                   cursor: 'pointer',
+                  marginTop: 'auto'
                 }}
               >
                 {t.courseButton}
               </button>
             </div>
 
-            {/* The Trainer */}
-            <div>
+            {/* The Trainer - White Card */}
+            <div style={{
+              width: '404px',
+              height: '320px',
+              backgroundColor: '#fff',
+              borderRadius: '16px',
+              padding: '24px',
+              display: 'flex',
+              flexDirection: 'column'
+            }}>
               <h3 style={{ 
                 fontFamily: 'var(--font-tiktok)', 
-                fontSize: '18px', 
-                fontWeight: 700, 
+                fontSize: '20px', 
+                fontWeight: 600, 
                 color: '#3A2E1F', 
-                marginBottom: '12px'
+                marginBottom: '16px',
+                textAlign: 'left'
               }}>
                 {t.trainerTitle}
               </h3>
-              <p style={{ fontFamily: 'var(--font-tiktok)', fontSize: '14px', fontWeight: 400, color: '#3A2E1F', marginBottom: '8px' }}>
-                {t.trainerDesc}
+              
+              <p style={{ 
+                fontFamily: 'var(--font-tiktok)', 
+                fontSize: '14px', 
+                fontWeight: 400, 
+                color: '#3A2E1F',
+                marginBottom: '12px',
+                textAlign: 'left'
+              }}>
+                {t.trainerIntro}
               </p>
-              <p style={{ fontFamily: 'var(--font-tiktok)', fontSize: '14px', fontWeight: 400, color: '#3A2E1F', marginBottom: '8px' }}>
-                {t.trainerDesc2}
-              </p>
-              <p style={{ fontFamily: 'var(--font-tiktok)', fontSize: '14px', fontWeight: 400, color: '#3A2E1F', marginBottom: '8px' }}>
-                {t.trainerDesc3}
-              </p>
-              <p style={{ fontFamily: 'var(--font-tiktok)', fontSize: '14px', fontWeight: 400, color: '#3A2E1F', marginBottom: '16px' }}>
-                {t.trainerDesc4}
-              </p>
+
+              <ul style={{ 
+                listStyle: 'none', 
+                padding: 0, 
+                margin: 0, 
+                marginBottom: '16px',
+                textAlign: 'left'
+              }}>
+                {t.trainerItems.map((item, index) => (
+                  <li key={index} style={{ 
+                    fontFamily: 'var(--font-tiktok)', 
+                    fontSize: '14px', 
+                    fontWeight: 400, 
+                    color: '#3A2E1F', 
+                    marginBottom: '8px',
+                    textAlign: 'left'
+                  }}>
+                    → {item}
+                  </li>
+                ))}
+              </ul>
+
               <Image
-                src="/Img/Website/Phone-1.svg"
+                src="/Img/Website/Phone.svg"
                 alt="Trainer"
-                width={150}
-                height={300}
-                style={{ width: '100%', height: 'auto', marginBottom: '12px' }}
+                width={200}
+                height={120}
+                style={{ width: '100%', height: 'auto', marginBottom: '12px', objectFit: 'contain' }}
               />
+
+              <p style={{ 
+                fontFamily: 'var(--font-tiktok)', 
+                fontSize: '10px', 
+                fontWeight: 400, 
+                color: '#3A2E1F',
+                marginBottom: '12px',
+                textAlign: 'left'
+              }}>
+                {t.trainerDescription}
+              </p>
+
               <button
                 onClick={() => router.push('/player')}
                 style={{
-                  width: '100%',
-                  padding: '10px',
+                  width: '116px',
+                  height: '40px',
                   borderRadius: '8px',
                   border: 'none',
                   backgroundColor: '#3B82F6',
@@ -622,38 +711,11 @@ export default function SubscriptionLandingPage() {
                   fontSize: '14px',
                   fontWeight: 700,
                   cursor: 'pointer',
+                  marginTop: 'auto'
                 }}
               >
                 {t.trainerButton}
               </button>
-            </div>
-          </div>
-
-          {/* Connecting Notes */}
-          <div style={{ position: 'relative', height: '60px', marginTop: '20px' }}>
-            <div style={{ position: 'absolute', left: '10%', top: '50%', transform: 'translateY(-50%)' }}>
-              <p style={{ 
-                fontFamily: 'var(--font-tiktok)', 
-                fontSize: '12px', 
-                fontWeight: 500, 
-                color: '#3A2E1F',
-                writingMode: 'vertical-rl',
-                textOrientation: 'mixed'
-              }}>
-                {t.trainerNote}
-              </p>
-            </div>
-            <div style={{ position: 'absolute', right: '10%', top: '50%', transform: 'translateY(-50%)' }}>
-              <p style={{ 
-                fontFamily: 'var(--font-tiktok)', 
-                fontSize: '12px', 
-                fontWeight: 500, 
-                color: '#3A2E1F',
-                writingMode: 'vertical-rl',
-                textOrientation: 'mixed'
-              }}>
-                {t.courseNote}
-              </p>
             </div>
           </div>
         </div>
