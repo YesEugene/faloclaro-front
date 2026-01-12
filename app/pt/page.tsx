@@ -393,7 +393,10 @@ export default function SubscriptionLandingPage() {
               fontSize: '16px', 
               fontWeight: 700, 
               color: '#3A2E1F', 
+              marginTop: '54px',
               marginBottom: '0',
+              paddingLeft: '0px',
+              paddingRight: '0px',
               lineHeight: '1.2',
               textAlign: 'center'
             }}>
@@ -458,9 +461,9 @@ export default function SubscriptionLandingPage() {
               style={{
                 position: 'absolute',
                 right: '5px', // 5px from the end of black container
-                top: '5px', // Centered vertically (50px container - 40px button) / 2 = 5px
+                top: '2px', // Centered vertically (50px container - 46px button) / 2 = 2px
                 width: '74px',
-                height: '40px',
+                height: '46px',
                 borderRadius: '5px',
                 border: 'none',
                 backgroundColor: '#FFF944',
