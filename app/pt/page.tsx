@@ -536,7 +536,7 @@ export default function SubscriptionLandingPage() {
             fontSize: isMobile ? '32px' : '40px', 
             fontWeight: 400, 
             color: '#3A2E1F', 
-            marginBottom: '12px',
+            marginBottom: '0px',
             textAlign: isMobile ? 'center' : 'left',
             paddingLeft: isMobile ? '10px' : '30px',
             paddingRight: isMobile ? '10px' : '30px'
