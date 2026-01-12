@@ -26,3 +26,4 @@ DELETE FROM lessons;
 -- before running this migration.
 
 
+

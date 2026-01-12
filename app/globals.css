@@ -1,8 +1,42 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: 'Orelega One';
+  src: url('/fonts/Orelega_One/OrelegaOne-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'TikTok Sans';
+  src: url('/fonts/TikTok_Sans/TikTokSans-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'TikTok Sans';
+  src: url('/fonts/TikTok_Sans/TikTokSans-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'TikTok Sans';
+  src: url('/fonts/TikTok_Sans/TikTokSans-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --font-orelega: 'Orelega One', serif;
+  --font-tiktok: 'TikTok Sans', sans-serif;
 }
 
 @theme inline {

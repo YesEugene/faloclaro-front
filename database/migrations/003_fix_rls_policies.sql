@@ -19,3 +19,4 @@ CREATE POLICY "Service role full access to audio_files" ON audio_files
   FOR ALL USING (auth.role() = 'service_role');
 
 
+

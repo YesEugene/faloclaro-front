@@ -152,3 +152,4 @@ WHERE portuguese_text = 'Não.';
 
 
 
+
