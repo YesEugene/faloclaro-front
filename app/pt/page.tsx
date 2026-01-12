@@ -380,14 +380,14 @@ export default function SubscriptionLandingPage() {
           {/* Hero Title */}
           <h1 style={{ 
             fontFamily: 'var(--font-orelega)', 
-            fontSize: isMobile ? '32px' : '48px', 
+            fontSize: isMobile ? '60px' : '48px', 
             fontWeight: 400, 
             color: '#3A2E1F', 
-            marginTop: isMobile ? '0px' : '51px',
+            marginTop: isMobile ? '13px' : '51px',
             marginBottom: isMobile ? '12px' : '16px',
             paddingTop: '0px',
             paddingBottom: '0px',
-            lineHeight: '1.2',
+            lineHeight: isMobile ? '0.9' : '1.2',
             textAlign: 'center'
           }}>
             {t.heroTitle}
