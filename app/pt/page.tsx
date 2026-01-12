@@ -380,7 +380,10 @@ export default function SubscriptionLandingPage() {
             fontSize: isMobile ? '32px' : '48px', 
             fontWeight: 400, 
             color: '#3A2E1F', 
+            marginTop: isMobile ? '0px' : '51px',
             marginBottom: isMobile ? '12px' : '16px',
+            paddingTop: '0px',
+            paddingBottom: '0px',
             lineHeight: '1.2',
             textAlign: 'center'
           }}>
@@ -522,7 +525,15 @@ export default function SubscriptionLandingPage() {
       </section>
 
       {/* What is FaloClaro - Light Pink #FFE3E3 */}
-      <section style={{ backgroundColor: '#fff', padding: isMobile ? '10px' : '60px 20px', display: 'flex', justifyContent: 'center' }}>
+      <section style={{ 
+        backgroundColor: '#fff', 
+        padding: isMobile ? '10px' : '10px 20px', 
+        display: 'flex', 
+        justifyContent: 'center',
+        marginTop: '0px',
+        marginBottom: '0px',
+        overflow: 'hidden'
+      }}>
         {/* Pink Card - 868px width with rounded corners */}
         <div style={{ 
           width: isMobile ? '100%' : '868px',
