@@ -399,7 +399,10 @@ export default function SubscriptionLandingPage() {
             fontSize: isMobile ? '18px' : '24px', 
             fontWeight: 500, 
             color: '#3A2E1F', 
-            marginBottom: isMobile ? '16px' : '20px',
+            marginTop: '0px',
+            marginBottom: isMobile ? '72px' : '20px',
+            paddingLeft: '0px',
+            paddingRight: '0px',
             lineHeight: '1.4',
             textAlign: 'center'
           }}>
@@ -409,11 +412,14 @@ export default function SubscriptionLandingPage() {
           {/* Hero Description - Regular weight, 16px */}
           <p style={{ 
             fontFamily: 'var(--font-tiktok)', 
-            fontSize: isMobile ? '14px' : '16px', 
+            fontSize: isMobile ? '28px' : '16px', 
             fontWeight: 400, 
             color: '#3A2E1F', 
-            marginBottom: isMobile ? '20px' : '24px',
-            lineHeight: '1.5',
+            marginTop: '0px',
+            marginBottom: isMobile ? '72px' : '24px',
+            paddingLeft: '0px',
+            paddingRight: '0px',
+            lineHeight: isMobile ? '1.2' : '1.5',
             textAlign: 'center'
           }}>
             {t.heroDescription}
@@ -458,14 +464,15 @@ export default function SubscriptionLandingPage() {
             <div style={{ 
               width: isMobile ? '100%' : '327px',
               maxWidth: isMobile ? '100%' : '327px',
-              height: '62px', // Updated to 62px
+              height: '62px',
               backgroundColor: '#000',
               borderRadius: '10px',
-              padding: '0 8px',
+              padding: isMobile ? '8px' : '0 8px',
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
-              position: 'relative'
+              position: 'relative',
+              marginBottom: '0px'
             }}>
               <input
                 type="email"
