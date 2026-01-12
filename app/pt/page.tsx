@@ -324,11 +324,14 @@ export default function SubscriptionLandingPage() {
     <div className="min-h-screen bg-white" style={{ fontFamily: 'var(--font-tiktok)' }}>
       {/* Hero Section - Light Green #BDF6BB */}
       <section style={{ 
-        padding: isMobile ? '10px' : '40px 20px', 
+        padding: isMobile ? '10px' : '10px 20px', 
         display: 'flex', 
         flexDirection: 'column',
         alignItems: 'center',
-        backgroundColor: '#fff'
+        backgroundColor: '#fff',
+        marginTop: '0px',
+        marginBottom: '0px',
+        overflow: 'hidden'
       }}>
         {/* Header with Logo and Language Selector - ABOVE the card */}
         <div style={{ 
