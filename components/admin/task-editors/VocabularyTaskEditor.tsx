@@ -154,7 +154,6 @@ export default function VocabularyTaskEditor({ task, onChange, lessonDay }: Voca
         });
         return newState;
       });
-    }
   };
 
   const handleGenerateAudio = async (index: number) => {
@@ -283,12 +282,12 @@ export default function VocabularyTaskEditor({ task, onChange, lessonDay }: Voca
                         </span>
                         {card.word_translation_ru && (
                           <span className="text-sm text-gray-600">
-                            — {card.word_translation_ru}
+                            - {card.word_translation_ru}
                           </span>
                         )}
                         {card.word_translation_en && (
                           <span className="text-sm text-gray-600">
-                            — {card.word_translation_en}
+                            - {card.word_translation_en}
                           </span>
                         )}
                       </div>
