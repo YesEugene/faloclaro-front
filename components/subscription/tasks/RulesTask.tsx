@@ -285,7 +285,16 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
   // Handle speak out loud completion
   const handleSpeakOutLoudComplete = () => {
     setSpeakOutLoudCompleted(true);
-    // Don't auto-complete - let user click "All tasks completed" button explicitly
+    // If this is the last task and all blocks are completed, auto-complete
+    if (isLastTask) {
+      const blocksStructure = getBlocksStructure();
+      const allBlocksCompleted = checkAllBlocksCompleted(blocksStructure);
+      if (allBlocksCompleted) {
+        // Auto-complete last task when "I said it out loud" is clicked
+        handleFinalComplete();
+      }
+    }
+    // For non-last tasks, don't auto-complete - let user click "All tasks completed" button explicitly
   };
   
   // Handle replay - reset all progress
@@ -758,8 +767,8 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
         })}
       </div>
 
-      {/* Final Completion Button - Only show if all blocks are completed */}
-      {allCompleted && !localIsCompleted && (
+      {/* Final Completion Button - Only show if all blocks are completed and NOT last task */}
+      {allCompleted && !localIsCompleted && !isLastTask && (
         <div className="mt-8">
           <button
             onClick={handleFinalComplete}
@@ -811,9 +820,9 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
       </div>
 
       {/* Navigation Panel - Fixed at bottom */}
-      <div className="fixed bottom-0 left-0 right-0 bg-black z-30" style={{ borderRadius: '0px', height: '59px', marginBottom: '0px', opacity: 1, color: 'rgba(255, 255, 255, 1)' }}>
-        <div className="max-w-md mx-auto pt-3 pb-3" style={{ paddingBottom: 'env(safe-area-inset-bottom, 12px)', height: '59px', color: 'rgba(255, 255, 255, 1)', paddingLeft: '16px', paddingRight: '16px' }}>
-          <div className="flex items-center justify-between gap-4">
+      <div className="fixed bottom-0 left-0 right-0 bg-black z-30" style={{ borderRadius: '0px', height: '59px', marginBottom: '0px', opacity: 1, color: 'rgba(255, 255, 255, 1)', overflow: 'visible' }}>
+        <div className="max-w-md mx-auto pt-3 pb-3" style={{ paddingBottom: 'env(safe-area-inset-bottom, 12px)', height: '59px', color: 'rgba(255, 255, 255, 1)', paddingLeft: '16px', paddingRight: '16px', overflow: 'visible' }}>
+          <div className="flex items-center justify-between gap-4" style={{ position: 'relative' }}>
             {/* Previous Task Button - Always green when available */}
             {canGoPrevious && onPreviousTask ? (
               <button
@@ -887,8 +896,8 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                   </button>
                   {showTooltip && (
                     <div
-                      className="absolute bottom-full right-0 mb-2 px-3 py-2 bg-black text-white text-xs rounded-lg whitespace-nowrap z-50"
-                      style={{ maxWidth: '200px' }}
+                      className="absolute bottom-full right-0 mb-2 px-3 py-2 bg-black text-white text-xs rounded-lg whitespace-nowrap"
+                      style={{ maxWidth: '200px', zIndex: 9999 }}
                     >
                       {appLanguage === 'ru' 
                         ? 'Чтобы перейти к следующему заданию, выполните текущее задание'
@@ -928,8 +937,8 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                   </button>
                   {showTooltip && (
                     <div
-                      className="absolute bottom-full right-0 mb-2 px-3 py-2 bg-black text-white text-xs rounded-lg whitespace-nowrap z-50"
-                      style={{ maxWidth: '200px' }}
+                      className="absolute bottom-full right-0 mb-2 px-3 py-2 bg-black text-white text-xs rounded-lg whitespace-nowrap"
+                      style={{ maxWidth: '200px', zIndex: 9999 }}
                     >
                       {appLanguage === 'ru' 
                         ? `Выполните задание, чтобы перейти к уроку ${dayNumber ? dayNumber + 1 : 2}`
