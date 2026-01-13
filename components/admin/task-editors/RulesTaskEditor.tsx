@@ -245,17 +245,10 @@ export default function RulesTaskEditor({ task, onChange, lessonDay }: RulesTask
     const newExample = {
       text: '',
       audio: true,
-      pause_after_audio_sec: 1.5,
+      pause_after_audio_sec: 1.5, // Default value, not editable
     };
     const newExamples = [...examples, newExample];
     handleUpdateBlock(blockIndex, 'examples', newExamples);
-    // Auto-expand the new example
-    const newExpandedExamples = { ...expandedExamples };
-    if (!newExpandedExamples[blockIndex]) {
-      newExpandedExamples[blockIndex] = new Set();
-    }
-    newExpandedExamples[blockIndex].add(newExamples.length - 1);
-    setExpandedExamples(newExpandedExamples);
   };
 
   const handleUpdateExample = (blockIndex: number, exampleIndex: number, field: string, value: any) => {
@@ -472,16 +465,10 @@ export default function RulesTaskEditor({ task, onChange, lessonDay }: RulesTask
               <span className="font-semibold text-gray-900">
                 {typeof title === 'string' 
                   ? title 
-                  : (title.ru || title.en || 'Без названия')}
+                  : (title.ru && title.en 
+                    ? `${title.ru} — ${title.en}`
+                    : (title.ru || title.en || 'Без названия'))}
               </span>
-              {title.ru && title.en && (
-                <>
-                  <span className="text-sm text-gray-400">—</span>
-                  <span className="text-sm text-gray-600">
-                    {title.ru} — {title.en}
-                  </span>
-                </>
-              )}
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -569,200 +556,124 @@ export default function RulesTaskEditor({ task, onChange, lessonDay }: RulesTask
 
             {/* Examples Section */}
             <div>
-              <div className="flex justify-between items-center mb-2">
-                <h3 className="text-sm font-semibold text-gray-900">Примеры ({examples.length})</h3>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleAddExample(index);
-                  }}
-                  className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
-                >
-                  + Добавить пример
-                </button>
-              </div>
+              <h3 className="text-sm font-semibold text-gray-900 mb-2">Примеры ({examples.length})</h3>
               <div className="space-y-2">
                 {examples.map((example: any, exampleIndex: number) => {
-                  const isExampleExpanded = expandedExamples[index]?.has(exampleIndex) || false;
                   const key = `${index}_${exampleIndex}`;
                   const hasAudio = audioUrls[key] || example?.audio_url;
 
                   return (
                     <div
                       key={exampleIndex}
-                      className="border border-gray-300 rounded-lg overflow-hidden bg-white"
+                      className="flex items-center gap-2"
                     >
-                      {/* Example Collapsed Header */}
-                      <div
-                        onClick={() => {
-                          const newExpanded = { ...expandedExamples };
-                          if (!newExpanded[index]) {
-                            newExpanded[index] = new Set();
-                          }
-                          if (newExpanded[index].has(exampleIndex)) {
-                            newExpanded[index].delete(exampleIndex);
-                          } else {
-                            newExpanded[index].add(exampleIndex);
-                          }
-                          setExpandedExamples(newExpanded);
+                      <input
+                        type="text"
+                        value={example.text || ''}
+                        onChange={(e) => handleUpdateExample(index, exampleIndex, 'text', e.target.value)}
+                        placeholder="Текст примера (PT) *"
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg"
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleGenerateAudio(index, exampleIndex);
                         }}
-                        className="flex items-center justify-between p-3 cursor-pointer hover:bg-gray-50"
+                        disabled={generatingAudio[key] || !example.text?.trim()}
+                        className="px-2 py-2 text-xs text-green-600 hover:text-green-800 font-medium disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                        title="Сгенерировать аудио"
                       >
-                        <div className="flex items-center gap-2 flex-1">
-                          <span className="text-xs text-gray-500">#{exampleIndex + 1}</span>
-                          <span className="text-sm font-medium text-gray-900">
-                            {example.text || 'Без текста'}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          {hasAudio && (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handlePlayAudio(index, exampleIndex);
-                              }}
-                              disabled={isPlayingAudio[key]}
-                              className="w-6 h-6 flex items-center justify-center text-blue-600 hover:text-blue-800 disabled:opacity-50"
-                              title="Воспроизвести аудио"
-                            >
-                              {isPlayingAudio[key] ? '⏸️' : '▶️'}
-                            </button>
-                          )}
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleGenerateAudio(index, exampleIndex);
-                            }}
-                            disabled={generatingAudio[key] || !example.text?.trim()}
-                            className="px-2 py-1 text-xs text-green-600 hover:text-green-800 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                            title="Сгенерировать аудио"
-                          >
-                            {generatingAudio[key] ? '⏳' : 'Генерировать аудио'}
-                          </button>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDeleteExample(index, exampleIndex);
-                            }}
-                            className="w-6 h-6 flex items-center justify-center text-red-600 hover:text-red-800"
-                            title="Удалить"
-                          >
-                            🗑️
-                          </button>
-                        </div>
-                      </div>
-
-                      {/* Example Expanded Content */}
-                      {isExampleExpanded && (
-                        <div className="border-t border-gray-200 bg-gray-50 p-3 space-y-2">
-                          <input
-                            type="text"
-                            value={example.text || ''}
-                            onChange={(e) => handleUpdateExample(index, exampleIndex, 'text', e.target.value)}
-                            placeholder="Текст примера (PT) *"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                            onClick={(e) => e.stopPropagation()}
-                          />
-                          <input
-                            type="number"
-                            step="0.1"
-                            value={example.pause_after_audio_sec || 1.5}
-                            onChange={(e) => handleUpdateExample(index, exampleIndex, 'pause_after_audio_sec', parseFloat(e.target.value) || 1.5)}
-                            placeholder="Пауза после аудио (секунды)"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                            onClick={(e) => e.stopPropagation()}
-                          />
-                        </div>
+                        {generatingAudio[key] ? '⏳' : 'Генерировать аудио'}
+                      </button>
+                      {hasAudio && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handlePlayAudio(index, exampleIndex);
+                          }}
+                          disabled={isPlayingAudio[key]}
+                          className="w-8 h-8 flex items-center justify-center text-blue-600 hover:text-blue-800 disabled:opacity-50 border border-gray-300 rounded"
+                          title="Воспроизвести аудио"
+                        >
+                          {isPlayingAudio[key] ? '⏸️' : '▶️'}
+                        </button>
                       )}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteExample(index, exampleIndex);
+                        }}
+                        className="w-8 h-8 flex items-center justify-center text-red-600 hover:text-red-800 border border-gray-300 rounded"
+                        title="Удалить"
+                      >
+                        🗑️
+                      </button>
                     </div>
                   );
                 })}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleAddExample(index);
+                  }}
+                  className="text-blue-600 hover:text-blue-800 font-bold text-sm"
+                >
+                  + Добавить пример
+                </button>
               </div>
             </div>
 
             {/* Hints Section */}
             <div>
-              <div className="flex justify-between items-center mb-2">
-                <h3 className="text-sm font-semibold text-gray-900">Подсказки ({hints.length})</h3>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleAddHint(index);
-                  }}
-                  className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
-                >
-                  + Добавить подсказку
-                </button>
-              </div>
+              <h3 className="text-sm font-semibold text-gray-900 mb-2">Подсказки ({hints.length})</h3>
               <div className="space-y-2">
                 {hints.map((hint: any, hintIndex: number) => {
-                  const isHintExpanded = expandedHints[index]?.has(hintIndex) || false;
-
                   return (
                     <div
                       key={hintIndex}
-                      className="border border-gray-300 rounded-lg overflow-hidden bg-white"
+                      className="grid grid-cols-2 gap-2"
                     >
-                      {/* Hint Collapsed Header */}
-                      <div
-                        onClick={() => {
-                          const newExpanded = { ...expandedHints };
-                          if (!newExpanded[index]) {
-                            newExpanded[index] = new Set();
-                          }
-                          if (newExpanded[index].has(hintIndex)) {
-                            newExpanded[index].delete(hintIndex);
-                          } else {
-                            newExpanded[index].add(hintIndex);
-                          }
-                          setExpandedHints(newExpanded);
-                        }}
-                        className="flex items-center justify-between p-3 cursor-pointer hover:bg-gray-50"
-                      >
-                        <div className="flex items-center gap-2 flex-1">
-                          <span className="text-xs text-gray-500">#{hintIndex + 1}</span>
-                          <span className="text-sm font-medium text-gray-900">
-                            {typeof hint === 'string' ? hint : (hint.ru || 'Без текста')}
-                          </span>
-                        </div>
+                      <input
+                        type="text"
+                        value={typeof hint === 'string' ? hint : (hint.ru || '')}
+                        onChange={(e) => handleUpdateHint(index, hintIndex, 'ru', e.target.value)}
+                        placeholder="Подсказка (RU) *"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="text"
+                          value={typeof hint === 'string' ? '' : (hint.en || '')}
+                          onChange={(e) => handleUpdateHint(index, hintIndex, 'en', e.target.value)}
+                          placeholder="Подсказка (EN)"
+                          className="flex-1 px-3 py-2 border border-gray-300 rounded-lg"
+                          onClick={(e) => e.stopPropagation()}
+                        />
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
                             handleDeleteHint(index, hintIndex);
                           }}
-                          className="w-6 h-6 flex items-center justify-center text-red-600 hover:text-red-800"
+                          className="w-8 h-8 flex items-center justify-center text-red-600 hover:text-red-800 border border-gray-300 rounded"
                           title="Удалить"
                         >
                           🗑️
                         </button>
                       </div>
-
-                      {/* Hint Expanded Content */}
-                      {isHintExpanded && (
-                        <div className="border-t border-gray-200 bg-gray-50 p-3 space-y-2">
-                          <div className="grid grid-cols-2 gap-2">
-                            <input
-                              type="text"
-                              value={typeof hint === 'string' ? hint : (hint.ru || '')}
-                              onChange={(e) => handleUpdateHint(index, hintIndex, 'ru', e.target.value)}
-                              placeholder="Подсказка (RU) *"
-                              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                              onClick={(e) => e.stopPropagation()}
-                            />
-                            <input
-                              type="text"
-                              value={typeof hint === 'string' ? '' : (hint.en || '')}
-                              onChange={(e) => handleUpdateHint(index, hintIndex, 'en', e.target.value)}
-                              placeholder="Подсказка (EN)"
-                              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                              onClick={(e) => e.stopPropagation()}
-                            />
-                          </div>
-                        </div>
-                      )}
                     </div>
                   );
                 })}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleAddHint(index);
+                  }}
+                  className="text-blue-600 hover:text-blue-800 font-bold text-sm"
+                >
+                  + Добавить подсказку
+                </button>
               </div>
             </div>
           </div>
