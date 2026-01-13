@@ -80,27 +80,25 @@ export default function ComparisonBlockEditor({ block, onChange, lessonDay }: Co
   };
 
   const handleDeleteCard = (index: number) => {
-    if (confirm('Вы уверены, что хотите удалить эту карточку?')) {
-      const newCards = comparisonCards.filter((_, i) => i !== index);
-      setComparisonCards(newCards);
-      updateBlock({ comparison_card: newCards });
-      // Clean up audio state
-      setGeneratingAudio(prev => {
-        const newState = { ...prev };
-        delete newState[index];
-        return newState;
-      });
-      setIsPlayingAudio(prev => {
-        const newState = { ...prev };
-        delete newState[index];
-        return newState;
-      });
-      setAudioUrls(prev => {
-        const newState = { ...prev };
-        delete newState[index];
-        return newState;
-      });
-    }
+    const newCards = comparisonCards.filter((_, i) => i !== index);
+    setComparisonCards(newCards);
+    updateBlock({ comparison_card: newCards });
+    // Clean up audio state
+    setGeneratingAudio(prev => {
+      const newState = { ...prev };
+      delete newState[index];
+      return newState;
+    });
+    setIsPlayingAudio(prev => {
+      const newState = { ...prev };
+      delete newState[index];
+      return newState;
+    });
+    setAudioUrls(prev => {
+      const newState = { ...prev };
+      delete newState[index];
+      return newState;
+    });
   };
 
   // Check for existing audio URLs when cards change

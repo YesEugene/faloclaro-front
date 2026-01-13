@@ -95,18 +95,14 @@ export default function ReinforcementBlockEditor({ block, onChange, lessonDay }:
   };
 
   const handleDeleteTask1 = () => {
-    if (confirm('Вы уверены, что хотите удалить задание 1?')) {
-      setTask1(null);
-      updateBlock({ task_1: null });
-    }
+    setTask1(null);
+    updateBlock({ task_1: null });
   };
 
   const handleDeleteTask2 = () => {
-    if (confirm('Вы уверены, что хотите удалить задание 2?')) {
-      setTask2(null);
-      updateBlock({ task_2: null });
-      setAudioUrls(prev => ({ ...prev, task2: null }));
-    }
+    setTask2(null);
+    updateBlock({ task_2: null });
+    setAudioUrls(prev => ({ ...prev, task2: null }));
   };
 
   const handleGenerateAudio = async (taskNumber: 1 | 2) => {
@@ -448,10 +444,8 @@ function ReinforcementTaskEditor({ task, taskNumber, lessonDay, onSave, onCancel
   };
 
   const handleDeleteOption = (index: number) => {
-    if (confirm('Вы уверены, что хотите удалить этот вариант ответа?')) {
-      const newOptions = options.filter((_, i) => i !== index);
-      setOptions(newOptions);
-    }
+    const newOptions = options.filter((_, i) => i !== index);
+    setOptions(newOptions);
   };
 
   const handleMoveOptionUp = (index: number) => {
