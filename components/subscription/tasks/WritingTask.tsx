@@ -396,37 +396,6 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
         </button>
       )}
 
-      {/* Progress Bar - Above navigation panel */}
-      <div className="fixed left-0 right-0 z-30 flex justify-center" style={{ bottom: '59px', height: '28px', margin: 0, padding: 0 }}>
-        <div className="w-full max-w-md relative" style={{ height: '100%', margin: 0, padding: 0 }}>
-          {/* Progress Bar - Full height with green and gray sections */}
-          <div className="absolute inset-0 flex">
-            {/* Green section (completed) */}
-            <div
-              className="transition-all duration-300"
-              style={{ 
-                width: `${(progressCompleted / progressTotal) * 100}%`,
-                backgroundColor: '#B2FDB0'
-              }}
-            />
-            {/* Gray section (remaining) */}
-            <div
-              className="flex-1"
-              style={{ 
-                backgroundColor: '#F4F5F9'
-              }}
-            />
-          </div>
-          
-          {/* Progress Text - Overlay on top of progress bar */}
-          <div className="relative flex justify-between items-center h-full px-4" style={{ fontSize: '15px', color: 'rgba(23, 23, 23, 1)', zIndex: 1 }}>
-            <span>
-              {getProgressMessage(progressCompleted, progressTotal)}
-            </span>
-            <span>{Math.round((progressCompleted / progressTotal) * 100)}%</span>
-          </div>
-        </div>
-      </div>
 
       {/* Navigation Panel - Fixed at bottom (Cross-task navigation) */}
       <div className="fixed bottom-0 left-0 right-0 bg-black z-30" style={{ borderRadius: '0px', borderTopLeftRadius: '0px', borderTopRightRadius: '0px', borderBottomRightRadius: '0px', borderBottomLeftRadius: '0px', height: '59px', verticalAlign: 'bottom', marginBottom: '0px', opacity: 1, color: 'rgba(255, 255, 255, 1)' }}>
