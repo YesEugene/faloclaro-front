@@ -1378,10 +1378,48 @@ export default function RulesTaskEditor({ task, onChange, lessonDay }: RulesTask
   const renderSpeakOutLoudBlock = (block: any, index: number) => {
     const isExpanded = expandedBlocks.has(index);
     const content = block.content || {};
-    const instructionText = content.instruction_text || { ru: '', en: '' };
-    const actionButton = content.action_button || {
-      text: { ru: '✔ Я сказал(а) вслух', en: '✔ I said it out loud' },
-      completes_task: true,
+    const template = content.template || [];
+    const example = content.example || { show_by_button: true, button_text: { ru: 'Показать пример', en: 'Show example' }, content: [] };
+    const alternative = content.alternative || {
+      title: { ru: 'Напиши, как ты это запомнил или скажи вслух (опционально)', en: 'Write how you remembered it or say it aloud (optional)' },
+      instruction: { ru: '', en: '' },
+      action_button: { text: { ru: 'Я сказал это', en: 'I said it' }, completes_task: true },
+    };
+
+    const handleAddTemplate = () => {
+      const newTemplate = [...template, ''];
+      handleUpdateBlock(index, 'template', newTemplate);
+    };
+
+    const handleUpdateTemplate = (templateIndex: number, value: string) => {
+      const newTemplate = [...template];
+      newTemplate[templateIndex] = value;
+      handleUpdateBlock(index, 'template', newTemplate);
+    };
+
+    const handleDeleteTemplate = (templateIndex: number) => {
+      if (confirm('Вы уверены, что хотите удалить эту форму?')) {
+        const newTemplate = template.filter((_: any, i: number) => i !== templateIndex);
+        handleUpdateBlock(index, 'template', newTemplate);
+      }
+    };
+
+    const handleAddExampleContent = () => {
+      const newContent = [...(example.content || []), ''];
+      handleUpdateBlock(index, 'example', { ...example, content: newContent });
+    };
+
+    const handleUpdateExampleContent = (contentIndex: number, value: string) => {
+      const newContent = [...(example.content || [])];
+      newContent[contentIndex] = value;
+      handleUpdateBlock(index, 'example', { ...example, content: newContent });
+    };
+
+    const handleDeleteExampleContent = (contentIndex: number) => {
+      if (confirm('Вы уверены, что хотите удалить эту строку примера?')) {
+        const newContent = (example.content || []).filter((_: any, i: number) => i !== contentIndex);
+        handleUpdateBlock(index, 'example', { ...example, content: newContent });
+      }
     };
 
     return (
@@ -1435,55 +1473,184 @@ export default function RulesTaskEditor({ task, onChange, lessonDay }: RulesTask
         {/* Expanded Content */}
         {isExpanded && (
           <div className="border-t border-gray-200 bg-gray-50 p-4 space-y-4">
-            {/* Instruction Text */}
+            {/* Info: Title and subtitle are automatic */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+              <p className="text-sm text-blue-800">
+                <strong>Заголовок:</strong> "Практикуемся (пишем или говорим вслух)" (автоматически)
+              </p>
+              <p className="text-sm text-blue-800 mt-1">
+                <strong>Подзаголовок:</strong> "Используй слова и фразы из сегодняшнего урока." (автоматически)
+              </p>
+            </div>
+
+            {/* Template Forms */}
             <div>
-              <h3 className="text-sm font-semibold text-gray-900 mb-2">Инструкция</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <textarea
-                  value={typeof instructionText === 'string' ? instructionText : (instructionText.ru || '')}
-                  onChange={(e) => handleUpdateBlock(index, 'instruction_text', { ...instructionText, ru: e.target.value })}
-                  placeholder="Инструкция (RU) *"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg h-32"
-                  onClick={(e) => e.stopPropagation()}
-                />
-                <textarea
-                  value={typeof instructionText === 'string' ? '' : (instructionText.en || '')}
-                  onChange={(e) => handleUpdateBlock(index, 'instruction_text', { ...instructionText, en: e.target.value })}
-                  placeholder="Инструкция (EN) *"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg h-32"
-                  onClick={(e) => e.stopPropagation()}
-                />
+              <h3 className="text-sm font-semibold text-gray-900 mb-2">Варианты фраз (Template)</h3>
+              <div className="space-y-2">
+                {template.map((form: string, formIndex: number) => (
+                  <div key={formIndex} className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      value={form}
+                      onChange={(e) => handleUpdateTemplate(formIndex, e.target.value)}
+                      placeholder="Форма: Eu acordo ___."
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg"
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleDeleteTemplate(formIndex); }}
+                      className="w-8 h-8 flex items-center justify-center text-red-600 hover:text-red-800 border border-gray-300 rounded"
+                      title="Удалить форму"
+                    >
+                      🗑️
+                    </button>
+                  </div>
+                ))}
+                <button
+                  onClick={(e) => { e.stopPropagation(); handleAddTemplate(); }}
+                  className="text-blue-600 hover:text-blue-800 font-bold text-sm"
+                >
+                  + Добавить форму
+                </button>
               </div>
             </div>
 
-            {/* Action Button */}
+            {/* Alternative Section */}
             <div>
-              <h3 className="text-sm font-semibold text-gray-900 mb-2">Кнопка действия</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <input
-                  type="text"
-                  value={typeof actionButton?.text === 'string' ? actionButton?.text : (actionButton?.text?.ru || '')}
-                  onChange={(e) => handleUpdateBlock(index, 'action_button', {
-                    ...actionButton,
-                    text: { ...actionButton?.text, ru: e.target.value },
-                    completes_task: true,
-                  })}
-                  placeholder="Текст кнопки (RU) *"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                  onClick={(e) => e.stopPropagation()}
-                />
-                <input
-                  type="text"
-                  value={typeof actionButton?.text === 'string' ? '' : (actionButton?.text?.en || '')}
-                  onChange={(e) => handleUpdateBlock(index, 'action_button', {
-                    ...actionButton,
-                    text: { ...actionButton?.text, en: e.target.value },
-                    completes_task: true,
-                  })}
-                  placeholder="Текст кнопки (EN) *"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                  onClick={(e) => e.stopPropagation()}
-                />
+              <h3 className="text-sm font-semibold text-gray-900 mb-2">
+                Напиши, как ты это запомнил или скажи вслух (опционально)
+              </h3>
+              <div className="space-y-3">
+                {/* Alternative Instruction */}
+                <div>
+                  <label className="block text-xs text-gray-600 mb-1">Инструкция (опционально)</label>
+                  <div className="grid grid-cols-2 gap-4">
+                    <textarea
+                      value={typeof alternative.instruction === 'string' ? '' : (alternative.instruction?.ru || '')}
+                      onChange={(e) => handleUpdateBlock(index, 'alternative', {
+                        ...alternative,
+                        instruction: { ...alternative.instruction, ru: e.target.value },
+                      })}
+                      placeholder="Инструкция (RU)"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg h-20"
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                    <textarea
+                      value={typeof alternative.instruction === 'string' ? '' : (alternative.instruction?.en || '')}
+                      onChange={(e) => handleUpdateBlock(index, 'alternative', {
+                        ...alternative,
+                        instruction: { ...alternative.instruction, en: e.target.value },
+                      })}
+                      placeholder="Инструкция (EN)"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg h-20"
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  </div>
+                </div>
+
+                {/* Action Button */}
+                <div>
+                  <label className="block text-xs text-gray-600 mb-1">Кнопка действия</label>
+                  <div className="grid grid-cols-2 gap-4">
+                    <input
+                      type="text"
+                      value={typeof alternative.action_button?.text === 'string' ? '' : (alternative.action_button?.text?.ru || '')}
+                      onChange={(e) => handleUpdateBlock(index, 'alternative', {
+                        ...alternative,
+                        action_button: {
+                          ...alternative.action_button,
+                          text: { ...alternative.action_button?.text, ru: e.target.value },
+                          completes_task: true,
+                        },
+                      })}
+                      placeholder="Текст кнопки (RU) *"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                    <input
+                      type="text"
+                      value={typeof alternative.action_button?.text === 'string' ? '' : (alternative.action_button?.text?.en || '')}
+                      onChange={(e) => handleUpdateBlock(index, 'alternative', {
+                        ...alternative,
+                        action_button: {
+                          ...alternative.action_button,
+                          text: { ...alternative.action_button?.text, en: e.target.value },
+                          completes_task: true,
+                        },
+                      })}
+                      placeholder="Текст кнопки (EN) *"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Example Section */}
+            <div>
+              <h3 className="text-sm font-semibold text-gray-900 mb-2">Подсказка: Показать пример</h3>
+              <div className="space-y-3">
+                {/* Example Button Text */}
+                <div>
+                  <label className="block text-xs text-gray-600 mb-1">Текст кнопки подсказки</label>
+                  <div className="grid grid-cols-2 gap-4">
+                    <input
+                      type="text"
+                      value={typeof example.button_text === 'string' ? '' : (example.button_text?.ru || '')}
+                      onChange={(e) => handleUpdateBlock(index, 'example', {
+                        ...example,
+                        button_text: { ...example.button_text, ru: e.target.value },
+                      })}
+                      placeholder="Текст кнопки (RU) *"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                    <input
+                      type="text"
+                      value={typeof example.button_text === 'string' ? '' : (example.button_text?.en || '')}
+                      onChange={(e) => handleUpdateBlock(index, 'example', {
+                        ...example,
+                        button_text: { ...example.button_text, en: e.target.value },
+                      })}
+                      placeholder="Текст кнопки (EN) *"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  </div>
+                </div>
+
+                {/* Example Content */}
+                <div>
+                  <label className="block text-xs text-gray-600 mb-1">Содержимое примера</label>
+                  <div className="space-y-2">
+                    {(example.content || []).map((line: string, contentIndex: number) => (
+                      <div key={contentIndex} className="flex items-center gap-2">
+                        <input
+                          type="text"
+                          value={line}
+                          onChange={(e) => handleUpdateExampleContent(contentIndex, e.target.value)}
+                          placeholder="Строка примера"
+                          className="flex-1 px-3 py-2 border border-gray-300 rounded-lg"
+                          onClick={(e) => e.stopPropagation()}
+                        />
+                        <button
+                          onClick={(e) => { e.stopPropagation(); handleDeleteExampleContent(contentIndex); }}
+                          className="w-8 h-8 flex items-center justify-center text-red-600 hover:text-red-800 border border-gray-300 rounded"
+                          title="Удалить строку"
+                        >
+                          🗑️
+                        </button>
+                      </div>
+                    ))}
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleAddExampleContent(); }}
+                      className="text-blue-600 hover:text-blue-800 font-bold text-sm"
+                    >
+                      + Добавить строку примера
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
