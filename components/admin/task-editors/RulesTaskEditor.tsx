@@ -461,8 +461,9 @@ export default function RulesTaskEditor({ task, onChange, lessonDay }: RulesTask
         >
           <div className="flex items-center gap-3 flex-1">
             <span className="text-sm font-medium text-gray-500">#{index + 1}</span>
-            <div className="flex items-center gap-2 flex-1">
-              <span className="font-semibold text-gray-900">
+            <div className="flex flex-col gap-1 flex-1">
+              <span className="font-bold text-gray-900">Даем примеры (текст + аудио + подсказки)</span>
+              <span className="text-sm text-gray-600">
                 {typeof title === 'string' 
                   ? title 
                   : (title.ru && title.en 
@@ -682,15 +683,525 @@ export default function RulesTaskEditor({ task, onChange, lessonDay }: RulesTask
     );
   };
 
-  // For non-explanation blocks, use modal editor
+  // Render Comparison Block
+  const renderComparisonBlock = (block: any, index: number) => {
+    const isExpanded = expandedBlocks.has(index);
+    const content = block.content || {};
+    const title = content.title || { ru: '', en: '' };
+    const comparisonCards = content.comparison_card || [];
+    const note = content.note || { ru: '', en: '' };
+
+    const handleUpdateCard = (cardIndex: number, field: string, value: any) => {
+      const newCards = [...comparisonCards];
+      newCards[cardIndex] = { ...newCards[cardIndex], [field]: value };
+      handleUpdateBlock(index, 'comparison_card', newCards);
+    };
+
+    const handleAddCard = () => {
+      const newCards = [...comparisonCards, { text: '', audio: true }];
+      handleUpdateBlock(index, 'comparison_card', newCards);
+    };
+
+    const handleDeleteCard = (cardIndex: number) => {
+      if (confirm('Вы уверены, что хотите удалить эту карточку?')) {
+        const newCards = comparisonCards.filter((_: any, i: number) => i !== cardIndex);
+        handleUpdateBlock(index, 'comparison_card', newCards);
+      }
+    };
+
+    const handleGenerateAudio = async (cardIndex: number) => {
+      const card = comparisonCards[cardIndex];
+      if (!card || !card.text || !card.text.trim()) {
+        alert('Пожалуйста, сначала добавьте текст карточки');
+        return;
+      }
+
+      const key = `comparison_${index}_${cardIndex}`;
+      setGeneratingAudio(prev => ({ ...prev, [key]: true }));
+
+      try {
+        const response = await fetch('/api/admin/audio/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            text: card.text.trim(),
+            lessonId: lessonDay.toString(),
+            taskId: task.task_id,
+            blockId: block.block_id,
+            itemId: `card_${cardIndex}_${Date.now()}`,
+          }),
+        });
+
+        const data = await response.json();
+        if (data.success && data.audioUrl) {
+          handleUpdateCard(cardIndex, 'audio_url', data.audioUrl);
+          setAudioUrls(prev => ({ ...prev, [key]: data.audioUrl }));
+        } else {
+          alert('Ошибка при генерации аудио: ' + (data.error || 'Unknown error'));
+        }
+      } catch (error) {
+        console.error('Error generating audio:', error);
+        alert('Ошибка при генерации аудио');
+      } finally {
+        setGeneratingAudio(prev => ({ ...prev, [key]: false }));
+      }
+    };
+
+    const handlePlayAudio = (cardIndex: number) => {
+      const card = comparisonCards[cardIndex];
+      const key = `comparison_${index}_${cardIndex}`;
+      const audioUrl = audioUrls[key] || card?.audio_url;
+      if (!audioUrl) return;
+
+      setIsPlayingAudio(prev => ({ ...prev, [key]: true }));
+      const audio = new Audio(audioUrl);
+      audio.play().catch(err => {
+        console.error('Error playing audio:', err);
+        setIsPlayingAudio(prev => ({ ...prev, [key]: false }));
+      });
+      audio.onended = () => setIsPlayingAudio(prev => ({ ...prev, [key]: false }));
+      audio.onerror = () => setIsPlayingAudio(prev => ({ ...prev, [key]: false }));
+    };
+
+    return (
+      <div
+        key={block.block_id || `block_${index}`}
+        className="border border-gray-200 rounded-lg overflow-hidden hover:border-gray-300 transition-colors"
+      >
+        {/* Collapsed Header */}
+        <div
+          onClick={() => handleToggleBlock(index)}
+          className="flex items-center justify-between p-4 cursor-pointer bg-white hover:bg-gray-50"
+        >
+          <div className="flex items-center gap-3 flex-1">
+            <span className="text-sm font-medium text-gray-500">#{index + 1}</span>
+            <div className="flex flex-col gap-1 flex-1">
+              <span className="font-bold text-gray-900">Сравниваем варианты</span>
+              <span className="text-sm text-gray-600">
+                {typeof title === 'string' 
+                  ? title 
+                  : (title.ru && title.en 
+                    ? `${title.ru} — ${title.en}`
+                    : (title.ru || title.en || 'Без названия')))}
+              </span>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1">
+              {index > 0 && (
+                <button
+                  onClick={(e) => { e.stopPropagation(); handleMoveBlock(index, 'up'); }}
+                  className="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-gray-900"
+                  title="Переместить вверх"
+                >
+                  ↑
+                </button>
+              )}
+              {index < blocks.length - 1 && (
+                <button
+                  onClick={(e) => { e.stopPropagation(); handleMoveBlock(index, 'down'); }}
+                  className="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-gray-900"
+                  title="Переместить вниз"
+                >
+                  ↓
+                </button>
+              )}
+            </div>
+            <button
+              onClick={(e) => { e.stopPropagation(); handleDeleteBlock(index); }}
+              className="w-8 h-8 flex items-center justify-center text-red-600 hover:text-red-800"
+              title="Удалить"
+            >
+              🗑️
+            </button>
+          </div>
+        </div>
+
+        {/* Expanded Content */}
+        {isExpanded && (
+          <div className="border-t border-gray-200 bg-gray-50 p-4 space-y-4">
+            {/* Block Title */}
+            <div className="grid grid-cols-2 gap-4">
+              <input
+                type="text"
+                value={typeof title === 'string' ? title : (title.ru || '')}
+                onChange={(e) => handleUpdateBlock(index, 'title', { ...title, ru: e.target.value })}
+                placeholder="Название блока (RU) *"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                onClick={(e) => e.stopPropagation()}
+              />
+              <input
+                type="text"
+                value={typeof title === 'string' ? '' : (title.en || '')}
+                onChange={(e) => handleUpdateBlock(index, 'title', { ...title, en: e.target.value })}
+                placeholder="Название блока (EN) *"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                onClick={(e) => e.stopPropagation()}
+              />
+            </div>
+
+            {/* Comparison Cards */}
+            <div>
+              <h3 className="text-sm font-semibold text-gray-900 mb-2">Карточки для сравнения ({comparisonCards.length})</h3>
+              <div className="space-y-2">
+                {comparisonCards.map((card: any, cardIndex: number) => {
+                  const key = `comparison_${index}_${cardIndex}`;
+                  const hasAudio = audioUrls[key] || card?.audio_url;
+                  return (
+                    <div key={cardIndex} className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={card.text || ''}
+                        onChange={(e) => handleUpdateCard(cardIndex, 'text', e.target.value)}
+                        placeholder="Текст карточки (PT) *"
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg"
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleGenerateAudio(cardIndex); }}
+                        disabled={generatingAudio[key] || !card.text?.trim()}
+                        className="px-2 py-2 text-xs text-green-600 hover:text-green-800 font-medium disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                        title="Сгенерировать аудио"
+                      >
+                        {generatingAudio[key] ? '⏳' : 'Генерировать аудио'}
+                      </button>
+                      {hasAudio && (
+                        <button
+                          onClick={(e) => { e.stopPropagation(); handlePlayAudio(cardIndex); }}
+                          disabled={isPlayingAudio[key]}
+                          className="w-8 h-8 flex items-center justify-center text-blue-600 hover:text-blue-800 disabled:opacity-50 border border-gray-300 rounded"
+                          title="Воспроизвести аудио"
+                        >
+                          {isPlayingAudio[key] ? '⏸️' : '▶️'}
+                        </button>
+                      )}
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleDeleteCard(cardIndex); }}
+                        className="w-8 h-8 flex items-center justify-center text-red-600 hover:text-red-800 border border-gray-300 rounded"
+                        title="Удалить"
+                      >
+                        🗑️
+                      </button>
+                    </div>
+                  );
+                })}
+                <button
+                  onClick={(e) => { e.stopPropagation(); handleAddCard(); }}
+                  className="text-blue-600 hover:text-blue-800 font-bold text-sm"
+                >
+                  + Добавить карточку
+                </button>
+              </div>
+            </div>
+
+            {/* Note */}
+            <div>
+              <h3 className="text-sm font-semibold text-gray-900 mb-2">Примечание</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <textarea
+                  value={typeof note === 'string' ? note : (note.ru || '')}
+                  onChange={(e) => handleUpdateBlock(index, 'note', { ...note, ru: e.target.value })}
+                  placeholder="Примечание (RU)"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg h-24"
+                  onClick={(e) => e.stopPropagation()}
+                />
+                <textarea
+                  value={typeof note === 'string' ? '' : (note.en || '')}
+                  onChange={(e) => handleUpdateBlock(index, 'note', { ...note, en: e.target.value })}
+                  placeholder="Примечание (EN)"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg h-24"
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  // Render Reinforcement Block
+  const renderReinforcementBlock = (block: any, index: number) => {
+    const isExpanded = expandedBlocks.has(index);
+    const content = block.content || {};
+    const task1 = content.task_1 || null;
+    const task2 = content.task_2 || null;
+
+    const handleUpdateTask = (taskNumber: 1 | 2, task: any) => {
+      if (taskNumber === 1) {
+        handleUpdateBlock(index, 'task_1', task);
+      } else {
+        handleUpdateBlock(index, 'task_2', task);
+      }
+    };
+
+    const handleDeleteTask = (taskNumber: 1 | 2) => {
+      if (confirm(`Вы уверены, что хотите удалить задание ${taskNumber}?`)) {
+        handleUpdateTask(taskNumber, null);
+      }
+    };
+
+    return (
+      <div
+        key={block.block_id || `block_${index}`}
+        className="border border-gray-200 rounded-lg overflow-hidden hover:border-gray-300 transition-colors"
+      >
+        {/* Collapsed Header */}
+        <div
+          onClick={() => handleToggleBlock(index)}
+          className="flex items-center justify-between p-4 cursor-pointer bg-white hover:bg-gray-50"
+        >
+          <div className="flex items-center gap-3 flex-1">
+            <span className="text-sm font-medium text-gray-500">#{index + 1}</span>
+            <div className="flex flex-col gap-1 flex-1">
+              <span className="font-bold text-gray-900">Проверка знаний</span>
+              <span className="text-sm text-gray-600">
+                {task1 || task2 ? `${task1 ? 'Задание 1' : ''}${task1 && task2 ? ', ' : ''}${task2 ? 'Задание 2' : ''}` : 'Без заданий'}
+              </span>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1">
+              {index > 0 && (
+                <button
+                  onClick={(e) => { e.stopPropagation(); handleMoveBlock(index, 'up'); }}
+                  className="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-gray-900"
+                  title="Переместить вверх"
+                >
+                  ↑
+                </button>
+              )}
+              {index < blocks.length - 1 && (
+                <button
+                  onClick={(e) => { e.stopPropagation(); handleMoveBlock(index, 'down'); }}
+                  className="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-gray-900"
+                  title="Переместить вниз"
+                >
+                  ↓
+                </button>
+              )}
+            </div>
+            <button
+              onClick={(e) => { e.stopPropagation(); handleDeleteBlock(index); }}
+              className="w-8 h-8 flex items-center justify-center text-red-600 hover:text-red-800"
+              title="Удалить"
+            >
+              🗑️
+            </button>
+          </div>
+        </div>
+
+        {/* Expanded Content */}
+        {isExpanded && (
+          <div className="border-t border-gray-200 bg-gray-50 p-4 space-y-4">
+            <p className="text-sm text-gray-600 mb-4">
+              Добавьте формы с проигрыванием и вариантами ответа. Можно добавить до 2 заданий.
+            </p>
+
+            {/* Task 1 */}
+            <div>
+              <div className="flex justify-between items-center mb-2">
+                <h3 className="text-sm font-semibold text-gray-900">Задание 1</h3>
+                {task1 && (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); handleDeleteTask(1); }}
+                    className="text-red-600 hover:text-red-800 text-sm font-medium"
+                  >
+                    Удалить
+                  </button>
+                )}
+              </div>
+              {task1 ? (
+                <div className="border border-gray-300 rounded-lg p-3 bg-white">
+                  <p className="text-sm text-gray-700 mb-1">
+                    Формат: {task1.format === 'single_choice' ? 'Одиночный выбор' : 'Ситуация к фразе'}
+                  </p>
+                  {task1.audio && <p className="text-xs text-gray-600">Аудио: {task1.audio}</p>}
+                  {task1.question && (
+                    <p className="text-xs text-gray-600">
+                      Вопрос: {typeof task1.question === 'string' ? task1.question : (task1.question.ru || task1.question.en || '')}
+                    </p>
+                  )}
+                  {task1.options && <p className="text-xs text-gray-600">Вариантов: {task1.options.length}</p>}
+                </div>
+              ) : (
+                <button
+                  onClick={(e) => { e.stopPropagation(); setEditingBlockIndex(index); }}
+                  className="text-blue-600 hover:text-blue-800 font-bold text-sm"
+                >
+                  + Добавить задание 1
+                </button>
+              )}
+            </div>
+
+            {/* Task 2 */}
+            <div>
+              <div className="flex justify-between items-center mb-2">
+                <h3 className="text-sm font-semibold text-gray-900">Задание 2</h3>
+                {task2 && (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); handleDeleteTask(2); }}
+                    className="text-red-600 hover:text-red-800 text-sm font-medium"
+                  >
+                    Удалить
+                  </button>
+                )}
+              </div>
+              {task2 ? (
+                <div className="border border-gray-300 rounded-lg p-3 bg-white">
+                  <p className="text-sm text-gray-700 mb-1">
+                    Формат: {task2.format === 'single_choice' ? 'Одиночный выбор' : 'Ситуация к фразе'}
+                  </p>
+                  {task2.audio && <p className="text-xs text-gray-600">Аудио: {task2.audio}</p>}
+                  {task2.question && (
+                    <p className="text-xs text-gray-600">
+                      Вопрос: {typeof task2.question === 'string' ? task2.question : (task2.question.ru || task2.question.en || '')}
+                    </p>
+                  )}
+                  {task2.options && <p className="text-xs text-gray-600">Вариантов: {task2.options.length}</p>}
+                </div>
+              ) : (
+                <button
+                  onClick={(e) => { e.stopPropagation(); setEditingBlockIndex(index); }}
+                  className="text-blue-600 hover:text-blue-800 font-bold text-sm"
+                >
+                  + Добавить задание 2
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  // Render Speak Out Loud Block
+  const renderSpeakOutLoudBlock = (block: any, index: number) => {
+    const isExpanded = expandedBlocks.has(index);
+    const content = block.content || {};
+    const instructionText = content.instruction_text || { ru: '', en: '' };
+    const actionButton = content.action_button || {
+      text: { ru: '✔ Я сказал(а) вслух', en: '✔ I said it out loud' },
+      completes_task: true,
+    };
+
+    return (
+      <div
+        key={block.block_id || `block_${index}`}
+        className="border border-gray-200 rounded-lg overflow-hidden hover:border-gray-300 transition-colors"
+      >
+        {/* Collapsed Header */}
+        <div
+          onClick={() => handleToggleBlock(index)}
+          className="flex items-center justify-between p-4 cursor-pointer bg-white hover:bg-gray-50"
+        >
+          <div className="flex items-center gap-3 flex-1">
+            <span className="text-sm font-medium text-gray-500">#{index + 1}</span>
+            <div className="flex flex-col gap-1 flex-1">
+              <span className="font-bold text-gray-900">Практикуемся (пишем или говорим вслух)</span>
+              <span className="text-sm text-gray-600">Блок практики</span>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1">
+              {index > 0 && (
+                <button
+                  onClick={(e) => { e.stopPropagation(); handleMoveBlock(index, 'up'); }}
+                  className="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-gray-900"
+                  title="Переместить вверх"
+                >
+                  ↑
+                </button>
+              )}
+              {index < blocks.length - 1 && (
+                <button
+                  onClick={(e) => { e.stopPropagation(); handleMoveBlock(index, 'down'); }}
+                  className="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-gray-900"
+                  title="Переместить вниз"
+                >
+                  ↓
+                </button>
+              )}
+            </div>
+            <button
+              onClick={(e) => { e.stopPropagation(); handleDeleteBlock(index); }}
+              className="w-8 h-8 flex items-center justify-center text-red-600 hover:text-red-800"
+              title="Удалить"
+            >
+              🗑️
+            </button>
+          </div>
+        </div>
+
+        {/* Expanded Content */}
+        {isExpanded && (
+          <div className="border-t border-gray-200 bg-gray-50 p-4 space-y-4">
+            {/* Instruction Text */}
+            <div>
+              <h3 className="text-sm font-semibold text-gray-900 mb-2">Инструкция</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <textarea
+                  value={typeof instructionText === 'string' ? instructionText : (instructionText.ru || '')}
+                  onChange={(e) => handleUpdateBlock(index, 'instruction_text', { ...instructionText, ru: e.target.value })}
+                  placeholder="Инструкция (RU) *"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg h-32"
+                  onClick={(e) => e.stopPropagation()}
+                />
+                <textarea
+                  value={typeof instructionText === 'string' ? '' : (instructionText.en || '')}
+                  onChange={(e) => handleUpdateBlock(index, 'instruction_text', { ...instructionText, en: e.target.value })}
+                  placeholder="Инструкция (EN) *"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg h-32"
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </div>
+            </div>
+
+            {/* Action Button */}
+            <div>
+              <h3 className="text-sm font-semibold text-gray-900 mb-2">Кнопка действия</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <input
+                  type="text"
+                  value={typeof actionButton?.text === 'string' ? actionButton?.text : (actionButton?.text?.ru || '')}
+                  onChange={(e) => handleUpdateBlock(index, 'action_button', {
+                    ...actionButton,
+                    text: { ...actionButton?.text, ru: e.target.value },
+                    completes_task: true,
+                  })}
+                  placeholder="Текст кнопки (RU) *"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                  onClick={(e) => e.stopPropagation()}
+                />
+                <input
+                  type="text"
+                  value={typeof actionButton?.text === 'string' ? '' : (actionButton?.text?.en || '')}
+                  onChange={(e) => handleUpdateBlock(index, 'action_button', {
+                    ...actionButton,
+                    text: { ...actionButton?.text, en: e.target.value },
+                    completes_task: true,
+                  })}
+                  placeholder="Текст кнопки (EN) *"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  // For Reinforcement blocks, use modal editor for task editing
   if (editingBlockIndex !== null && editingBlockIndex >= 0 && editingBlockIndex < blocks.length) {
     const blockToEdit = blocks[editingBlockIndex];
     const blockType = typeof blockToEdit.block_type === 'string' 
       ? blockToEdit.block_type 
       : (typeof blockToEdit.type === 'string' ? blockToEdit.type : 'unknown');
     
-    // Only show modal for non-explanation blocks
-    if (blockType !== 'how_to_say' && blockType !== 'explanation') {
+    // Only show modal for Reinforcement blocks when editing tasks
+    if (blockType === 'reinforcement') {
       // Ensure block has required structure
       if (!blockToEdit || typeof blockToEdit !== 'object') {
         console.error('Invalid block structure:', blockToEdit);
@@ -762,72 +1273,24 @@ export default function RulesTaskEditor({ task, onChange, lessonDay }: RulesTask
                 ? block.block_type 
                 : (typeof block.type === 'string' ? block.type : 'unknown');
               
-              // Render explanation blocks inline
+              // Render blocks inline based on type
               if (blockType === 'how_to_say' || blockType === 'explanation') {
                 return renderExplanationBlock(block, index);
+              } else if (blockType === 'comparison') {
+                return renderComparisonBlock(block, index);
+              } else if (blockType === 'reinforcement') {
+                return renderReinforcementBlock(block, index);
+              } else if (blockType === 'speak_out_loud') {
+                return renderSpeakOutLoudBlock(block, index);
               }
 
-              // For other block types, show collapsed view with edit button
-              const blockTitle = (block.content && typeof block.content === 'object' && block.content.title)
-                ? block.content.title
-                : (block.title && typeof block.title === 'object' ? block.title : {});
-
+              // Fallback for unknown block types
               return (
                 <div
                   key={block.block_id || `block_${index}`}
-                  className="border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition-colors"
+                  className="border border-gray-200 rounded-lg p-4"
                 >
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <span className="text-sm font-medium text-gray-500">
-                          Блок {index + 1} / {blocks.length}
-                        </span>
-                        <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded text-sm">
-                          {blockType}
-                        </span>
-                      </div>
-                      <h3 className="font-semibold text-gray-900">
-                        {typeof blockTitle === 'string' 
-                          ? blockTitle 
-                          : (blockTitle && typeof blockTitle === 'object' 
-                            ? (blockTitle.ru || blockTitle.en || 'Без названия')
-                            : 'Без названия')}
-                      </h3>
-                    </div>
-                    <div className="flex gap-2">
-                      {index > 0 && (
-                        <button
-                          onClick={() => handleMoveBlock(index, 'up')}
-                          className="px-2 py-1 text-gray-600 hover:text-gray-900"
-                          title="Переместить вверх"
-                        >
-                          ↑
-                        </button>
-                      )}
-                      {index < blocks.length - 1 && (
-                        <button
-                          onClick={() => handleMoveBlock(index, 'down')}
-                          className="px-2 py-1 text-gray-600 hover:text-gray-900"
-                          title="Переместить вниз"
-                        >
-                          ↓
-                        </button>
-                      )}
-                      <button
-                        onClick={() => setEditingBlockIndex(index)}
-                        className="px-3 py-1 text-blue-600 hover:text-blue-800 text-sm font-medium"
-                      >
-                        Редактировать
-                      </button>
-                      <button
-                        onClick={() => handleDeleteBlock(index)}
-                        className="px-3 py-1 text-red-600 hover:text-red-800 text-sm font-medium"
-                      >
-                        Удалить
-                      </button>
-                    </div>
-                  </div>
+                  <p className="text-red-600">Неизвестный тип блока: {blockType}</p>
                 </div>
               );
             })}
