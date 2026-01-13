@@ -114,9 +114,8 @@ export default function VocabularyTaskEditor({ task, onChange, lessonDay }: Voca
   };
 
   const handleDeleteCard = (index: number) => {
-    if (confirm('Вы уверены, что хотите удалить это слово?')) {
-      const newCards = cards.filter((_, i) => i !== index);
-      updateTask(newCards);
+    const newCards = cards.filter((_, i) => i !== index);
+    updateTask(newCards);
       // Remove from expanded set
       const newExpanded = new Set(expandedCards);
       newExpanded.delete(index);

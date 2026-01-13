@@ -262,26 +262,24 @@ export default function RulesTaskEditor({ task, onChange, lessonDay }: RulesTask
   };
 
   const handleDeleteExample = (blockIndex: number, exampleIndex: number) => {
-    if (confirm('Вы уверены, что хотите удалить этот пример?')) {
-      const block = blocks[blockIndex];
-      const examples = (block.content?.examples || []).filter((_: any, i: number) => i !== exampleIndex);
-      handleUpdateBlock(blockIndex, 'examples', examples);
-      // Remove from expanded set
-      const newExpandedExamples = { ...expandedExamples };
-      if (newExpandedExamples[blockIndex]) {
-        newExpandedExamples[blockIndex].delete(exampleIndex);
-        // Adjust indices
-        const adjusted = new Set<number>();
-        newExpandedExamples[blockIndex].forEach(idx => {
-          if (idx > exampleIndex) {
-            adjusted.add(idx - 1);
-          } else {
-            adjusted.add(idx);
-          }
-        });
-        newExpandedExamples[blockIndex] = adjusted;
-        setExpandedExamples(newExpandedExamples);
-      }
+    const block = blocks[blockIndex];
+    const examples = (block.content?.examples || []).filter((_: any, i: number) => i !== exampleIndex);
+    handleUpdateBlock(blockIndex, 'examples', examples);
+    // Remove from expanded set
+    const newExpandedExamples = { ...expandedExamples };
+    if (newExpandedExamples[blockIndex]) {
+      newExpandedExamples[blockIndex].delete(exampleIndex);
+      // Adjust indices
+      const adjusted = new Set<number>();
+      newExpandedExamples[blockIndex].forEach(idx => {
+        if (idx > exampleIndex) {
+          adjusted.add(idx - 1);
+        } else {
+          adjusted.add(idx);
+        }
+      });
+      newExpandedExamples[blockIndex] = adjusted;
+      setExpandedExamples(newExpandedExamples);
     }
   };
 
@@ -311,26 +309,24 @@ export default function RulesTaskEditor({ task, onChange, lessonDay }: RulesTask
   };
 
   const handleDeleteHint = (blockIndex: number, hintIndex: number) => {
-    if (confirm('Вы уверены, что хотите удалить эту подсказку?')) {
-      const block = blocks[blockIndex];
-      const hints = (block.content?.hint || []).filter((_: any, i: number) => i !== hintIndex);
-      handleUpdateBlock(blockIndex, 'hint', hints);
-      // Remove from expanded set
-      const newExpandedHints = { ...expandedHints };
-      if (newExpandedHints[blockIndex]) {
-        newExpandedHints[blockIndex].delete(hintIndex);
-        // Adjust indices
-        const adjusted = new Set<number>();
-        newExpandedHints[blockIndex].forEach(idx => {
-          if (idx > hintIndex) {
-            adjusted.add(idx - 1);
-          } else {
-            adjusted.add(idx);
-          }
-        });
-        newExpandedHints[blockIndex] = adjusted;
-        setExpandedHints(newExpandedHints);
-      }
+    const block = blocks[blockIndex];
+    const hints = (block.content?.hint || []).filter((_: any, i: number) => i !== hintIndex);
+    handleUpdateBlock(blockIndex, 'hint', hints);
+    // Remove from expanded set
+    const newExpandedHints = { ...expandedHints };
+    if (newExpandedHints[blockIndex]) {
+      newExpandedHints[blockIndex].delete(hintIndex);
+      // Adjust indices
+      const adjusted = new Set<number>();
+      newExpandedHints[blockIndex].forEach(idx => {
+        if (idx > hintIndex) {
+          adjusted.add(idx - 1);
+        } else {
+          adjusted.add(idx);
+        }
+      });
+      newExpandedHints[blockIndex] = adjusted;
+      setExpandedHints(newExpandedHints);
     }
   };
 
@@ -703,10 +699,8 @@ export default function RulesTaskEditor({ task, onChange, lessonDay }: RulesTask
     };
 
     const handleDeleteCard = (cardIndex: number) => {
-      if (confirm('Вы уверены, что хотите удалить эту карточку?')) {
-        const newCards = comparisonCards.filter((_: any, i: number) => i !== cardIndex);
-        handleUpdateBlock(index, 'comparison_card', newCards);
-      }
+      const newCards = comparisonCards.filter((_: any, i: number) => i !== cardIndex);
+      handleUpdateBlock(index, 'comparison_card', newCards);
     };
 
     const handleGenerateAudio = async (cardIndex: number) => {
@@ -937,9 +931,7 @@ export default function RulesTaskEditor({ task, onChange, lessonDay }: RulesTask
     };
 
     const handleDeleteTask = (taskNumber: 1 | 2) => {
-      if (confirm(`Вы уверены, что хотите удалить задание ${taskNumber}?`)) {
-        handleUpdateTask(taskNumber, null);
-      }
+      handleUpdateTask(taskNumber, null);
     };
 
     const handleCreateTask = (taskNumber: 1 | 2) => {
@@ -1398,10 +1390,8 @@ export default function RulesTaskEditor({ task, onChange, lessonDay }: RulesTask
     };
 
     const handleDeleteTemplate = (templateIndex: number) => {
-      if (confirm('Вы уверены, что хотите удалить эту форму?')) {
-        const newTemplate = template.filter((_: any, i: number) => i !== templateIndex);
-        handleUpdateBlock(index, 'template', newTemplate);
-      }
+      const newTemplate = template.filter((_: any, i: number) => i !== templateIndex);
+      handleUpdateBlock(index, 'template', newTemplate);
     };
 
     const handleAddExampleContent = () => {
@@ -1416,10 +1406,8 @@ export default function RulesTaskEditor({ task, onChange, lessonDay }: RulesTask
     };
 
     const handleDeleteExampleContent = (contentIndex: number) => {
-      if (confirm('Вы уверены, что хотите удалить эту строку примера?')) {
-        const newContent = (example.content || []).filter((_: any, i: number) => i !== contentIndex);
-        handleUpdateBlock(index, 'example', { ...example, content: newContent });
-      }
+      const newContent = (example.content || []).filter((_: any, i: number) => i !== contentIndex);
+      handleUpdateBlock(index, 'example', { ...example, content: newContent });
     };
 
     return (
