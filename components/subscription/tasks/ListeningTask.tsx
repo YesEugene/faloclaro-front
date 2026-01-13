@@ -406,12 +406,12 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
         ))}
       </div>
 
-      {/* Final Completion Button - Floating above progress bar, only show if all items are answered */}
+      {/* Final Completion Button - Floating above navigation panel, only show if all items are answered */}
       {allAnswered && !localIsCompleted && (
         <div 
           className="fixed left-0 right-0 z-40 flex justify-center"
           style={{ 
-            bottom: '87px', // 59px (navigation) + 28px (progress bar)
+            bottom: '59px', // Above navigation panel
             paddingLeft: '16px',
             paddingRight: '16px',
           }}
@@ -439,33 +439,6 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
         </div>
       )}
 
-      {/* Progress Bar - Above navigation panel */}
-      <div className="fixed left-0 right-0 z-30 flex justify-center" style={{ bottom: '59px', height: '28px', margin: 0, padding: 0 }}>
-        <div className="w-full max-w-md relative" style={{ height: '100%', margin: 0, padding: 0 }}>
-          <div className="absolute inset-0 flex">
-            <div
-              className="transition-all duration-300"
-              style={{ 
-                width: `${(progressCompleted / progressTotal) * 100}%`,
-                backgroundColor: '#B2FDB0'
-              }}
-            />
-            <div
-              className="flex-1"
-              style={{ 
-                backgroundColor: '#F4F5F9'
-              }}
-            />
-          </div>
-          
-          <div className="relative flex justify-between items-center h-full px-4" style={{ fontSize: '15px', color: 'rgba(23, 23, 23, 1)', zIndex: 1 }}>
-            <span>
-              {getProgressMessage(progressCompleted, progressTotal)}
-            </span>
-            <span>{Math.round((progressCompleted / progressTotal) * 100)}%</span>
-          </div>
-        </div>
-      </div>
 
       {/* Navigation Panel - Fixed at bottom */}
       <div className="fixed bottom-0 left-0 right-0 bg-black z-30" style={{ borderRadius: '0px', height: '59px', marginBottom: '0px', opacity: 1, color: 'rgba(255, 255, 255, 1)' }}>

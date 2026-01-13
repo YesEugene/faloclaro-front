@@ -541,14 +541,27 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
             <div className="max-w-md mx-auto px-4 mb-[10px] flex gap-[10px]" style={{ paddingBottom: '10px', position: 'relative', zIndex: 20 }}>
               <button
                 onClick={() => router.push(`/pt/lesson/${lesson.day_number}/${token}/overview`)}
-                className="px-4 py-2 rounded-[10px] bg-white border-2 border-gray-300 text-black hover:bg-gray-50 transition-colors text-center"
+                className="relative rounded-[10px] border-2 border-black text-black hover:opacity-90 transition-opacity text-center overflow-hidden"
                 style={{ 
                   width: currentTask?.type === 'vocabulary' ? 'calc(50% - 5px)' : '100%',
                   fontSize: '13px',
-                  fontWeight: 500,
+                  fontWeight: 700,
+                  padding: '8px 16px',
                 }}
               >
-                <span>
+                {/* Progress background - green part */}
+                <div
+                  className="absolute inset-0 transition-all duration-300"
+                  style={{ 
+                    width: `${((userProgress.tasks_completed || 0) / (userProgress.total_tasks || 5)) * 100}%`,
+                    backgroundColor: '#B2FDB0',
+                    left: 0,
+                    top: 0,
+                    bottom: 0,
+                  }}
+                />
+                {/* Text content */}
+                <span className="relative z-10">
                   {appLanguage === 'ru' 
                     ? `← УРОК ${lesson.day_number}` 
                     : appLanguage === 'en' 
