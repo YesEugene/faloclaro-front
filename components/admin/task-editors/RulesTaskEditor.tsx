@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import BlockEditor from '@/components/admin/block-editors/BlockEditor';
 
 interface RulesTaskEditorProps {
@@ -72,6 +72,12 @@ export default function RulesTaskEditor({ task, onChange, lessonDay }: RulesTask
   const [blocks, setBlocks] = useState<any[]>(getBlocksArray());
   const [showBlockTemplates, setShowBlockTemplates] = useState(false);
   const [editingBlockIndex, setEditingBlockIndex] = useState<number | null>(null);
+  const [expandedBlocks, setExpandedBlocks] = useState<Set<number>>(new Set());
+  const [expandedExamples, setExpandedExamples] = useState<{ [blockIndex: number]: Set<number> }>({});
+  const [expandedHints, setExpandedHints] = useState<{ [blockIndex: number]: Set<number> }>({});
+  const [generatingAudio, setGeneratingAudio] = useState<{ [key: string]: boolean }>({});
+  const [isPlayingAudio, setIsPlayingAudio] = useState<{ [key: string]: boolean }>({});
+  const [audioUrls, setAudioUrls] = useState<{ [key: string]: string | null }>({});
 
   const updateTask = (newBlocks: any[]) => {
     setBlocks(newBlocks);
@@ -153,7 +159,13 @@ export default function RulesTaskEditor({ task, onChange, lessonDay }: RulesTask
 
     const newBlocks = [...blocks, newBlock];
     updateTask(newBlocks);
-    setEditingBlockIndex(newBlocks.length - 1);
+    // Auto-expand new explanation blocks
+    if (blockType === 'how_to_say' || blockType === 'explanation') {
+      setExpandedBlocks(new Set([...expandedBlocks, newBlocks.length - 1]));
+    } else {
+      // For other types, open in modal
+      setEditingBlockIndex(newBlocks.length - 1);
+    }
     setShowBlockTemplates(false);
   };
 
@@ -161,6 +173,19 @@ export default function RulesTaskEditor({ task, onChange, lessonDay }: RulesTask
     if (confirm('Вы уверены, что хотите удалить этот блок?')) {
       const newBlocks = blocks.filter((_, i) => i !== index);
       updateTask(newBlocks);
+      // Remove from expanded set
+      const newExpanded = new Set(expandedBlocks);
+      newExpanded.delete(index);
+      // Adjust indices for blocks after deleted one
+      const adjustedExpanded = new Set<number>();
+      newExpanded.forEach(idx => {
+        if (idx > index) {
+          adjustedExpanded.add(idx - 1);
+        } else {
+          adjustedExpanded.add(idx);
+        }
+      });
+      setExpandedBlocks(adjustedExpanded);
     }
   };
 
@@ -168,11 +193,252 @@ export default function RulesTaskEditor({ task, onChange, lessonDay }: RulesTask
     const newBlocks = [...blocks];
     if (direction === 'up' && index > 0) {
       [newBlocks[index - 1], newBlocks[index]] = [newBlocks[index], newBlocks[index - 1]];
+      // Update expanded set
+      const newExpanded = new Set(expandedBlocks);
+      const wasExpanded1 = newExpanded.has(index - 1);
+      const wasExpanded2 = newExpanded.has(index);
+      newExpanded.delete(index - 1);
+      newExpanded.delete(index);
+      if (wasExpanded1) newExpanded.add(index);
+      if (wasExpanded2) newExpanded.add(index - 1);
+      setExpandedBlocks(newExpanded);
     } else if (direction === 'down' && index < newBlocks.length - 1) {
       [newBlocks[index], newBlocks[index + 1]] = [newBlocks[index + 1], newBlocks[index]];
+      // Update expanded set
+      const newExpanded = new Set(expandedBlocks);
+      const wasExpanded1 = newExpanded.has(index);
+      const wasExpanded2 = newExpanded.has(index + 1);
+      newExpanded.delete(index);
+      newExpanded.delete(index + 1);
+      if (wasExpanded1) newExpanded.add(index + 1);
+      if (wasExpanded2) newExpanded.add(index);
+      setExpandedBlocks(newExpanded);
     }
     updateTask(newBlocks);
   };
+
+  const handleToggleBlock = (index: number) => {
+    const newExpanded = new Set(expandedBlocks);
+    if (newExpanded.has(index)) {
+      newExpanded.delete(index);
+    } else {
+      newExpanded.add(index);
+    }
+    setExpandedBlocks(newExpanded);
+  };
+
+  const handleUpdateBlock = (index: number, field: string, value: any) => {
+    const newBlocks = [...blocks];
+    newBlocks[index] = {
+      ...newBlocks[index],
+      content: {
+        ...newBlocks[index].content,
+        [field]: value,
+      },
+    };
+    updateTask(newBlocks);
+  };
+
+  const handleAddExample = (blockIndex: number) => {
+    const block = blocks[blockIndex];
+    const examples = block.content?.examples || [];
+    const newExample = {
+      text: '',
+      audio: true,
+      pause_after_audio_sec: 1.5,
+    };
+    const newExamples = [...examples, newExample];
+    handleUpdateBlock(blockIndex, 'examples', newExamples);
+    // Auto-expand the new example
+    const newExpandedExamples = { ...expandedExamples };
+    if (!newExpandedExamples[blockIndex]) {
+      newExpandedExamples[blockIndex] = new Set();
+    }
+    newExpandedExamples[blockIndex].add(newExamples.length - 1);
+    setExpandedExamples(newExpandedExamples);
+  };
+
+  const handleUpdateExample = (blockIndex: number, exampleIndex: number, field: string, value: any) => {
+    const block = blocks[blockIndex];
+    const examples = [...(block.content?.examples || [])];
+    examples[exampleIndex] = {
+      ...examples[exampleIndex],
+      [field]: value,
+    };
+    handleUpdateBlock(blockIndex, 'examples', examples);
+  };
+
+  const handleDeleteExample = (blockIndex: number, exampleIndex: number) => {
+    if (confirm('Вы уверены, что хотите удалить этот пример?')) {
+      const block = blocks[blockIndex];
+      const examples = (block.content?.examples || []).filter((_: any, i: number) => i !== exampleIndex);
+      handleUpdateBlock(blockIndex, 'examples', examples);
+      // Remove from expanded set
+      const newExpandedExamples = { ...expandedExamples };
+      if (newExpandedExamples[blockIndex]) {
+        newExpandedExamples[blockIndex].delete(exampleIndex);
+        // Adjust indices
+        const adjusted = new Set<number>();
+        newExpandedExamples[blockIndex].forEach(idx => {
+          if (idx > exampleIndex) {
+            adjusted.add(idx - 1);
+          } else {
+            adjusted.add(idx);
+          }
+        });
+        newExpandedExamples[blockIndex] = adjusted;
+        setExpandedExamples(newExpandedExamples);
+      }
+    }
+  };
+
+  const handleAddHint = (blockIndex: number) => {
+    const block = blocks[blockIndex];
+    const hints = block.content?.hint || [];
+    const newHint = { ru: '', en: '' };
+    const newHints = [...hints, newHint];
+    handleUpdateBlock(blockIndex, 'hint', newHints);
+    // Auto-expand the new hint
+    const newExpandedHints = { ...expandedHints };
+    if (!newExpandedHints[blockIndex]) {
+      newExpandedHints[blockIndex] = new Set();
+    }
+    newExpandedHints[blockIndex].add(newHints.length - 1);
+    setExpandedHints(newExpandedHints);
+  };
+
+  const handleUpdateHint = (blockIndex: number, hintIndex: number, field: string, value: string) => {
+    const block = blocks[blockIndex];
+    const hints = [...(block.content?.hint || [])];
+    hints[hintIndex] = {
+      ...hints[hintIndex],
+      [field]: value,
+    };
+    handleUpdateBlock(blockIndex, 'hint', hints);
+  };
+
+  const handleDeleteHint = (blockIndex: number, hintIndex: number) => {
+    if (confirm('Вы уверены, что хотите удалить эту подсказку?')) {
+      const block = blocks[blockIndex];
+      const hints = (block.content?.hint || []).filter((_: any, i: number) => i !== hintIndex);
+      handleUpdateBlock(blockIndex, 'hint', hints);
+      // Remove from expanded set
+      const newExpandedHints = { ...expandedHints };
+      if (newExpandedHints[blockIndex]) {
+        newExpandedHints[blockIndex].delete(hintIndex);
+        // Adjust indices
+        const adjusted = new Set<number>();
+        newExpandedHints[blockIndex].forEach(idx => {
+          if (idx > hintIndex) {
+            adjusted.add(idx - 1);
+          } else {
+            adjusted.add(idx);
+          }
+        });
+        newExpandedHints[blockIndex] = adjusted;
+        setExpandedHints(newExpandedHints);
+      }
+    }
+  };
+
+  const handleGenerateAudio = async (blockIndex: number, exampleIndex: number) => {
+    const block = blocks[blockIndex];
+    const examples = block.content?.examples || [];
+    const example = examples[exampleIndex];
+    if (!example || !example.text || !example.text.trim()) {
+      alert('Пожалуйста, сначала добавьте текст примера');
+      return;
+    }
+
+    const key = `${blockIndex}_${exampleIndex}`;
+    setGeneratingAudio(prev => ({ ...prev, [key]: true }));
+
+    try {
+      const response = await fetch('/api/admin/audio/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          text: example.text.trim(),
+          lessonId: lessonDay.toString(),
+          taskId: 2, // Rules task
+          blockId: block.block_id || block.block_type || 'explanation',
+          itemId: `example_${exampleIndex}_${Date.now()}`,
+        }),
+      });
+
+      const data = await response.json();
+      if (data.success && data.audioUrl) {
+        // Update example with audio_url
+        const newExamples = [...examples];
+        newExamples[exampleIndex] = {
+          ...newExamples[exampleIndex],
+          audio_url: data.audioUrl,
+        };
+        handleUpdateBlock(blockIndex, 'examples', newExamples);
+        setAudioUrls(prev => ({ ...prev, [key]: data.audioUrl }));
+      } else {
+        alert('Ошибка при генерации аудио: ' + (data.error || 'Unknown error'));
+      }
+    } catch (error) {
+      console.error('Error generating audio:', error);
+      alert('Ошибка при генерации аудио');
+    } finally {
+      setGeneratingAudio(prev => ({ ...prev, [key]: false }));
+    }
+  };
+
+  const handlePlayAudio = (blockIndex: number, exampleIndex: number) => {
+    const block = blocks[blockIndex];
+    const examples = block.content?.examples || [];
+    const example = examples[exampleIndex];
+    const key = `${blockIndex}_${exampleIndex}`;
+    const audioUrl = audioUrls[key] || example?.audio_url;
+    if (!audioUrl) return;
+
+    setIsPlayingAudio(prev => ({ ...prev, [key]: true }));
+    const audio = new Audio(audioUrl);
+    audio.play().catch(err => {
+      console.error('Error playing audio:', err);
+      setIsPlayingAudio(prev => ({ ...prev, [key]: false }));
+    });
+    audio.onended = () => setIsPlayingAudio(prev => ({ ...prev, [key]: false }));
+    audio.onerror = () => setIsPlayingAudio(prev => ({ ...prev, [key]: false }));
+  };
+
+  // Check for existing audio URLs when examples change
+  useEffect(() => {
+    const checkAudioUrls = async () => {
+      const urls: { [key: string]: string | null } = {};
+      
+      blocks.forEach((block, blockIndex) => {
+        if (block.block_type === 'how_to_say' || block.block_type === 'explanation') {
+          const examples = block.content?.examples || [];
+          examples.forEach((example: any, exampleIndex: number) => {
+            const key = `${blockIndex}_${exampleIndex}`;
+            if (example.audio_url) {
+              urls[key] = example.audio_url;
+            } else if (example.text && example.text.trim()) {
+              // Check database asynchronously
+              fetch(`/api/phrases?text=${encodeURIComponent(example.text.trim())}`)
+                .then(res => res.json())
+                .then(data => {
+                  if (data.success && data.exists && data.audioUrl) {
+                    setAudioUrls(prev => ({ ...prev, [key]: data.audioUrl }));
+                  }
+                })
+                .catch(err => console.error(`Error checking audio for example ${key}:`, err));
+            }
+          });
+        }
+      });
+      
+      setAudioUrls(prev => ({ ...prev, ...urls }));
+    };
+    
+    if (blocks.length > 0) {
+      checkAudioUrls();
+    }
+  }, [blocks]);
 
   const handleSaveBlock = (index: number, block: any) => {
     const newBlocks = [...blocks];
@@ -181,42 +447,377 @@ export default function RulesTaskEditor({ task, onChange, lessonDay }: RulesTask
     setEditingBlockIndex(null);
   };
 
-  if (editingBlockIndex !== null && editingBlockIndex >= 0 && editingBlockIndex < blocks.length) {
-    const blockToEdit = blocks[editingBlockIndex];
-    
-    // Ensure block has required structure
-    if (!blockToEdit || typeof blockToEdit !== 'object') {
-      console.error('Invalid block structure:', blockToEdit);
-      return (
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <p className="text-red-600">Ошибка: блок имеет неверную структуру</p>
-          <button
-            onClick={() => setEditingBlockIndex(null)}
-            className="mt-4 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
-          >
-            Назад
-          </button>
-        </div>
-      );
-    }
-
-    // Ensure block has block_id and block_type
-    const normalizedBlock = {
-      ...blockToEdit,
-      block_id: blockToEdit.block_id || `block_${editingBlockIndex + 1}`,
-      block_type: blockToEdit.block_type || blockToEdit.type || 'explanation',
-      content: blockToEdit.content || {},
-    };
+  // Render explanation block inline (accordion)
+  const renderExplanationBlock = (block: any, index: number) => {
+    const isExpanded = expandedBlocks.has(index);
+    const content = block.content || {};
+    const title = content.title || { ru: '', en: '' };
+    const explanationText = content.explanation_text || { ru: '', en: '' };
+    const examples = content.examples || [];
+    const hints = content.hint || [];
 
     return (
-      <BlockEditor
-        blockKey={normalizedBlock.block_id}
-        block={normalizedBlock}
-        lessonDay={lessonDay}
-        onSave={(block) => handleSaveBlock(editingBlockIndex, block)}
-        onCancel={() => setEditingBlockIndex(null)}
-      />
+      <div
+        key={block.block_id || `block_${index}`}
+        className="border border-gray-200 rounded-lg overflow-hidden hover:border-gray-300 transition-colors"
+      >
+        {/* Collapsed Header - Clickable */}
+        <div
+          onClick={() => handleToggleBlock(index)}
+          className="flex items-center justify-between p-4 cursor-pointer bg-white hover:bg-gray-50"
+        >
+          <div className="flex items-center gap-3 flex-1">
+            <span className="text-sm font-medium text-gray-500">#{index + 1}</span>
+            <div className="flex items-center gap-2 flex-1">
+              <span className="font-semibold text-gray-900">
+                {typeof title === 'string' 
+                  ? title 
+                  : (title.ru || title.en || 'Без названия')}
+              </span>
+              {title.ru && title.en && (
+                <>
+                  <span className="text-sm text-gray-400">—</span>
+                  <span className="text-sm text-gray-600">
+                    {title.ru} — {title.en}
+                  </span>
+                </>
+              )}
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            {/* Group 1: Move buttons */}
+            <div className="flex items-center gap-1">
+              {index > 0 && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleMoveBlock(index, 'up');
+                  }}
+                  className="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-gray-900"
+                  title="Переместить вверх"
+                >
+                  ↑
+                </button>
+              )}
+              {index < blocks.length - 1 && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleMoveBlock(index, 'down');
+                  }}
+                  className="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-gray-900"
+                  title="Переместить вниз"
+                >
+                  ↓
+                </button>
+              )}
+            </div>
+            {/* Group 2: Delete button */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDeleteBlock(index);
+              }}
+              className="w-8 h-8 flex items-center justify-center text-red-600 hover:text-red-800"
+              title="Удалить"
+            >
+              🗑️
+            </button>
+          </div>
+        </div>
+
+        {/* Expanded Content */}
+        {isExpanded && (
+          <div className="border-t border-gray-200 bg-gray-50 p-4 space-y-4">
+            {/* Block Title Row */}
+            <div className="grid grid-cols-2 gap-4">
+              <input
+                type="text"
+                value={typeof title === 'string' ? title : (title.ru || '')}
+                onChange={(e) => handleUpdateBlock(index, 'title', { ...title, ru: e.target.value })}
+                placeholder="Название блока (RU) *"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                onClick={(e) => e.stopPropagation()}
+              />
+              <input
+                type="text"
+                value={typeof title === 'string' ? '' : (title.en || '')}
+                onChange={(e) => handleUpdateBlock(index, 'title', { ...title, en: e.target.value })}
+                placeholder="Название блока (EN) *"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                onClick={(e) => e.stopPropagation()}
+              />
+            </div>
+
+            {/* Explanation Text Row */}
+            <div className="grid grid-cols-2 gap-4">
+              <textarea
+                value={typeof explanationText === 'string' ? explanationText : (explanationText.ru || '')}
+                onChange={(e) => handleUpdateBlock(index, 'explanation_text', { ...explanationText, ru: e.target.value })}
+                placeholder="Текст объяснения (RU)"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg h-20 resize-y"
+                onClick={(e) => e.stopPropagation()}
+              />
+              <textarea
+                value={typeof explanationText === 'string' ? '' : (explanationText.en || '')}
+                onChange={(e) => handleUpdateBlock(index, 'explanation_text', { ...explanationText, en: e.target.value })}
+                placeholder="Текст объяснения (EN)"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg h-20 resize-y"
+                onClick={(e) => e.stopPropagation()}
+              />
+            </div>
+
+            {/* Examples Section */}
+            <div>
+              <div className="flex justify-between items-center mb-2">
+                <h3 className="text-sm font-semibold text-gray-900">Примеры ({examples.length})</h3>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleAddExample(index);
+                  }}
+                  className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+                >
+                  + Добавить пример
+                </button>
+              </div>
+              <div className="space-y-2">
+                {examples.map((example: any, exampleIndex: number) => {
+                  const isExampleExpanded = expandedExamples[index]?.has(exampleIndex) || false;
+                  const key = `${index}_${exampleIndex}`;
+                  const hasAudio = audioUrls[key] || example?.audio_url;
+
+                  return (
+                    <div
+                      key={exampleIndex}
+                      className="border border-gray-300 rounded-lg overflow-hidden bg-white"
+                    >
+                      {/* Example Collapsed Header */}
+                      <div
+                        onClick={() => {
+                          const newExpanded = { ...expandedExamples };
+                          if (!newExpanded[index]) {
+                            newExpanded[index] = new Set();
+                          }
+                          if (newExpanded[index].has(exampleIndex)) {
+                            newExpanded[index].delete(exampleIndex);
+                          } else {
+                            newExpanded[index].add(exampleIndex);
+                          }
+                          setExpandedExamples(newExpanded);
+                        }}
+                        className="flex items-center justify-between p-3 cursor-pointer hover:bg-gray-50"
+                      >
+                        <div className="flex items-center gap-2 flex-1">
+                          <span className="text-xs text-gray-500">#{exampleIndex + 1}</span>
+                          <span className="text-sm font-medium text-gray-900">
+                            {example.text || 'Без текста'}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {hasAudio && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handlePlayAudio(index, exampleIndex);
+                              }}
+                              disabled={isPlayingAudio[key]}
+                              className="w-6 h-6 flex items-center justify-center text-blue-600 hover:text-blue-800 disabled:opacity-50"
+                              title="Воспроизвести аудио"
+                            >
+                              {isPlayingAudio[key] ? '⏸️' : '▶️'}
+                            </button>
+                          )}
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleGenerateAudio(index, exampleIndex);
+                            }}
+                            disabled={generatingAudio[key] || !example.text?.trim()}
+                            className="px-2 py-1 text-xs text-green-600 hover:text-green-800 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                            title="Сгенерировать аудио"
+                          >
+                            {generatingAudio[key] ? '⏳' : 'Генерировать аудио'}
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteExample(index, exampleIndex);
+                            }}
+                            className="w-6 h-6 flex items-center justify-center text-red-600 hover:text-red-800"
+                            title="Удалить"
+                          >
+                            🗑️
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Example Expanded Content */}
+                      {isExampleExpanded && (
+                        <div className="border-t border-gray-200 bg-gray-50 p-3 space-y-2">
+                          <input
+                            type="text"
+                            value={example.text || ''}
+                            onChange={(e) => handleUpdateExample(index, exampleIndex, 'text', e.target.value)}
+                            placeholder="Текст примера (PT) *"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                            onClick={(e) => e.stopPropagation()}
+                          />
+                          <input
+                            type="number"
+                            step="0.1"
+                            value={example.pause_after_audio_sec || 1.5}
+                            onChange={(e) => handleUpdateExample(index, exampleIndex, 'pause_after_audio_sec', parseFloat(e.target.value) || 1.5)}
+                            placeholder="Пауза после аудио (секунды)"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                            onClick={(e) => e.stopPropagation()}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Hints Section */}
+            <div>
+              <div className="flex justify-between items-center mb-2">
+                <h3 className="text-sm font-semibold text-gray-900">Подсказки ({hints.length})</h3>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleAddHint(index);
+                  }}
+                  className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+                >
+                  + Добавить подсказку
+                </button>
+              </div>
+              <div className="space-y-2">
+                {hints.map((hint: any, hintIndex: number) => {
+                  const isHintExpanded = expandedHints[index]?.has(hintIndex) || false;
+
+                  return (
+                    <div
+                      key={hintIndex}
+                      className="border border-gray-300 rounded-lg overflow-hidden bg-white"
+                    >
+                      {/* Hint Collapsed Header */}
+                      <div
+                        onClick={() => {
+                          const newExpanded = { ...expandedHints };
+                          if (!newExpanded[index]) {
+                            newExpanded[index] = new Set();
+                          }
+                          if (newExpanded[index].has(hintIndex)) {
+                            newExpanded[index].delete(hintIndex);
+                          } else {
+                            newExpanded[index].add(hintIndex);
+                          }
+                          setExpandedHints(newExpanded);
+                        }}
+                        className="flex items-center justify-between p-3 cursor-pointer hover:bg-gray-50"
+                      >
+                        <div className="flex items-center gap-2 flex-1">
+                          <span className="text-xs text-gray-500">#{hintIndex + 1}</span>
+                          <span className="text-sm font-medium text-gray-900">
+                            {typeof hint === 'string' ? hint : (hint.ru || 'Без текста')}
+                          </span>
+                        </div>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteHint(index, hintIndex);
+                          }}
+                          className="w-6 h-6 flex items-center justify-center text-red-600 hover:text-red-800"
+                          title="Удалить"
+                        >
+                          🗑️
+                        </button>
+                      </div>
+
+                      {/* Hint Expanded Content */}
+                      {isHintExpanded && (
+                        <div className="border-t border-gray-200 bg-gray-50 p-3 space-y-2">
+                          <div className="grid grid-cols-2 gap-2">
+                            <input
+                              type="text"
+                              value={typeof hint === 'string' ? hint : (hint.ru || '')}
+                              onChange={(e) => handleUpdateHint(index, hintIndex, 'ru', e.target.value)}
+                              placeholder="Подсказка (RU) *"
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                              onClick={(e) => e.stopPropagation()}
+                            />
+                            <input
+                              type="text"
+                              value={typeof hint === 'string' ? '' : (hint.en || '')}
+                              onChange={(e) => handleUpdateHint(index, hintIndex, 'en', e.target.value)}
+                              placeholder="Подсказка (EN)"
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                              onClick={(e) => e.stopPropagation()}
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     );
+  };
+
+  // For non-explanation blocks, use modal editor
+  if (editingBlockIndex !== null && editingBlockIndex >= 0 && editingBlockIndex < blocks.length) {
+    const blockToEdit = blocks[editingBlockIndex];
+    const blockType = typeof blockToEdit.block_type === 'string' 
+      ? blockToEdit.block_type 
+      : (typeof blockToEdit.type === 'string' ? blockToEdit.type : 'unknown');
+    
+    // Only show modal for non-explanation blocks
+    if (blockType !== 'how_to_say' && blockType !== 'explanation') {
+      // Ensure block has required structure
+      if (!blockToEdit || typeof blockToEdit !== 'object') {
+        console.error('Invalid block structure:', blockToEdit);
+        return (
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <p className="text-red-600">Ошибка: блок имеет неверную структуру</p>
+            <button
+              onClick={() => setEditingBlockIndex(null)}
+              className="mt-4 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
+            >
+              Назад
+            </button>
+          </div>
+        );
+      }
+
+      // Ensure block has block_id and block_type
+      const normalizedBlock = {
+        ...blockToEdit,
+        block_id: blockToEdit.block_id || `block_${editingBlockIndex + 1}`,
+        block_type: blockToEdit.block_type || blockToEdit.type || 'explanation',
+        content: blockToEdit.content || {},
+      };
+
+      return (
+        <BlockEditor
+          blockKey={normalizedBlock.block_id}
+          block={normalizedBlock}
+          lessonDay={lessonDay}
+          onSave={(block) => handleSaveBlock(editingBlockIndex, block)}
+          onCancel={() => setEditingBlockIndex(null)}
+        />
+      );
+    } else {
+      // If it's an explanation block, just close the modal and expand it
+      setEditingBlockIndex(null);
+      setExpandedBlocks(new Set([...expandedBlocks, editingBlockIndex]));
+    }
   }
 
   return (
@@ -238,7 +839,7 @@ export default function RulesTaskEditor({ task, onChange, lessonDay }: RulesTask
             Блоки еще не добавлены. Нажмите "Добавить блок", чтобы начать.
           </p>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-2">
             {blocks.map((block, index) => {
               if (!block || typeof block !== 'object') {
                 console.warn(`Invalid block at index ${index}:`, block);
@@ -250,7 +851,12 @@ export default function RulesTaskEditor({ task, onChange, lessonDay }: RulesTask
                 ? block.block_type 
                 : (typeof block.type === 'string' ? block.type : 'unknown');
               
-              // Safely extract title
+              // Render explanation blocks inline
+              if (blockType === 'how_to_say' || blockType === 'explanation') {
+                return renderExplanationBlock(block, index);
+              }
+
+              // For other block types, show collapsed view with edit button
               const blockTitle = (block.content && typeof block.content === 'object' && block.content.title)
                 ? block.content.title
                 : (block.title && typeof block.title === 'object' ? block.title : {});
