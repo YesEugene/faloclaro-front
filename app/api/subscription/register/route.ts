@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     // Get or create user
     let { data: user, error: userError } = await supabase
       .from('subscription_users')
-      .select('id, email')
+      .select('id, email, language_preference')
       .eq('email', normalizedEmail)
       .single();
 
@@ -50,6 +50,21 @@ export async function POST(request: NextRequest) {
         { error: 'Failed to process request' },
         { status: 500 }
       );
+    } else if (user && language) {
+      // User exists, update language preference if provided
+      const { error: updateError } = await supabase
+        .from('subscription_users')
+        .update({ language_preference: language })
+        .eq('id', user.id);
+
+      if (updateError) {
+        console.error('Error updating language preference:', updateError);
+        // Don't fail registration if language update fails
+      } else {
+        console.log('Language preference updated:', { userId: user.id, language });
+        // Update user object with new language
+        user.language_preference = language;
+      }
     }
 
     if (!user) {

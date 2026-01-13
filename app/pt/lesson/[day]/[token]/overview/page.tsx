@@ -3,7 +3,7 @@
 import { useEffect, useState, Suspense } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
-import { useAppLanguage } from '@/lib/language-context';
+import { useAppLanguage, syncUserLanguageFromDB } from '@/lib/language-context';
 import { getDayTitle, getDaySubtitle, getTaskTitle, getTaskSubtitle } from '@/lib/lesson-translations';
 import { LanguageSelector } from '@/components/LanguageSelector';
 import Link from 'next/link';
@@ -12,7 +12,7 @@ import Image from 'next/image';
 function OverviewPageContent() {
   const params = useParams();
   const router = useRouter();
-  const { language: appLanguage } = useAppLanguage();
+  const { language: appLanguage, setLanguage } = useAppLanguage();
   const day = parseInt(params.day as string);
   const token = params.token as string;
 
@@ -163,6 +163,9 @@ function OverviewPageContent() {
         setLoading(false);
         return;
       }
+
+      // Sync user language from database
+      await syncUserLanguageFromDB(tokenData.user_id, setLanguage);
 
       // Load all lessons data first
       await loadAllLessonsData(tokenData.user_id);

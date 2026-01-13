@@ -3,7 +3,7 @@
 import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
-import { useAppLanguage } from '@/lib/language-context';
+import { useAppLanguage, syncUserLanguageFromDB } from '@/lib/language-context';
 import { getDayTitle, getDaySubtitle } from '@/lib/lesson-translations';
 import { LanguageSelector } from '@/components/LanguageSelector';
 import Link from 'next/link';
@@ -12,7 +12,7 @@ import Image from 'next/image';
 function CoursePageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { language: appLanguage } = useAppLanguage();
+  const { language: appLanguage, setLanguage } = useAppLanguage();
   const [levels, setLevels] = useState<any[]>([]);
   const [lessons, setLessons] = useState<any[]>([]);
   const [userTokens, setUserTokens] = useState<Map<number, string>>(new Map());
@@ -37,6 +37,9 @@ function CoursePageContent() {
         return;
       }
       setUserId(user.id);
+
+      // Sync user language from database
+      await syncUserLanguageFromDB(user.id, setLanguage);
 
       // Load subscription
       const { data: subscriptionData } = await supabase

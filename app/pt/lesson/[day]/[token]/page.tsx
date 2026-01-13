@@ -3,14 +3,14 @@
 import { useEffect, useState, Suspense } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
-import { useAppLanguage } from '@/lib/language-context';
+import { useAppLanguage, syncUserLanguageFromDB } from '@/lib/language-context';
 import LessonContent from '@/components/subscription/LessonContent';
 
 function LessonPageContent() {
   const params = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { language: appLanguage } = useAppLanguage();
+  const { language: appLanguage, setLanguage } = useAppLanguage();
   const day = parseInt(params.day as string);
   const token = params.token as string;
   const taskId = searchParams.get('task');
@@ -60,6 +60,9 @@ function LessonPageContent() {
         setLoading(false);
         return;
       }
+
+      // Sync user language from database
+      await syncUserLanguageFromDB(tokenData.user_id, setLanguage);
 
       // Get lesson
       const { data: lessonData, error: lessonError } = await supabase

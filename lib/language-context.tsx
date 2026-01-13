@@ -42,6 +42,29 @@ export function useAppLanguage() {
   return context;
 }
 
+/**
+ * Sync user language preference from database with context
+ * Call this function when user is loaded to ensure language is synchronized
+ */
+export async function syncUserLanguageFromDB(userId: string, setLanguage: (lang: AppLanguage) => void) {
+  try {
+    const { supabase } = await import('./supabase');
+    const { data: user } = await supabase
+      .from('subscription_users')
+      .select('language_preference')
+      .eq('id', userId)
+      .single();
+
+    if (user?.language_preference && ['en', 'ru'].includes(user.language_preference)) {
+      setLanguage(user.language_preference as AppLanguage);
+      // Also update localStorage to keep it in sync
+      localStorage.setItem('faloClaro_app_language', user.language_preference);
+    }
+  } catch (error) {
+    console.error('Error syncing user language:', error);
+  }
+}
+
 // Cluster name translations
 export const clusterTranslations: Record<string, Record<AppLanguage, string>> = {
   'Beginner': {
