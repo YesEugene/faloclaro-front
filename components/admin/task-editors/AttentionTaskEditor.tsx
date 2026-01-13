@@ -410,13 +410,13 @@ export default function AttentionTaskEditor({ task, onChange, lessonDay }: Atten
                       key={optionIndex}
                       className="border border-gray-200 rounded-lg p-3 bg-white"
                     >
-                      <div className="grid grid-cols-2 gap-2 mb-2">
+                      <div className="flex items-center gap-2">
                         <input
                           type="text"
                           value={optionText.ru || ''}
                           onChange={(e) => handleUpdateOption(index, optionIndex, 'text', { ...optionText, ru: e.target.value })}
                           placeholder="Текст варианта (RU) *"
-                          className="px-3 py-2 border border-gray-300 rounded-lg"
+                          className="flex-1 px-3 py-2 border border-gray-300 rounded-lg"
                           onClick={(e) => e.stopPropagation()}
                         />
                         <input
@@ -424,12 +424,10 @@ export default function AttentionTaskEditor({ task, onChange, lessonDay }: Atten
                           value={optionText.en || ''}
                           onChange={(e) => handleUpdateOption(index, optionIndex, 'text', { ...optionText, en: e.target.value })}
                           placeholder="Текст варианта (EN) *"
-                          className="px-3 py-2 border border-gray-300 rounded-lg"
+                          className="flex-1 px-3 py-2 border border-gray-300 rounded-lg"
                           onClick={(e) => e.stopPropagation()}
                         />
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <label className="flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-lg bg-white">
+                        <label className="flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-lg bg-white whitespace-nowrap">
                           <input
                             type="checkbox"
                             checked={option.correct || false}
