@@ -416,10 +416,11 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
             paddingRight: '16px',
           }}
         >
-          <div className="w-full max-w-md">
+          <div className="w-full max-w-md flex justify-center">
             <button
               onClick={handleFinalComplete}
-              className="w-full bg-green-600 text-white py-2 rounded-lg font-semibold text-sm hover:bg-green-700 transition-colors"
+              className="bg-green-600 text-white py-2 rounded-lg font-semibold text-sm hover:bg-green-700 transition-colors"
+              style={{ width: '70%' }} // 30% smaller (was 100%)
             >
               {appLanguage === 'ru' ? 'Все задания выполнены' : appLanguage === 'en' ? 'All tasks completed' : 'Todas as tarefas concluídas'}
             </button>
@@ -427,15 +428,25 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
         </div>
       )}
 
-      {/* Replay Button - Show if task is completed */}
+      {/* Replay Button - Floating above navigation panel, show if task is completed */}
       {localIsCompleted && (
-        <div className="mt-8">
-          <button
-            onClick={handleReplay}
-            className="w-full bg-blue-600 text-white py-4 rounded-lg font-semibold text-lg hover:bg-blue-700 transition-colors"
-          >
-            {appLanguage === 'ru' ? 'Пройти заново' : appLanguage === 'en' ? 'Replay' : 'Repetir'}
-          </button>
+        <div 
+          className="fixed left-0 right-0 z-40 flex justify-center"
+          style={{ 
+            bottom: '59px', // Above navigation panel, same position as "All tasks completed"
+            paddingLeft: '16px',
+            paddingRight: '16px',
+          }}
+        >
+          <div className="w-full max-w-md flex justify-center">
+            <button
+              onClick={handleReplay}
+              className="bg-blue-600 text-white py-2 rounded-lg font-semibold text-sm hover:bg-blue-700 transition-colors"
+              style={{ width: '70%' }} // Same width as "All tasks completed" button
+            >
+              {appLanguage === 'ru' ? 'Пройти заново' : appLanguage === 'en' ? 'Replay' : 'Repetir'}
+            </button>
+          </div>
         </div>
       )}
 
