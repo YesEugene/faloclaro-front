@@ -518,10 +518,10 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
                       style={{ maxWidth: '200px' }}
                     >
                       {appLanguage === 'ru' 
-                        ? 'Чтобы перейти к следующему заданию, выполните текущее задание'
+                        ? 'Нужно выполнить все задания для перехода на следующее задание'
                         : appLanguage === 'en'
-                        ? 'Complete the current task to proceed to the next one'
-                        : 'Complete a tarefa atual para prosseguir para a próxima'}
+                        ? 'You need to complete all tasks to proceed to the next task'
+                        : 'Você precisa concluir todas as tarefas para prosseguir para a próxima tarefa'}
                       <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-black"></div>
                     </div>
                   )}

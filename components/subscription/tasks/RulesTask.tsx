@@ -749,13 +749,12 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                 style={{
                   backgroundColor: '#F1F2F6',
                   border: '1px solid #E5E7EB',
-                  color: '#109929'
                 }}
               >
                 <svg className="w-6 h-6 mr-2" fill="none" stroke="#109929" viewBox="0 0 24 24" strokeWidth={3}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
-                {appLanguage === 'ru' ? 'Выполнено' : 'Completed'}
+                <span style={{ color: '#6B7280' }}>{appLanguage === 'ru' ? 'Выполнено' : 'Completed'}</span>
               </div>
             )}
           </div>
@@ -922,8 +921,8 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                       style={{ maxWidth: '200px', zIndex: 9999 }}
                     >
                       {appLanguage === 'ru' 
-                        ? 'Чтобы перейти к следующему заданию, выполните текущее задание'
-                        : 'Complete the current task to proceed to the next one'}
+                        ? 'Нужно выполнить все задания для перехода на следующее задание'
+                        : 'You need to complete all tasks to proceed to the next task'}
                       <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-black"></div>
                     </div>
                   )}
