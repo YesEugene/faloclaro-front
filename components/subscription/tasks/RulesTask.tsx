@@ -284,17 +284,44 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
 
   // Handle speak out loud completion
   const handleSpeakOutLoudComplete = () => {
-    setSpeakOutLoudCompleted(true);
-    // If this is the last task and all blocks are completed, auto-complete
+    const newSpeakOutLoudCompleted = true;
+    setSpeakOutLoudCompleted(newSpeakOutLoudCompleted);
+    // If this is the last task, check if all blocks are completed
     if (isLastTask) {
-      // Use setTimeout to ensure state is updated before checking
-      setTimeout(() => {
-        const allBlocksCompleted = checkAllBlocksCompleted();
-        if (allBlocksCompleted) {
-          // Auto-complete last task when "I said it out loud" is clicked
-          handleFinalComplete();
+      // Check if all blocks are completed (using the new speakOutLoudCompleted value)
+      const blocksStructure = getBlocksStructure();
+      const { blocks, blocksOrder } = blocksStructure;
+      
+      // Check all reinforcement blocks
+      let allBlocksCompleted = true;
+      for (let i = 0; i < blocksOrder.length; i++) {
+        const blockKey = blocksOrder[i];
+        const block = blocks[blockKey];
+        if (block.type === 'reinforcement' && !checkBlockReinforcementCompleted(block)) {
+          allBlocksCompleted = false;
+          break;
         }
-      }, 0);
+      }
+      
+      // Check speak out loud block (last block) - use the new value
+      if (allBlocksCompleted) {
+        const lastBlockKey = blocksOrder[blocksOrder.length - 1];
+        const lastBlock = lastBlockKey ? blocks[lastBlockKey] : null;
+        if (lastBlock && lastBlock.type === 'speak_out_loud' && !newSpeakOutLoudCompleted) {
+          allBlocksCompleted = false;
+        }
+      }
+      
+      if (allBlocksCompleted) {
+        // Auto-complete last task when "I said it out loud" is clicked
+        setLocalIsCompleted(true);
+        onComplete({
+          selectedAnswers,
+          showResults,
+          speakOutLoudCompleted: newSpeakOutLoudCompleted,
+          completedAt: new Date().toISOString(),
+        });
+      }
     }
     // For non-last tasks, don't auto-complete - let user click "All tasks completed" button explicitly
   };
@@ -910,46 +937,62 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                 </div>
               )
             ) : isLastTask && onNextLesson ? (
-              localIsCompleted ? (
-                // Last task completed - show green active next lesson button
-                <button
-                  onClick={onNextLesson}
-                  className="w-10 h-10 rounded-full bg-green-500 hover:bg-green-600 transition-colors flex items-center justify-center"
-                  aria-label={appLanguage === 'ru' ? `Урок ${dayNumber ? dayNumber + 1 : 2}` : `Lesson ${dayNumber ? dayNumber + 1 : 2}`}
-                  title={appLanguage === 'ru' ? `Урок ${dayNumber ? dayNumber + 1 : 2}` : `Lesson ${dayNumber ? dayNumber + 1 : 2}`}
-                >
-                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
-              ) : (
-                // Last task not completed - show gray disabled next lesson button
-                <div className="relative">
-                  <button
-                    disabled
-                    onMouseEnter={() => setShowTooltip(true)}
-                    onMouseLeave={() => setShowTooltip(false)}
-                    onClick={() => setShowTooltip(true)}
-                    className="w-10 h-10 rounded-full bg-gray-400 cursor-not-allowed flex items-center justify-center"
-                    aria-label={appLanguage === 'ru' ? `Урок ${dayNumber ? dayNumber + 1 : 2}` : `Lesson ${dayNumber ? dayNumber + 1 : 2}`}
-                  >
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </button>
-                  {showTooltip && (
-                    <div
-                      className="absolute bottom-full right-0 mb-2 px-3 py-2 bg-black text-white text-xs rounded-lg whitespace-nowrap"
-                      style={{ maxWidth: '200px', zIndex: 9999 }}
+              <div className="relative">
+                {localIsCompleted ? (
+                  // Last task completed - show green active next lesson button with tooltip
+                  <>
+                    <button
+                      onClick={onNextLesson}
+                      onMouseEnter={() => setShowTooltip(true)}
+                      onMouseLeave={() => setShowTooltip(false)}
+                      className="w-10 h-10 rounded-full bg-green-500 hover:bg-green-600 transition-colors flex items-center justify-center"
+                      aria-label={appLanguage === 'ru' ? `Урок ${dayNumber ? dayNumber + 1 : 2}` : `Lesson ${dayNumber ? dayNumber + 1 : 2}`}
                     >
-                      {appLanguage === 'ru' 
-                        ? `Выполните задание, чтобы перейти к уроку ${dayNumber ? dayNumber + 1 : 2}`
-                        : `Complete the task to proceed to lesson ${dayNumber ? dayNumber + 1 : 2}`}
-                      <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-black"></div>
-                    </div>
-                  )}
-                </div>
-              )
+                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                    {showTooltip && (
+                      <div
+                        className="absolute bottom-full right-0 mb-2 px-3 py-2 bg-black text-white text-xs rounded-lg whitespace-nowrap"
+                        style={{ maxWidth: '200px', zIndex: 9999 }}
+                      >
+                        {appLanguage === 'ru' 
+                          ? `Перейти к уроку ${dayNumber ? dayNumber + 1 : 2}`
+                          : `Go to lesson ${dayNumber ? dayNumber + 1 : 2}`}
+                        <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-black"></div>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  // Last task not completed - show gray disabled next lesson button with tooltip
+                  <>
+                    <button
+                      disabled
+                      onMouseEnter={() => setShowTooltip(true)}
+                      onMouseLeave={() => setShowTooltip(false)}
+                      onClick={() => setShowTooltip(true)}
+                      className="w-10 h-10 rounded-full bg-gray-400 cursor-not-allowed flex items-center justify-center"
+                      aria-label={appLanguage === 'ru' ? `Урок ${dayNumber ? dayNumber + 1 : 2}` : `Lesson ${dayNumber ? dayNumber + 1 : 2}`}
+                    >
+                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                    {showTooltip && (
+                      <div
+                        className="absolute bottom-full right-0 mb-2 px-3 py-2 bg-black text-white text-xs rounded-lg whitespace-nowrap"
+                        style={{ maxWidth: '200px', zIndex: 9999 }}
+                      >
+                        {appLanguage === 'ru' 
+                          ? `Выполните задание, чтобы перейти к уроку ${dayNumber ? dayNumber + 1 : 2}`
+                          : `Complete the task to proceed to lesson ${dayNumber ? dayNumber + 1 : 2}`}
+                        <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-black"></div>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
             ) : (
               <div className="w-10 h-10"></div>
             )}
