@@ -467,7 +467,7 @@ export default function RulesTaskEditor({ task, onChange, lessonDay }: RulesTask
                 {typeof title === 'string' 
                   ? title 
                   : (title.ru && title.en 
-                    ? `${title.ru} — ${title.en}`
+                    ? `${title.ru} - ${title.en}`
                     : (title.ru || title.en || 'Без названия'))}
               </span>
             </div>
@@ -781,8 +781,8 @@ export default function RulesTaskEditor({ task, onChange, lessonDay }: RulesTask
                 {typeof title === 'string' 
                   ? title 
                   : (title.ru && title.en 
-                    ? `${title.ru} — ${title.en}`
-                    : (title.ru || title.en || 'Без названия')))}
+                    ? `${title.ru} - ${title.en}`
+                    : (title.ru || title.en || 'Без названия'))}
               </span>
             </div>
           </div>
