@@ -368,6 +368,79 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
     }
   };
 
+  const handleNextLesson = async () => {
+    try {
+      // Get next lesson
+      const nextDayNumber = lesson.day_number + 1;
+      
+      // Check if next lesson exists
+      const { data: nextLesson, error: lessonError } = await supabase
+        .from('lessons')
+        .select('id, day_number, is_published')
+        .eq('day_number', nextDayNumber)
+        .eq('is_published', true)
+        .single();
+
+      if (lessonError || !nextLesson) {
+        // No next lesson available - redirect to course overview
+        router.push('/pt/course');
+        return;
+      }
+
+      // Get user ID from token
+      const { data: tokenData } = await supabase
+        .from('lesson_access_tokens')
+        .select('user_id')
+        .eq('token', token)
+        .single();
+
+      if (!tokenData) {
+        console.error('Token not found');
+        return;
+      }
+
+      // Get or create token for next lesson
+      const { data: nextTokenData, error: tokenError } = await supabase
+        .from('lesson_access_tokens')
+        .select('token')
+        .eq('user_id', tokenData.user_id)
+        .eq('lesson_id', nextLesson.id)
+        .single();
+
+      if (tokenError && tokenError.code === 'PGRST116') {
+        // Token doesn't exist, create it
+        // Generate random token using Web Crypto API (browser-compatible)
+        const array = new Uint8Array(32);
+        crypto.getRandomValues(array);
+        const newToken = Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+        
+        const { data: newTokenData, error: createError } = await supabase
+          .from('lesson_access_tokens')
+          .insert({
+            user_id: tokenData.user_id,
+            lesson_id: nextLesson.id,
+            token: newToken,
+            expires_at: null, // Never expires
+          })
+          .select('token')
+          .single();
+
+        if (createError || !newTokenData) {
+          console.error('Error creating token:', createError);
+          return;
+        }
+
+        // Navigate to next lesson
+        router.push(`/pt/lesson/${nextDayNumber}/${newTokenData.token}`);
+      } else if (nextTokenData) {
+        // Token exists, navigate to next lesson
+        router.push(`/pt/lesson/${nextDayNumber}/${nextTokenData.token}`);
+      }
+    } catch (error) {
+      console.error('Error navigating to next lesson:', error);
+    }
+  };
+
   const getTaskProgress = (taskId: number) => {
     return userProgress.task_progress?.find((tp: any) => tp.task_id === taskId);
   };
@@ -538,8 +611,10 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
             onComplete={(completionData) => handleTaskComplete(currentTask.task_id, completionData)}
             onNext={handleNextTask}
             onPrevious={handlePreviousTask}
+            onNextLesson={handleNextLesson}
             canGoNext={currentTaskIndex < tasks.length - 1}
             canGoPrevious={currentTaskIndex > 0}
+            isLastTask={currentTaskIndex === tasks.length - 1}
             onBackToTasks={() => router.push(`/pt/lesson/${lesson.day_number}/${token}/overview`)}
             onDictionaryList={() => {
               // Navigate to dictionary list - we need to construct URL with cluster info

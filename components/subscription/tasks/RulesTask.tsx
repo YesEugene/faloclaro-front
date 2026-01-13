@@ -15,13 +15,15 @@ interface RulesTaskProps {
   savedSpeakOutLoudCompleted?: boolean;
   onNextTask?: () => void;
   onPreviousTask?: () => void;
+  onNextLesson?: () => void;
   canGoNext?: boolean;
   canGoPrevious?: boolean;
+  isLastTask?: boolean;
   progressCompleted?: number;
   progressTotal?: number;
 }
 
-export default function RulesTask({ task, language, onComplete, isCompleted, savedAnswers, savedShowResults, savedSpeakOutLoudCompleted, onNextTask, onPreviousTask, canGoNext = false, canGoPrevious = false, progressCompleted = 0, progressTotal = 5 }: RulesTaskProps) {
+export default function RulesTask({ task, language, onComplete, isCompleted, savedAnswers, savedShowResults, savedSpeakOutLoudCompleted, onNextTask, onPreviousTask, onNextLesson, canGoNext = false, canGoPrevious = false, isLastTask = false, progressCompleted = 0, progressTotal = 5 }: RulesTaskProps) {
   const { language: appLanguage } = useAppLanguage();
   const [audioUrls, setAudioUrls] = useState<{ [key: string]: string }>({});
   const [isPlayingAudio, setIsPlayingAudio] = useState<{ [key: string]: boolean }>({});
@@ -810,14 +812,14 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
       <div className="fixed bottom-0 left-0 right-0 bg-black z-30" style={{ borderRadius: '0px', height: '59px', marginBottom: '0px', opacity: 1, color: 'rgba(255, 255, 255, 1)' }}>
         <div className="max-w-md mx-auto pt-3 pb-3" style={{ paddingBottom: 'env(safe-area-inset-bottom, 12px)', height: '59px', color: 'rgba(255, 255, 255, 1)', paddingLeft: '16px', paddingRight: '16px' }}>
           <div className="flex items-center justify-between gap-4">
-            {/* Previous Task Button */}
+            {/* Previous Task Button - Always green when available */}
             {canGoPrevious && onPreviousTask ? (
               <button
                 onClick={onPreviousTask}
-                className="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors flex items-center justify-center"
+                className="w-10 h-10 rounded-full bg-green-500 hover:bg-green-600 transition-colors flex items-center justify-center"
                 aria-label={appLanguage === 'ru' ? 'Предыдущее задание' : 'Previous task'}
               >
-                <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
               </button>
@@ -853,12 +855,37 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
               </p>
             </div>
 
-            {/* Next Task Button - Only enabled when task is completed */}
-            {localIsCompleted && canGoNext && onNextTask ? (
+            {/* Next Task/Lesson Button - Always visible, gray when not completed, green when completed */}
+            {canGoNext && onNextTask ? (
+              localIsCompleted ? (
+                // Task completed - show green active button
+                <button
+                  onClick={onNextTask}
+                  className="w-10 h-10 rounded-full bg-green-500 hover:bg-green-600 transition-colors flex items-center justify-center"
+                  aria-label={appLanguage === 'ru' ? 'Следующее задание' : 'Next task'}
+                >
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              ) : (
+                // Task not completed - show gray disabled button
+                <button
+                  disabled
+                  className="w-10 h-10 rounded-full bg-gray-400 cursor-not-allowed flex items-center justify-center"
+                  aria-label={appLanguage === 'ru' ? 'Следующее задание' : 'Next task'}
+                >
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              )
+            ) : isLastTask && localIsCompleted && onNextLesson ? (
+              // Last task completed - show next lesson button
               <button
-                onClick={onNextTask}
+                onClick={onNextLesson}
                 className="w-10 h-10 rounded-full bg-green-500 hover:bg-green-600 transition-colors flex items-center justify-center"
-                aria-label={appLanguage === 'ru' ? 'Следующее задание' : 'Next task'}
+                aria-label={appLanguage === 'ru' ? 'Следующий урок' : 'Next lesson'}
               >
                 <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />

@@ -18,8 +18,10 @@ interface TaskCardProps {
   onComplete: (completionData?: any) => void;
   onNext: () => void;
   onPrevious: () => void;
+  onNextLesson?: () => void;
   canGoNext: boolean;
   canGoPrevious: boolean;
+  isLastTask?: boolean;
   onBackToTasks?: () => void;
   onDictionaryList?: () => void;
   dayNumber?: number;
@@ -37,8 +39,10 @@ export default function TaskCard({
   onComplete,
   onNext,
   onPrevious,
+  onNextLesson,
   canGoNext,
   canGoPrevious,
+  isLastTask = false,
   onBackToTasks,
   onDictionaryList,
   dayNumber,
@@ -227,8 +231,10 @@ export default function TaskCard({
             savedSpeakOutLoudCompleted={taskProgress?.completion_data?.speakOutLoudCompleted}
             onNextTask={onNext}
             onPreviousTask={onPrevious}
+            onNextLesson={onNextLesson}
             canGoNext={canGoNext}
             canGoPrevious={canGoPrevious}
+            isLastTask={isLastTask}
             progressCompleted={progressCompleted}
             progressTotal={progressTotal}
           />
@@ -276,8 +282,10 @@ export default function TaskCard({
             savedShowResults={listeningSavedShowResults}
             onNextTask={onNext}
             onPreviousTask={onPrevious}
+            onNextLesson={onNextLesson}
             canGoNext={canGoNext}
             canGoPrevious={canGoPrevious}
+            isLastTask={isLastTask}
             progressCompleted={progressCompleted}
             progressTotal={progressTotal}
           />
@@ -301,8 +309,10 @@ export default function TaskCard({
             savedShowResults={attentionSavedShowResults}
             onNextTask={onNext}
             onPreviousTask={onPrevious}
+            onNextLesson={onNextLesson}
             canGoNext={canGoNext}
             canGoPrevious={canGoPrevious}
+            isLastTask={isLastTask}
             progressCompleted={progressCompleted}
             progressTotal={progressTotal}
           />
@@ -318,8 +328,10 @@ export default function TaskCard({
             savedSpeakOutLoud={taskProgress?.completion_data?.speakOutLoud}
             onNextTask={onNext}
             onPreviousTask={onPrevious}
+            onNextLesson={onNextLesson}
             canGoNext={canGoNext}
             canGoPrevious={canGoPrevious}
+            isLastTask={isLastTask}
             progressCompleted={progressCompleted}
             progressTotal={progressTotal}
           />
