@@ -91,8 +91,9 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
   }, [speakOutLoud, writtenText, localIsCompleted, isLastTask]);
   
   // Save answers to completion_data whenever they change (for persistence)
+  // BUT only if task is not completed yet - don't overwrite completion
   useEffect(() => {
-    if (hasLoadedSavedData && (writtenText.trim() || speakOutLoud)) {
+    if (hasLoadedSavedData && !localIsCompleted && (writtenText.trim() || speakOutLoud)) {
       // Save current state to completion_data without marking as completed
       onComplete({
         writtenText: speakOutLoud ? null : writtenText,
@@ -100,7 +101,7 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
         saved: true, // Flag to indicate this is just saving, not completing
       });
     }
-  }, [writtenText, speakOutLoud, hasLoadedSavedData]);
+  }, [writtenText, speakOutLoud, hasLoadedSavedData, localIsCompleted]);
 
   const handleComplete = (forceSpeakOutLoud?: boolean) => {
     // Writing task is optional - can be completed with either text or speaking out loud
