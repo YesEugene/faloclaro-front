@@ -21,13 +21,15 @@ interface RulesTaskProps {
   isLastTask?: boolean;
   progressCompleted?: number;
   progressTotal?: number;
+  dayNumber?: number;
 }
 
-export default function RulesTask({ task, language, onComplete, isCompleted, savedAnswers, savedShowResults, savedSpeakOutLoudCompleted, onNextTask, onPreviousTask, onNextLesson, canGoNext = false, canGoPrevious = false, isLastTask = false, progressCompleted = 0, progressTotal = 5 }: RulesTaskProps) {
+export default function RulesTask({ task, language, onComplete, isCompleted, savedAnswers, savedShowResults, savedSpeakOutLoudCompleted, onNextTask, onPreviousTask, onNextLesson, canGoNext = false, canGoPrevious = false, isLastTask = false, progressCompleted = 0, progressTotal = 5, dayNumber }: RulesTaskProps) {
   const { language: appLanguage } = useAppLanguage();
   const [audioUrls, setAudioUrls] = useState<{ [key: string]: string }>({});
   const [isPlayingAudio, setIsPlayingAudio] = useState<{ [key: string]: boolean }>({});
   const [selectedAnswers, setSelectedAnswers] = useState<{ [key: string]: string | null }>(savedAnswers || {});
+  const [showTooltip, setShowTooltip] = useState(false);
   const [showResults, setShowResults] = useState<{ [key: string]: boolean }>(savedShowResults || {});
   const [speakOutLoudCompleted, setSpeakOutLoudCompleted] = useState(savedSpeakOutLoudCompleted || false);
   const [isReplaying, setIsReplaying] = useState(false);
@@ -869,28 +871,74 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                   </svg>
                 </button>
               ) : (
-                // Task not completed - show gray disabled button
+                // Task not completed - show gray disabled button with tooltip
+                <div className="relative">
+                  <button
+                    disabled
+                    onMouseEnter={() => setShowTooltip(true)}
+                    onMouseLeave={() => setShowTooltip(false)}
+                    onClick={() => setShowTooltip(true)}
+                    className="w-10 h-10 rounded-full bg-gray-400 cursor-not-allowed flex items-center justify-center"
+                    aria-label={appLanguage === 'ru' ? 'Следующее задание' : 'Next task'}
+                  >
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                  {showTooltip && (
+                    <div
+                      className="absolute bottom-full right-0 mb-2 px-3 py-2 bg-black text-white text-xs rounded-lg whitespace-nowrap z-50"
+                      style={{ maxWidth: '200px' }}
+                    >
+                      {appLanguage === 'ru' 
+                        ? 'Чтобы перейти к следующему заданию, выполните текущее задание'
+                        : 'Complete the current task to proceed to the next one'}
+                      <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-black"></div>
+                    </div>
+                  )}
+                </div>
+              )
+            ) : isLastTask && onNextLesson ? (
+              localIsCompleted ? (
+                // Last task completed - show green active next lesson button
                 <button
-                  disabled
-                  className="w-10 h-10 rounded-full bg-gray-400 cursor-not-allowed flex items-center justify-center"
-                  aria-label={appLanguage === 'ru' ? 'Следующее задание' : 'Next task'}
+                  onClick={onNextLesson}
+                  className="w-10 h-10 rounded-full bg-green-500 hover:bg-green-600 transition-colors flex items-center justify-center"
+                  aria-label={appLanguage === 'ru' ? `Урок ${dayNumber ? dayNumber + 1 : 2}` : `Lesson ${dayNumber ? dayNumber + 1 : 2}`}
+                  title={appLanguage === 'ru' ? `Урок ${dayNumber ? dayNumber + 1 : 2}` : `Lesson ${dayNumber ? dayNumber + 1 : 2}`}
                 >
                   <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </button>
+              ) : (
+                // Last task not completed - show gray disabled next lesson button
+                <div className="relative">
+                  <button
+                    disabled
+                    onMouseEnter={() => setShowTooltip(true)}
+                    onMouseLeave={() => setShowTooltip(false)}
+                    onClick={() => setShowTooltip(true)}
+                    className="w-10 h-10 rounded-full bg-gray-400 cursor-not-allowed flex items-center justify-center"
+                    aria-label={appLanguage === 'ru' ? `Урок ${dayNumber ? dayNumber + 1 : 2}` : `Lesson ${dayNumber ? dayNumber + 1 : 2}`}
+                  >
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                  {showTooltip && (
+                    <div
+                      className="absolute bottom-full right-0 mb-2 px-3 py-2 bg-black text-white text-xs rounded-lg whitespace-nowrap z-50"
+                      style={{ maxWidth: '200px' }}
+                    >
+                      {appLanguage === 'ru' 
+                        ? `Выполните задание, чтобы перейти к уроку ${dayNumber ? dayNumber + 1 : 2}`
+                        : `Complete the task to proceed to lesson ${dayNumber ? dayNumber + 1 : 2}`}
+                      <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-black"></div>
+                    </div>
+                  )}
+                </div>
               )
-            ) : isLastTask && localIsCompleted && onNextLesson ? (
-              // Last task completed - show next lesson button
-              <button
-                onClick={onNextLesson}
-                className="w-10 h-10 rounded-full bg-green-500 hover:bg-green-600 transition-colors flex items-center justify-center"
-                aria-label={appLanguage === 'ru' ? 'Следующий урок' : 'Next lesson'}
-              >
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
             ) : (
               <div className="w-10 h-10"></div>
             )}

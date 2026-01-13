@@ -235,6 +235,7 @@ export default function TaskCard({
             canGoNext={canGoNext}
             canGoPrevious={canGoPrevious}
             isLastTask={isLastTask}
+            dayNumber={dayNumber}
             progressCompleted={progressCompleted}
             progressTotal={progressTotal}
           />
@@ -286,6 +287,7 @@ export default function TaskCard({
             canGoNext={canGoNext}
             canGoPrevious={canGoPrevious}
             isLastTask={isLastTask}
+            dayNumber={dayNumber}
             progressCompleted={progressCompleted}
             progressTotal={progressTotal}
           />
@@ -313,6 +315,7 @@ export default function TaskCard({
             canGoNext={canGoNext}
             canGoPrevious={canGoPrevious}
             isLastTask={isLastTask}
+            dayNumber={dayNumber}
             progressCompleted={progressCompleted}
             progressTotal={progressTotal}
           />
@@ -332,6 +335,7 @@ export default function TaskCard({
             canGoNext={canGoNext}
             canGoPrevious={canGoPrevious}
             isLastTask={isLastTask}
+            dayNumber={dayNumber}
             progressCompleted={progressCompleted}
             progressTotal={progressTotal}
           />
