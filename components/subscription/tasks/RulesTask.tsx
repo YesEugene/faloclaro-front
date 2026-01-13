@@ -287,12 +287,14 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
     setSpeakOutLoudCompleted(true);
     // If this is the last task and all blocks are completed, auto-complete
     if (isLastTask) {
-      const blocksStructure = getBlocksStructure();
-      const allBlocksCompleted = checkAllBlocksCompleted(blocksStructure);
-      if (allBlocksCompleted) {
-        // Auto-complete last task when "I said it out loud" is clicked
-        handleFinalComplete();
-      }
+      // Use setTimeout to ensure state is updated before checking
+      setTimeout(() => {
+        const allBlocksCompleted = checkAllBlocksCompleted();
+        if (allBlocksCompleted) {
+          // Auto-complete last task when "I said it out loud" is clicked
+          handleFinalComplete();
+        }
+      }, 0);
     }
     // For non-last tasks, don't auto-complete - let user click "All tasks completed" button explicitly
   };
