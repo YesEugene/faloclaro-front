@@ -204,6 +204,172 @@ function getEmailContent(lesson: any, language: string, lessonsUrl: string) {
   const dayInfo = lesson.yaml_content?.day || {};
   const emailInfo = lesson.yaml_content?.email || {};
 
+  // Registration email is for day 1
+  const isRegistrationEmail = lesson.day_number === 1;
+
+  if (isRegistrationEmail) {
+    // Welcome email content
+    const welcomeTranslations = {
+      ru: {
+        subject: 'Добро пожаловать в FaloClaro. Начнем!',
+        greeting: 'Привет!',
+        intro: 'Это Ye из FaloClaro!',
+        body: `Спасибо, что зарегистрировались и начали свои первые три дня.
+Мне очень приятно, что вы решили попробовать этот способ изучения португальского.
+
+Давайте я расскажу, как устроен курс и как получить от него максимум.
+
+Каждый день, это короткий урок из пяти частей.
+Он сделан лёгким по ощущению, но это не значит, что его нужно проходить на скорости.
+
+Не спешите.
+
+Первый блок каждого урока — это словарь.
+Здесь вы собираете слова, которые будете использовать дальше в этом же уроке.
+Мы рекомендуем уделить этому около 10 минут.
+В углу экрана вы увидите таймер, используйте его как ориентир, а не как давление.
+
+Если какие-то слова вам уже знакомы, отлично, можно идти дальше.
+Если нет — повторяйте, слушайте ещё раз, дайте им уложиться.
+
+Все следующие задания в уроке строятся именно на этих словах.
+К концу урока цель не просто узнавать слова, а уметь собирать из них живые фразы.
+
+Уроки специально сделаны короткими.
+Это позволяет встроить их в обычный день, но важно не превращать их в пролистывание.
+Оставайтесь в задании до тех пор, пока вы действительно не почувствуете, что понимаете, что происходит.
+
+Именно так язык начинает закрепляться.
+
+Ещё раз спасибо, что вы здесь.
+Надеюсь, эти три урока дадут вам настоящее ощущение того, как спокойно и естественно можно учить португальский.
+
+Приятного обучения
+и добро пожаловать в FaloClaro 🇵🇹`,
+        cta: 'Начать урок',
+      },
+      en: {
+        subject: 'Welcome to FaloClaro. Let\'s start.',
+        greeting: 'Hi,',
+        intro: 'This is Ye from FaloClaro.',
+        body: `Thank you for signing up and starting your first three days with us.
+I'm really glad you decided to try this way of learning Portuguese.
+
+Let me quickly explain how the course works and how to get the most out of it.
+
+Each day is a short lesson made of five parts.
+It feels light and simple, but that doesn't mean you should rush through it.
+
+Take your time.
+
+The first block of every lesson is vocabulary.
+This is where you build the set of words you will use in the rest of that lesson.
+We recommend spending about 10 minutes here.
+You will see a timer in the corner of the screen. Use it as a guide, not as pressure.
+
+If you already know some of the words, great, you can move on.
+If not, listen again, repeat them, and let them settle.
+
+All the following tasks in the lesson are built from these words.
+By the end of the lesson, the goal is not just to recognize them, but to turn them into real phrases.
+
+The lessons are intentionally short.
+They are designed to fit into a normal day, but it's important not to treat them like something to scroll through.
+Stay with each task until you truly feel you understand what is happening.
+
+That is how the language starts to stick.
+
+Thank you again for being here.
+I hope these three lessons give you a real sense of how calm and natural learning Portuguese can be.
+
+Enjoy your learning,
+and welcome to FaloClaro 🇵🇹`,
+        cta: 'Start lesson',
+      },
+      pt: {
+        subject: 'Bem-vindo ao FaloClaro. Vamos começar.',
+        greeting: 'Olá,',
+        intro: 'Sou o Ye do FaloClaro.',
+        body: `Obrigado por te registares e começares os teus primeiros três dias connosco.
+Fico muito feliz por teres decidido experimentar esta forma de aprender português.
+
+Deixa-me explicar rapidamente como funciona o curso e como tirar o máximo proveito dele.
+
+Cada dia é uma lição curta composta por cinco partes.
+Parece leve e simples, mas isso não significa que deves passar por ela com pressa.
+
+Toma o teu tempo.
+
+O primeiro bloco de cada lição é vocabulário.
+É aqui que constróis o conjunto de palavras que usarás no resto dessa lição.
+Recomendamos passar cerca de 10 minutos aqui.
+Verás um temporizador no canto do ecrã. Usa-o como guia, não como pressão.
+
+Se já conheces algumas das palavras, ótimo, podes avançar.
+Se não, ouve novamente, repete-as e deixa-as assentar.
+
+Todas as tarefas seguintes na lição são construídas a partir destas palavras.
+No final da lição, o objetivo não é apenas reconhecê-las, mas transformá-las em frases reais.
+
+As lições são intencionalmente curtas.
+Foram concebidas para caber num dia normal, mas é importante não as tratar como algo para percorrer rapidamente.
+Fica com cada tarefa até sentires verdadeiramente que compreendes o que está a acontecer.
+
+É assim que a língua começa a fixar-se.
+
+Obrigado novamente por estares aqui.
+Espero que estas três lições te dêem uma sensação real de como aprender português pode ser calmo e natural.
+
+Aproveita a tua aprendizagem,
+e bem-vindo ao FaloClaro 🇵🇹`,
+        cta: 'Começar lição',
+      },
+    };
+
+    const t = welcomeTranslations[language as keyof typeof welcomeTranslations] || welcomeTranslations.en;
+
+    const html = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        </head>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9fafb;">
+          <div style="background-color: white; border-radius: 8px; padding: 30px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h1 style="color: #3A2E1F; font-size: 24px; margin-bottom: 20px; font-weight: 600;">${t.subject}</h1>
+            <p style="font-size: 16px; margin-bottom: 10px;">${t.greeting}</p>
+            <p style="font-size: 16px; margin-bottom: 20px;">${t.intro}</p>
+            <div style="font-size: 15px; line-height: 1.8; color: #4b5563; margin-bottom: 30px; white-space: pre-line;">${t.body}</div>
+            <div style="margin: 30px 0; text-align: center;">
+              <a href="${lessonsUrl}" style="background-color: #45C240; color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: 600; font-size: 16px;">
+                ${t.cta}
+              </a>
+            </div>
+          </div>
+        </body>
+      </html>
+    `;
+
+    const text = `
+${t.subject}
+
+${t.greeting}
+${t.intro}
+
+${t.body}
+
+${t.cta}: ${lessonsUrl}
+    `;
+
+    return {
+      subject: t.subject,
+      html,
+      text,
+    };
+  }
+
+  // Regular lesson email (not registration)
   const translations = {
     ru: {
       subject: emailInfo.subject || `День ${lesson.day_number} из 60 — новый урок`,
@@ -231,18 +397,7 @@ function getEmailContent(lesson: any, language: string, lessonsUrl: string) {
     },
   };
 
-      const t = translations[language as keyof typeof translations] || translations.en;
-
-  // Update message for registration email (first 3 lessons unlocked)
-  // Registration email is for day 1 - check if day_number is 1
-  const isRegistrationEmail = lesson.day_number === 1;
-  const message = isRegistrationEmail 
-    ? (language === 'ru' 
-        ? 'Ты получил доступ к первым 3 урокам бесплатно. Остальные уроки доступны после оплаты.'
-        : language === 'en'
-        ? 'You got access to the first 3 lessons for free. The rest of the lessons are available after payment.'
-        : 'Tens acesso às primeiras 3 lições grátis. O resto das lições está disponível após pagamento.')
-    : t.message;
+  const t = translations[language as keyof typeof translations] || translations.en;
 
   const html = `
     <!DOCTYPE html>
@@ -253,7 +408,7 @@ function getEmailContent(lesson: any, language: string, lessonsUrl: string) {
       </head>
       <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
         <h1 style="color: #2563eb;">${t.greeting}</h1>
-        <p>${message}</p>
+        <p>${t.message}</p>
         <p style="color: #666;">${t.preview}</p>
         <div style="margin: 30px 0;">
           <a href="${lessonsUrl}" style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
@@ -268,7 +423,7 @@ function getEmailContent(lesson: any, language: string, lessonsUrl: string) {
   const text = `
 ${t.greeting}
 
-${message}
+${t.message}
 
 ${t.preview}
 

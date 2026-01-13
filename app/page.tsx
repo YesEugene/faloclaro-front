@@ -12,6 +12,7 @@ export default function SubscriptionLandingPage() {
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [error, setError] = useState('');
   const [isMobile, setIsMobile] = useState(false);
   const [courseCardHover, setCourseCardHover] = useState(false);
@@ -25,6 +26,17 @@ export default function SubscriptionLandingPage() {
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  // Auto-hide success popup after 5 seconds
+  useEffect(() => {
+    if (submitted && showSuccessPopup) {
+      const timer = setTimeout(() => {
+        setShowSuccessPopup(false);
+        setSubmitted(false);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [submitted, showSuccessPopup]);
 
   const scrollToStartFree = () => {
     const element = document.getElementById('start-free');
@@ -228,6 +240,7 @@ export default function SubscriptionLandingPage() {
       }
 
       setSubmitted(true);
+      setShowSuccessPopup(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
@@ -235,25 +248,10 @@ export default function SubscriptionLandingPage() {
     }
   };
 
-  if (submitted) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center px-4">
-        <div style={{ maxWidth: '500px', width: '100%', textAlign: 'center' }}>
-          <div className="mb-6">
-            <Image
-              src="/Img/Website/logo.svg"
-              alt="FaloClaro"
-              width={120}
-              height={40}
-              className="h-10 w-auto mx-auto"
-            />
-          </div>
-          <h1 style={{ fontFamily: 'var(--font-orelega)', fontSize: '24px', fontWeight: 400, marginBottom: '16px', color: '#000' }}>{t.successMessage}</h1>
-          <p style={{ fontFamily: 'var(--font-tiktok)', fontSize: '16px', color: '#666' }}>{t.successSubtext}</p>
-        </div>
-      </div>
-    );
-  }
+  const closeSuccessPopup = () => {
+    setShowSuccessPopup(false);
+    setSubmitted(false);
+  };
 
   return (
     <div className="min-h-screen bg-white" style={{ fontFamily: 'var(--font-tiktok)' }}>
@@ -2079,6 +2077,96 @@ export default function SubscriptionLandingPage() {
           </div>
         </div>
       </section>
+
+      {/* Success Popup */}
+      {showSuccessPopup && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            padding: isMobile ? '20px' : '40px',
+          }}
+          onClick={closeSuccessPopup}
+        >
+          <div
+            style={{
+              backgroundColor: '#fff',
+              borderRadius: '16px',
+              padding: isMobile ? '24px' : '40px',
+              maxWidth: isMobile ? '100%' : '500px',
+              width: '100%',
+              textAlign: 'center',
+              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+              position: 'relative',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close button */}
+            <button
+              onClick={closeSuccessPopup}
+              style={{
+                position: 'absolute',
+                top: '16px',
+                right: '16px',
+                background: 'none',
+                border: 'none',
+                fontSize: '24px',
+                cursor: 'pointer',
+                color: '#666',
+                width: '32px',
+                height: '32px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: '50%',
+                transition: 'background-color 0.2s',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#f0f0f0';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
+              }}
+            >
+              ×
+            </button>
+
+            <div className="mb-6">
+              <Image
+                src="/Img/Website/logo.svg"
+                alt="FaloClaro"
+                width={120}
+                height={40}
+                className="h-10 w-auto mx-auto"
+              />
+            </div>
+            <h1 style={{ 
+              fontFamily: 'var(--font-orelega)', 
+              fontSize: isMobile ? '20px' : '24px', 
+              fontWeight: 400, 
+              marginBottom: '16px', 
+              color: '#000' 
+            }}>
+              {t.successMessage}
+            </h1>
+            <p style={{ 
+              fontFamily: 'var(--font-tiktok)', 
+              fontSize: isMobile ? '14px' : '16px', 
+              color: '#666' 
+            }}>
+              {t.successSubtext}
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

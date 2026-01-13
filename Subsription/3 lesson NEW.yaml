@@ -1,0 +1,406 @@
+day:
+  number: 3
+  title:
+    ru: "Время и повседневность"
+    en: "Time and daily routine"
+  subtitle:
+    ru: "Говорим о времени и ежедневных действиях"
+    en: "Talking about time and daily actions"
+
+tasks:
+
+  - task_id: 1
+    type: vocabulary
+    title:
+      ru: "Слова и фразы"
+      en: "Words and phrases"
+    subtitle:
+      ru: "Время и день"
+      en: "Time and the day"
+    estimated_time: "~10"
+    show_timer: true
+    show_audio_settings: true
+    completion_rule: "auto_after_audio_10_min"
+
+    card_format:
+      show_word: true
+      show_transcription: true
+      show_example_sentence: true
+      show_word_translation_ru: true
+      show_word_translation_en: true
+      show_sentence_translation_ru: true
+      show_sentence_translation_en: true
+
+    content:
+      cards:
+        - word: "Manhã"
+          transcription: "[mɐˈɲɐ]"
+          example_sentence: "De manhã."
+          sentence_translation_ru: "Утром."
+          sentence_translation_en: "In the morning."
+          word_translation_ru: "утро"
+          word_translation_en: "morning"
+
+        - word: "Tarde"
+          transcription: "[ˈtaɾdɨ]"
+          example_sentence: "À tarde."
+          sentence_translation_ru: "Днём."
+          sentence_translation_en: "In the afternoon."
+          word_translation_ru: "день"
+          word_translation_en: "afternoon"
+
+        - word: "Noite"
+          transcription: "[ˈnojti]"
+          example_sentence: "À noite."
+          sentence_translation_ru: "Вечером."
+          sentence_translation_en: "At night."
+          word_translation_ru: "ночь"
+          word_translation_en: "night"
+
+        - word: "Dia"
+          transcription: "[ˈdiɐ]"
+          example_sentence: "Bom dia."
+          sentence_translation_ru: "Добрый день."
+          sentence_translation_en: "Good day."
+          word_translation_ru: "день"
+          word_translation_en: "day"
+
+        - word: "Acordar"
+          transcription: "[ɐkoɾˈdaɾ]"
+          example_sentence: "Eu acordo cedo."
+          sentence_translation_ru: "Я просыпаюсь рано."
+          sentence_translation_en: "I wake up early."
+          word_translation_ru: "просыпаться"
+          word_translation_en: "to wake up"
+
+        - word: "Dormir"
+          transcription: "[duɾˈmiɾ]"
+          example_sentence: "Eu durmo à noite."
+          sentence_translation_ru: "Я сплю ночью."
+          sentence_translation_en: "I sleep at night."
+          word_translation_ru: "спать"
+          word_translation_en: "to sleep"
+
+        - word: "Trabalhar"
+          transcription: "[tɾɐbɐˈʎaɾ]"
+          example_sentence: "Eu trabalho."
+          sentence_translation_ru: "Я работаю."
+          sentence_translation_en: "I work."
+          word_translation_ru: "работать"
+          word_translation_en: "to work"
+
+        - word: "Comer"
+          transcription: "[kuˈmeɾ]"
+          example_sentence: "Eu como."
+          sentence_translation_ru: "Я ем."
+          sentence_translation_en: "I eat."
+          word_translation_ru: "есть"
+          word_translation_en: "to eat"
+
+        - word: "Cedo"
+          transcription: "[ˈsedu]"
+          example_sentence: "Muito cedo."
+          sentence_translation_ru: "Очень рано."
+          sentence_translation_en: "Very early."
+          word_translation_ru: "рано"
+          word_translation_en: "early"
+
+        - word: "Tarde"
+          transcription: "[ˈtaɾdɨ]"
+          example_sentence: "Muito tarde."
+          sentence_translation_ru: "Очень поздно."
+          sentence_translation_en: "Very late."
+          word_translation_ru: "поздно"
+          word_translation_en: "late"
+
+
+  - task_id: 2
+    type: rules
+    title:
+      ru: "Как строится мысль"
+      en: "How the idea is built"
+    subtitle:
+      ru: "Время и действия"
+      en: "Time and actions"
+
+    structure:
+      blocks_order:
+        - block_1_build
+        - block_2_transform
+        - block_3_answers
+        - block_4_equivalence
+        - block_5_reinforcement
+        - block_6_speak
+
+    blocks:
+
+      block_1_build:
+        type: explanation
+        title:
+          ru: "Базовые действия"
+          en: "Basic actions"
+        explanation_text:
+          ru: "Ты можешь сказать, что делаешь."
+          en: "You can say what you do."
+        examples:
+          - text: "Eu trabalho."
+            audio: true
+          - text: "Eu como."
+            audio: true
+
+      block_2_transform:
+        type: explanation
+        title:
+          ru: "Добавляем время"
+          en: "Adding time"
+        examples:
+          - text: "Eu trabalho de manhã."
+            audio: true
+          - text: "Eu como à noite."
+            audio: true
+
+      block_3_answers:
+        type: explanation
+        title:
+          ru: "Распорядок"
+          en: "Daily routine"
+        examples:
+          - text: "Eu acordo cedo."
+            audio: true
+          - text: "Eu durmo à noite."
+            audio: true
+
+      block_4_equivalence:
+        type: comparison
+        title:
+          ru: "Разные фразы"
+          en: "Different forms"
+        comparison_card:
+          - text: "Eu trabalho de manhã."
+            audio: true
+          - text: "De manhã eu trabalho."
+            audio: true
+        note:
+          ru: "Порядок слов меняется, смысл остаётся."
+          en: "Word order changes, meaning stays."
+
+      block_5_reinforcement:
+        type: reinforcement
+        task_1:
+          format: single_choice
+          audio: "Eu durmo à noite."
+          question:
+            ru: "Что это?"
+            en: "What is this?"
+          options:
+            - text:
+                ru: "Действие во времени"
+                en: "An action in time"
+              correct: true
+            - text:
+                ru: "Вопрос"
+                en: "A question"
+              correct: false
+            - text:
+                ru: "Место"
+                en: "A place"
+              correct: false
+
+        task_2:
+          format: single_choice
+          audio: "Eu acordo cedo."
+          question:
+            ru: "Что это значит?"
+            en: "What does it mean?"
+          options:
+            - text:
+                ru: "Я просыпаюсь рано"
+                en: "I wake up early"
+              correct: true
+            - text:
+                ru: "Я ем"
+                en: "I eat"
+              correct: false
+            - text:
+                ru: "Я работаю"
+                en: "I work"
+              correct: false
+
+      block_6_speak:
+        type: speak_out_loud
+        title:
+          ru: "Скажи вслух"
+          en: "Speak out loud"
+        instruction_text:
+          ru: "Скажи: Eu acordo cedo. Eu trabalho de manhã. Eu durmo à noite."
+          en: "Say: Eu acordo cedo. Eu trabalho de manhã. Eu durmo à noite."
+        action_button:
+          text:
+            ru: "✔ Я сказал(а)"
+            en: "✔ I said it"
+          completes_task: true
+
+
+  - task_id: 3
+    type: listening_comprehension
+    title:
+      ru: "Слушай и пойми"
+      en: "Listen and understand"
+
+    ui_rules:
+      audio_plays_first: true
+      show_text_after_answer: true
+
+    items:
+      - item_id: 1
+        audio: "Eu trabalho de manhã."
+        question:
+          ru: "Когда?"
+          en: "When?"
+        options:
+          - text:
+              ru: "Утром"
+              en: "In the morning"
+            correct: true
+          - text:
+              ru: "Ночью"
+              en: "At night"
+            correct: false
+          - text:
+              ru: "Поздно"
+              en: "Late"
+            correct: false
+
+      - item_id: 2
+        audio: "Eu durmo à noite."
+        question:
+          ru: "Что происходит?"
+          en: "What happens?"
+        options:
+          - text:
+              ru: "Сон"
+              en: "Sleeping"
+            correct: true
+          - text:
+              ru: "Работа"
+              en: "Working"
+            correct: false
+          - text:
+              ru: "Еда"
+              en: "Eating"
+            correct: false
+
+      - item_id: 3
+        audio: "Eu acordo cedo."
+        question:
+          ru: "Как?"
+          en: "How?"
+        options:
+          - text:
+              ru: "Рано"
+              en: "Early"
+            correct: true
+          - text:
+              ru: "Поздно"
+              en: "Late"
+            correct: false
+          - text:
+              ru: "Днём"
+              en: "In the afternoon"
+            correct: false
+
+
+  - task_id: 4
+    type: attention
+    title:
+      ru: "Внимательность"
+      en: "Attention"
+
+    items:
+      - item_id: 1
+        audio: "Eu como à noite."
+        question:
+          ru: "Что это?"
+          en: "What is this?"
+        options:
+          - text:
+              ru: "Действие и время"
+              en: "An action and time"
+            correct: true
+          - text:
+              ru: "Место"
+              en: "A place"
+            correct: false
+          - text:
+              ru: "Вопрос"
+              en: "A question"
+            correct: false
+
+      - item_id: 2
+        audio: "Eu trabalho."
+        question:
+          ru: "Что это?"
+          en: "What is this?"
+        options:
+          - text:
+              ru: "Действие"
+              en: "An action"
+            correct: true
+          - text:
+              ru: "Время"
+              en: "Time"
+            correct: false
+          - text:
+              ru: "Место"
+              en: "Place"
+            correct: false
+
+      - item_id: 3
+        audio: "De manhã."
+        question:
+          ru: "Что это?"
+          en: "What is this?"
+        options:
+          - text:
+              ru: "Время"
+              en: "Time"
+            correct: true
+          - text:
+              ru: "Действие"
+              en: "Action"
+            correct: false
+          - text:
+              ru: "Место"
+              en: "Place"
+            correct: false
+
+
+  - task_id: 5
+    type: writing_optional
+    title:
+      ru: "Скажи или напиши"
+      en: "Say or write"
+
+    main_task:
+      format: template_fill
+      template:
+        - "Eu acordo ___."
+        - "Eu trabalho ___."
+        - "Eu durmo ___."
+
+    example:
+      show_by_button: true
+      content:
+        - "Eu acordo cedo."
+        - "Eu trabalho de manhã."
+        - "Eu durmo à noite."
+
+    alternative:
+      instruction:
+        ru: "Скажи эти фразы вслух."
+        en: "Say these sentences out loud."
+      action_button:
+        text:
+          ru: "✔ Я сказал(а)"
+          en: "✔ I said it"
+        completes_task: true

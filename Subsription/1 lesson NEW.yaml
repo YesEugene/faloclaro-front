@@ -1,0 +1,370 @@
+day:
+  number: 1
+  title:
+    ru: "Знакомство"
+    en: "Getting to know each other"
+  subtitle:
+    ru: "Говорим, кто мы и как нас зовут"
+    en: "Saying who we are and our names"
+  estimated_time: "15–25"
+
+tasks:
+
+# =========================================================
+# TASK 1 — VOCABULARY
+# =========================================================
+  - task_id: 1
+    type: vocabulary
+    title:
+      ru: "Слова и фразы"
+      en: "Words and phrases"
+    subtitle:
+      ru: "Знакомство"
+      en: "Introductions"
+
+    card_format:
+      show_word: true
+      show_transcription: true
+      show_example_sentence: true
+      show_word_translation_ru: true
+      show_word_translation_en: true
+      show_sentence_translation_ru: true
+      show_sentence_translation_en: true
+
+    content:
+      cards:
+        - word: "Olá"
+          transcription: "[ɔˈla]"
+          example_sentence: "Olá!"
+          sentence_translation_ru: "Привет!"
+          sentence_translation_en: "Hello!"
+          word_translation_ru: "привет"
+          word_translation_en: "hello"
+
+        - word: "Eu"
+          transcription: "[ew]"
+          example_sentence: "Eu sou Ana."
+          sentence_translation_ru: "Я Ана."
+          sentence_translation_en: "I am Ana."
+          word_translation_ru: "я"
+          word_translation_en: "I"
+
+        - word: "Sou"
+          transcription: "[so]"
+          example_sentence: "Eu sou João."
+          sentence_translation_ru: "Я Жоау."
+          sentence_translation_en: "I am João."
+          word_translation_ru: "есть / являюсь"
+          word_translation_en: "am"
+
+        - word: "Nome"
+          transcription: "[ˈnomɨ]"
+          example_sentence: "Meu nome é Ana."
+          sentence_translation_ru: "Меня зовут Ана."
+          sentence_translation_en: "My name is Ana."
+          word_translation_ru: "имя"
+          word_translation_en: "name"
+
+        - word: "Meu"
+          transcription: "[mew]"
+          example_sentence: "Meu nome é João."
+          sentence_translation_ru: "Меня зовут Жоау."
+          sentence_translation_en: "My name is João."
+          word_translation_ru: "мой"
+          word_translation_en: "my"
+
+        - word: "É"
+          transcription: "[ɛ]"
+          example_sentence: "Meu nome é Ana."
+          sentence_translation_ru: "Меня зовут Ана."
+          sentence_translation_en: "My name is Ana."
+          word_translation_ru: "есть"
+          word_translation_en: "is"
+
+        - word: "Como"
+          transcription: "[ˈkomu]"
+          example_sentence: "Como se chama?"
+          sentence_translation_ru: "Как вас зовут?"
+          sentence_translation_en: "What is your name?"
+          word_translation_ru: "как"
+          word_translation_en: "how"
+
+        - word: "Chama"
+          transcription: "[ˈʃɐmɐ]"
+          example_sentence: "Como se chama?"
+          sentence_translation_ru: "Как вас зовут?"
+          sentence_translation_en: "What is your name?"
+          word_translation_ru: "называется"
+          word_translation_en: "is called"
+
+        - word: "Prazer"
+          transcription: "[pɾɐˈzeɾ]"
+          example_sentence: "Prazer!"
+          sentence_translation_ru: "Приятно познакомиться!"
+          sentence_translation_en: "Nice to meet you!"
+          word_translation_ru: "приятно"
+          word_translation_en: "nice"
+
+        - word: "Também"
+          transcription: "[tɐ̃ˈbɐ̃j]"
+          example_sentence: "Prazer, também."
+          sentence_translation_ru: "Взаимно."
+          sentence_translation_en: "Nice to meet you too."
+          word_translation_ru: "тоже"
+          word_translation_en: "too"
+
+        # вспомогательные
+        - word: "Eu sou"
+          transcription: "[ew so]"
+          example_sentence: "Eu sou Maria."
+          sentence_translation_ru: "Я Мария."
+          sentence_translation_en: "I am Maria."
+          word_translation_ru: "я есть"
+          word_translation_en: "I am"
+
+        - word: "Meu nome"
+          transcription: "[mew ˈnomɨ]"
+          example_sentence: "Meu nome é Pedro."
+          sentence_translation_ru: "Меня зовут Педру."
+          sentence_translation_en: "My name is Pedro."
+          word_translation_ru: "моё имя"
+          word_translation_en: "my name"
+
+
+# =========================================================
+# TASK 2 — RULES (Michel Thomas style)
+# =========================================================
+  - task_id: 2
+    type: rules
+    title:
+      ru: "Как строится фраза"
+      en: "How the sentence is built"
+    subtitle:
+      ru: "От простого к диалогу"
+      en: "From simple to dialogue"
+
+    structure:
+      blocks_order:
+        - block_1_build
+        - block_2_transform
+        - block_3_answers
+        - block_4_equivalence
+        - block_5_reinforcement
+        - block_6_speak
+
+    blocks:
+
+      block_1_build:
+        type: explanation
+        title:
+          ru: "Кто ты"
+          en: "Who you are"
+        explanation_text:
+          ru: "Так ты говоришь, кто ты."
+          en: "This is how you say who you are."
+        examples:
+          - text: "Eu sou Ana."
+            audio: true
+          - text: "Eu sou João."
+            audio: true
+        hint:
+          - ru: "Eu = я"
+            en: "Eu = I"
+          - ru: "sou = есть"
+            en: "sou = am"
+
+      block_2_transform:
+        type: explanation
+        title:
+          ru: "Имя"
+          en: "Your name"
+        examples:
+          - text: "Meu nome é Ana."
+            audio: true
+          - text: "Meu nome é João."
+            audio: true
+        hint:
+          - ru: "Meu nome = моё имя"
+            en: "Meu nome = my name"
+          - ru: "é = есть"
+            en: "é = is"
+
+      block_3_answers:
+        type: explanation
+        title:
+          ru: "Как спросить"
+          en: "How to ask"
+        examples:
+          - text: "Como se chama?"
+            audio: true
+          - text: "Qual é o seu nome?"
+            audio: true
+        hint:
+          - ru: "Como se chama? = Как вас зовут?"
+            en: "Como se chama? = What is your name?"
+
+      block_4_equivalence:
+        type: comparison
+        title:
+          ru: "Один смысл"
+          en: "Same meaning"
+        comparison_card:
+          - text: "Eu sou Ana."
+            audio: true
+          - text: "Meu nome é Ana."
+            audio: true
+        note:
+          ru: "Обе фразы говорят, как тебя зовут."
+          en: "Both say your name."
+
+      block_5_reinforcement:
+        type: reinforcement
+        task_1:
+          format: single_choice
+          audio: "Meu nome é João."
+          question:
+            ru: "Что человек сказал?"
+            en: "What did the person say?"
+          options:
+            - { text: { ru: "Как его зовут", en: "His name" }, correct: true }
+            - { text: { ru: "Привет", en: "Hello" }, correct: false }
+            - { text: { ru: "Прощание", en: "Goodbye" }, correct: false }
+
+        task_2:
+          format: single_choice
+          audio: "Como se chama?"
+          question:
+            ru: "Что это?"
+            en: "What is this?"
+          options:
+            - { text: { ru: "Вопрос об имени", en: "A question about a name" }, correct: true }
+            - { text: { ru: "Ответ", en: "An answer" }, correct: false }
+            - { text: { ru: "Благодарность", en: "Thanks" }, correct: false }
+
+      block_6_speak:
+        type: speak_out_loud
+        title:
+          ru: "Скажи вслух"
+          en: "Say it out loud"
+        instruction_text:
+          ru: "Скажи: Olá. Eu sou Ana. Meu nome é Ana. Prazer."
+          en: "Say: Olá. Eu sou Ana. Meu nome é Ana. Prazer."
+        action_button:
+          text:
+            ru: "✔ Я сказал(а) вслух"
+            en: "✔ I said it out loud"
+          completes_task: true
+
+
+# =========================================================
+# TASK 3 — LISTENING
+# =========================================================
+  - task_id: 3
+    type: listening_comprehension
+    title:
+      ru: "Мини-диалоги"
+      en: "Mini dialogues"
+    subtitle:
+      ru: "Пойми, кто есть кто"
+      en: "Understand who is who"
+
+    ui_rules:
+      audio_plays_first: true
+      show_text_after_answer: true
+
+    items:
+      - item_id: 1
+        audio: "Olá. Eu sou João."
+        question:
+          ru: "Что сказал человек?"
+          en: "What did the person say?"
+        options:
+          - { text: { ru: "Он назвал своё имя", en: "He said his name" }, correct: true }
+          - { text: { ru: "Он попрощался", en: "He said goodbye" }, correct: false }
+          - { text: { ru: "Он поблагодарил", en: "He thanked" }, correct: false }
+
+      - item_id: 2
+        audio: "Meu nome é Maria."
+        question:
+          ru: "Что мы узнали?"
+          en: "What did we learn?"
+        options:
+          - { text: { ru: "Её имя", en: "Her name" }, correct: true }
+          - { text: { ru: "Её возраст", en: "Her age" }, correct: false }
+          - { text: { ru: "Её город", en: "Her city" }, correct: false }
+
+
+# =========================================================
+# TASK 4 — ATTENTION
+# =========================================================
+  - task_id: 4
+    type: attention
+    title:
+      ru: "Внимательность"
+      en: "Attention"
+    subtitle:
+      ru: "Что человек делает?"
+
+    items:
+      - item_id: 1
+        audio: "Prazer."
+        question:
+          ru: "Что это?"
+          en: "What is this?"
+        options:
+          - { text: { ru: "Приятно познакомиться", en: "Nice to meet you" }, correct: true }
+          - { text: { ru: "Имя", en: "A name" }, correct: false }
+          - { text: { ru: "Вопрос", en: "A question" }, correct: false }
+
+      - item_id: 2
+        audio: "Como se chama?"
+        question:
+          ru: "Что это?"
+          en: "What is this?"
+        options:
+          - { text: { ru: "Вопрос", en: "A question" }, correct: true }
+          - { text: { ru: "Ответ", en: "An answer" }, correct: false }
+          - { text: { ru: "Благодарность", en: "Thanks" }, correct: false }
+
+
+# =========================================================
+# TASK 5 — WRITING / SPEAKING
+# =========================================================
+  - task_id: 5
+    type: writing_optional
+    title:
+      ru: "Скажи или напиши"
+      en: "Say it or write it"
+
+    instruction:
+      ru: "Представься."
+      en: "Introduce yourself."
+
+    main_task:
+      format: template_fill
+      template:
+        - "Olá."
+        - "Eu sou ___."
+        - "Meu nome é ___."
+        - "Prazer."
+
+    example:
+      show_by_button: true
+      content:
+        - "Olá."
+        - "Eu sou Ana."
+        - "Meu nome é Ana."
+        - "Prazer."
+
+    alternative:
+      title:
+        ru: "Можно сказать вслух"
+        en: "You can say it out loud"
+      instruction:
+        ru: "Скажи: Olá. Eu sou Ana. Meu nome é Ana. Prazer."
+        en: "Say: Olá. Eu sou Ana. Meu nome é Ana. Prazer."
+      action_button:
+        text:
+          ru: "✔ Я сказал(а) вслух"
+          en: "✔ I said it out loud"
+        completes_task: true

@@ -1,0 +1,415 @@
+day:
+  number: 2
+  title:
+    ru: "Где я и откуда"
+    en: "Where I am and where I'm from"
+  subtitle:
+    ru: "Говорим о месте и происхождении"
+    en: "Talking about location and origin"
+
+tasks:
+
+  - task_id: 1
+    type: vocabulary
+    title:
+      ru: "Слова и фразы"
+      en: "Words and phrases"
+    subtitle:
+      ru: "Место и происхождение"
+      en: "Place and origin"
+    estimated_time: "~10"
+    show_timer: true
+    show_audio_settings: true
+    completion_rule: "auto_after_audio_10_min"
+
+    card_format:
+      show_word: true
+      show_transcription: true
+      show_example_sentence: true
+      show_word_translation_ru: true
+      show_word_translation_en: true
+      show_sentence_translation_ru: true
+      show_sentence_translation_en: true
+
+    content:
+      cards:
+        - word: "Aqui"
+          transcription: "[ɐˈki]"
+          example_sentence: "Aqui é Lisboa."
+          sentence_translation_ru: "Здесь Лиссабон."
+          sentence_translation_en: "This is Lisbon."
+          word_translation_ru: "здесь"
+          word_translation_en: "here"
+
+        - word: "Ali"
+          transcription: "[ɐˈli]"
+          example_sentence: "Ali é o café."
+          sentence_translation_ru: "Там кафе."
+          sentence_translation_en: "There is the café."
+          word_translation_ru: "там"
+          word_translation_en: "there"
+
+        - word: "Em"
+          transcription: "[ẽ]"
+          example_sentence: "Em Lisboa."
+          sentence_translation_ru: "В Лиссабоне."
+          sentence_translation_en: "In Lisbon."
+          word_translation_ru: "в"
+          word_translation_en: "in"
+
+        - word: "De"
+          transcription: "[dɨ]"
+          example_sentence: "De Portugal."
+          sentence_translation_ru: "Из Португалии."
+          sentence_translation_en: "From Portugal."
+          word_translation_ru: "из"
+          word_translation_en: "from"
+
+        - word: "Lisboa"
+          transcription: "[liʒˈboɐ]"
+          example_sentence: "Em Lisboa."
+          sentence_translation_ru: "В Лиссабоне."
+          sentence_translation_en: "In Lisbon."
+          word_translation_ru: "Лиссабон"
+          word_translation_en: "Lisbon"
+
+        - word: "Portugal"
+          transcription: "[puɾtuˈɡaɫ]"
+          example_sentence: "De Portugal."
+          sentence_translation_ru: "Из Португалии."
+          sentence_translation_en: "From Portugal."
+          word_translation_ru: "Португалия"
+          word_translation_en: "Portugal"
+
+        - word: "França"
+          transcription: "[ˈfɾɐ̃sɐ]"
+          example_sentence: "De França."
+          sentence_translation_ru: "Из Франции."
+          sentence_translation_en: "From France."
+          word_translation_ru: "Франция"
+          word_translation_en: "France"
+
+        - word: "Onde"
+          transcription: "[ˈõdʒi]"
+          example_sentence: "Onde fica Lisboa?"
+          sentence_translation_ru: "Где находится Лиссабон?"
+          sentence_translation_en: "Where is Lisbon?"
+          word_translation_ru: "где"
+          word_translation_en: "where"
+
+        - word: "Fica"
+          transcription: "[ˈfikɐ]"
+          example_sentence: "Lisboa fica aqui."
+          sentence_translation_ru: "Лиссабон здесь."
+          sentence_translation_en: "Lisbon is here."
+          word_translation_ru: "находится"
+          word_translation_en: "is located"
+
+        - word: "Daqui"
+          transcription: "[dɐˈki]"
+          example_sentence: "Daqui é Lisboa."
+          sentence_translation_ru: "Отсюда Лиссабон."
+          sentence_translation_en: "From here is Lisbon."
+          word_translation_ru: "отсюда"
+          word_translation_en: "from here"
+
+
+  - task_id: 2
+    type: rules
+    title:
+      ru: "Как строится мысль"
+      en: "How the idea is built"
+    subtitle:
+      ru: "Где и откуда"
+      en: "Where and from where"
+
+    structure:
+      blocks_order:
+        - block_1_build
+        - block_2_transform
+        - block_3_answers
+        - block_4_equivalence
+        - block_5_reinforcement
+        - block_6_speak
+
+    blocks:
+
+      block_1_build:
+        type: explanation
+        title:
+          ru: "Говорим где"
+          en: "Saying where"
+        explanation_text:
+          ru: "Ты можешь сказать, где находится место."
+          en: "You can say where a place is."
+        examples:
+          - text: "Lisboa fica aqui."
+            audio: true
+          - text: "O café fica ali."
+            audio: true
+        hints:
+          - ru: "fica = находится"
+            en: "fica = is located"
+
+      block_2_transform:
+        type: explanation
+        title:
+          ru: "Спрашиваем"
+          en: "Asking"
+        examples:
+          - text: "Onde fica Lisboa?"
+            audio: true
+          - text: "Onde fica o café?"
+            audio: true
+        hints:
+          - ru: "Onde = где"
+            en: "Onde = where"
+
+      block_3_answers:
+        type: explanation
+        title:
+          ru: "Говорим откуда"
+          en: "Saying from where"
+        examples:
+          - text: "De Portugal."
+            audio: true
+          - text: "De França."
+            audio: true
+        hints:
+          - ru: "de = из"
+            en: "de = from"
+
+      block_4_equivalence:
+        type: comparison
+        title:
+          ru: "Две стороны"
+          en: "Two sides"
+        comparison_card:
+          - text: "Lisboa fica aqui."
+            audio: true
+          - text: "De Portugal."
+            audio: true
+        note:
+          ru: "Одно про место, другое про происхождение."
+          en: "One is about place, the other about origin."
+
+      block_5_reinforcement:
+        type: reinforcement
+        task_1:
+          format: single_choice
+          audio: "Onde fica Lisboa?"
+          question:
+            ru: "Что это?"
+            en: "What is this?"
+          options:
+            - text:
+                ru: "Вопрос о месте"
+                en: "A place question"
+              correct: true
+            - text:
+                ru: "Ответ"
+                en: "An answer"
+              correct: false
+            - text:
+                ru: "Происхождение"
+                en: "Origin"
+              correct: false
+
+        task_2:
+          format: single_choice
+          audio: "De França."
+          question:
+            ru: "Что это?"
+            en: "What is this?"
+          options:
+            - text:
+                ru: "Происхождение"
+                en: "Origin"
+              correct: true
+            - text:
+                ru: "Место"
+                en: "Place"
+              correct: false
+            - text:
+                ru: "Вопрос"
+                en: "Question"
+              correct: false
+
+      block_6_speak:
+        type: speak_out_loud
+        title:
+          ru: "Скажи вслух"
+          en: "Speak out loud"
+        instruction_text:
+          ru: "Скажи: Onde fica Lisboa? Lisboa fica aqui. De Portugal."
+          en: "Say: Onde fica Lisboa? Lisboa fica aqui. De Portugal."
+        action_button:
+          text:
+            ru: "✔ Я сказал(а)"
+            en: "✔ I said it"
+          completes_task: true
+
+
+  - task_id: 3
+    type: listening_comprehension
+    title:
+      ru: "Слушай и пойми"
+      en: "Listen and understand"
+
+    ui_rules:
+      audio_plays_first: true
+      show_text_after_answer: true
+
+    items:
+      - item_id: 1
+        audio: "Onde fica Lisboa?"
+        question:
+          ru: "Что хотят узнать?"
+          en: "What do they want to know?"
+        options:
+          - text:
+              ru: "Где находится"
+              en: "Where it is"
+            correct: true
+          - text:
+              ru: "Откуда"
+              en: "Where from"
+            correct: false
+          - text:
+              ru: "Кто"
+              en: "Who"
+            correct: false
+
+      - item_id: 2
+        audio: "Lisboa fica aqui."
+        question:
+          ru: "Что это?"
+          en: "What is this?"
+        options:
+          - text:
+              ru: "Сообщение о месте"
+              en: "A place statement"
+            correct: true
+          - text:
+              ru: "Происхождение"
+              en: "Origin"
+            correct: false
+          - text:
+              ru: "Вопрос"
+              en: "Question"
+            correct: false
+
+      - item_id: 3
+        audio: "De Portugal."
+        question:
+          ru: "О чём это?"
+          en: "What is this about?"
+        options:
+          - text:
+              ru: "Происхождение"
+              en: "Origin"
+            correct: true
+          - text:
+              ru: "Место"
+              en: "Place"
+            correct: false
+          - text:
+              ru: "Вопрос"
+              en: "Question"
+            correct: false
+
+
+  - task_id: 4
+    type: attention
+    title:
+      ru: "Внимательность"
+      en: "Attention"
+
+    items:
+      - item_id: 1
+        audio: "Lisboa fica aqui."
+        question:
+          ru: "Что это?"
+          en: "What is this?"
+        options:
+          - text:
+              ru: "Где"
+              en: "Where"
+            correct: true
+          - text:
+              ru: "Откуда"
+              en: "From where"
+            correct: false
+          - text:
+              ru: "Вопрос"
+              en: "Question"
+            correct: false
+
+      - item_id: 2
+        audio: "Onde fica o café?"
+        question:
+          ru: "Что это?"
+          en: "What is this?"
+        options:
+          - text:
+              ru: "Вопрос"
+              en: "A question"
+            correct: true
+          - text:
+              ru: "Ответ"
+              en: "An answer"
+            correct: false
+          - text:
+              ru: "Происхождение"
+              en: "Origin"
+            correct: false
+
+      - item_id: 3
+        audio: "De França."
+        question:
+          ru: "Что это?"
+          en: "What is this?"
+        options:
+          - text:
+              ru: "Откуда"
+              en: "From where"
+            correct: true
+          - text:
+              ru: "Где"
+              en: "Where"
+            correct: false
+          - text:
+              ru: "Вопрос"
+              en: "Question"
+            correct: false
+
+
+  - task_id: 5
+    type: writing_optional
+    title:
+      ru: "Скажи или напиши"
+      en: "Say or write"
+
+    main_task:
+      format: template_fill
+      template:
+        - "Onde fica Lisboa?"
+        - "Lisboa fica ___."
+        - "De ___."
+
+    example:
+      show_by_button: true
+      content:
+        - "Onde fica Lisboa?"
+        - "Lisboa fica aqui."
+        - "De Portugal."
+
+    alternative:
+      instruction:
+        ru: "Скажи эти фразы вслух."
+        en: "Say these sentences out loud."
+      action_button:
+        text:
+          ru: "✔ Я сказал(а)"
+          en: "✔ I said it"
+        completes_task: true
