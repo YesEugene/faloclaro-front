@@ -582,7 +582,7 @@ export default function RulesTaskEditor({ task, onChange, lessonDay }: RulesTask
                           handleGenerateAudio(index, exampleIndex);
                         }}
                         disabled={generatingAudio[key] || !example.text?.trim()}
-                        className="px-2 py-2 text-xs text-green-600 hover:text-green-800 font-medium disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                        className="px-3 py-2 text-xs text-green-600 hover:text-green-800 font-medium disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap border border-gray-300 rounded"
                         title="Сгенерировать аудио"
                       >
                         {generatingAudio[key] ? '⏳' : 'Генерировать аудио'}
@@ -860,7 +860,7 @@ export default function RulesTaskEditor({ task, onChange, lessonDay }: RulesTask
                       <button
                         onClick={(e) => { e.stopPropagation(); handleGenerateAudio(cardIndex); }}
                         disabled={generatingAudio[key] || !card.text?.trim()}
-                        className="px-2 py-2 text-xs text-green-600 hover:text-green-800 font-medium disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                        className="px-3 py-2 text-xs text-green-600 hover:text-green-800 font-medium disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap border border-gray-300 rounded"
                         title="Сгенерировать аудио"
                       >
                         {generatingAudio[key] ? '⏳' : 'Генерировать аудио'}
