@@ -1255,6 +1255,13 @@ export default function RulesTaskEditor({ task, onChange, lessonDay }: RulesTask
                   >
                     ↓
                   </button>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); handleDeleteOption(taskNumber, optionIndex); }}
+                    className="w-8 h-8 flex items-center justify-center text-red-600 hover:text-red-800 border border-gray-300 rounded"
+                    title="Удалить вариант"
+                  >
+                    🗑️
+                  </button>
                 </div>
               ))}
               <button
@@ -1351,6 +1358,16 @@ export default function RulesTaskEditor({ task, onChange, lessonDay }: RulesTask
 
             {/* Task 2 */}
             {renderTask(2)}
+
+            {/* Add Task Button (if task 2 doesn't exist) */}
+            {!task2 && (
+              <button
+                onClick={(e) => { e.stopPropagation(); handleCreateTask(2); }}
+                className="text-blue-600 hover:text-blue-800 font-bold text-sm"
+              >
+                + Добавить задание
+              </button>
+            )}
           </div>
         )}
       </div>
