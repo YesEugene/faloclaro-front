@@ -321,25 +321,26 @@ export default function AttentionTaskEditor({ task, onChange, lessonDay }: Atten
                   className="flex-1 px-3 py-2 border border-gray-300 rounded-lg"
                   onClick={(e) => e.stopPropagation()}
                 />
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); handleGenerateAudio(index); }}
+                  disabled={generatingAudio[index] || !item.audio?.trim()}
+                  className="px-3 py-2 text-sm text-green-600 hover:text-green-800 font-medium disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap border border-gray-300 rounded bg-white"
+                  title="Сгенерировать аудио"
+                >
+                  {generatingAudio[index] ? '⏳' : 'Генерировать аудио'}
+                </button>
                 {item.audio_url && (
                   <button
                     type="button"
                     onClick={(e) => { e.stopPropagation(); handlePlayAudio(index); }}
                     disabled={isPlayingAudio[index]}
-                    className="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm flex items-center gap-2"
+                    className="w-8 h-8 flex items-center justify-center text-blue-600 hover:text-blue-800 disabled:opacity-50 border border-gray-300 rounded bg-white"
                     title="Воспроизвести аудио"
                   >
                     {isPlayingAudio[index] ? '⏸️' : '▶️'}
                   </button>
                 )}
-                <button
-                  type="button"
-                  onClick={(e) => { e.stopPropagation(); handleGenerateAudio(index); }}
-                  disabled={generatingAudio[index] || !item.audio?.trim()}
-                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {generatingAudio[index] ? '⏳' : '🎵 Генерировать'}
-                </button>
               </div>
             </div>
 
