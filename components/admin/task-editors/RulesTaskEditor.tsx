@@ -924,6 +924,7 @@ export default function RulesTaskEditor({ task, onChange, lessonDay }: RulesTask
   const renderReinforcementBlock = (block: any, index: number) => {
     const isExpanded = expandedBlocks.has(index);
     const content = block.content || {};
+    const title = content.title || { ru: '', en: '' };
     const task1 = content.task_1 || null;
     const task2 = content.task_2 || null;
 
@@ -941,6 +942,333 @@ export default function RulesTaskEditor({ task, onChange, lessonDay }: RulesTask
       }
     };
 
+    const handleCreateTask = (taskNumber: 1 | 2) => {
+      const newTask = {
+        format: 'single_choice',
+        audio: '',
+        audio_url: '',
+        question: { ru: '', en: '' },
+        options: [],
+      };
+      handleUpdateTask(taskNumber, newTask);
+    };
+
+    const handleUpdateTaskField = (taskNumber: 1 | 2, field: string, value: any) => {
+      const task = taskNumber === 1 ? task1 : task2;
+      if (!task) return;
+      handleUpdateTask(taskNumber, { ...task, [field]: value });
+    };
+
+    const handleUpdateOption = (taskNumber: 1 | 2, optionIndex: number, field: string, value: any) => {
+      const task = taskNumber === 1 ? task1 : task2;
+      if (!task || !task.options) return;
+      const newOptions = [...task.options];
+      newOptions[optionIndex] = { ...newOptions[optionIndex], [field]: value };
+      handleUpdateTask(taskNumber, { ...task, options: newOptions });
+    };
+
+    const handleAddOption = (taskNumber: 1 | 2) => {
+      const task = taskNumber === 1 ? task1 : task2;
+      if (!task) return;
+      const newOption = task.format === 'single_choice'
+        ? { text: { ru: '', en: '' }, correct: false }
+        : { text: '', correct: false };
+      const newOptions = [...(task.options || []), newOption];
+      handleUpdateTask(taskNumber, { ...task, options: newOptions });
+    };
+
+    const handleDeleteOption = (taskNumber: 1 | 2, optionIndex: number) => {
+      const task = taskNumber === 1 ? task1 : task2;
+      if (!task || !task.options) return;
+      const newOptions = task.options.filter((_: any, i: number) => i !== optionIndex);
+      handleUpdateTask(taskNumber, { ...task, options: newOptions });
+    };
+
+    const handleMoveOption = (taskNumber: 1 | 2, optionIndex: number, direction: 'up' | 'down') => {
+      const task = taskNumber === 1 ? task1 : task2;
+      if (!task || !task.options) return;
+      const newOptions = [...task.options];
+      if (direction === 'up' && optionIndex > 0) {
+        [newOptions[optionIndex - 1], newOptions[optionIndex]] = [newOptions[optionIndex], newOptions[optionIndex - 1]];
+      } else if (direction === 'down' && optionIndex < newOptions.length - 1) {
+        [newOptions[optionIndex], newOptions[optionIndex + 1]] = [newOptions[optionIndex + 1], newOptions[optionIndex]];
+      }
+      handleUpdateTask(taskNumber, { ...task, options: newOptions });
+    };
+
+    const handleGenerateAudio = async (taskNumber: 1 | 2) => {
+      const task = taskNumber === 1 ? task1 : task2;
+      if (!task || !task.audio || !task.audio.trim()) {
+        alert('Пожалуйста, сначала добавьте текст для аудио');
+        return;
+      }
+
+      const key = `reinforcement_${index}_${taskNumber}`;
+      setGeneratingAudio(prev => ({ ...prev, [key]: true }));
+
+      try {
+        const response = await fetch('/api/admin/audio/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            text: task.audio.trim(),
+            lessonId: lessonDay.toString(),
+            taskId: task.task_id,
+            blockId: block.block_id,
+            itemId: `task_${taskNumber}_${Date.now()}`,
+          }),
+        });
+
+        const data = await response.json();
+        if (data.success && data.audioUrl) {
+          handleUpdateTaskField(taskNumber, 'audio_url', data.audioUrl);
+          setAudioUrls(prev => ({ ...prev, [key]: data.audioUrl }));
+        } else {
+          alert('Ошибка при генерации аудио: ' + (data.error || 'Unknown error'));
+        }
+      } catch (error) {
+        console.error('Error generating audio:', error);
+        alert('Ошибка при генерации аудио');
+      } finally {
+        setGeneratingAudio(prev => ({ ...prev, [key]: false }));
+      }
+    };
+
+    const handlePlayAudio = (taskNumber: 1 | 2) => {
+      const task = taskNumber === 1 ? task1 : task2;
+      const key = `reinforcement_${index}_${taskNumber}`;
+      const audioUrl = audioUrls[key] || task?.audio_url;
+      if (!audioUrl) return;
+
+      setIsPlayingAudio(prev => ({ ...prev, [key]: true }));
+      const audio = new Audio(audioUrl);
+      audio.play().catch(err => {
+        console.error('Error playing audio:', err);
+        setIsPlayingAudio(prev => ({ ...prev, [key]: false }));
+      });
+      audio.onended = () => setIsPlayingAudio(prev => ({ ...prev, [key]: false }));
+      audio.onerror = () => setIsPlayingAudio(prev => ({ ...prev, [key]: false }));
+    };
+
+    const renderTask = (taskNumber: 1 | 2) => {
+      const task = taskNumber === 1 ? task1 : task2;
+      const key = `reinforcement_${index}_${taskNumber}`;
+      const hasAudio = audioUrls[key] || task?.audio_url;
+
+      if (!task) {
+        return (
+          <div className="border border-gray-300 rounded-lg p-4 bg-white">
+            <div className="flex justify-between items-center mb-2">
+              <h3 className="text-sm font-semibold text-gray-900">Задание {taskNumber}</h3>
+            </div>
+            <button
+              onClick={(e) => { e.stopPropagation(); handleCreateTask(taskNumber); }}
+              className="text-blue-600 hover:text-blue-800 font-bold text-sm"
+            >
+              + Добавить задание {taskNumber}
+            </button>
+          </div>
+        );
+      }
+
+      return (
+        <div className="border border-gray-300 rounded-lg p-4 bg-white">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-sm font-semibold text-gray-900">Задание {taskNumber}</h3>
+            <button
+              onClick={(e) => { e.stopPropagation(); handleDeleteTask(taskNumber); }}
+              className="text-red-600 hover:text-red-800 text-sm font-medium flex items-center gap-1"
+            >
+              <span>Удалить задание</span>
+              <span>🗑️</span>
+            </button>
+          </div>
+
+          {/* Format Selection */}
+          <div className="mb-4">
+            <select
+              value={task.format || 'single_choice'}
+              onChange={(e) => {
+                const newFormat = e.target.value;
+                handleUpdateTaskField(taskNumber, 'format', newFormat);
+                if (newFormat === 'single_choice') {
+                  handleUpdateTaskField(taskNumber, 'options', []);
+                } else {
+                  handleUpdateTaskField(taskNumber, 'options', []);
+                }
+              }}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <option value="single_choice">Одиночный выбор (аудио + вопрос + варианты)</option>
+              <option value="situation_to_phrase">Ситуация к фразе (ситуация + варианты фраз)</option>
+            </select>
+          </div>
+
+          {/* Audio (only for single_choice) */}
+          {task.format === 'single_choice' && (
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Текст примера (PT) *
+              </label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={task.audio || ''}
+                  onChange={(e) => handleUpdateTaskField(taskNumber, 'audio', e.target.value)}
+                  placeholder="Текст примера (PT) *"
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg"
+                  onClick={(e) => e.stopPropagation()}
+                />
+                <button
+                  onClick={(e) => { e.stopPropagation(); handleGenerateAudio(taskNumber); }}
+                  disabled={generatingAudio[key] || !task.audio?.trim()}
+                  className="px-3 py-2 text-xs text-green-600 hover:text-green-800 font-medium disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap border border-gray-300 rounded"
+                  title="Генерировать аудио"
+                >
+                  {generatingAudio[key] ? '⏳' : 'Генерировать аудио'}
+                </button>
+                {hasAudio && (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); handlePlayAudio(taskNumber); }}
+                    disabled={isPlayingAudio[key]}
+                    className="w-8 h-8 flex items-center justify-center text-blue-600 hover:text-blue-800 disabled:opacity-50 border border-gray-300 rounded"
+                    title="Воспроизвести аудио"
+                  >
+                    {isPlayingAudio[key] ? '⏸️' : '▶️'}
+                  </button>
+                )}
+                <button
+                  onClick={(e) => { e.stopPropagation(); handleUpdateTaskField(taskNumber, 'audio_url', ''); }}
+                  className="w-8 h-8 flex items-center justify-center text-red-600 hover:text-red-800 border border-gray-300 rounded"
+                  title="Удалить аудио"
+                >
+                  🗑️
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Question (for single_choice) */}
+          {task.format === 'single_choice' && (
+            <div className="mb-4">
+              <div className="grid grid-cols-2 gap-4">
+                <input
+                  type="text"
+                  value={typeof task.question === 'string' ? '' : (task.question?.ru || '')}
+                  onChange={(e) => handleUpdateTaskField(taskNumber, 'question', { ...task.question, ru: e.target.value })}
+                  placeholder="Вопрос (RU) *"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                  onClick={(e) => e.stopPropagation()}
+                />
+                <input
+                  type="text"
+                  value={typeof task.question === 'string' ? '' : (task.question?.en || '')}
+                  onChange={(e) => handleUpdateTaskField(taskNumber, 'question', { ...task.question, en: e.target.value })}
+                  placeholder="Вопрос (EN) *"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Situation Text (for situation_to_phrase) */}
+          {task.format === 'situation_to_phrase' && (
+            <div className="mb-4">
+              <div className="grid grid-cols-2 gap-4">
+                <input
+                  type="text"
+                  value={typeof task.situation_text === 'string' ? '' : (task.situation_text?.ru || '')}
+                  onChange={(e) => handleUpdateTaskField(taskNumber, 'situation_text', { ...task.situation_text, ru: e.target.value })}
+                  placeholder="Текст ситуации (RU) *"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                  onClick={(e) => e.stopPropagation()}
+                />
+                <input
+                  type="text"
+                  value={typeof task.situation_text === 'string' ? '' : (task.situation_text?.en || '')}
+                  onChange={(e) => handleUpdateTaskField(taskNumber, 'situation_text', { ...task.situation_text, en: e.target.value })}
+                  placeholder="Текст ситуации (EN) *"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Options */}
+          <div>
+            <h4 className="text-sm font-semibold text-gray-900 mb-2">Варианты ответов</h4>
+            <div className="space-y-2">
+              {(task.options || []).map((option: any, optionIndex: number) => (
+                <div key={optionIndex} className="flex items-center gap-2">
+                  {task.format === 'single_choice' ? (
+                    <>
+                      <input
+                        type="text"
+                        value={typeof option.text === 'string' ? '' : (option.text?.ru || '')}
+                        onChange={(e) => handleUpdateOption(taskNumber, optionIndex, 'text', { ...option.text, ru: e.target.value })}
+                        placeholder="Текст (RU) *"
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg"
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                      <input
+                        type="text"
+                        value={typeof option.text === 'string' ? '' : (option.text?.en || '')}
+                        onChange={(e) => handleUpdateOption(taskNumber, optionIndex, 'text', { ...option.text, en: e.target.value })}
+                        placeholder="Текст (EN) *"
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg"
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                    </>
+                  ) : (
+                    <input
+                      type="text"
+                      value={typeof option.text === 'string' ? option.text : ''}
+                      onChange={(e) => handleUpdateOption(taskNumber, optionIndex, 'text', e.target.value)}
+                      placeholder="Текст фразы (PT) *"
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg"
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  )}
+                  <input
+                    type="checkbox"
+                    checked={option.correct || false}
+                    onChange={(e) => handleUpdateOption(taskNumber, optionIndex, 'correct', e.target.checked)}
+                    className="w-5 h-5"
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                  <button
+                    onClick={(e) => { e.stopPropagation(); handleMoveOption(taskNumber, optionIndex, 'up'); }}
+                    disabled={optionIndex === 0}
+                    className="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-gray-900 disabled:opacity-30 border border-gray-300 rounded"
+                    title="Переместить вверх"
+                  >
+                    ↑
+                  </button>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); handleMoveOption(taskNumber, optionIndex, 'down'); }}
+                    disabled={optionIndex === (task.options?.length || 0) - 1}
+                    className="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-gray-900 disabled:opacity-30 border border-gray-300 rounded"
+                    title="Переместить вниз"
+                  >
+                    ↓
+                  </button>
+                </div>
+              ))}
+              <button
+                onClick={(e) => { e.stopPropagation(); handleAddOption(taskNumber); }}
+                className="text-blue-600 hover:text-blue-800 font-bold text-sm"
+              >
+                + Добавить вариант
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
     return (
       <div
         key={block.block_id || `block_${index}`}
@@ -956,7 +1284,11 @@ export default function RulesTaskEditor({ task, onChange, lessonDay }: RulesTask
             <div className="flex flex-col gap-1 flex-1">
               <span className="font-bold text-gray-900">Проверка знаний</span>
               <span className="text-sm text-gray-600">
-                {task1 || task2 ? `${task1 ? 'Задание 1' : ''}${task1 && task2 ? ', ' : ''}${task2 ? 'Задание 2' : ''}` : 'Без заданий'}
+                {typeof title === 'string' 
+                  ? title 
+                  : (title.ru && title.en 
+                    ? `${title.ru} - ${title.en}`
+                    : (title.ru || title.en || 'Без названия'))}
               </span>
             </div>
           </div>
@@ -994,81 +1326,31 @@ export default function RulesTaskEditor({ task, onChange, lessonDay }: RulesTask
         {/* Expanded Content */}
         {isExpanded && (
           <div className="border-t border-gray-200 bg-gray-50 p-4 space-y-4">
-            <p className="text-sm text-gray-600 mb-4">
-              Добавьте формы с проигрыванием и вариантами ответа. Можно добавить до 2 заданий.
-            </p>
+            {/* Block Title */}
+            <div className="grid grid-cols-2 gap-4">
+              <input
+                type="text"
+                value={typeof title === 'string' ? title : (title.ru || '')}
+                onChange={(e) => handleUpdateBlock(index, 'title', { ...title, ru: e.target.value })}
+                placeholder="Название блока (RU) *"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                onClick={(e) => e.stopPropagation()}
+              />
+              <input
+                type="text"
+                value={typeof title === 'string' ? '' : (title.en || '')}
+                onChange={(e) => handleUpdateBlock(index, 'title', { ...title, en: e.target.value })}
+                placeholder="Название блока (EN) *"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                onClick={(e) => e.stopPropagation()}
+              />
+            </div>
 
             {/* Task 1 */}
-            <div>
-              <div className="flex justify-between items-center mb-2">
-                <h3 className="text-sm font-semibold text-gray-900">Задание 1</h3>
-                {task1 && (
-                  <button
-                    onClick={(e) => { e.stopPropagation(); handleDeleteTask(1); }}
-                    className="text-red-600 hover:text-red-800 text-sm font-medium"
-                  >
-                    Удалить
-                  </button>
-                )}
-              </div>
-              {task1 ? (
-                <div className="border border-gray-300 rounded-lg p-3 bg-white">
-                  <p className="text-sm text-gray-700 mb-1">
-                    Формат: {task1.format === 'single_choice' ? 'Одиночный выбор' : 'Ситуация к фразе'}
-                  </p>
-                  {task1.audio && <p className="text-xs text-gray-600">Аудио: {task1.audio}</p>}
-                  {task1.question && (
-                    <p className="text-xs text-gray-600">
-                      Вопрос: {typeof task1.question === 'string' ? task1.question : (task1.question.ru || task1.question.en || '')}
-                    </p>
-                  )}
-                  {task1.options && <p className="text-xs text-gray-600">Вариантов: {task1.options.length}</p>}
-                </div>
-              ) : (
-                <button
-                  onClick={(e) => { e.stopPropagation(); setEditingBlockIndex(index); }}
-                  className="text-blue-600 hover:text-blue-800 font-bold text-sm"
-                >
-                  + Добавить задание 1
-                </button>
-              )}
-            </div>
+            {renderTask(1)}
 
             {/* Task 2 */}
-            <div>
-              <div className="flex justify-between items-center mb-2">
-                <h3 className="text-sm font-semibold text-gray-900">Задание 2</h3>
-                {task2 && (
-                  <button
-                    onClick={(e) => { e.stopPropagation(); handleDeleteTask(2); }}
-                    className="text-red-600 hover:text-red-800 text-sm font-medium"
-                  >
-                    Удалить
-                  </button>
-                )}
-              </div>
-              {task2 ? (
-                <div className="border border-gray-300 rounded-lg p-3 bg-white">
-                  <p className="text-sm text-gray-700 mb-1">
-                    Формат: {task2.format === 'single_choice' ? 'Одиночный выбор' : 'Ситуация к фразе'}
-                  </p>
-                  {task2.audio && <p className="text-xs text-gray-600">Аудио: {task2.audio}</p>}
-                  {task2.question && (
-                    <p className="text-xs text-gray-600">
-                      Вопрос: {typeof task2.question === 'string' ? task2.question : (task2.question.ru || task2.question.en || '')}
-                    </p>
-                  )}
-                  {task2.options && <p className="text-xs text-gray-600">Вариантов: {task2.options.length}</p>}
-                </div>
-              ) : (
-                <button
-                  onClick={(e) => { e.stopPropagation(); setEditingBlockIndex(index); }}
-                  className="text-blue-600 hover:text-blue-800 font-bold text-sm"
-                >
-                  + Добавить задание 2
-                </button>
-              )}
-            </div>
+            {renderTask(2)}
           </div>
         )}
       </div>
