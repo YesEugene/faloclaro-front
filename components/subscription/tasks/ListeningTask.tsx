@@ -406,15 +406,24 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
         ))}
       </div>
 
-      {/* Final Completion Button - Only show if all items are answered */}
+      {/* Final Completion Button - Floating above progress bar, only show if all items are answered */}
       {allAnswered && !localIsCompleted && (
-        <div className="mt-8">
-          <button
-            onClick={handleFinalComplete}
-            className="w-full bg-green-600 text-white py-4 rounded-lg font-semibold text-lg hover:bg-green-700 transition-colors"
-          >
-            {appLanguage === 'ru' ? 'Все задания выполнены' : appLanguage === 'en' ? 'All tasks completed' : 'Todas as tarefas concluídas'}
-          </button>
+        <div 
+          className="fixed left-0 right-0 z-40 flex justify-center"
+          style={{ 
+            bottom: '87px', // 59px (navigation) + 28px (progress bar)
+            paddingLeft: '16px',
+            paddingRight: '16px',
+          }}
+        >
+          <div className="w-full max-w-md">
+            <button
+              onClick={handleFinalComplete}
+              className="w-full bg-green-600 text-white py-2 rounded-lg font-semibold text-sm hover:bg-green-700 transition-colors"
+            >
+              {appLanguage === 'ru' ? 'Все задания выполнены' : appLanguage === 'en' ? 'All tasks completed' : 'Todas as tarefas concluídas'}
+            </button>
+          </div>
         </div>
       )}
 
