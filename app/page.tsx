@@ -40,9 +40,9 @@ export default function SubscriptionLandingPage() {
 
   const translations = {
     en: {
-      heroTitle: 'Learn Portuguese for life.',
-      heroSubtitle: 'Without stress. Without grammar overload.',
-      heroDescription: 'FaloClaro is a 60-lesson micro-course that helps you start understanding and speaking real Portuguese — by training your ear, your memory and your intuition.',
+      heroTitle: 'Learn Portuguese you can use',
+      heroSubtitle: 'Start speaking in your daily flow.',
+      heroDescription: 'FaloClaro is inspired by the Michel Thomas method and modern neuroscience. We train your speaking reflex before your grammar brain wakes up.',
       heroCta: 'Get 3 lessons free.',
       heroCtaSub: 'Instant access by email.',
       emailPlaceholder: 'Your E-mail',
@@ -72,19 +72,20 @@ export default function SubscriptionLandingPage() {
       trainerButton: 'Start',
       
       whyWorksTitle: 'Why it works',
-      whyWorksSubtitle: 'We don\'t teach rules. We build reflexes.',
-      whyWorksOld: 'Most language apps try to explain Portuguese.',
+      whyWorksSubtitle: 'We don\'t start with rules. We start with real phrases and let your brain build the language.',
+      whyWorksOld: 'Most language apps start with explanations and memorizing rules.',
       whyWorksNew: 'FaloClaro trains your brain to recognize it, hear it and produce it.',
-      whyWorksNew2: 'You don\'t start with grammar. You start with living phrases.',
+      whyWorksNew2: 'You don\'t start with grammar.\nYou start with living phrases.',
       whyWorksActions: ['You repeat them', 'You say them', 'You hear them'],
-      whyWorksResult: 'Until they stop feeling foreign. That\'s how real language is built.',
+      whyWorksResult: 'Until they stop feeling foreign.\nThat\'s how real language is built.',
       
       howToTitle: 'How to use the course',
       howToSubtitle: 'One simple rule. Do 1-2 lessons per day. Not more.',
       step1Title: 'Learn a few phrases in the morning.',
       step2Title: 'Use the trainer during the day.',
       step3Title: 'Let the phrases settle.',
-      howToResult: 'That\'s it. No pressure. No homework. Just real contact with the language.',
+      howToResult1: 'That\'s it.',
+      howToResult2: 'No pressure. No homework. Just real contact with the language.',
       
       learnTitle: 'What you will learn',
       learnSubtitle: 'In the course you train things you actually need:',
@@ -108,10 +109,11 @@ export default function SubscriptionLandingPage() {
       startFreeItem2: 'No credit card required',
       startFreeButton: 'Try 3 lessons for free.',
       startFreeNote: 'No spam. No worries. You can cancel anytime.',
+      startFreeEndText: 'If you like our approach,\nyou can unlock all 60 lessons for €20.',
       
       aboutTitle: 'I built FaloClaro for myself.',
-      aboutSubtitle: 'After two years in Portugal, I realized I wanted to really feel the language, not study it.',
-      aboutText: 'I\'m an entrepreneur, and one of my main projects in the past was a large educational platform. So when I couldn\'t find a language format that actually worked for me, I did what I always did in EdTech: I built it, together with experienced linguists and language teachers.\n\nWe designed FaloClaro to be simple, calm, repetitive and human. Not a school. Not a grammar book. A way to let Portuguese slowly become part of your thinking.\n\nNow I\'m learning Portuguese with you.\n\nFaloClaro will keep growing, improving, and evolving as the language grows in my own head.\n\nObrigado — and welcome 🇵🇹',
+      aboutSubtitle: 'After two years of living in Portugal, we realized we wanted to stay, which meant we finally had to learn the language. As always, time was limited because of work, so we needed an online format. But not a "school". We wanted practice, something that helps you speak and actually feel the language.',
+      aboutText: 'I\'m an entrepreneur, and one of my main projects in the past was a large educational platform. When I couldn\'t find a language-learning format that really worked for me, I did what I know best in EdTech, I built it myself, together with strong linguists and Portuguese teachers.\n\nWe designed FaloClaro to be simple, calm, and based on repetition and practice. Not like a grammar textbook, but as a way for the language to slowly start living in your head.\n\nI\'m learning Portuguese together with you, and my personal challenge is to start speaking in 60 days.\n\nObrigado, and welcome 🇵🇹',
       
       contactTitle: 'Write a message to FaloClaro',
       contactButton: 'Send',
@@ -119,97 +121,16 @@ export default function SubscriptionLandingPage() {
       successMessage: 'We\'ve sent you the first lesson by email.',
       successSubtext: 'Check your email and click the link in the message.',
     },
-    pt: {
-      heroTitle: 'Aprende Português para a vida.',
-      heroSubtitle: 'Sem stress. Sem sobrecarga de gramática.',
-      heroDescription: 'FaloClaro é um micro-curso de 60 lições que te ajuda a começar a compreender e falar português real — treinando o teu ouvido, a tua memória e a tua intuição.',
-      heroCta: 'Obtém 3 lições grátis.',
-      heroCtaSub: 'Acesso instantâneo por email.',
-      emailPlaceholder: 'O teu E-mail',
-      buttonStart: 'Obter!',
-      buttonLearnMore: 'Ou saber mais',
-      disclaimer: 'Sem spam. Receberás um link pessoal para começar imediatamente.',
-      noCard: 'Sem cartão de crédito necessário. Podes cancelar a qualquer momento.',
-      
-      whatIsTitle: 'O que é FaloClaro',
-      whatIsSubtitle: 'Duas partes. Uma ideia.',
-      courseTitle: 'O Curso',
-      courseItems: [
-        '60 lições curtas.',
-        '5 tarefas por lição.',
-        '15–20 minutos por dia.',
-      ],
-      courseDescription: 'Este é o caminho estruturado: moves-te de frases simples para situações reais, passo a passo.',
-      courseButton: 'Começar',
-      trainerTitle: 'O Treinador',
-      trainerIntro: 'Um espaço de repetição de frases:',
-      trainerItems: [
-        'Escolhe um tópico',
-        'Escolhe palavras ou frases',
-        'Ouve e repete.',
-      ],
-      trainerDescription: 'É aqui que a língua se torna automática.',
-      trainerButton: 'Começar',
-      
-      whyWorksTitle: 'Por que funciona',
-      whyWorksSubtitle: 'Não ensinamos regras. Construímos reflexos.',
-      whyWorksOld: 'A maioria das apps de línguas tenta explicar português.',
-      whyWorksNew: 'FaloClaro treina o teu cérebro para reconhecer, ouvir e produzir.',
-      whyWorksNew2: 'Não começas com gramática. Começas com frases vivas.',
-      whyWorksActions: ['Repetes-as', 'Dizes-as', 'Ouvês-as'],
-      whyWorksResult: 'Até deixarem de parecer estrangeiras. É assim que se constrói uma língua real.',
-      
-      howToTitle: 'Como usar o curso',
-      howToSubtitle: 'Uma regra simples. Faz 1-2 lições por dia. Não mais.',
-      step1Title: 'Aprende algumas frases de manhã.',
-      step2Title: 'Usa o treinador durante o dia.',
-      step3Title: 'Deixa as frases fixarem-se.',
-      howToResult: 'É isso. Sem pressão. Sem trabalhos de casa. Apenas contacto real com a língua.',
-      
-      learnTitle: 'O que vais aprender',
-      learnSubtitle: 'No curso treinas coisas que realmente precisas:',
-      learnTopics: [
-        'perguntar e responder',
-        'polidez e pedidos',
-        'preços e compras',
-        'cafés e restaurantes',
-        'hora e direções',
-        'casa e vida quotidiana',
-        'emoções e reações',
-        'frases curtas e longas',
-      ],
-      learnPhrases: 'Cerca de 600 frases reais',
-      learnWords: '2.500-3.000 palavras',
-      
-      startFreeTitle: 'Começa grátis',
-      startFreeSubtitle: 'Não precisas de decidir agora.',
-      startFreeDesc: 'Introduz o teu email e obtém:',
-      startFreeItem1: '3 lições completas',
-      startFreeItem2: 'Sem cartão de crédito necessário',
-      startFreeButton: 'Experimenta 3 lições grátis.',
-      startFreeNote: 'Sem spam. Sem preocupações. Podes cancelar a qualquer momento.',
-      
-      aboutTitle: 'Construí FaloClaro para mim.',
-      aboutSubtitle: 'Após dois anos em Portugal, percebi que queria realmente sentir a língua, não estudá-la.',
-      aboutText: 'Sou empreendedor, não professor. Construí este curso porque precisava dele. Simples. Repetitivo. Humano. Não escola. Não livro de gramática.',
-      aboutText2: 'Obrigado - e bem-vindo!',
-      
-      contactTitle: 'Escreve uma mensagem para FaloClaro',
-      contactButton: 'Enviar',
-      
-      successMessage: 'Enviamos-te a primeira lição por email.',
-      successSubtext: 'Verifica o teu email e clica no link da mensagem.',
-    },
     ru: {
-      heroTitle: 'Изучай португальский для жизни.',
-      heroSubtitle: 'Без стресса. Без перегрузки грамматикой.',
-      heroDescription: 'FaloClaro — это микро-курс из 60 уроков, который помогает начать понимать и говорить на настоящем португальском — тренируя твой слух, память и интуицию.',
+      heroTitle: 'Изучай португальский для жизни',
+      heroSubtitle: 'Начни говорить, не отвлекаясь от своих задач.',
+      heroDescription: 'FaloClaro вдохновлен методом Мишеля Томаса и нейронаукой. Здесь вы начинаете говорить раньше, чем думать о грамматике.',
       heroCta: 'Получи 3 урока бесплатно.',
       heroCtaSub: 'Мгновенный доступ по email.',
       emailPlaceholder: 'Твой Email',
       buttonStart: 'Получить!',
       buttonLearnMore: 'Или узнать больше',
-      disclaimer: 'Без спама. Ты получишь персональную ссылку для начала сразу.',
+      disclaimer: 'Без спама. Ты получишь персональную ссылку\nи начнешь учиться.',
       noCard: 'Без карты. Можно отменить в любой момент.',
       
       whatIsTitle: 'Что такое FaloClaro',
@@ -233,19 +154,20 @@ export default function SubscriptionLandingPage() {
       trainerButton: 'Начать',
       
       whyWorksTitle: 'Почему это работает',
-      whyWorksSubtitle: 'Мы не учим правилам. Мы строим рефлексы.',
-      whyWorksOld: 'Большинство языковых приложений пытаются объяснить португальский.',
-      whyWorksNew: 'FaloClaro тренирует твой мозг распознавать, слышать и производить его.',
-      whyWorksNew2: 'Ты не начинаешь с грамматики. Ты начинаешь с живых фраз.',
+      whyWorksSubtitle: 'Вместо правил — живые фразы. Вместо зубрёжки — естественное привыкание к языку.',
+      whyWorksOld: 'Большинство языковых школ и приложений начинает обучение с объяснения и запоминания правил.',
+      whyWorksNew: 'FaloClaro помогает тебе слышать язык, узнавать слова и самому говорить на португальском.',
+      whyWorksNew2: 'Ты не будешь начинать грызть грамматику.\nТы начнешь с настоящих, живых фраз.',
       whyWorksActions: ['Ты их повторяешь', 'Ты их говоришь', 'Ты их слышишь'],
-      whyWorksResult: 'Пока они не перестанут казаться чужими. Так строится настоящий язык.',
+      whyWorksResult: 'Пока слова не перестанут быть тебе чужими.\nИменно так устроен настоящий язык.',
       
       howToTitle: 'Как использовать курс',
       howToSubtitle: 'Одно простое правило. Делай 1-2 урока в день. Не больше.',
       step1Title: 'Учи несколько фраз утром.',
       step2Title: 'Используй тренажер в течение дня.',
       step3Title: 'Дай фразам уложиться.',
-      howToResult: 'Вот и всё. Без давления. Без домашних заданий. Просто реальный контакт с языком.',
+      howToResult1: 'Вот и все.',
+      howToResult2: 'Никакого давления, Нет домашки. Только настоящее взаимодействие с языком.',
       
       learnTitle: 'Что ты выучишь',
       learnSubtitle: 'В курсе ты тренируешь то, что действительно нужно:',
@@ -263,17 +185,17 @@ export default function SubscriptionLandingPage() {
       learnWords: '2,500-3,000 слов',
       
       startFreeTitle: 'Начни бесплатно',
-      startFreeSubtitle: 'Тебе не нужно решать сейчас.',
+      startFreeSubtitle: 'Максимум что произойдет, ты узнаешь что-то новое.',
       startFreeDesc: 'Введи email и получи:',
       startFreeItem1: '3 полных урока',
       startFreeItem2: 'Без карты',
       startFreeButton: 'Попробуй 3 урока бесплатно.',
       startFreeNote: 'Без спама. Без переживаний. Можно отменить в любой момент.',
+      startFreeEndText: 'Если тебе понравится наш подход,\nты сможешь купить весь курс из 60 уроков за 20€.',
       
-      aboutTitle: 'Я создал FaloClaro для себя.',
-      aboutSubtitle: 'После двух лет в Португалии я понял, что хочу действительно чувствовать язык, а не изучать его.',
-      aboutText: 'Я предприниматель, а не учитель. Я создал этот курс, потому что он был мне нужен. Простой. Повторяющийся. Человечный. Не школа. Не учебник грамматики.',
-      aboutText2: 'Obrigado - и добро пожаловать!',
+      aboutTitle: 'Я сделал FaloClaro для себя.',
+      aboutSubtitle: 'После двух лет жизни в Португалии мы поняли, что хотим остаться, а значит, язык все-таки придется выучить. Как всегда, времени мало из-за работы, поэтому нужен был онлайн-формат. Но не «школа», а практика, чтобы говорить и действительно прочувствовать язык.',
+      aboutText: 'Я предприниматель, и одним из моих основных проектов в прошлом была большая образовательная платформа. Когда я не нашел формат изучения языка, который бы мне подошел, я сделал то, что умею лучше всего в EdTech — создал его сам, вместе с сильным лингвистом и преподавателями португальского.\n\nМы спроектировали FaloClaro простым, спокойным и основанным на повторении и практике. Не как учебник по грамматике. А как способ, при котором язык постепенно начинает жить у тебя в голове.\n\nЯ учу португальский вместе с вами.\nИ мой личный челлендж — начать говорить через 60 дней.\n\nObrigado и добро пожаловать 🇵🇹',
       
       contactTitle: 'Напиши сообщение FaloClaro',
       contactButton: 'Отправить',
@@ -337,68 +259,73 @@ export default function SubscriptionLandingPage() {
     <div className="min-h-screen bg-white" style={{ fontFamily: 'var(--font-tiktok)' }}>
       {/* Hero Section - Light Green #BDF6BB */}
       <section style={{ 
+        backgroundColor: '#fff', 
         padding: isMobile ? '10px' : '10px 20px', 
         display: 'flex', 
-        flexDirection: 'column',
-        alignItems: 'center',
-        backgroundColor: '#fff',
+        justifyContent: 'center',
         marginTop: '0px',
         marginBottom: '0px',
         overflow: 'hidden'
       }}>
-        {/* Header with Logo and Language Selector - ABOVE the card */}
         <div style={{ 
           width: isMobile ? '100%' : '868px',
           maxWidth: isMobile ? '100%' : '868px',
           display: 'flex', 
-          justifyContent: 'space-between', 
-          alignItems: 'flex-start',
-          marginBottom: isMobile ? '16px' : '20px',
-          padding: isMobile ? '0 16px' : '0'
-        }}>
-          {/* Logo - Left aligned */}
-          <div>
-            <Image
-              src="/Img/Website/logo.svg"
-              alt="FaloClaro"
-              width={83}
-              height={37}
-              style={{ display: 'block' }}
-            />
-          </div>
-          
-          {/* Language Selector - Right aligned */}
-          <div>
-            <LanguageSelector />
-          </div>
-        </div>
-
-        {/* Main Card */}
-        <div style={{ 
-          width: isMobile ? '100%' : '868px',
-          maxWidth: isMobile ? '389px' : '868px',
-          height: isMobile ? 'auto' : '500px',
-          minHeight: isMobile ? 'auto' : '500px',
-          backgroundColor: '#BDF6BB',
-          borderRadius: isMobile ? '16px' : '20px',
-          padding: isMobile ? '32px 24px' : '40px 50px',
-          position: 'relative',
-          display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          textAlign: 'center',
-          marginBottom: isMobile ? '10px' : '0'
+          alignItems: 'center'
         }}>
+          {/* Header with Logo and Language Selector - ABOVE the card */}
+          <div style={{ 
+            width: '100%',
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'flex-start',
+            marginBottom: isMobile ? '16px' : '20px',
+            padding: isMobile ? '0 16px' : '0'
+          }}>
+            {/* Logo - Left aligned */}
+            <div>
+              <Image
+                src="/Img/Website/logo.svg"
+                alt="FaloClaro"
+                width={83}
+                height={37}
+                style={{ display: 'block' }}
+              />
+            </div>
+            
+            {/* Language Selector - Right aligned */}
+            <div>
+              <LanguageSelector />
+            </div>
+          </div>
+
+          {/* Green Card - 868px width with rounded corners */}
+          <div style={{ 
+            width: isMobile ? '100%' : '868px',
+            maxWidth: isMobile ? '389px' : '868px',
+            height: isMobile ? 'auto' : '500px',
+            minHeight: isMobile ? 'auto' : '500px',
+            backgroundColor: '#BDF6BB',
+            borderRadius: isMobile ? '16px' : '20px',
+            padding: isMobile ? '10px' : '40px 20px 20px 20px',
+            position: 'relative',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            textAlign: 'center',
+            marginBottom: isMobile ? '10px' : '0'
+          }}>
           {/* Hero Title */}
           <h1 style={{ 
             fontFamily: 'var(--font-orelega)', 
-            fontSize: isMobile ? '59px' : '48px', 
+            fontSize: isMobile ? (appLanguage === 'ru' ? '49px' : '59px') : (appLanguage === 'ru' ? '38px' : '48px'), 
             fontWeight: 400, 
             color: '#3A2E1F', 
-            marginTop: isMobile ? '0px' : '51px',
+            marginTop: isMobile ? '0px' : '31px',
             marginBottom: isMobile ? '0px' : '11px',
-            paddingTop: isMobile ? '13px' : '0px',
+            paddingTop: isMobile ? '50px' : '0px',
             paddingBottom: isMobile ? '13px' : '0px',
             lineHeight: isMobile ? '1' : '1.2',
             textAlign: 'center'
@@ -412,7 +339,7 @@ export default function SubscriptionLandingPage() {
             fontSize: isMobile ? '24px' : '24px', 
             fontWeight: 500, 
             color: '#3A2E1F', 
-            marginTop: isMobile ? '0px' : '0px',
+            marginTop: isMobile ? '0px' : '-10px',
             marginBottom: isMobile ? '0px' : '45px',
             paddingLeft: '0px',
             paddingRight: '0px',
@@ -435,7 +362,9 @@ export default function SubscriptionLandingPage() {
             paddingLeft: '0px',
             paddingRight: '0px',
             lineHeight: isMobile ? '1.2' : '1.5',
-            textAlign: 'center'
+            textAlign: 'center',
+            maxWidth: isMobile ? '100%' : 'calc(100% - 60px)',
+            width: isMobile ? '100%' : 'auto'
           }}>
             {t.heroDescription}
           </p>
@@ -515,7 +444,7 @@ export default function SubscriptionLandingPage() {
                 type="submit"
                 disabled={isSubmitting}
                 style={{
-                  width: isMobile ? '70px' : '74px',
+                  width: isMobile ? '90px' : '94px',
                   height: isMobile ? '42px' : '46px',
                   borderRadius: '5px',
                   border: 'none',
@@ -536,17 +465,21 @@ export default function SubscriptionLandingPage() {
             <div style={{ color: '#ff0000', fontSize: '14px', marginBottom: '8px', textAlign: 'center' }}>{error}</div>
           )}
 
-          {/* Disclaimer - Regular weight, 10px */}
+          {/* Disclaimer - Regular weight, 11px */}
           <p style={{ 
             fontFamily: 'var(--font-tiktok)', 
-            fontSize: isMobile ? '9px' : '10px', 
+            fontSize: isMobile ? '10px' : '11px', 
             fontWeight: 400, 
             color: '#3A2E1F',
             textAlign: 'center',
-            padding: isMobile ? '0 16px' : '0'
+            padding: isMobile ? '0 16px' : '0',
+            marginBottom: isMobile ? '0px' : '0px',
+            paddingBottom: isMobile ? '40px' : '30px',
+            whiteSpace: 'pre-line'
           }}>
             {t.disclaimer}
           </p>
+          </div>
         </div>
       </section>
 
@@ -574,11 +507,12 @@ export default function SubscriptionLandingPage() {
             fontSize: isMobile ? '40px' : '40px', 
             fontWeight: 400, 
             color: '#3A2E1F', 
-            marginBottom: '0px',
+            marginBottom: isMobile ? '10px' : '0px',
             marginTop: isMobile ? '30px' : '0px',
             textAlign: isMobile ? 'center' : 'left',
             paddingLeft: isMobile ? '0px' : '30px',
-            paddingRight: isMobile ? '0px' : '30px'
+            paddingRight: isMobile ? '0px' : '30px',
+            lineHeight: isMobile ? '1.0' : '1.2'
           }}>
             {t.whatIsTitle}
           </h2>
@@ -700,7 +634,7 @@ export default function SubscriptionLandingPage() {
                 alignItems: 'center'
               }}>
                 <Image
-                  src="/Img/Website/Phone-1.svg"
+                  src={appLanguage === 'ru' ? "/Img/Website/Interface 1 RU.svg" : "/Img/Website/PHONE_ILLUSTRATION_COURSE.svg"}
                   alt="Course"
                   width={isMobile ? 132 : 129}
                   height={isMobile ? 198 : 259}
@@ -822,7 +756,7 @@ export default function SubscriptionLandingPage() {
                 alignItems: 'center'
               }}>
                 <Image
-                  src="/Img/Website/Phone.svg"
+                  src={appLanguage === 'ru' ? "/Img/Website/interface 2 RU.svg" : "/Img/Website/PHONE_ILLUSTRATION_COURSE_2.png"}
                   alt="Trainer"
                   width={isMobile ? 132 : 129}
                   height={isMobile ? 198 : 259}
@@ -835,6 +769,40 @@ export default function SubscriptionLandingPage() {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Illustration 3block tags - сразу под вторым блоком */}
+      <section style={{ 
+        backgroundColor: '#fff', 
+        padding: isMobile ? '10px' : '10px 20px', 
+        display: 'flex', 
+        justifyContent: 'center',
+        marginTop: '0px',
+        marginBottom: '0px',
+        overflow: 'hidden'
+      }}>
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          width: '100%',
+          maxWidth: isMobile ? '389px' : '868px',
+          padding: isMobile ? '0 10px' : '0'
+        }}>
+          <Image
+            src={appLanguage === 'ru'
+              ? (isMobile ? '/Img/Website/3block tags mob RU.svg' : '/Img/Website/3block tags RU.svg')
+              : (isMobile ? '/Img/Website/3block tags mob.svg' : '/Img/Website/3block tags.svg')}
+            alt="Tags illustration"
+            width={isMobile ? 330 : 530}
+            height={isMobile ? 400 : 600}
+            style={{
+              width: isMobile ? '330px' : '530px',
+              height: 'auto',
+              objectFit: 'contain'
+            }}
+          />
         </div>
       </section>
 
@@ -862,11 +830,12 @@ export default function SubscriptionLandingPage() {
             fontSize: isMobile ? '40px' : '40px', 
             fontWeight: 400, 
             color: '#3A2E1F', 
-            marginBottom: '0px',
+            marginBottom: isMobile ? '10px' : '0px',
             marginTop: isMobile ? '30px' : '0px',
             textAlign: isMobile ? 'center' : 'left',
             paddingLeft: isMobile ? '0px' : '30px',
-            paddingRight: isMobile ? '0px' : '30px'
+            paddingRight: isMobile ? '0px' : '30px',
+            lineHeight: isMobile ? '1.0' : '1.2'
           }}>
             {t.whyWorksTitle}
           </h2>
@@ -879,7 +848,8 @@ export default function SubscriptionLandingPage() {
             marginTop: '0px',
             textAlign: isMobile ? 'center' : 'left',
             paddingLeft: isMobile ? '0px' : '30px',
-            paddingRight: isMobile ? '0px' : '30px'
+            paddingRight: isMobile ? '0px' : '30px',
+            maxWidth: isMobile ? '100%' : '838px'
           }}>
             {t.whyWorksSubtitle}
           </p>
@@ -936,7 +906,7 @@ export default function SubscriptionLandingPage() {
                     color: '#3A2E1F',
                     margin: 0
                   }}>
-                    Most language apps try to explain Portuguese
+                    {t.whyWorksOld}
                   </p>
                 </div>
 
@@ -954,7 +924,7 @@ export default function SubscriptionLandingPage() {
                     color: '#3A2E1F',
                     margin: 0
                   }}>
-                    FaloClaro trains your brain to recognize it, hear it and produce it.
+                    {t.whyWorksNew}
                   </p>
                 </div>
 
@@ -973,7 +943,7 @@ export default function SubscriptionLandingPage() {
                     margin: 0,
                     whiteSpace: 'pre-line'
                   }}>
-                    You don't start with grammar.{'\n'}You start with living phrases.
+                    {t.whyWorksNew2}
                   </p>
                 </div>
               </div>
@@ -1040,7 +1010,7 @@ export default function SubscriptionLandingPage() {
                   color: '#3A2E1F',
                   margin: 0
                 }}>
-                  Most language apps try to explain Portuguese
+                  {t.whyWorksOld}
                 </p>
               </div>
 
@@ -1077,7 +1047,7 @@ export default function SubscriptionLandingPage() {
                   color: '#3A2E1F',
                   margin: 0
                 }}>
-                  FaloClaro trains your brain to recognize it, hear it and produce it.
+                  {t.whyWorksNew}
                 </p>
               </div>
 
@@ -1096,7 +1066,7 @@ export default function SubscriptionLandingPage() {
                   margin: 0,
                   whiteSpace: 'pre-line'
                 }}>
-                  You don't start with grammar.{'\n'}You start with living phrases.
+                  {t.whyWorksNew2}
                 </p>
               </div>
             </div>
@@ -1111,7 +1081,9 @@ export default function SubscriptionLandingPage() {
             padding: isMobile ? '0 10px' : '0'
           }}>
             <Image
-              src="/Img/Website/4block tags.svg"
+              src={appLanguage === 'ru' 
+                ? (isMobile ? "/Img/Website/4block tags mob RU.svg" : "/Img/Website/4block tags RU.svg")
+                : "/Img/Website/4block tags.svg"}
               alt="Tags illustration"
               width={isMobile ? 330 : 580}
               height={isMobile ? 200 : 400}
@@ -1135,7 +1107,7 @@ export default function SubscriptionLandingPage() {
             padding: isMobile ? '0 10px' : '0',
             marginBottom: '50px'
           }}>
-            Until they stop feeling foreign.{'\n'}That's how real language is built.
+            {t.whyWorksResult}
           </p>
         </div>
       </section>
@@ -1164,7 +1136,7 @@ export default function SubscriptionLandingPage() {
             fontSize: isMobile ? '40px' : '40px', 
             fontWeight: 400, 
             color: '#3A2E1F', 
-            marginBottom: '0px',
+            marginBottom: isMobile ? '10px' : '0px',
             marginTop: isMobile ? '30px' : '0px',
             textAlign: isMobile ? 'center' : 'left',
             paddingLeft: isMobile ? '0px' : '30px',
@@ -1178,7 +1150,7 @@ export default function SubscriptionLandingPage() {
             fontSize: isMobile ? '18px' : '24px', 
             fontWeight: 500, 
             color: '#3A2E1F', 
-            marginBottom: isMobile ? '40px' : '40px',
+            marginBottom: isMobile ? '20px' : '40px',
             marginTop: '0px',
             textAlign: isMobile ? 'center' : 'left',
             paddingLeft: isMobile ? '0px' : '30px',
@@ -1584,7 +1556,7 @@ export default function SubscriptionLandingPage() {
               marginBottom: '8px',
               marginTop: 0
             }}>
-              That's it.
+              {t.howToResult1}
             </p>
             <p style={{ 
               fontFamily: 'var(--font-tiktok)', 
@@ -1594,7 +1566,7 @@ export default function SubscriptionLandingPage() {
               marginTop: 0,
               marginBottom: isMobile ? '10px' : '40px'
             }}>
-              No pressure. No homework. Just real contact with the langua
+              {t.howToResult2}
             </p>
           </div>
         </div>
@@ -1619,7 +1591,7 @@ export default function SubscriptionLandingPage() {
             fontSize: isMobile ? '40px' : '40px', 
             fontWeight: 400, 
             color: '#3A2E1F', 
-            marginBottom: '0px',
+            marginBottom: isMobile ? '10px' : '0px',
             marginTop: isMobile ? '30px' : '0px',
             textAlign: 'center',
             paddingLeft: isMobile ? '0px' : '30px',
@@ -1651,7 +1623,9 @@ export default function SubscriptionLandingPage() {
             padding: isMobile ? '0 10px' : '0'
           }}>
             <Image
-              src={isMobile ? '/Img/Website/6block tags mob.svg' : '/Img/Website/6block tags.svg'}
+              src={appLanguage === 'ru'
+                ? (isMobile ? '/Img/Website/6block tags mob RU.svg' : '/Img/Website/6block tags RU.svg')
+                : (isMobile ? '/Img/Website/6block tags mob.svg' : '/Img/Website/6block tags.svg')}
               alt="What you will learn illustration"
               width={isMobile ? 389 : 868}
               height={isMobile ? 400 : 600}
@@ -1718,11 +1692,12 @@ export default function SubscriptionLandingPage() {
             fontSize: isMobile ? '40px' : '40px', 
             fontWeight: 400, 
             color: '#fff', 
-            marginBottom: '0px',
+            marginBottom: isMobile ? '10px' : '0px',
             marginTop: isMobile ? '30px' : '0px',
             textAlign: 'center',
             paddingLeft: isMobile ? '0px' : '30px',
-            paddingRight: isMobile ? '0px' : '30px'
+            paddingRight: isMobile ? '0px' : '30px',
+            lineHeight: isMobile ? '1.0' : '1.2'
           }}>
             {t.startFreeTitle}
           </h2>
@@ -1731,7 +1706,7 @@ export default function SubscriptionLandingPage() {
             fontSize: isMobile ? '18px' : '24px', 
             fontWeight: 500, 
             color: '#fff', 
-            marginBottom: isMobile ? '40px' : '40px',
+            marginBottom: isMobile ? '20px' : '40px',
             marginTop: '0px',
             textAlign: 'center',
             paddingLeft: isMobile ? '0px' : '30px',
@@ -1846,7 +1821,7 @@ export default function SubscriptionLandingPage() {
             marginTop: isMobile ? '30px' : '0px',
             marginBottom: isMobile ? '10px' : '40px'
           }}>
-            If you like the method,{'\n'}you can unlock all 60 lessons for $15
+            {t.startFreeEndText}
           </p>
         </div>
       </section>
@@ -1892,7 +1867,7 @@ export default function SubscriptionLandingPage() {
                 marginBottom: '30px',
                 display: 'flex',
                 justifyContent: 'flex-start',
-                paddingLeft: isMobile ? '0px' : '30px'
+                paddingLeft: isMobile ? '20px' : '30px'
               }}>
                 <Image
                   src="/Img/Website/yes.svg"
@@ -1917,25 +1892,25 @@ export default function SubscriptionLandingPage() {
                 marginBottom: '16px',
                 marginTop: '0px',
                 textAlign: 'left',
-                paddingLeft: isMobile ? '0px' : '30px',
-                paddingRight: isMobile ? '0px' : '30px',
+                paddingLeft: isMobile ? '20px' : '30px',
+                paddingRight: isMobile ? '20px' : '30px',
                 lineHeight: '1.1'
               }}>
                 {t.aboutTitle}
               </h2>
 
-              {/* Subtitle - 24px */}
+              {/* Subtitle - 14px desktop, 18px mobile */}
               <p style={{ 
                 fontFamily: 'var(--font-tiktok)', 
-                fontSize: isMobile ? '18px' : '24px', 
+                fontSize: isMobile ? '18px' : '14px', 
                 fontWeight: 500, 
                 color: '#3A2E1F', 
                 marginBottom: '0px',
                 marginTop: '0px',
                 textAlign: 'left',
                 lineHeight: '1.4',
-                paddingLeft: isMobile ? '0px' : '30px',
-                paddingRight: isMobile ? '0px' : '40px'
+                paddingLeft: isMobile ? '20px' : '30px',
+                paddingRight: isMobile ? '20px' : '40px'
               }}>
                 {t.aboutSubtitle}
               </p>
@@ -1964,7 +1939,8 @@ export default function SubscriptionLandingPage() {
                 marginTop: '0px',
                 textAlign: 'left',
                 whiteSpace: 'pre-line',
-                paddingLeft: isMobile ? '0px' : '30px',
+                paddingLeft: isMobile ? '20px' : '30px',
+                paddingRight: isMobile ? '20px' : '0px',
                 paddingBottom: isMobile ? '30px' : '0px'
               }}>
                 {t.aboutText}

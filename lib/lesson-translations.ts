@@ -2,14 +2,14 @@
  * Utility functions for getting translated texts from lesson YAML data
  */
 
-type AppLanguage = 'en' | 'ru' | 'pt';
+type AppLanguage = 'en' | 'ru';
 
 /**
  * Get translated text from an object that can have language-specific fields
  * Supports both old format (string) and new format (object with ru/en)
  */
 export function getTranslatedText(
-  textOrObject: string | { ru?: string; en?: string; pt?: string } | undefined,
+  textOrObject: string | { ru?: string; en?: string } | undefined,
   language: AppLanguage
 ): string {
   if (!textOrObject) return '';
@@ -21,8 +21,8 @@ export function getTranslatedText(
   
   // If it's an object with language keys
   if (typeof textOrObject === 'object') {
-    // Try to get the requested language, fallback to ru, then en, then pt, then empty string
-    return textOrObject[language] || textOrObject.ru || textOrObject.en || textOrObject.pt || '';
+    // Try to get the requested language, fallback to ru, then en, then empty string
+    return textOrObject[language] || textOrObject.ru || textOrObject.en || '';
   }
   
   return '';
