@@ -78,6 +78,18 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
     }
   }, [isCompleted, isReplaying]);
   
+  // Also check if task should be considered completed based on speakOutLoud or writtenText
+  useEffect(() => {
+    // If user has completed the task (either by writing or speaking), mark as completed
+    if (!localIsCompleted && (speakOutLoud || writtenText.trim())) {
+      // Only auto-complete if this is the last task and user clicked "I said it out loud"
+      // For other cases, let the explicit completion handle it
+      if (isLastTask && speakOutLoud) {
+        setLocalIsCompleted(true);
+      }
+    }
+  }, [speakOutLoud, writtenText, localIsCompleted, isLastTask]);
+  
   // Save answers to completion_data whenever they change (for persistence)
   useEffect(() => {
     if (hasLoadedSavedData && (writtenText.trim() || speakOutLoud)) {
@@ -100,7 +112,10 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
         setSpeakOutLoud(true);
       }
       
+      // Set local completion state immediately
       setLocalIsCompleted(true);
+      
+      // Call onComplete to update database and parent state
       onComplete({
         writtenText: (forceSpeakOutLoud || speakOutLoud) ? null : writtenText,
         speakOutLoud: forceSpeakOutLoud || speakOutLoud,
@@ -512,48 +527,66 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
                 </div>
               )
             ) : isLastTask && onNextLesson ? (
-              localIsCompleted ? (
-                // Last task completed - show green active next lesson button
-                <button
-                  onClick={onNextLesson}
-                  className="w-10 h-10 rounded-full bg-green-500 hover:bg-green-600 transition-colors flex items-center justify-center"
-                  aria-label={appLanguage === 'ru' ? `Урок ${dayNumber ? dayNumber + 1 : 2}` : appLanguage === 'en' ? `Lesson ${dayNumber ? dayNumber + 1 : 2}` : `Lição ${dayNumber ? dayNumber + 1 : 2}`}
-                  title={appLanguage === 'ru' ? `Урок ${dayNumber ? dayNumber + 1 : 2}` : appLanguage === 'en' ? `Lesson ${dayNumber ? dayNumber + 1 : 2}` : `Lição ${dayNumber ? dayNumber + 1 : 2}`}
-                >
-                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
-              ) : (
-                // Last task not completed - show gray disabled next lesson button
-                <div className="relative">
-                  <button
-                    disabled
-                    onMouseEnter={() => setShowTooltip(true)}
-                    onMouseLeave={() => setShowTooltip(false)}
-                    onClick={() => setShowTooltip(true)}
-                    className="w-10 h-10 rounded-full bg-gray-400 cursor-not-allowed flex items-center justify-center"
-                    aria-label={appLanguage === 'ru' ? `Урок ${dayNumber ? dayNumber + 1 : 2}` : appLanguage === 'en' ? `Lesson ${dayNumber ? dayNumber + 1 : 2}` : `Lição ${dayNumber ? dayNumber + 1 : 2}`}
-                  >
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </button>
-                  {showTooltip && (
-                    <div
-                      className="absolute bottom-full right-0 mb-2 px-3 py-2 bg-black text-white text-xs rounded-lg whitespace-nowrap z-50"
-                      style={{ maxWidth: '200px' }}
+              <div className="relative">
+                {localIsCompleted ? (
+                  // Last task completed - show green active next lesson button with tooltip
+                  <>
+                    <button
+                      onClick={onNextLesson}
+                      onMouseEnter={() => setShowTooltip(true)}
+                      onMouseLeave={() => setShowTooltip(false)}
+                      className="w-10 h-10 rounded-full bg-green-500 hover:bg-green-600 transition-colors flex items-center justify-center"
+                      aria-label={appLanguage === 'ru' ? `Урок ${dayNumber ? dayNumber + 1 : 2}` : appLanguage === 'en' ? `Lesson ${dayNumber ? dayNumber + 1 : 2}` : `Lição ${dayNumber ? dayNumber + 1 : 2}`}
                     >
-                      {appLanguage === 'ru' 
-                        ? `Выполните задание, чтобы перейти к уроку ${dayNumber ? dayNumber + 1 : 2}`
-                        : appLanguage === 'en'
-                        ? `Complete the task to proceed to lesson ${dayNumber ? dayNumber + 1 : 2}`
-                        : `Complete a tarefa para prosseguir para a lição ${dayNumber ? dayNumber + 1 : 2}`}
-                      <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-black"></div>
-                    </div>
-                  )}
-                </div>
-              )
+                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                    {showTooltip && (
+                      <div
+                        className="absolute bottom-full right-0 mb-2 px-3 py-2 bg-black text-white text-xs rounded-lg whitespace-nowrap"
+                        style={{ maxWidth: '200px', zIndex: 9999 }}
+                      >
+                        {appLanguage === 'ru' 
+                          ? `Перейти к уроку ${dayNumber ? dayNumber + 1 : 2}`
+                          : appLanguage === 'en'
+                          ? `Go to lesson ${dayNumber ? dayNumber + 1 : 2}`
+                          : `Ir para a lição ${dayNumber ? dayNumber + 1 : 2}`}
+                        <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-black"></div>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  // Last task not completed - show gray disabled next lesson button with tooltip
+                  <>
+                    <button
+                      disabled
+                      onMouseEnter={() => setShowTooltip(true)}
+                      onMouseLeave={() => setShowTooltip(false)}
+                      onClick={() => setShowTooltip(true)}
+                      className="w-10 h-10 rounded-full bg-gray-400 cursor-not-allowed flex items-center justify-center"
+                      aria-label={appLanguage === 'ru' ? `Урок ${dayNumber ? dayNumber + 1 : 2}` : appLanguage === 'en' ? `Lesson ${dayNumber ? dayNumber + 1 : 2}` : `Lição ${dayNumber ? dayNumber + 1 : 2}`}
+                    >
+                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                    {showTooltip && (
+                      <div
+                        className="absolute bottom-full right-0 mb-2 px-3 py-2 bg-black text-white text-xs rounded-lg whitespace-nowrap"
+                        style={{ maxWidth: '200px', zIndex: 9999 }}
+                      >
+                        {appLanguage === 'ru' 
+                          ? `Выполните задание, чтобы перейти к уроку ${dayNumber ? dayNumber + 1 : 2}`
+                          : appLanguage === 'en'
+                          ? `Complete the task to proceed to lesson ${dayNumber ? dayNumber + 1 : 2}`
+                          : `Complete a tarefa para prosseguir para a lição ${dayNumber ? dayNumber + 1 : 2}`}
+                        <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-black"></div>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
             ) : (
               <div className="w-10 h-10"></div>
             )}
