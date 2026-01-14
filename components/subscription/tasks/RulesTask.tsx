@@ -563,18 +563,30 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                 <div className="space-y-2">
                   {block.task_1.options?.map((option: any, index: number) => {
                     const taskKey = 'task_1';
-                    let optionText: string = getTranslatedText(option.text, appLanguage);
-                    if (!optionText || typeof optionText !== 'string') {
+                    // Safely extract option text - handle both string and object formats
+                    let optionText: string = '';
+                    if (option.text) {
                       if (typeof option.text === 'string') {
                         optionText = option.text;
-                      } else if (option.text && typeof option.text === 'object') {
-                        optionText = option.text.pt || option.text.portuguese || option.text.ru || option.text.en || String(option.text);
+                      } else if (typeof option.text === 'object' && !Array.isArray(option.text)) {
+                        // Handle object format: { ru: "...", en: "..." }
+                        optionText = getTranslatedText(option.text, appLanguage);
+                        // Fallback if getTranslatedText returns empty or non-string
+                        if (!optionText || typeof optionText !== 'string') {
+                          optionText = option.text.ru || option.text.en || option.text.pt || option.text.portuguese || '';
+                        }
                       } else {
                         optionText = String(option.text || '');
                       }
                     }
+                    // Ensure optionText is always a string
+                    if (typeof optionText !== 'string') {
+                      optionText = String(optionText || '');
+                    }
+                    
                     const isSelected = selectedAnswers[taskKey] === optionText || (option.text && typeof option.text === 'object' && selectedAnswers[taskKey] === getTranslatedText(option.text, appLanguage));
-                    const isCorrect = option.correct;
+                    // Check both correct and is_correct fields
+                    const isCorrect = option.correct === true || option.is_correct === true;
                     const showResult = showResults[taskKey];
                     
                     return (
@@ -667,7 +679,8 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                       optionText = '';
                     }
                     const isSelected = selectedAnswers[taskKey] === optionText || (option.text && typeof option.text === 'object' && selectedAnswers[taskKey] === getTranslatedText(option.text, appLanguage));
-                    const isCorrect = option.correct;
+                    // Check both correct and is_correct fields
+                    const isCorrect = option.correct === true || option.is_correct === true;
                     const showResult = showResults[taskKey];
                     
                     return (
