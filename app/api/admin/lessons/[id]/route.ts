@@ -307,6 +307,20 @@ export async function DELETE(
       console.warn('⚠️  Warning deleting audio_files (may not exist):', err.message);
     }
 
+    // 3.5. Delete email logs (references lessons without CASCADE)
+    try {
+      const { error: emailLogsError } = await supabase
+        .from('email_logs')
+        .delete()
+        .eq('lesson_id', id);
+      
+      if (!emailLogsError) {
+        console.log('✅ Deleted email_logs records');
+      }
+    } catch (err: any) {
+      console.warn('⚠️  Warning deleting email_logs (may not exist):', err.message);
+    }
+
     // 4. Check if lesson exists before deletion
     const { data: lessonCheck, error: checkError } = await supabase
       .from('lessons')
