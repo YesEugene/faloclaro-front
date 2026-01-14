@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAppLanguage } from '@/lib/language-context';
 import { getTranslatedText } from '@/lib/lesson-translations';
 
