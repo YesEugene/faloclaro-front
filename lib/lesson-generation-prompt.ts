@@ -213,24 +213,41 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
 The platform supports 4 different block types. You MUST use different types to create variety and better learning:
 
 1. **"explanation"** (or "how_to_say") - "Даем примеры (текст + аудио + подсказки)"
-   - Use for: Teaching new phrases, showing examples with explanations
-   - Contains: title, explanation_text, examples (array), hint (array)
-   - Best for: block_1_build, block_2_transform, block_3_answers
+   - **Use for:** Teaching new phrases, showing examples with explanations
+   - **Contains:** 
+     - title (RU/EN)
+     - explanation_text (RU/EN) - textarea for explanation
+     - examples (array) - each with text (PT) and audio_url (auto-generated)
+     - hint (array) - each with ru and en fields explaining meaning and grammar
+   - **Best for:** block_1_build, block_2_transform, block_3_answers
+   - **CRITICAL:** hint array is MANDATORY, especially for block_3_answers
 
 2. **"comparison"** - "Сравниваем варианты"
-   - Use for: Showing equivalent phrases or variations
-   - Contains: title, comparison_card (array), note
-   - Best for: block_4_equivalence
+   - **Use for:** Showing equivalent phrases or variations
+   - **Contains:**
+     - title (RU/EN)
+     - comparison_card (array) - each with text (PT) and audio_url (auto-generated)
+     - note (RU/EN) - textarea explaining equivalence
+   - **Best for:** block_4_equivalence
+   - **Minimum:** 2 comparison cards
 
 3. **"reinforcement"** - "Проверка знаний"
-   - Use for: Testing comprehension with multiple choice
-   - Contains: title, task_1, task_2 (each with audio, question, options)
-   - Best for: block_5_reinforcement
+   - **Use for:** Testing comprehension with multiple choice
+   - **Contains:**
+     - title (RU/EN)
+     - task_1 (required) - format: "single_choice", audio (PT), question (RU/EN), options (array)
+     - task_2 (required) - same structure as task_1
+     - Each option: text (RU/EN object), is_correct (boolean)
+   - **Best for:** block_5_reinforcement
+   - **CRITICAL:** Must have EXACTLY 2 tasks, each with EXACTLY 3 options, one correct answer per task
 
 4. **"speak_out_loud"** - "Практикуемся (пишем или говорим вслух)"
-   - Use for: Final speech production
-   - Contains: instruction_text, action_button
-   - Best for: block_6_speak
+   - **Use for:** Final speech production
+   - **Contains:**
+     - instruction_text (RU/EN) - textarea with Portuguese phrase inside
+     - action_button - text (RU/EN), completes_task (true)
+   - **Best for:** block_6_speak
+   - **CRITICAL:** instruction_text must contain the EXACT final result sentences
 
 **CRITICAL:** Do NOT use the same block_type for all 6 blocks. Use appropriate types:
 - block_1, block_2, block_3: "explanation"
