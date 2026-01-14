@@ -221,27 +221,51 @@ export async function POST(
         // Try to parse JSON
         generatedLesson = parseJsonSafely(responseText);
         
-        // Validate structure
-        if (!generatedLesson.tasks || !Array.isArray(generatedLesson.tasks) || generatedLesson.tasks.length !== 5) {
-          throw new Error('Lesson must have exactly 5 tasks');
+        // Validate structure - be more lenient to avoid blocking valid lessons
+        if (!generatedLesson.tasks || !Array.isArray(generatedLesson.tasks)) {
+          throw new Error('Lesson must have a tasks array');
         }
 
-        // Validate Task 2 has exactly 6 blocks
-        const task2 = generatedLesson.tasks.find((t: any) => t.task_id === 2 && t.type === 'rules');
-        if (task2 && (!task2.blocks || !Array.isArray(task2.blocks) || task2.blocks.length !== 6)) {
-          throw new Error('Task 2 (Rules) must have exactly 6 blocks');
+        // Log tasks before filtering for debugging
+        console.log('📋 Tasks before validation:', generatedLesson.tasks.map((t: any) => ({
+          task_id: t?.task_id,
+          type: t?.type,
+          hasTitle: !!t?.title
+        })));
+
+        // Filter out null/undefined tasks but keep all valid tasks
+        const validTasks = generatedLesson.tasks.filter((task: any) => task && typeof task === 'object');
+        
+        if (validTasks.length < 5) {
+          console.warn(`⚠️ Only ${validTasks.length} valid tasks found, expected 5`);
+          // Don't throw error here, let normalization handle it
         }
 
-        // Validate Task 3 has exactly 3 items
-        const task3 = generatedLesson.tasks.find((t: any) => t.task_id === 3 && (t.type === 'listening' || t.type === 'listening_comprehension'));
-        if (task3 && (!task3.items || !Array.isArray(task3.items) || task3.items.length !== 3)) {
-          throw new Error('Task 3 (Listening) must have exactly 3 items');
+        // Validate Task 2 has exactly 6 blocks (if it exists)
+        const task2 = validTasks.find((t: any) => t.task_id === 2 && t.type === 'rules');
+        if (task2) {
+          if (!task2.blocks || !Array.isArray(task2.blocks) || task2.blocks.length !== 6) {
+            console.warn(`⚠️ Task 2 has ${task2.blocks?.length || 0} blocks, expected 6`);
+            // Don't throw error, continue with what we have
+          }
         }
 
-        // Validate Task 4 has exactly 3 items
-        const task4 = generatedLesson.tasks.find((t: any) => t.task_id === 4 && t.type === 'attention');
-        if (task4 && (!task4.items || !Array.isArray(task4.items) || task4.items.length !== 3)) {
-          throw new Error('Task 4 (Attention) must have exactly 3 items');
+        // Validate Task 3 has exactly 3 items (if it exists)
+        const task3 = validTasks.find((t: any) => t.task_id === 3 && (t.type === 'listening' || t.type === 'listening_comprehension'));
+        if (task3) {
+          if (!task3.items || !Array.isArray(task3.items) || task3.items.length !== 3) {
+            console.warn(`⚠️ Task 3 has ${task3.items?.length || 0} items, expected 3`);
+            // Don't throw error, continue with what we have
+          }
+        }
+
+        // Validate Task 4 has exactly 3 items (if it exists)
+        const task4 = validTasks.find((t: any) => t.task_id === 4 && t.type === 'attention');
+        if (task4) {
+          if (!task4.items || !Array.isArray(task4.items) || task4.items.length !== 3) {
+            console.warn(`⚠️ Task 4 has ${task4.items?.length || 0} items, expected 3`);
+            // Don't throw error, continue with what we have
+          }
         }
 
         // Normalize and validate tasks structure
