@@ -359,6 +359,16 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
 • Each item must have exactly 3 answer options
 • Must require meaning understanding, not word matching
 
+**CREATIVITY AND VARIATION:**
+• DO NOT use the exact same phrases as Task 2 word-for-word
+• Create slight variations while staying within methodology:
+  - Change names: "Olá, chamo-me Ana" → "Olá, chamo-me Pedro" or "Olá, sou a Maria"
+  - Vary sentence structure: "Como estás?" → "Como está?" or "Tudo bem?"
+  - Use synonyms or similar phrases: "Estou bem" → "Estou ótimo" or "Tudo bem, obrigado"
+• The goal is to help learners build phrase-building skills by recognizing variations
+• Stay within the same vocabulary and grammar level from Task 1
+• Maintain the same meaning and context, but express it slightly differently
+
 **Structure:**
 ```json
 {
@@ -405,6 +415,16 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
 • Asks what kind of thing it is (request, answer, time, place, etc)
 • Must have exactly 3 options
 • Correct answer must be randomized in position
+
+**CREATIVITY AND VARIATION:**
+• DO NOT use the exact same phrases as Task 3 word-for-word
+• Create NEW variations of phrases from Task 1 and Task 2:
+  - Use different names, situations, or contexts
+  - Vary sentence structure while keeping the same meaning type
+  - Example: If Task 3 used "Olá, chamo-me Ana", Task 4 could use "Olá, sou o Pedro" or "Bom dia, chamo-me Maria"
+• The goal is progressive skill building: learners should recognize phrase types even with variations
+• Each task should feel fresh while staying methodologically consistent
+• Use phrases that are similar in structure but different in content
 
 **Structure:**
 ```json

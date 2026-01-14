@@ -395,16 +395,53 @@ export async function POST(
               });
             }
             
-            // Task 4 (attention)
+            // Task 4 (attention) - normalize options and ensure is_correct is set
             if (task.type === 'attention' && task.items) {
               task.items.forEach((item: any) => {
                 if (item.options && Array.isArray(item.options)) {
-                  const correctCount = item.options.filter((opt: any) => opt.is_correct === true).length;
+                  item.options.forEach((opt: any) => {
+                    // Normalize text to object format if needed
+                    if (opt.text && typeof opt.text === 'object' && !Array.isArray(opt.text)) {
+                      // Ensure both ru and en exist
+                      if (!opt.text.ru) opt.text.ru = '';
+                      if (!opt.text.en) opt.text.en = '';
+                    }
+                    
+                    // Normalize: ensure both is_correct and correct are set consistently
+                    if (opt.correct !== undefined && opt.is_correct === undefined) {
+                      opt.is_correct = opt.correct;
+                    }
+                    if (opt.is_correct !== undefined && opt.correct === undefined) {
+                      opt.correct = opt.is_correct;
+                    }
+                  });
+                  
+                  // Check if any option is marked as correct (check BOTH fields)
+                  const correctCount = item.options.filter((opt: any) => 
+                    opt.is_correct === true || opt.correct === true
+                  ).length;
+                  
                   if (correctCount === 0) {
                     // If no correct answer set, set first option as correct
                     if (item.options.length > 0) {
                       item.options[0].is_correct = true;
+                      item.options[0].correct = true;
                     }
+                  } else if (correctCount > 1) {
+                    // If multiple correct answers, keep only the first one
+                    let foundFirst = false;
+                    item.options.forEach((opt: any) => {
+                      if (opt.is_correct === true || opt.correct === true) {
+                        if (foundFirst) {
+                          opt.is_correct = false;
+                          opt.correct = false;
+                        } else {
+                          foundFirst = true;
+                          opt.is_correct = true;
+                          opt.correct = true;
+                        }
+                      }
+                    });
                   }
                 }
               });
