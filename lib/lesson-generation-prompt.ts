@@ -80,8 +80,9 @@ All later tasks (2–5) must be built ONLY from these words + already learned gl
 ### Rules for word selection
 
 For each lesson:
-• 8–10 words or phrases must belong directly to the lesson theme
-• 3–5 words may be supporting infrastructure (time, connectors, polite words, etc)
+• **Minimum 10 words or phrases** must belong directly to the lesson theme (core vocabulary)
+• **3-5 additional words** may be supporting infrastructure (time, connectors, polite words, etc) - these will be used in example sentences
+• **Total: 13-15 cards minimum** (10 core + 3-5 supporting)
 
 **CRITICAL CONSTRAINTS:**
 • No word may be duplicated inside the lesson
@@ -107,9 +108,10 @@ Do not include things like:
 \`\`\`
 
 ### Platform constraints:
-• Minimum: 8 cards
-• Maximum: 15 cards (recommended: 10-12)
+• **Minimum: 13 cards** (10 core theme words + 3 supporting words)
+• **Maximum: 15 cards** (10 core theme words + 5 supporting words)
 • All fields are required for each card
+• Always generate the minimum (13 cards) or more, never fewer
 
 ---
 
@@ -122,7 +124,7 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
 **Purpose:** Create the first working phrase
 • Show the simplest usable sentence built from Task 1 words
 • Give 2–3 audio examples
-• Include translations in hints
+• **CRITICAL:** Hint must explain the CONSTRUCTION of ALL examples, not just translate one
 
 **Structure:**
 \`\`\`json
@@ -136,19 +138,28 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
       "en": "To ask for help, we say: Preciso de ajuda."
     },
     "examples": [
-      { "text": "Preciso de ajuda." },
-      { "text": "Pode ajudar?" }
+      { "text": "Eu estou aqui." },
+      { "text": "Eu sou de Lisboa." }
     ],
     "hint": [
-      { "ru": "Preciso de ajuda = Мне нужна помощь", "en": "Preciso de ajuda = I need help" }
+      { 
+        "ru": "Обе фразы используют конструкцию 'Eu + глагол + дополнение'. 'Estou' (я нахожусь) и 'sou' (я есть) - это формы глагола 'ser/estar' в первом лице. 'Aqui' означает 'здесь', 'de Lisboa' - 'из Лиссабона'.",
+        "en": "Both phrases use the structure 'Eu + verb + complement'. 'Estou' (I am located) and 'sou' (I am) are forms of 'ser/estar' in first person. 'Aqui' means 'here', 'de Lisboa' means 'from Lisbon'."
+      }
     ]
   }
 }
 \`\`\`
 
+**CRITICAL HINT REQUIREMENT:**
+• Hint must explain the GRAMMATICAL CONSTRUCTION that applies to ALL examples
+• Do NOT just translate one example word-for-word
+• Explain the pattern, structure, or rule that connects all examples
+• Example: If examples are "Eu estou aqui" and "Eu sou de Lisboa", explain the "Eu + verb + complement" pattern, not just translate "Eu estou aqui = I am here"
+
 **Platform constraints:**
 • Minimum: 2 examples
-• Minimum: 1 hint
+• Minimum: 1 hint (must explain construction of ALL examples)
 • Examples must use words from Task 1
 
 ---
@@ -159,7 +170,7 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
 • Add: time, politeness, intensity, or context
 • Use words from Task 1
 • Give 2–3 longer phrases
-• Include translations in hints
+• **CRITICAL:** Hint must explain WHAT CHANGED and what both the original and transformed phrases mean
 
 **Structure:** Same as block_1_build, but with transformed phrases
 
@@ -167,6 +178,12 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
 • "Preciso de ajuda agora." (add time)
 • "Por favor, pode ajudar?" (add politeness)
 • "Preciso muito de ajuda." (add intensity)
+
+**CRITICAL HINT REQUIREMENT:**
+• Hint must explain WHAT ELEMENT was added (time, politeness, intensity, etc.)
+• Explain what the ORIGINAL phrase means AND what the TRANSFORMED phrase means
+• Show the progression: simple → enhanced
+• Example: "Первая фраза 'Preciso de ajuda' означает 'Мне нужна помощь'. Добавив 'agora' (сейчас), мы получаем 'Preciso de ajuda agora' - 'Мне нужна помощь сейчас'. Слово 'agora' добавляет временной контекст."
 
 ---
 
@@ -176,13 +193,16 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
 • Responses must be meaningful full phrases, not single words
 • Use words from Task 1
 
-**CRITICAL REQUIREMENT:**
-• MUST include "hints" array with explanations for new words or important Portuguese grammar rules
+**CRITICAL REQUIREMENT - MANDATORY:**
+• **MUST include "hints" array** - this is NOT optional
+• **Minimum 1-2 hints** explaining new words or important Portuguese grammar rules
 • Each hint should explain:
   - New vocabulary words that appear in examples
   - Important grammar rules or patterns
   - Cultural or usage notes
+  - How to use the phrases in context
 • Hints help learners understand context and meaning
+• **If you skip hints, the lesson is invalid**
 
 **Example:**
 • "Claro, posso ajudar agora."
@@ -315,9 +335,11 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
 
 **Purpose:** Force speech production
 
-**CRITICAL REQUIREMENTS:**
-• Must instruct the learner to say at least 2 sentences
-• One must be longer and more complex than the ones in block_1
+**CRITICAL REQUIREMENTS - MANDATORY:**
+• **MUST instruct the learner to say at least 2 sentences** - this is NOT optional
+• One sentence must be longer and more complex than the ones in block_1
+• Both sentences must be included in the instruction_text
+• This is the culmination of the lesson - learners should be able to say complex phrases by now
 
 **Structure:**
 \`\`\`json
@@ -326,8 +348,8 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
   "block_type": "speak_out_loud",
   "content": {
     "instruction_text": { 
-      "ru": "Скажи вслух: 'Preciso de ajuda hoje, mas amanhã será bom.'",
-      "en": "Say out loud: 'Preciso de ajuda hoje, mas amanhã será bom.'"
+      "ru": "Скажи вслух: 'Preciso de ajuda hoje. Mas amanhã será bom.'",
+      "en": "Say out loud: 'Preciso de ajuda hoje. Mas amanhã será bom.'"
     },
     "action_button": {
       "text": { "ru": "✔ Я сказал(а) вслух", "en": "✔ I said it out loud" },
@@ -336,6 +358,12 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
   }
 }
 \`\`\`
+
+**CRITICAL - TWO SENTENCES REQUIRED:**
+• Instruction must contain TWO separate sentences (separated by period or conjunction)
+• Example: "Скажи вслух: 'Preciso de ajuda hoje. Mas amanhã será bom.'" (two sentences)
+• NOT: "Скажи вслух: 'Preciso de ajuda hoje, mas amanhã será bom.'" (one compound sentence)
+• The two sentences should build on each other and use words from Task 1
 
 **CRITICAL INSTRUCTION FOR instruction_text:**
 • The Portuguese phrase inside the instruction MUST remain in Portuguese in BOTH Russian and English versions
@@ -346,8 +374,10 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
   - ❌ WRONG: "ru": "Скажи вслух: 'Привет, меня зовут Ана.'" / "en": "Say out loud: 'Hello, my name is Ana.'"
 
 **Platform constraints:**
-• Instruction must require at least 2 sentences
+• **MANDATORY:** Instruction must require exactly 2 sentences (minimum and standard)
 • One sentence must be more complex than block_1 phrases
+• Both sentences must use words from Task 1
+• This represents the final skill level: from simple words (Task 1) → complex multi-sentence production (block_6)
 
 ---
 
@@ -594,14 +624,21 @@ Generate a complete lesson JSON for:
 
 **CRITICAL REQUIREMENTS:**
 1. Use ONLY words NOT in: ${usedWordsList}
-2. Task 1: 8-15 vocabulary cards (all new words)
-3. Task 2: Exactly 6 blocks in the specified order
+2. Task 1: **Minimum 13 vocabulary cards** (10 core theme words + 3 supporting words, maximum 15)
+3. Task 2: Exactly 6 blocks in the specified order:
+   - block_1_build: Hint must explain construction of ALL examples
+   - block_2_transform: Hint must explain what changed between phrases
+   - block_3_answers: **MANDATORY hints** explaining new words/grammar (minimum 1-2 hints)
+   - block_4_equivalence: Comparison of variants
+   - block_5_reinforcement: Knowledge check with 2 tasks
+   - block_6_speak: **MANDATORY 2 sentences** in instruction_text
 4. Task 3: Exactly 3 listening items
 5. Task 4: Exactly 3 attention items
 6. Task 5: Writing task with template using Task 1 words
-7. All phrases must escalate in complexity
+7. All phrases must escalate in complexity: Task 1 (words) → Task 2 block_1 (simple phrases) → Task 2 block_6 (complex sentences) → Task 5 (production)
 8. Final output (Task 5) must be more complex than Task 2 block_1
 9. Match phase level: ${phaseDescription}
+10. **Methodology compliance: 100%** - Every requirement must be met exactly as specified
 
 **Return ONLY valid JSON object matching the platform structure. No markdown, no explanations.`;
 }
