@@ -78,9 +78,10 @@ All later tasks (2–5) must be built ONLY from these words + already learned gl
 ### Rules for word selection
 
 For each lesson:
-• **Minimum 10 words or phrases** must belong directly to the lesson theme (core vocabulary)
-• **3-5 additional words** may be supporting infrastructure (time, connectors, polite words, etc) - these will be used in example sentences
-• **Total: 13-15 cards minimum** (10 core + 3-5 supporting)
+• **Exactly 10 words or phrases** must belong directly to the lesson theme (core vocabulary)
+• **3-5 additional words** are REQUIRED as supporting infrastructure (time, connectors, polite words, etc) - these will be used in example sentences
+• **Total: 13-15 cards REQUIRED** (10 core + 3-5 supporting)
+• **CRITICAL:** You MUST generate at least 13 cards. Never generate only 10 cards.
 
 **CRITICAL CONSTRAINTS:**
 • No word may be duplicated inside the lesson
@@ -120,7 +121,9 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
 ### block_1_build (block_type: "explanation" or "how_to_say")
 
 **Purpose:** Create the first working phrase
-• Show the simplest usable sentence built from Task 1 words
+• Show the SIMPLEST usable sentence built from Task 1 words
+• **CRITICAL:** Sentences must be VERY SIMPLE - only 2-3 words each
+• Examples: "Chamo-me Ana." (2 words), "Sou de Lisboa." (3 words), "Estou bem." (2 words)
 • Give 2–3 audio examples
 • **CRITICAL:** Hint must explain the CONSTRUCTION of ALL examples, not just translate one
 
@@ -331,13 +334,15 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
 
 ### block_6_speak (block_type: "speak_out_loud")
 
-**Purpose:** Force speech production
+**Purpose:** Force speech production - this is the culmination of the lesson
 
 **CRITICAL REQUIREMENTS - MANDATORY:**
-• **MUST instruct the learner to say at least 2 sentences** - this is NOT optional
-• One sentence must be longer and more complex than the ones in block_1
+• **MUST instruct the learner to say exactly 2 sentences** - this is NOT optional
+• **Each sentence must be 4-7 words long** (NOT 2-3 words like block_1)
 • Both sentences must be included in the instruction_text
-• This is the culmination of the lesson - learners should be able to say complex phrases by now
+• This represents the progression: block_1 (2-3 words) → block_6 (4-7 words per sentence, 2 sentences)
+• Example: "Chamo-me Ana. Sou de Lisboa e estou bem." (first sentence: 3 words, second: 6 words)
+• By the end of block_6, learners should be able to say longer, more complex phrases than in block_1
 
 **Structure:**
 ```json
@@ -381,23 +386,31 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
 
 ## TASK 3: LISTENING (type: "listening")
 
-**Purpose:** Train phrase recognition
+**Purpose:** Train phrase recognition and comprehension
 
 **CRITICAL REQUIREMENTS:**
 • Must contain exactly 3 listening items
-• Each item must use full phrases from Task 2
 • Each item must have exactly 3 answer options
 • Must require meaning understanding, not word matching
 
-**CREATIVITY AND VARIATION:**
-• DO NOT use the exact same phrases as Task 2 word-for-word
-• Create slight variations while staying within methodology:
-  - Change names: "Olá, chamo-me Ana" → "Olá, chamo-me Pedro" or "Olá, sou a Maria"
-  - Vary sentence structure: "Como estás?" → "Como está?" or "Tudo bem?"
-  - Use synonyms or similar phrases: "Estou bem" → "Estou ótimo" or "Tudo bem, obrigado"
-• The goal is to help learners build phrase-building skills by recognizing variations
-• Stay within the same vocabulary and grammar level from Task 1
-• Maintain the same meaning and context, but express it slightly differently
+**MANDATORY: REVIEW ALL TASK 2 PHRASES FIRST:**
+• Before generating Task 3, you MUST review ALL phrases from Task 2 blocks (block_1_build, block_2_transform, block_3_answers, block_4_equivalence, block_5_reinforcement, block_6_speak)
+• Understand the meaning and structure of phrases used in Task 2
+• Task 3 phrases must be a CONTINUATION and DEVELOPMENT of Task 2, NOT a repetition
+
+**CRITICAL - NO WORD-FOR-WORD REPETITION:**
+• **DO NOT use the exact same phrases from Task 2 word-for-word**
+• **DO NOT use phrases like "Chamo-me Ana", "Prazer em conhecer", "Sou de Lisboa" if they were already used in Task 2**
+• Create NEW phrases that:
+  - Are LONGER than Task 2 block_1 phrases (which are 2-3 words)
+  - Use the SAME vocabulary from Task 1
+  - Express SIMILAR meanings but with DIFFERENT structure
+  - Are a logical CONTINUATION of the lesson theme
+• Examples of progression:
+  - If Task 2 block_1 used "Chamo-me Ana" (2 words), Task 3 could use "Olá, chamo-me Pedro e sou de Lisboa" (7 words)
+  - If Task 2 used "Prazer em conhecer" (3 words), Task 3 could use "Muito prazer em conhecê-lo hoje" (5 words)
+  - If Task 2 used "Sou de Lisboa" (3 words), Task 3 could use "Eu sou de Lisboa e gosto muito daqui" (8 words)
+• The goal is progressive skill building: learners recognize meaning even when phrases are longer and structured differently
 
 **Structure:**
 ```json
@@ -446,15 +459,23 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
 • Must have exactly 3 options
 • Correct answer must be randomized in position
 
-**CREATIVITY AND VARIATION:**
-• DO NOT use the exact same phrases as Task 3 word-for-word
-• Create NEW variations of phrases from Task 1 and Task 2:
-  - Use different names, situations, or contexts
-  - Vary sentence structure while keeping the same meaning type
-  - Example: If Task 3 used "Olá, chamo-me Ana", Task 4 could use "Olá, sou o Pedro" or "Bom dia, chamo-me Maria"
-• The goal is progressive skill building: learners should recognize phrase types even with variations
-• Each task should feel fresh while staying methodologically consistent
-• Use phrases that are similar in structure but different in content
+**MANDATORY: REVIEW TASK 3 PHRASES FIRST:**
+• Before generating Task 4, you MUST review ALL phrases from Task 3
+• Task 4 phrases must be a CONTINUATION and DEVELOPMENT of Task 3, NOT a repetition
+
+**CRITICAL - NO WORD-FOR-WORD REPETITION:**
+• **DO NOT use the exact same phrases from Task 3 word-for-word**
+• **DO NOT use phrases like "Chamo-me Ana", "Prazer em conhecer", "Sou de Lisboa" if they were already used in Task 3**
+• Create NEW phrases that:
+  - Are LONGER than Task 3 phrases OR have a DIFFERENT structure
+  - Use the SAME vocabulary from Task 1
+  - Express SIMILAR meanings but with ENHANCED complexity
+  - Are a logical CONTINUATION of the lesson theme
+• Examples of progression:
+  - If Task 3 used "Olá, chamo-me Pedro e sou de Lisboa" (7 words), Task 4 could use "Olá, chamo-me Pedro, sou de Lisboa e estou muito feliz em conhecê-lo" (12 words)
+  - If Task 3 used "Muito prazer em conhecê-lo hoje" (5 words), Task 4 could use "Foi um grande prazer conhecê-lo hoje e espero vê-lo novamente" (10 words)
+  - Alternative: Change structure - if Task 3 used simple statements, Task 4 could use questions or more complex constructions
+• The goal is progressive skill building: learners recognize phrase types even when phrases are longer and more complex
 
 **Structure:**
 ```json
@@ -497,13 +518,36 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
 
 ## TASK 5: WRITING (type: "writing")
 
-**Purpose:** Force active production - this is the output gate
+**Purpose:** Force active production - this is the final output gate of the lesson
 
 **CRITICAL REQUIREMENTS:**
-• Must force the learner to assemble a medium-length phrase
-• Must use words from Task 1 and phrases from Task 2
-• Must be harder than anything in block_1
+• Must force the learner to assemble LONGER, MORE COMPLEX phrases
+• Must use words from Task 1
+• **MUST be more complex than Task 2 block_1 (which uses 2-3 word phrases)**
+• **MUST be at least as complex as Task 2 block_6 (which uses 4-7 word sentences)**
 • Must offer text input option and speak-aloud alternative
+
+**MANDATORY: REVIEW ALL PREVIOUS TASKS:**
+• Before generating Task 5, you MUST review ALL phrases from:
+  - Task 2 (all blocks, especially block_1 and block_6)
+  - Task 3
+  - Task 4
+• Task 5 templates must be a CONTINUATION and DEVELOPMENT, NOT a repetition of short phrases
+
+**CRITICAL - NO SHORT PHRASE REPETITION:**
+• **DO NOT use the exact same short phrases (2-3 words) that were used in Task 2 block_1**
+• **DO NOT use phrases like "Chamo-me Ana", "Prazer em conhecer", "Sou de Lisboa" if they were already used extensively**
+• Create templates that:
+  - Require LONGER phrases (minimum 4-7 words per template line)
+  - Use COMBINATIONS of words from Task 1
+  - Build on the complexity progression: Task 2 block_1 (2-3 words) → Task 2 block_6 (4-7 words) → Task 5 (4-7+ words)
+• Examples of appropriate templates:
+  - ✅ GOOD: "Chamo-me ___ e sou de ___." (5-6 words when filled)
+  - ✅ GOOD: "Muito prazer em conhecê-lo, ___." (5 words when filled)
+  - ✅ GOOD: "Sou de ___ e gosto muito de ___." (7 words when filled)
+  - ❌ BAD: "Chamo-me ___." (only 2 words - too simple, repeats block_1)
+  - ❌ BAD: "Sou de ___." (only 3 words - too simple, repeats block_1)
+• By the end of Task 5, learners should be able to produce longer, more complex phrases than at the start of the lesson
 
 **Structure:**
 ```json
@@ -575,10 +619,19 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
 
 ### Phase Requirements (${phase}):
 The phase will be automatically determined based on day number:
-• Day 1-10 (A1): Simple present tense, basic vocabulary, 5-7 word phrases max
-• Day 11-30 (A2): Past/future tenses, 8-12 word phrases, more connectors
-• Day 31-50 (B1): Subjunctive, conditional, 12-15 word phrases, abstract topics
-• Day 51+ (B2): Advanced grammar, idiomatic expressions, 15+ word phrases
+
+**Complexity progression within each lesson:**
+• **Task 2 block_1:** Start with VERY SIMPLE phrases (2-3 words) - e.g., "Chamo-me Ana", "Sou de Lisboa"
+• **Task 2 block_6:** Progress to COMPLEX sentences (4-7 words each, 2 sentences) - e.g., "Chamo-me Ana e sou de Lisboa. Estou muito feliz em conhecê-lo."
+• **Task 3:** Continue with LONGER phrases (4-7+ words) that differ from Task 2 but use same vocabulary
+• **Task 4:** Further develop with LONGER or DIFFERENTLY STRUCTURED phrases (5-10+ words)
+• **Task 5:** Final production with COMPLEX templates (4-7+ words per template line)
+
+**Phase-level complexity:**
+• Day 1-10 (A1): Simple present tense, basic vocabulary, block_1: 2-3 words, block_6: 4-5 words per sentence
+• Day 11-30 (A2): Past/future tenses, block_1: 2-3 words, block_6: 5-7 words per sentence
+• Day 31-50 (B1): Subjunctive, conditional, block_1: 3 words, block_6: 6-7 words per sentence
+• Day 51+ (B2): Advanced grammar, block_1: 3 words, block_6: 7+ words per sentence
 
 ### Current Lesson Parameters:
 • Day: ${dayNumber}
@@ -614,19 +667,24 @@ Generate a complete lesson JSON for:
 
 **CRITICAL REQUIREMENTS:**
 1. Use ONLY words NOT in: ${usedWordsList}
-2. Task 1: **Minimum 13 vocabulary cards** (10 core theme words + 3 supporting words, maximum 15)
+2. Task 1: **EXACTLY 13-15 vocabulary cards** (10 core theme words + 3-5 supporting words) - NEVER generate only 10 cards
 3. Task 2: Exactly 6 blocks in the specified order:
-   - block_1_build: Hint must explain construction of ALL examples
+   - block_1_build: **VERY SIMPLE phrases (2-3 words)** - e.g., "Chamo-me Ana", "Sou de Lisboa". Hint must explain construction of ALL examples
    - block_2_transform: Hint must explain what changed between phrases
    - block_3_answers: **MANDATORY hints** explaining new words/grammar (minimum 1-2 hints)
    - block_4_equivalence: Comparison of variants
    - block_5_reinforcement: Knowledge check with 2 tasks
-   - block_6_speak: **MANDATORY 2 sentences** in instruction_text
-4. Task 3: Exactly 3 listening items
-5. Task 4: Exactly 3 attention items
-6. Task 5: Writing task with template using Task 1 words
-7. All phrases must escalate in complexity: Task 1 (words) → Task 2 block_1 (simple phrases) → Task 2 block_6 (complex sentences) → Task 5 (production)
-8. Final output (Task 5) must be more complex than Task 2 block_1
+   - block_6_speak: **MANDATORY 2 sentences (4-7 words each)** in instruction_text - e.g., "Chamo-me Ana. Sou de Lisboa e estou bem."
+4. Task 3: Exactly 3 listening items - **MUST review Task 2 phrases first, create LONGER phrases (4-7+ words) that differ from Task 2, NO word-for-word repetition**
+5. Task 4: Exactly 3 attention items - **MUST review Task 3 phrases first, create LONGER or DIFFERENTLY STRUCTURED phrases (5-10+ words), NO word-for-word repetition**
+6. Task 5: Writing task with template using Task 1 words - **MUST review all previous tasks, create COMPLEX templates (4-7+ words per line), NO repetition of short 2-3 word phrases from block_1**
+7. **MANDATORY complexity progression:**
+   - Task 2 block_1: 2-3 words (start simple)
+   - Task 2 block_6: 4-7 words per sentence, 2 sentences (culmination)
+   - Task 3: 4-7+ words (longer, different from Task 2)
+   - Task 4: 5-10+ words (longer or different structure from Task 3)
+   - Task 5: 4-7+ words per template line (final production)
+8. **NO PHRASE REPETITION:** Do NOT use the same phrases word-for-word across tasks. Each task must build on previous tasks with longer or differently structured phrases.
 9. Match phase level based on day number
 10. **Methodology compliance: 100%** - Every requirement must be met exactly as specified
 
