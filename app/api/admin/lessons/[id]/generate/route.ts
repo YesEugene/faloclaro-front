@@ -447,9 +447,44 @@ export async function POST(
               });
             }
             
-            // Task 2 block_5_reinforcement - ensure is_correct is set
+            // Task 2 blocks - normalize hints and block types
             if (task.type === 'rules' && task.blocks) {
               task.blocks.forEach((block: any) => {
+                // Ensure block_3_answers has hints array (MANDATORY)
+                if (block.block_id === 'block_3_answers' && block.block_type === 'explanation' && block.content) {
+                  if (!block.content.hints || !Array.isArray(block.content.hints) || block.content.hints.length === 0) {
+                    console.warn('⚠️ block_3_answers missing hints - adding default hints');
+                    // Generate default hints from examples
+                    const examples = block.content.examples || [];
+                    block.content.hints = examples.map((ex: any, idx: number) => ({
+                      ru: `Пример ${idx + 1}: "${ex.text || ''}" - объяснение значения и грамматики.`,
+                      en: `Example ${idx + 1}: "${ex.text || ''}" - explanation of meaning and grammar.`
+                    }));
+                    // If still no hints, add at least one
+                    if (block.content.hints.length === 0) {
+                      block.content.hints = [{
+                        ru: 'Объяснение новых слов и грамматических конструкций в примерах.',
+                        en: 'Explanation of new words and grammatical constructions in examples.'
+                      }];
+                    }
+                  }
+                }
+                
+                // Normalize block types to match platform expectations
+                if (block.block_id === 'block_4_equivalence' && block.block_type !== 'comparison') {
+                  console.warn(`⚠️ block_4_equivalence has type "${block.block_type}", changing to "comparison"`);
+                  block.block_type = 'comparison';
+                }
+                if (block.block_id === 'block_5_reinforcement' && block.block_type !== 'reinforcement') {
+                  console.warn(`⚠️ block_5_reinforcement has type "${block.block_type}", changing to "reinforcement"`);
+                  block.block_type = 'reinforcement';
+                }
+                if (block.block_id === 'block_6_speak' && block.block_type !== 'speak_out_loud') {
+                  console.warn(`⚠️ block_6_speak has type "${block.block_type}", changing to "speak_out_loud"`);
+                  block.block_type = 'speak_out_loud';
+                }
+                
+                // block_5_reinforcement - ensure is_correct is set
                 if (block.block_type === 'reinforcement' && block.content) {
                   ['task_1', 'task_2'].forEach((taskKey: string) => {
                     const reinforcementTask = block.content[taskKey];

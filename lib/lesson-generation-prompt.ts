@@ -168,6 +168,36 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
 
 **CRITICAL:** Task 2 builds PROGRESSIVELY from simple to the FINAL RESULT sentences.
 
+**PLATFORM BLOCK TYPES - YOU MUST USE DIFFERENT TYPES:**
+
+The platform supports 4 different block types. You MUST use different types to create variety and better learning:
+
+1. **"explanation"** (or "how_to_say") - "Даем примеры (текст + аудио + подсказки)"
+   - Use for: Teaching new phrases, showing examples with explanations
+   - Contains: title, explanation_text, examples (array), hint (array)
+   - Best for: block_1_build, block_2_transform, block_3_answers
+
+2. **"comparison"** - "Сравниваем варианты"
+   - Use for: Showing equivalent phrases or variations
+   - Contains: title, comparison_card (array), note
+   - Best for: block_4_equivalence
+
+3. **"reinforcement"** - "Проверка знаний"
+   - Use for: Testing comprehension with multiple choice
+   - Contains: title, task_1, task_2 (each with audio, question, options)
+   - Best for: block_5_reinforcement
+
+4. **"speak_out_loud"** - "Практикуемся (пишем или говорим вслух)"
+   - Use for: Final speech production
+   - Contains: instruction_text, action_button
+   - Best for: block_6_speak
+
+**CRITICAL:** Do NOT use the same block_type for all 6 blocks. Use appropriate types:
+- block_1, block_2, block_3: "explanation"
+- block_4: "comparison"
+- block_5: "reinforcement"
+- block_6: "speak_out_loud"
+
 ### block_1_build (block_type: "explanation" or "how_to_say")
 
 **Purpose:** Create the first working phrase - the SIMPLEST part of the final result
@@ -251,16 +281,45 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
 • Use words from Task 1 (add new words to Task 1 if needed)
 • These phrases should continue building toward the final result
 
-**CRITICAL REQUIREMENT - MANDATORY:**
-• **MUST include "hints" array** - this is NOT optional
-• **Minimum 1-2 hints** explaining:
-  - What the sentence means
-  - New vocabulary words that appear
-  - Important grammar rules or patterns
-  - How to use the phrases in context
-  - How this relates to the final result
-• Hints help learners understand context and meaning
-• **If you skip hints, the lesson is invalid**
+**CRITICAL REQUIREMENT - MANDATORY HINTS (THIS IS THE MOST IMPORTANT):**
+• **MUST include "hints" array** - this is NOT optional, NOT optional, NOT optional
+• **Minimum 1-2 hints** - if you skip this, the lesson is INVALID
+• **EVERY example sentence MUST have at least one hint explaining:**
+  - What the sentence means (full translation and meaning)
+  - New vocabulary words that appear (explain each new word)
+  - Important grammar rules or patterns (explain the construction)
+  - How to use the phrases in context (when/why to use it)
+  - How this relates to the final result (connection to lesson goal)
+• Hints are CRITICAL for learning - without them, learners cannot understand
+• **If block_3_answers has NO hints, the lesson is INVALID and will be rejected**
+
+**STRUCTURE - hints MUST be an array:**
+\`\`\`json
+{
+  "block_id": "block_3_answers",
+  "block_type": "explanation",
+  "content": {
+    "title": { "ru": "Как отвечать", "en": "How to respond" },
+    "explanation_text": {
+      "ru": "Когда кто-то просит о помощи, можно ответить...",
+      "en": "When someone asks for help, you can respond..."
+    },
+    "examples": [
+      { "text": "Claro, posso ajudar agora." }
+    ],
+    "hints": [  // ← THIS ARRAY IS MANDATORY
+      {
+        "ru": "'Claro' означает 'конечно' или 'разумеется'. Это вежливый способ согласиться. 'Posso ajudar' означает 'я могу помочь'.",
+        "en": "'Claro' means 'of course' or 'certainly'. It's a polite way to agree. 'Posso ajudar' means 'I can help'."
+      },
+      {
+        "ru": "В португальском языке порядок слов может быть гибким. 'Posso ajudar' и 'Ajudar posso' оба правильны.",
+        "en": "In Portuguese, word order can be flexible. Both 'Posso ajudar' and 'Ajudar posso' are correct."
+      }
+    ]
+  }
+}
+\`\`\`
 
 **Example progression:**
 • block_1: "Chamo-me Ana." (2 words)
@@ -314,6 +373,10 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
 ### block_4_equivalence (block_type: "comparison")
 
 **Purpose:** Show that different forms can have same meaning, or statements vs questions differ only by structure
+• **CRITICAL:** This block MUST use block_type: "comparison" (NOT "explanation")
+• Show equivalent phrases with different word order or structure
+• Minimum 2 comparison cards
+• Note must explain the equivalence
 
 **Structure:**
 \`\`\`json
@@ -343,12 +406,13 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
 ### block_5_reinforcement (block_type: "reinforcement")
 
 **Purpose:** Confirm comprehension with LONGER phrases (6-7+ words)
+• **CRITICAL:** This block MUST use block_type: "reinforcement" (NOT "explanation")
 • Use LONGER phrases that combine elements from blocks 1-4
 • These phrases should be close to the final result but not identical
-• Must contain at least 2 tasks (task_1 and task_2)
-• More than 2 answer options per task (minimum 3)
+• Must contain EXACTLY 2 tasks (task_1 and task_2)
+• Each task has: audio, question (RU/EN), EXACTLY 3 answer options
 • Correct answer must NOT always be in position 1 (randomize)
-• **MANDATORY:** Include hints explaining what the phrases mean
+• Options text must be in RU/EN format: { "ru": "...", "en": "..." }
 
 **Example progression:**
 • block_1: "Hoje trabalho." (2 words)
@@ -405,6 +469,7 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
 ### block_6_speak (block_type: "speak_out_loud")
 
 **Purpose:** Force speech production - THIS IS THE FINAL RESULT
+• **CRITICAL:** This block MUST use block_type: "speak_out_loud" (NOT "explanation")
 
 **CRITICAL REQUIREMENTS - MANDATORY:**
 • **MUST use the EXACT FINAL RESULT sentences** defined at the start of lesson generation
@@ -418,6 +483,24 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
 - Use ONLY words from Task 1
 - Be the result of progressive building from block_1 → block_6
 - Represent what the learner can say at the end of the lesson
+
+**Structure:**
+\`\`\`json
+{
+  "block_id": "block_6_speak",
+  "block_type": "speak_out_loud",  // ← MUST be this type
+  "content": {
+    "instruction_text": { 
+      "ru": "Скажи вслух: 'Hoje eu trabalho de manhã. À tarde vou ao parque.'",
+      "en": "Say out loud: 'Hoje eu trabalho de manhã. À tarde vou ao parque.'"
+    },
+    "action_button": {
+      "text": { "ru": "✔ Я сказал(а) вслух", "en": "✔ I said it out loud" },
+      "completes_task": true
+    }
+  }
+}
+\`\`\`
 
 **Structure:**
 \`\`\`json
@@ -757,14 +840,14 @@ Generate a complete lesson JSON for:
 - Add any new words that appear in intermediate examples
 - Total: 13-15 cards minimum
 
-**STEP 3: BUILD TASK 2 PROGRESSIVELY**
-- block_1: 2-3 words (simplest fragments from final result)
-- block_2: 3-4 words (add one element)
-- block_3: 4-5 words (learn to ask/respond)
-- block_4: 4-5 words (variations)
-- block_5: 6-7 words (longer combinations)
-- block_6: FINAL RESULT (exact sentences from Step 1)
-- **MANDATORY:** Add hints to EVERY block explaining meaning and new words
+**STEP 3: BUILD TASK 2 PROGRESSIVELY - USE DIFFERENT BLOCK TYPES**
+- block_1_build: 2-3 words, block_type: "explanation", MUST have hints
+- block_2_transform: 3-4 words, block_type: "explanation", MUST have hints
+- block_3_answers: 4-5 words, block_type: "explanation", **MUST have "hints" array (MANDATORY)**
+- block_4_equivalence: variations, block_type: "comparison" (NOT explanation)
+- block_5_reinforcement: 6-7 words, block_type: "reinforcement" (NOT explanation)
+- block_6_speak: FINAL RESULT, block_type: "speak_out_loud" (NOT explanation)
+- **MANDATORY:** Add hints to blocks 1, 2, 3 explaining meaning and new words
 
 **STEP 4: BUILD TASK 3 (6-8+ words)**
 - Longer phrases building on Task 2, toward final result
@@ -782,13 +865,14 @@ Generate a complete lesson JSON for:
 1. Use ONLY words NOT in: ${usedWordsList}
 2. **START WITH FINAL RESULT** - define it first, then build everything else
 3. Task 1: **13-15 vocabulary cards** (extracted from final result + supporting + intermediate words)
-4. Task 2: Exactly 6 blocks with MANDATORY hints in EVERY block:
-   - block_1_build: 2-3 words + hints
-   - block_2_transform: 3-4 words + hints
-   - block_3_answers: 4-5 words + MANDATORY hints (minimum 1-2)
-   - block_4_equivalence: Variations + hints
-   - block_5_reinforcement: 6-7 words + hints
-   - block_6_speak: FINAL RESULT sentences (exact from Step 1)
+4. Task 2: Exactly 6 blocks with DIFFERENT block types and MANDATORY hints:
+   - block_1_build: 2-3 words, block_type: "explanation", MUST have hints array
+   - block_2_transform: 3-4 words, block_type: "explanation", MUST have hints array
+   - block_3_answers: 4-5 words, block_type: "explanation", **MUST have "hints" array (CRITICAL - lesson invalid without it)**
+   - block_4_equivalence: Variations, block_type: "comparison" (NOT explanation)
+   - block_5_reinforcement: 6-7 words, block_type: "reinforcement" (NOT explanation), 2 tasks with 3 options each
+   - block_6_speak: FINAL RESULT, block_type: "speak_out_loud" (NOT explanation)
+5. **DO NOT use "explanation" for all blocks** - use appropriate types: explanation, comparison, reinforcement, speak_out_loud
 5. Task 3: Exactly 3 listening items, 6-8+ words each
 6. Task 4: Exactly 3 attention items, 7-10+ words each
 7. Task 5: FINAL RESULT template (same as block_6)
