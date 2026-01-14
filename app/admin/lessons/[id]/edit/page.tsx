@@ -665,13 +665,6 @@ function LessonEditorContent() {
                     >
                       ✏️
                     </button>
-                    <button
-                      onClick={handleDeleteLesson}
-                      className="text-red-400 hover:text-red-600 text-sm px-2 py-1 rounded transition-colors"
-                      title="Удалить урок"
-                    >
-                      🗑️
-                    </button>
                   </>
                 ) : (
                   <div className="flex items-center gap-2">
@@ -753,28 +746,28 @@ function LessonEditorContent() {
                       setShowGenerateModal(true);
                     }}
                     disabled={isGenerating}
-                    className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                    className="px-3 py-1.5 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5 text-sm"
                     title="Сгенерировать урок с помощью AI"
                   >
-                    🤖 Сгенерировать урок
+                    🤖 урок
                   </button>
                   <button
                     onClick={handleGenerateAllAudio}
                     disabled={isGeneratingAllAudio}
-                    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                    className="px-3 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5 text-sm"
                     title="Сгенерировать аудио для всех элементов урока"
                   >
-                    {isGeneratingAllAudio ? '⏳ Генерирую...' : '🎵 Сгенерировать аудио урока'}
+                    {isGeneratingAllAudio ? '⏳...' : '🎵 аудио урока'}
                   </button>
                   <button
                     onClick={() => setShowTaskTypeModal(true)}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    className="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-1.5 text-sm"
                   >
-                    + Создать задание
+                    ✅ Создать задание
                   </button>
                   <button
                     onClick={handleDeleteLesson}
-                    className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center gap-2"
+                    className="px-3 py-1.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center gap-1.5 text-sm"
                     title="Удалить урок"
                   >
                     🗑️ Удалить урок
