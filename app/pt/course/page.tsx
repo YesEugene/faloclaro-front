@@ -204,9 +204,9 @@ function CoursePageContent() {
       {/* Header */}
       <div className="sticky top-0 bg-white z-10 border-b border-gray-200">
         <div className="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
-          <Link href="/pt" className="flex items-center cursor-pointer">
+          <Link href="/pt/course" className="flex items-center cursor-pointer">
             <Image
-              src="/Img/Logo FaloClaro.svg"
+              src="/Img/Website/logo.svg"
               alt="FaloClaro"
               width={120}
               height={40}
