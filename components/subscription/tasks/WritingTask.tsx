@@ -59,6 +59,8 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
 
   // Load saved data on mount
   const [hasLoadedSavedData, setHasLoadedSavedData] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+
   useEffect(() => {
     if (!hasLoadedSavedData) {
       if (savedWrittenText !== undefined && savedWrittenText !== null) {
@@ -70,6 +72,14 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
       setHasLoadedSavedData(true);
     }
   }, [savedWrittenText, savedSpeakOutLoud, hasLoadedSavedData]);
+
+  // Auto-resize textarea when writtenText changes
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = `${Math.max(120, textareaRef.current.scrollHeight)}px`;
+    }
+  }, [writtenText]);
 
   // Update local completion state when prop changes
   useEffect(() => {
@@ -256,14 +266,21 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
           {!speakOutLoud && (
             <div>
               <textarea
+                ref={textareaRef}
                 value={writtenText}
-                onChange={(e) => setWrittenText(e.target.value)}
+                onChange={(e) => {
+                  setWrittenText(e.target.value);
+                  // Auto-resize textarea to fit content
+                  e.target.style.height = 'auto';
+                  e.target.style.height = `${Math.max(120, e.target.scrollHeight)}px`;
+                }}
                 placeholder={appLanguage === 'ru' ? 'Напишите здесь...' : appLanguage === 'en' ? 'Write here...' : 'Escreve aqui...'}
-                className="w-full px-4 py-3 rounded-lg resize-none text-black"
+                className="w-full px-4 py-3 rounded-lg resize-none text-black overflow-hidden"
                 style={{
                   minHeight: '120px',
                   backgroundColor: 'white',
-                  border: 'none'
+                  border: 'none',
+                  height: 'auto'
                 }}
               />
             </div>
