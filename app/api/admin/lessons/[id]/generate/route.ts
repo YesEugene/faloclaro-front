@@ -93,7 +93,7 @@ export async function POST(
     const { data: methodologies, error: methodologiesError } = await supabase
       .from('admin_methodologies')
       .select('type, content')
-      .in('type', ['course', 'lesson', 'vocabulary']);
+      .in('type', ['course', 'lesson', 'vocabulary', 'generation_prompt']);
 
     if (methodologiesError) {
       console.error('Error loading methodologies:', methodologiesError);
@@ -103,50 +103,83 @@ export async function POST(
       );
     }
 
-    const courseMethodology = methodologies?.find(m => m.type === 'course')?.content || 'Course methodology not set';
-    const lessonMethodology = methodologies?.find(m => m.type === 'lesson')?.content || 'Lesson methodology not set';
+    // Check if custom generation prompt exists
+    const customPrompt = methodologies?.find(m => m.type === 'generation_prompt')?.content;
     
-    let usedWords: string[] = [];
-    try {
-      const vocabContent = methodologies?.find(m => m.type === 'vocabulary')?.content;
-      if (vocabContent) {
-        const vocab = typeof vocabContent === 'string' ? JSON.parse(vocabContent) : vocabContent;
-        usedWords = vocab.used_words || [];
+    let systemPrompt: string;
+    
+    if (customPrompt && customPrompt.trim() && customPrompt !== 'Generation prompt placeholder. This is the full prompt sent to OpenAI for lesson generation. You can customize it here.') {
+      // Use custom prompt if provided, but replace placeholders with actual values
+      const courseMethodology = methodologies?.find(m => m.type === 'course')?.content || 'Course methodology not set';
+      const lessonMethodology = methodologies?.find(m => m.type === 'lesson')?.content || 'Lesson methodology not set';
+      
+      let usedWords: string[] = [];
+      try {
+        const vocabContent = methodologies?.find(m => m.type === 'vocabulary')?.content;
+        if (vocabContent) {
+          const vocab = typeof vocabContent === 'string' ? JSON.parse(vocabContent) : vocabContent;
+          usedWords = vocab.used_words || [];
+        }
+      } catch (e) {
+        console.error('Error parsing vocabulary:', e);
       }
-    } catch (e) {
-      console.error('Error parsing vocabulary:', e);
-    }
 
-    // Step 4: Get example lesson 4
-    let exampleLesson: any = null;
-    try {
-      const { data: lesson4, error: lesson4Error } = await supabase
-        .from('lessons')
-        .select('yaml_content')
-        .eq('day_number', 4)
-        .single();
-
-      if (!lesson4Error && lesson4) {
-        exampleLesson = typeof lesson4.yaml_content === 'string' 
-          ? JSON.parse(lesson4.yaml_content) 
-          : lesson4.yaml_content;
+      // Replace placeholders in custom prompt
+      systemPrompt = customPrompt
+        .replace(/\$\{courseMethodology\}/g, courseMethodology)
+        .replace(/\$\{lessonMethodology\}/g, lessonMethodology)
+        .replace(/\$\{usedWordsList\}/g, usedWords.length > 0 ? usedWords.join(', ') : 'None yet')
+        .replace(/\$\{dayNumber\}/g, dayNumber.toString())
+        .replace(/\$\{phase\}/g, phase)
+        .replace(/\$\{topicRu\}/g, topic_ru)
+        .replace(/\$\{topicEn\}/g, topic_en);
+    } else {
+      // Use default prompt builder
+      const courseMethodology = methodologies?.find(m => m.type === 'course')?.content || 'Course methodology not set';
+      const lessonMethodology = methodologies?.find(m => m.type === 'lesson')?.content || 'Lesson methodology not set';
+      
+      let usedWords: string[] = [];
+      try {
+        const vocabContent = methodologies?.find(m => m.type === 'vocabulary')?.content;
+        if (vocabContent) {
+          const vocab = typeof vocabContent === 'string' ? JSON.parse(vocabContent) : vocabContent;
+          usedWords = vocab.used_words || [];
+        }
+      } catch (e) {
+        console.error('Error parsing vocabulary:', e);
       }
-    } catch (e) {
-      console.error('Error loading example lesson 4:', e);
-      // Continue without example if not found
-    }
 
-    // Step 5: Build system prompt using the new detailed prompt builder
-    const systemPrompt = buildLessonGenerationPrompt(
-      courseMethodology,
-      lessonMethodology,
-      usedWords,
-      dayNumber,
-      phase,
-      topic_ru,
-      topic_en,
-      exampleLesson
-    );
+      // Step 4: Get example lesson 4
+      let exampleLesson: any = null;
+      try {
+        const { data: lesson4, error: lesson4Error } = await supabase
+          .from('lessons')
+          .select('yaml_content')
+          .eq('day_number', 4)
+          .single();
+
+        if (!lesson4Error && lesson4) {
+          exampleLesson = typeof lesson4.yaml_content === 'string' 
+            ? JSON.parse(lesson4.yaml_content) 
+            : lesson4.yaml_content;
+        }
+      } catch (e) {
+        console.error('Error loading example lesson 4:', e);
+        // Continue without example if not found
+      }
+
+      // Step 5: Build system prompt using the new detailed prompt builder
+      systemPrompt = buildLessonGenerationPrompt(
+        courseMethodology,
+        lessonMethodology,
+        usedWords,
+        dayNumber,
+        phase,
+        topic_ru,
+        topic_en,
+        exampleLesson
+      );
+    }
 
     // Step 6: Generate lesson with OpenAI (with retry logic)
     let generatedLesson: any = null;

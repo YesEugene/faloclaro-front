@@ -8,6 +8,7 @@ export default function MethodologiesPage() {
   const router = useRouter();
   const [courseMethodology, setCourseMethodology] = useState('');
   const [lessonMethodology, setLessonMethodology] = useState('');
+  const [generationPrompt, setGenerationPrompt] = useState('');
   const [vocabulary, setVocabulary] = useState<{ used_words: string[] }>({ used_words: [] });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -31,6 +32,8 @@ export default function MethodologiesPage() {
             setCourseMethodology(m.content);
           } else if (m.type === 'lesson') {
             setLessonMethodology(m.content);
+          } else if (m.type === 'generation_prompt') {
+            setGenerationPrompt(m.content);
           } else if (m.type === 'vocabulary') {
             try {
               const vocabContent = typeof m.content === 'string' ? JSON.parse(m.content) : m.content;
@@ -78,13 +81,17 @@ export default function MethodologiesPage() {
     }
   };
 
-  const handleSave = async (type: 'course' | 'lesson') => {
+  const handleSave = async (type: 'course' | 'lesson' | 'generation_prompt') => {
     try {
       setSaving(true);
       setError('');
       setSuccess('');
 
-      const content = type === 'course' ? courseMethodology : lessonMethodology;
+      const content = type === 'course' 
+        ? courseMethodology 
+        : type === 'lesson' 
+        ? lessonMethodology 
+        : generationPrompt;
       
       const response = await fetch('/api/admin/methodologies', {
         method: 'PUT',
@@ -95,7 +102,12 @@ export default function MethodologiesPage() {
       const data = await response.json();
 
       if (data.success) {
-        setSuccess(`${type === 'course' ? 'Методология курса' : 'Методология урока'} успешно сохранена!`);
+        const typeNames: Record<string, string> = {
+          'course': 'Методология курса',
+          'lesson': 'Методология урока',
+          'generation_prompt': 'Промпт генерации урока'
+        };
+        setSuccess(`${typeNames[type] || 'Методология'} успешно сохранена!`);
         setTimeout(() => setSuccess(''), 3000);
       } else {
         setError(data.error || 'Ошибка при сохранении');
@@ -188,6 +200,35 @@ export default function MethodologiesPage() {
             className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {saving ? 'Сохранение...' : 'Сохранить методологию урока'}
+          </button>
+        </div>
+
+        {/* Generation Prompt */}
+        <div className="bg-white rounded-lg shadow p-6 mb-6">
+          <div className="mb-4">
+            <h2 className="text-xl font-bold text-gray-900 mb-2">Промпт генерации урока</h2>
+            <p className="text-sm text-gray-600 mb-2">
+              Полный промпт, который отправляется в OpenAI для генерации урока. Можно использовать плейсхолдеры:
+            </p>
+            <div className="text-xs text-gray-500 bg-gray-50 p-2 rounded mb-2">
+              <code>${'{courseMethodology}'}</code>, <code>${'{lessonMethodology}'}</code>, <code>${'{usedWordsList}'}</code>, <code>${'{dayNumber}'}</code>, <code>${'{phase}'}</code>, <code>${'{topicRu}'}</code>, <code>${'{topicEn}'}</code>
+            </div>
+            <p className="text-xs text-gray-500">
+              Если поле пустое, используется стандартный промпт из системы. См. <code>GENERATION_PROMPT_TEMPLATE.md</code> для шаблона.
+            </p>
+          </div>
+          <textarea
+            value={generationPrompt}
+            onChange={(e) => setGenerationPrompt(e.target.value)}
+            className="w-full h-96 p-4 border border-gray-300 rounded-lg font-mono text-xs"
+            placeholder="Вставьте полный промпт для генерации урока. Если оставить пустым, будет использован стандартный промпт."
+          />
+          <button
+            onClick={() => handleSave('generation_prompt')}
+            disabled={saving}
+            className="mt-4 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {saving ? 'Сохранение...' : 'Сохранить промпт генерации'}
           </button>
         </div>
 

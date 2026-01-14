@@ -11,7 +11,8 @@ CREATE TABLE IF NOT EXISTS admin_methodologies (
 INSERT INTO admin_methodologies (type, content) VALUES
   ('course', 'Course methodology placeholder. Describe the philosophy and trajectory of the course here.'),
   ('lesson', 'Lesson methodology placeholder. Describe how each lesson is structured here.'),
-  ('vocabulary', '{"used_words": []}')
+  ('vocabulary', '{"used_words": []}'),
+  ('generation_prompt', 'Generation prompt placeholder. This is the full prompt sent to OpenAI for lesson generation. You can customize it here.')
 ON CONFLICT (type) DO NOTHING;
 
 -- Create index for faster lookups
