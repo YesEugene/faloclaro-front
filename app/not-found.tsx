@@ -27,14 +27,6 @@ export default function NotFound() {
       button: 'Back to home',
       emoji: '🇵🇹',
     },
-    pt: {
-      title: 'Opa! 🐙',
-      subtitle: 'Esta página decidiu tirar férias',
-      message: 'Parece que foi aprender português algures em Lisboa. Procurámos, mas não responde.',
-      suggestion: 'Talvez se tenha perdido na gramática?',
-      button: 'Voltar ao início',
-      emoji: '🇵🇹',
-    },
   };
 
   const t = translations[appLanguage] || translations.en;
@@ -121,9 +113,7 @@ export default function NotFound() {
           {/* Fun Footer */}
           <div className="mt-8 text-sm text-gray-500 relative z-10" style={{ fontFamily: 'var(--font-tiktok)' }}>
             <p>
-              {appLanguage === 'ru' && 'P.S. Если вы ищете уроки, они здесь: '}
-              {appLanguage === 'en' && 'P.S. If you\'re looking for lessons, they\'re here: '}
-              {appLanguage === 'pt' && 'P.S. Se procura lições, estão aqui: '}
+              {appLanguage === 'ru' ? 'P.S. Если вы ищете уроки, они здесь: ' : 'P.S. If you\'re looking for lessons, they\'re here: '}
               <Link href="/pt/course" className="text-[#45C240] hover:underline font-semibold">
                 /pt/course
               </Link>

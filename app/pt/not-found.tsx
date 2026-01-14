@@ -116,7 +116,12 @@ export default function NotFound() {
 
           {/* Fun Footer */}
           <div className="mt-8 text-sm text-gray-500" style={{ fontFamily: 'var(--font-tiktok)' }}>
-            <p>P.S. Если вы ищете уроки, они здесь: <Link href="/pt/course" className="text-[#45C240] hover:underline">/pt/course</Link></p>
+            <p>
+              {appLanguage === 'ru' ? 'P.S. Если вы ищете уроки, они здесь: ' : 'P.S. If you\'re looking for lessons, they\'re here: '}
+              <Link href="/pt/course" className="text-[#45C240] hover:underline font-semibold">
+                /pt/course
+              </Link>
+            </p>
           </div>
         </div>
 
