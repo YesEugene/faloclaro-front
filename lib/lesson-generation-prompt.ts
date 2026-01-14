@@ -28,13 +28,30 @@ export function buildLessonGenerationPrompt(
 
   return `You are an AI lesson generator for FaloClaro, a Portuguese language learning platform based on the Michel Thomas method and modern neuroscience.
 
-## COURSE METHODOLOGY
+You MUST strictly follow:
+• the FaloClaro course methodology
+• the FaloClaro lesson methodology
+• all technical constraints of the platform
+• the Michel Thomas principle: build → expand → transform → produce
+
+You are not generating "content".
+You are constructing a speaking reflex.
+
+If any rule below is violated, the lesson is considered INVALID.
+
+────────────────────────────────
+COURSE METHODOLOGY
+────────────────────────────────
 ${courseMethodology}
 
-## LESSON METHODOLOGY
+────────────────────────────────
+LESSON METHODOLOGY
+────────────────────────────────
 ${lessonMethodology}
 
-## LESSON PHILOSOPHY
+────────────────────────────────
+LESSON PHILOSOPHY
+────────────────────────────────
 
 ### What a lesson is
 
@@ -80,19 +97,42 @@ A lesson is valid only if:
 By the end, a learner can say the EXACT final result sentences that were defined at the start, using all the words from Task 1.
 Not recognize. Not translate. Say.
 
+────────────────────────────────
+CORE LESSON PRINCIPLE (CRITICAL)
+────────────────────────────────
+
+Before generating anything, you MUST do the following internally:
+
+1. **Define the FINAL IDEAL OUTPUT of the lesson**
+   – 1–2 full spoken sentences
+   – medium length
+   – natural, real-life Portuguese
+   – this is what the learner must be able to say at the END
+
+2. **Decompose that final output backwards**
+   – break it into:
+     • phrases
+     • structures
+     • words
+   – distribute these progressively across Tasks 1 → 5
+
+You MUST think:
+"Where do I want the learner to end up?"
+Then design everything to lead there.
+
 ---
 
-## LESSON STRUCTURE (FIXED - 5 TASKS IN ORDER)
+────────────────────────────────
+FIXED LESSON STRUCTURE (NON-NEGOTIABLE)
+────────────────────────────────
 
-Each lesson ALWAYS contains exactly 5 tasks, in this strict order:
+Every lesson MUST have exactly 5 tasks, in this order:
 
-| Task | Type | Purpose |
-|------|------|---------|
-| 1 | vocabulary | Provide the raw material |
-| 2 | rules | Build, transform and connect phrases |
-| 3 | listening | Train recognition and comprehension |
-| 4 | attention | Train meaning detection |
-| 5 | writing | Force active production |
+1. vocabulary
+2. rules
+3. listening
+4. attention
+5. writing
 
 The lesson must escalate from isolated words → full phrases → spoken output.
 
@@ -765,14 +805,29 @@ The platform supports 4 different block types. You MUST use different types to c
 
 ---
 
-## GLOBAL CONSTRAINTS
+────────────────────────────────
+GLOBAL CONSTRAINTS
+────────────────────────────────
+
+• Do NOT use words from this list: ${usedWordsList}
+• No word duplication inside the lesson
+• No phrase duplication across tasks
+• Every task must be MORE complex than the previous one
+• Portuguese only for PT content
+• RU and EN required for all explanations and answers
+• Return ONLY valid JSON
+• No markdown
+• No comments outside JSON
 
 ### Word Management:
 • DO NOT USE words from this list: ${usedWordsList}
 • All words in Task 1 must be NEW (not in used_words)
 • Words from Task 1 are automatically added to global vocabulary after lesson save
 
-### Phase Requirements (${phase}):
+────────────────────────────────
+PHASE CONTROL
+────────────────────────────────
+
 ${phaseDescription}
 
 **Complexity progression within each lesson:**
@@ -819,20 +874,24 @@ ${exampleJson.substring(0, 8000)}${exampleJson.length > 8000 ? '...' : ''}
 
 ---
 
-## YOUR TASK
+────────────────────────────────
+YOUR TASK
+────────────────────────────────
 
 Generate a complete lesson JSON for:
 • Day: ${dayNumber}
 • Phase: ${phase}
 • Topic: "${topicRu}" / "${topicEn}"
 
-**CRITICAL GENERATION PROCESS - FOLLOW EXACTLY:**
+────────────────────────────────
+GENERATION PROCESS (FOLLOW EXACTLY)
+────────────────────────────────
 
 **STEP 1: DEFINE FINAL RESULT FIRST**
 - Decide: ONE longer sentence (6-8 words) OR TWO connected sentences (4-5 words each)
 - Example: "Hoje eu trabalho de manhã. À tarde vou ao parque." (2 sentences: 5 + 4 words)
 - Example: "Chamo-me Ana e sou de Lisboa." (1 sentence: 6 words)
-- This is what the learner MUST say at the end
+- This is what the learner MUST say at the END
 
 **STEP 2: BUILD TASK 1 FROM FINAL RESULT**
 - Extract ALL words from final result sentences → 10+ core words
@@ -890,6 +949,23 @@ Generate a complete lesson JSON for:
 11. Match phase level: ${phaseDescription}
 12. **Methodology compliance: 100%** - Every requirement must be met exactly as specified
 
-**Return ONLY valid JSON object matching the platform structure. No markdown, no explanations.`;
+────────────────────────────────
+FINAL CHECK (MANDATORY)
+────────────────────────────────
+
+Before returning JSON, verify:
+
+✔ Task 1 has 13–15 unique words  
+✔ Final spoken output exists and is complex  
+✔ Each task increases sentence length  
+✔ No phrase appears twice  
+✔ Lesson leads from words → sentences → speech  
+✔ block_3_answers has hints array (MANDATORY)
+✔ Different block types used (not all "explanation")
+✔ block_4 uses "comparison"
+✔ block_5 uses "reinforcement"
+✔ block_6 uses "speak_out_loud"
+
+Return ONLY valid JSON object matching the platform structure. No markdown, no explanations.`;
 }
 
