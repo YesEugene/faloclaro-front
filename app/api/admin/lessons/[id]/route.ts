@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { getSupabaseAdmin } from '@/lib/supabase-admin';
 import { transformLessonForFrontend } from '@/lib/lesson-transformer';
+import { extractWordsFromLesson } from '@/lib/extract-words-from-lesson';
 
 // GET - Get a specific lesson (with optional transformation for frontend)
 export async function GET(
@@ -119,75 +120,48 @@ export async function PUT(
     }
 
     // Auto-extract words from Task 1 (vocabulary) and update global vocabulary
-    if (updateData.yaml_content && updateData.yaml_content.tasks) {
+    if (updateData.yaml_content) {
       try {
-        const tasks = updateData.yaml_content.tasks;
-        const vocabularyTask = tasks.find((t: any) => t.type === 'vocabulary' && t.task_id === 1);
-        
-        if (vocabularyTask) {
-          const words: string[] = [];
+        const words = extractWordsFromLesson(updateData.yaml_content);
+
+        // Update global vocabulary if we found words
+        if (words.length > 0) {
+          const supabaseAdmin = getSupabaseAdmin();
           
-          // Extract words from cards
-          if (vocabularyTask.content && vocabularyTask.content.cards) {
-            vocabularyTask.content.cards.forEach((card: any) => {
-              if (card.word && typeof card.word === 'string') {
-                words.push(card.word.trim());
-              }
-            });
-          }
-          
-          // Extract words from blocks (if structure uses blocks)
-          if (vocabularyTask.blocks) {
-            Object.values(vocabularyTask.blocks).forEach((block: any) => {
-              if (block.content && block.content.cards) {
-                block.content.cards.forEach((card: any) => {
-                  if (card.word && typeof card.word === 'string') {
-                    words.push(card.word.trim());
-                  }
-                });
-              }
-            });
-          }
+          // Get current vocabulary
+          const { data: vocabData, error: vocabError } = await supabaseAdmin
+            .from('admin_methodologies')
+            .select('content')
+            .eq('type', 'vocabulary')
+            .single();
 
-          // Update global vocabulary if we found words
-          if (words.length > 0) {
-            const supabaseAdmin = getSupabaseAdmin();
-            
-            // Get current vocabulary
-            const { data: vocabData, error: vocabError } = await supabaseAdmin
-              .from('admin_methodologies')
-              .select('content')
-              .eq('type', 'vocabulary')
-              .single();
+          if (!vocabError && vocabData) {
+            try {
+              const vocabContent = typeof vocabData.content === 'string' 
+                ? JSON.parse(vocabData.content) 
+                : vocabData.content;
+              
+              const usedWords = new Set(vocabContent.used_words || []);
+              
+              // Add new words
+              words.forEach(word => {
+                if (word && word.length > 0) {
+                  usedWords.add(word);
+                }
+              });
 
-            if (!vocabError && vocabData) {
-              try {
-                const vocabContent = typeof vocabData.content === 'string' 
-                  ? JSON.parse(vocabData.content) 
-                  : vocabData.content;
-                
-                const usedWords = new Set(vocabContent.used_words || []);
-                
-                // Add new words
-                words.forEach(word => {
-                  if (word && word.length > 0) {
-                    usedWords.add(word);
-                  }
-                });
+              // Update vocabulary
+              await supabaseAdmin
+                .from('admin_methodologies')
+                .update({
+                  content: JSON.stringify({ used_words: Array.from(usedWords).sort() }),
+                  updated_at: new Date().toISOString(),
+                })
+                .eq('type', 'vocabulary');
 
-                // Update vocabulary
-                await supabaseAdmin
-                  .from('admin_methodologies')
-                  .update({
-                    content: JSON.stringify({ used_words: Array.from(usedWords).sort() }),
-                    updated_at: new Date().toISOString(),
-                  })
-                  .eq('type', 'vocabulary');
-
-                console.log(`✅ Updated global vocabulary with ${words.length} new words`);
-              } catch (parseError) {
-                console.error('Error parsing vocabulary:', parseError);
-              }
+              console.log(`✅ Updated global vocabulary with ${words.length} new words`);
+            } catch (parseError) {
+              console.error('Error parsing vocabulary:', parseError);
             }
           }
         }
@@ -220,6 +194,58 @@ export async function DELETE(
     const supabase = getSupabaseAdmin();
 
     console.log(`🗑️  Starting deletion of lesson ${id}...`);
+
+    // 0. Extract words from lesson and remove them from global vocabulary
+    try {
+      const { data: lessonData, error: lessonFetchError } = await supabase
+        .from('lessons')
+        .select('yaml_content')
+        .eq('id', id)
+        .single();
+
+      if (!lessonFetchError && lessonData && lessonData.yaml_content) {
+        const words = extractWordsFromLesson(lessonData.yaml_content);
+        
+        if (words.length > 0) {
+          // Get current vocabulary
+          const { data: vocabData, error: vocabError } = await supabase
+            .from('admin_methodologies')
+            .select('content')
+            .eq('type', 'vocabulary')
+            .single();
+
+          if (!vocabError && vocabData) {
+            try {
+              const vocabContent = typeof vocabData.content === 'string' 
+                ? JSON.parse(vocabData.content) 
+                : vocabData.content;
+              
+              const usedWords = new Set(vocabContent.used_words || []);
+              
+              // Remove words from this lesson
+              words.forEach(word => {
+                usedWords.delete(word);
+              });
+
+              // Update vocabulary
+              await supabase
+                .from('admin_methodologies')
+                .update({
+                  content: JSON.stringify({ used_words: Array.from(usedWords).sort() }),
+                  updated_at: new Date().toISOString(),
+                })
+                .eq('type', 'vocabulary');
+
+              console.log(`✅ Removed ${words.length} words from global vocabulary`);
+            } catch (parseError) {
+              console.error('Error parsing vocabulary during deletion:', parseError);
+            }
+          }
+        }
+      }
+    } catch (err: any) {
+      console.warn('⚠️  Warning removing words from vocabulary (continuing with deletion):', err.message);
+    }
 
     // Delete related data before deleting the lesson
     // Note: user_progress and lesson_access_tokens have ON DELETE CASCADE in schema,

@@ -11,6 +11,7 @@ export default function MethodologiesPage() {
   const [vocabulary, setVocabulary] = useState<{ used_words: string[] }>({ used_words: [] });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [syncing, setSyncing] = useState(false);
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
 
@@ -46,6 +47,34 @@ export default function MethodologiesPage() {
       setError('Ошибка при загрузке методологий');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSyncVocabulary = async () => {
+    try {
+      setSyncing(true);
+      setError('');
+      setSuccess('');
+
+      const response = await fetch('/api/admin/methodologies/sync-vocabulary', {
+        method: 'POST',
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setSuccess(`Словарь синхронизирован! Обработано уроков: ${data.stats.processedLessons}, найдено уникальных слов: ${data.stats.uniqueWords}`);
+        setTimeout(() => setSuccess(''), 5000);
+        // Reload vocabulary
+        await loadMethodologies();
+      } else {
+        setError(data.error || 'Ошибка при синхронизации словаря');
+      }
+    } catch (err) {
+      console.error('Error syncing vocabulary:', err);
+      setError('Ошибка при синхронизации словаря');
+    } finally {
+      setSyncing(false);
     }
   };
 
@@ -164,7 +193,16 @@ export default function MethodologiesPage() {
 
         {/* Vocabulary (Read-only) */}
         <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">Глобальный словарь (автоматически обновляется)</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold text-gray-900">Глобальный словарь (автоматически обновляется)</h2>
+            <button
+              onClick={handleSyncVocabulary}
+              disabled={syncing}
+              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+            >
+              {syncing ? 'Синхронизация...' : '🔄 Синхронизировать из всех уроков'}
+            </button>
+          </div>
           <div className="p-4 bg-gray-50 border border-gray-300 rounded-lg">
             <p className="text-sm text-gray-600 mb-2">
               Использовано слов: <strong>{vocabulary.used_words?.length || 0}</strong>
@@ -188,6 +226,7 @@ export default function MethodologiesPage() {
           </div>
           <p className="mt-2 text-xs text-gray-500">
             Этот список автоматически обновляется после сохранения каждого урока, добавляя слова из задания 1 (Словарь).
+            При удалении урока слова также автоматически удаляются из словаря.
           </p>
         </div>
       </main>
