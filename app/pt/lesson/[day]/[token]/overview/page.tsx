@@ -781,13 +781,16 @@ function OverviewPageContent() {
                                 
                                 const lessonToken = userTokens.get(lessonDay) || (isUnlocked ? token : null);
                                 const canNavigate = (isUnlocked || isCompleted) && lessonToken;
+                                // For trial users, redirect locked lessons (> 3) to payment page
                                 const lessonUrl = canNavigate
                                   ? `/pt/lesson/${lessonDay}/${lessonToken}/overview`
-                                  : '#';
+                                  : lessonDay > 3 && (!subscription?.paid_at && subscription?.status !== 'active' && subscription?.status !== 'paid')
+                                    ? `/pt/payment?day=${lessonDay}&token=${token}`
+                                    : '#';
 
                                 return (
                                   <div key={lessonDay} onClick={(e) => e.stopPropagation()}>
-                                    {canNavigate ? (
+                                    {canNavigate || (lessonDay > 3 && !subscription?.paid_at && subscription?.status !== 'active' && subscription?.status !== 'paid') ? (
                                       <Link
                                         href={lessonUrl}
                                         style={lessonCardStyle}
