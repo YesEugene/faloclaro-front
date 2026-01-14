@@ -258,8 +258,9 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
 **Platform constraints:**
 • Both task_1 and task_2 are REQUIRED
 • Minimum 3 options per task
-• At least one correct answer per task
+• Exactly one correct answer per task - MUST set "is_correct": true for the correct option
 • Use phrases from previous blocks
+• CRITICAL: Always set "is_correct": true for exactly one option in each task (task_1 and task_2)
 
 ---
 
@@ -333,9 +334,10 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
 **Platform constraints:**
 • Exactly 3 items (no more, no less)
 • Exactly 3 options per item
-• Options text in PT (Portuguese)
-• One correct answer per item
+• Options text in PT (Portuguese) ONLY - NO English translations (admin panel doesn't have EN fields)
+• One correct answer per item - MUST set "is_correct": true for the correct option
 • Must use phrases from Task 2 blocks
+• CRITICAL: Always set "is_correct": true for exactly one option in each item
 
 ---
 
@@ -382,9 +384,10 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
 **Platform constraints:**
 • Exactly 3 items
 • Exactly 3 options per item
-• Options text in RU/EN (bilingual)
-• One correct answer per item
+• Options text in RU/EN (bilingual object: { "ru": "...", "en": "..." })
+• One correct answer per item - MUST set "is_correct": true for the correct option
 • Feedback is required for each item
+• CRITICAL: Always set "is_correct": true for exactly one option in each item
 
 ---
 
@@ -406,33 +409,56 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
   "title": { "ru": "Практикуемся", "en": "Practice" },
   "optional": true,
   "instruction": { 
-    "ru": "Используй слова и фразы из сегодняшнего урока. Напиши или скажи вслух: 'Мне нужна помощь сегодня, но завтра будет хорошо.'",
-    "en": "Use words and phrases from today's lesson. Write or say out loud: 'I need help today, but tomorrow will be fine.'"
+    "text": {
+      "ru": "Используй слова и фразы из сегодняшнего урока. Напиши или скажи вслух.",
+      "en": "Use words and phrases from today's lesson. Write or say out loud."
+    }
   },
   "main_task": {
     "format": "template_fill_or_speak",
     "template": [
-      { "type": "text", "content": "Eu " },
-      { "type": "input", "placeholder": "глагол" },
-      { "type": "text", "content": " português " },
-      { "type": "input", "placeholder": "время" },
-      { "type": "text", "content": ", mas " },
-      { "type": "input", "placeholder": "время" },
-      { "type": "text", "content": " será bom." }
+      "Preciso de ___.",
+      "Pode ___?",
+      "Obrigado pela ___."
+    ],
+    "hints": [
+      "ajuda",
+      "ajudar",
+      "ajuda"
     ]
   },
   "example": {
-    "text": "Eu preciso de ajuda hoje, mas amanhã será bom.",
-    "show_button": true
+    "show_by_button": true,
+    "button_text": {
+      "ru": "Показать пример",
+      "en": "Show example"
+    },
+    "content": [
+      "Preciso de ajuda.",
+      "Pode ajudar?",
+      "Obrigado pela ajuda."
+    ]
   }
 }
 ```
 
+**CRITICAL TEMPLATE STRUCTURE:**
+• Template is an array of STRINGS (not objects)
+• Each string is a separate template line with blanks marked as "___" (three underscores)
+• Example: ["Preciso de ___.", "Pode ___?", "Obrigado pela ___."]
+• Hints array provides words to fill the blanks (one hint per blank, in order)
+• Number of hints must match total number of "___" in all template strings
+• Each template string should be a complete phrase or sentence
+
 **Platform constraints:**
 • Must be more complex than block_1 phrases
 • Template must use words from Task 1
-• Minimum 3 template elements
-• Example is required
+• Template is an array of STRINGS (not objects) - each string is a separate template line
+• Each template string should contain blanks marked as "___" (three underscores)
+• Hints array must provide words to fill the blanks (one hint per blank, in order)
+• Minimum 3 template strings (each with at least one blank)
+• Example content must be an array of strings matching the template structure
+• Example is required with show_by_button: true
 
 ---
 
