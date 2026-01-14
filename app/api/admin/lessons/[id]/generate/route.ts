@@ -7,6 +7,56 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+function normalizeWordForComparison(input: unknown): string {
+  if (typeof input !== 'string') return '';
+  const lowered = input.toLowerCase().trim();
+  // Remove diacritics (Hoje === hoje; amanhã === amanha)
+  const noDiacritics = lowered.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  // Keep letters/numbers/spaces only, collapse whitespace
+  const lettersNumbersSpaces = noDiacritics.replace(/[^\p{L}\p{N}]+/gu, ' ');
+  return lettersNumbersSpaces.replace(/\s+/g, ' ').trim();
+}
+
+function getTask1VocabularyWords(lesson: any): string[] {
+  const tasks = Array.isArray(lesson?.tasks) ? lesson.tasks : [];
+  const t1 = tasks.find((t: any) => t?.task_id === 1 && t?.type === 'vocabulary');
+  const cards = Array.isArray(t1?.content?.cards) ? t1.content.cards : [];
+  return cards
+    .map((c: any) => (typeof c?.word === 'string' ? c.word.trim() : ''))
+    .filter((w: string) => w.length > 0);
+}
+
+function validateVocabularyIsNewOrThrow(generatedLesson: any, usedWords: string[]) {
+  const lessonWords = getTask1VocabularyWords(generatedLesson);
+
+  if (lessonWords.length < 13) {
+    throw new Error(`Task 1 vocabulary must have at least 13 cards. Got ${lessonWords.length}.`);
+  }
+
+  const forbidden = new Set((usedWords || []).map(normalizeWordForComparison).filter(Boolean));
+  const normalized = lessonWords.map(normalizeWordForComparison).filter(Boolean);
+
+  // Internal duplicates inside the lesson
+  const counts = new Map<string, number>();
+  for (const w of normalized) counts.set(w, (counts.get(w) || 0) + 1);
+  const internalDuplicates = Array.from(counts.entries())
+    .filter(([, count]) => count > 1)
+    .map(([w]) => w);
+
+  // Overlaps with global vocabulary (previous lessons)
+  const overlaps = Array.from(new Set(normalized.filter((w) => forbidden.has(w))));
+
+  if (internalDuplicates.length > 0 || overlaps.length > 0) {
+    const details = [
+      internalDuplicates.length > 0 ? `Internal duplicates in Task 1: ${internalDuplicates.join(', ')}` : null,
+      overlaps.length > 0 ? `Words already used in previous lessons (forbidden): ${overlaps.join(', ')}` : null,
+    ]
+      .filter(Boolean)
+      .join('. ');
+    throw new Error(`Vocabulary uniqueness violation. ${details}`);
+  }
+}
+
 // Helper function to fix JSON
 function fixJson(jsonString: string): string {
   try {
@@ -107,6 +157,8 @@ export async function POST(
     const customPrompt = methodologies?.find(m => m.type === 'generation_prompt')?.content;
     
     let systemPrompt: string;
+    // Used to enforce server-side "no reused vocabulary across lessons" regardless of prompt quality
+    let usedWordsForValidation: string[] = [];
     
     if (customPrompt && customPrompt.trim() && customPrompt !== 'Generation prompt placeholder. This is the full prompt sent to OpenAI for lesson generation. You can customize it here.') {
       // Use custom prompt if provided, but replace placeholders with actual values
@@ -123,6 +175,7 @@ export async function POST(
       } catch (e) {
         console.error('Error parsing vocabulary:', e);
       }
+      usedWordsForValidation = usedWords;
 
       // Replace placeholders in custom prompt
       systemPrompt = customPrompt
@@ -148,6 +201,7 @@ export async function POST(
       } catch (e) {
         console.error('Error parsing vocabulary:', e);
       }
+      usedWordsForValidation = usedWords;
 
       // Step 4: Get example lesson 4
       let exampleLesson: any = null;
@@ -187,6 +241,11 @@ export async function POST(
     
     for (let attempt = 0; attempt < 2; attempt++) {
       try {
+        const retryContext =
+          attempt > 0 && lastError
+            ? `\n\nIMPORTANT: Your previous output was INVALID.\nReason: ${lastError.message}\nYou MUST regenerate the ENTIRE lesson JSON.\nCRITICAL: Task 1 vocabulary must be 13-15 UNIQUE cards and MUST NOT contain ANY words from usedWordsList (case-insensitive and accent-insensitive; e.g. "Hoje" vs "hoje" are the same).\nUpdate Tasks 2-5 accordingly to match the new vocabulary.\n`
+            : '';
+
         const completion = await openai.chat.completions.create({
           model: 'gpt-4o-mini',
           messages: [
@@ -196,7 +255,7 @@ export async function POST(
             },
             {
               role: 'user',
-              content: `Generate a complete lesson JSON for day ${dayNumber}, phase ${phase}, topic "${topic_ru}" / "${topic_en}". Return ONLY valid JSON object, no explanations, no markdown code blocks, no text before or after JSON.`,
+              content: `Generate a complete lesson JSON for day ${dayNumber}, phase ${phase}, topic "${topic_ru}" / "${topic_en}". Return ONLY valid JSON object, no explanations, no markdown code blocks, no text before or after JSON.${retryContext}`,
             },
           ],
           temperature: 0.3,
@@ -575,6 +634,10 @@ export async function POST(
             return task;
           })
           .sort((a: any, b: any) => (a.task_id || 0) - (b.task_id || 0)); // Sort by task_id
+
+        // CRITICAL: Enforce "no reused vocabulary across lessons" server-side.
+        // This prevents OpenAI from reusing Task 1 words even if it ignores the prompt.
+        validateVocabularyIsNewOrThrow(generatedLesson, usedWordsForValidation);
         
         // Ensure we have exactly 5 tasks with task_id 1-5
         // If we have fewer than 5, log warning but don't fail
