@@ -206,7 +206,7 @@ function CoursePageContent() {
         <div className="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
           <Link href="/pt/course" className="flex items-center cursor-pointer">
             <Image
-              src="/Img/Website/logo.svg"
+              src="/Img/Website/logo.svg?v=2"
               alt="FaloClaro"
               width={120}
               height={40}
