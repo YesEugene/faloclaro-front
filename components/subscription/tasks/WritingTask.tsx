@@ -493,11 +493,10 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
                     <div
                       className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-black text-white text-xs rounded-lg z-50"
                       style={{ 
-                        maxWidth: 'calc(100vw - 32px)',
+                        maxWidth: '280px',
                         whiteSpace: 'normal',
                         wordWrap: 'break-word',
-                        minWidth: '200px',
-                        maxWidth: '280px'
+                        minWidth: '200px'
                       }}
                     >
                       {appLanguage === 'ru' 
@@ -530,11 +529,10 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
                       <div
                         className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-black text-white text-xs rounded-lg"
                         style={{ 
-                          maxWidth: 'calc(100vw - 32px)',
+                          maxWidth: '280px',
                           whiteSpace: 'normal',
                           wordWrap: 'break-word',
                           minWidth: '200px',
-                          maxWidth: '280px',
                           zIndex: 9999
                         }}
                       >
@@ -568,11 +566,10 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
                       <div
                         className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-black text-white text-xs rounded-lg"
                         style={{ 
-                          maxWidth: 'calc(100vw - 32px)',
+                          maxWidth: '280px',
                           whiteSpace: 'normal',
                           wordWrap: 'break-word',
                           minWidth: '200px',
-                          maxWidth: '280px',
                           zIndex: 9999
                         }}
                       >
