@@ -940,6 +940,8 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                     disabled
                     onMouseEnter={() => setShowTooltip(true)}
                     onMouseLeave={() => setShowTooltip(false)}
+                    onTouchStart={() => setShowTooltip(true)}
+                    onTouchEnd={() => setTimeout(() => setShowTooltip(false), 2000)}
                     onClick={() => setShowTooltip(true)}
                     className="w-10 h-10 rounded-full bg-gray-400 cursor-not-allowed flex items-center justify-center"
                     aria-label={appLanguage === 'ru' ? 'Следующее задание' : 'Next task'}
@@ -996,6 +998,8 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                       disabled
                       onMouseEnter={() => setShowTooltip(true)}
                       onMouseLeave={() => setShowTooltip(false)}
+                      onTouchStart={() => setShowTooltip(true)}
+                      onTouchEnd={() => setTimeout(() => setShowTooltip(false), 2000)}
                       onClick={() => setShowTooltip(true)}
                       className="w-10 h-10 rounded-full bg-gray-400 cursor-not-allowed flex items-center justify-center"
                       aria-label={appLanguage === 'ru' ? `Урок ${dayNumber ? dayNumber + 1 : 2}` : `Lesson ${dayNumber ? dayNumber + 1 : 2}`}

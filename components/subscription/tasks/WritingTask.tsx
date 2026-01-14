@@ -86,9 +86,15 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
       // For other cases, let the explicit completion handle it
       if (isLastTask && speakOutLoud) {
         setLocalIsCompleted(true);
+        // Ensure onComplete is called to update parent state
+        onComplete({
+          writtenText: null,
+          speakOutLoud: true,
+          completedAt: new Date().toISOString(),
+        });
       }
     }
-  }, [speakOutLoud, writtenText, localIsCompleted, isLastTask]);
+  }, [speakOutLoud, writtenText, localIsCompleted, isLastTask, onComplete]);
   
   // Save answers to completion_data whenever they change (for persistence)
   // BUT only if task is not completed yet - don't overwrite completion
@@ -472,6 +478,8 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
                     disabled
                     onMouseEnter={() => setShowTooltip(true)}
                     onMouseLeave={() => setShowTooltip(false)}
+                    onTouchStart={() => setShowTooltip(true)}
+                    onTouchEnd={() => setTimeout(() => setShowTooltip(false), 2000)}
                     onClick={() => setShowTooltip(true)}
                     className="w-10 h-10 rounded-full bg-gray-400 cursor-not-allowed flex items-center justify-center"
                     aria-label={appLanguage === 'ru' ? 'Следующее задание' : appLanguage === 'en' ? 'Next task' : 'Próxima tarefa'}
@@ -532,6 +540,8 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
                       disabled
                       onMouseEnter={() => setShowTooltip(true)}
                       onMouseLeave={() => setShowTooltip(false)}
+                      onTouchStart={() => setShowTooltip(true)}
+                      onTouchEnd={() => setTimeout(() => setShowTooltip(false), 2000)}
                       onClick={() => setShowTooltip(true)}
                       className="w-10 h-10 rounded-full bg-gray-400 cursor-not-allowed flex items-center justify-center"
                       aria-label={appLanguage === 'ru' ? `Урок ${dayNumber ? dayNumber + 1 : 2}` : appLanguage === 'en' ? `Lesson ${dayNumber ? dayNumber + 1 : 2}` : `Lição ${dayNumber ? dayNumber + 1 : 2}`}
