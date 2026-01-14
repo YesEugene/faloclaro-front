@@ -412,6 +412,7 @@ function UsersSection() {
             ))}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );
