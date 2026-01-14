@@ -94,3 +94,4 @@ CREATE POLICY "Public update access for task_progress" ON task_progress
 
 
 
+

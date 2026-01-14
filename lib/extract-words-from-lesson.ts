@@ -50,3 +50,4 @@ export function extractWordsFromLesson(yamlContent: any): string[] {
   return words;
 }
 
+

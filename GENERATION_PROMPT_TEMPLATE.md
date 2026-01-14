@@ -174,9 +174,54 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
 • Responses must be meaningful full phrases, not single words
 • Use words from Task 1
 
+**CRITICAL REQUIREMENT:**
+• MUST include "hints" array with explanations for new words or important Portuguese grammar rules
+• Each hint should explain:
+  - New vocabulary words that appear in examples
+  - Important grammar rules or patterns
+  - Cultural or usage notes
+• Hints help learners understand context and meaning
+
 **Example:**
 • "Claro, posso ajudar agora."
 • "Hoje não, talvez amanhã."
+
+**Structure with hints:**
+\`\`\`json
+{
+  "block_id": "block_3_answers",
+  "block_type": "explanation",
+  "content": {
+    "title": { "ru": "Как отвечать", "en": "How to respond" },
+    "explanation_text": {
+      "ru": "Когда кто-то просит о помощи, можно ответить...",
+      "en": "When someone asks for help, you can respond..."
+    },
+    "examples": [
+      {
+        "text": "Claro, posso ajudar agora.",
+        "audio_url": "..."
+      }
+    ],
+    "hints": [
+      {
+        "ru": "'Claro' означает 'конечно' или 'разумеется'. Это вежливый способ согласиться.",
+        "en": "'Claro' means 'of course' or 'certainly'. It's a polite way to agree."
+      },
+      {
+        "ru": "В португальском языке порядок слов может быть гибким. 'Posso ajudar' и 'Ajudar posso' оба правильны.",
+        "en": "In Portuguese, word order can be flexible. Both 'Posso ajudar' and 'Ajudar posso' are correct."
+      }
+    ]
+  }
+}
+\`\`\`
+
+**Platform constraints:**
+• Minimum: 2 examples
+• Examples must use words from Task 1
+• MUST include at least 1-2 hints explaining new words or grammar rules
+• Hints should be educational and help learners understand the language better
 
 ---
 

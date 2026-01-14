@@ -393,12 +393,44 @@ export async function POST(
                   ['task_1', 'task_2'].forEach((taskKey: string) => {
                     const reinforcementTask = block.content[taskKey];
                     if (reinforcementTask && reinforcementTask.options && Array.isArray(reinforcementTask.options)) {
-                      const correctCount = reinforcementTask.options.filter((opt: any) => opt.is_correct === true).length;
+                      // Normalize: ensure both is_correct and correct are set consistently
+                      reinforcementTask.options.forEach((opt: any) => {
+                        // If correct is set but is_correct is not, copy it
+                        if (opt.correct !== undefined && opt.is_correct === undefined) {
+                          opt.is_correct = opt.correct;
+                        }
+                        // If is_correct is set but correct is not, copy it
+                        if (opt.is_correct !== undefined && opt.correct === undefined) {
+                          opt.correct = opt.is_correct;
+                        }
+                      });
+                      
+                      // Check if any option is marked as correct
+                      const correctCount = reinforcementTask.options.filter((opt: any) => 
+                        opt.is_correct === true || opt.correct === true
+                      ).length;
+                      
                       if (correctCount === 0) {
                         // If no correct answer set, set first option as correct
                         if (reinforcementTask.options.length > 0) {
                           reinforcementTask.options[0].is_correct = true;
+                          reinforcementTask.options[0].correct = true;
                         }
+                      } else if (correctCount > 1) {
+                        // If multiple correct answers, keep only the first one
+                        let foundFirst = false;
+                        reinforcementTask.options.forEach((opt: any) => {
+                          if (opt.is_correct === true || opt.correct === true) {
+                            if (foundFirst) {
+                              opt.is_correct = false;
+                              opt.correct = false;
+                            } else {
+                              foundFirst = true;
+                              opt.is_correct = true;
+                              opt.correct = true;
+                            }
+                          }
+                        });
                       }
                     }
                   });
@@ -411,18 +443,51 @@ export async function POST(
           .sort((a: any, b: any) => (a.task_id || 0) - (b.task_id || 0)); // Sort by task_id
         
         // Ensure we have exactly 5 tasks with task_id 1-5
-        if (generatedLesson.tasks.length !== 5) {
-          throw new Error(`Expected 5 tasks, got ${generatedLesson.tasks.length}`);
+        // If we have fewer than 5, log warning but don't fail
+        if (generatedLesson.tasks.length < 5) {
+          console.warn(`⚠️ Warning: Only ${generatedLesson.tasks.length} tasks generated, expected 5`);
+          console.warn('Tasks found:', generatedLesson.tasks.map((t: any) => ({
+            task_id: t?.task_id,
+            type: t?.type,
+            title: t?.title
+          })));
+        } else if (generatedLesson.tasks.length > 5) {
+          console.warn(`⚠️ Warning: ${generatedLesson.tasks.length} tasks generated, expected 5. Taking first 5.`);
+          generatedLesson.tasks = generatedLesson.tasks.slice(0, 5);
         }
         
         // Validate all tasks have required fields
         for (let i = 0; i < generatedLesson.tasks.length; i++) {
           const task = generatedLesson.tasks[i];
-          if (!task.task_id || task.task_id !== i + 1) {
-            throw new Error(`Task at index ${i} has incorrect task_id: ${task.task_id}, expected ${i + 1}`);
+          if (!task) {
+            console.error(`❌ Task at index ${i} is null or undefined`);
+            continue;
           }
+          
+          // Ensure task_id is set correctly
+          if (!task.task_id) {
+            task.task_id = i + 1;
+            console.warn(`⚠️ Task at index ${i} missing task_id, set to ${i + 1}`);
+          } else if (task.task_id !== i + 1) {
+            console.warn(`⚠️ Task at index ${i} has task_id ${task.task_id}, expected ${i + 1}. Correcting...`);
+            task.task_id = i + 1;
+          }
+          
+          // Ensure type is set
           if (!task.type) {
-            throw new Error(`Task ${task.task_id} is missing type field`);
+            console.error(`❌ Task ${task.task_id} is missing type field`);
+            // Try to infer type from task_id if missing
+            const typeMap: Record<number, string> = {
+              1: 'vocabulary',
+              2: 'rules',
+              3: 'listening_comprehension',
+              4: 'attention',
+              5: 'writing_optional'
+            };
+            if (typeMap[task.task_id]) {
+              task.type = typeMap[task.task_id];
+              console.warn(`⚠️ Task ${task.task_id} missing type, inferred as ${task.type}`);
+            }
           }
         }
 
