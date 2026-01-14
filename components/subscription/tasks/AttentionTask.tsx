@@ -313,7 +313,8 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
           {item.options?.map((option: any, index: number) => {
             const optionText = getTranslatedText(option.text, appLanguage);
             const isSelected = currentAnswer === optionText || currentAnswer === option.text;
-            const isCorrect = option.correct;
+            // Check both correct and is_correct fields
+            const isCorrect = option.correct === true || option.is_correct === true;
             const showResultForOption = showResult;
 
             return (
