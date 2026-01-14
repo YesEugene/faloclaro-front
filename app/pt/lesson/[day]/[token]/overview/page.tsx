@@ -963,7 +963,7 @@ function OverviewPageContent() {
 
                               return (
                                 <div key={lessonDay} onClick={(e) => e.stopPropagation()}>
-                                  {canNavigate ? (
+                                  {canNavigate || (lessonDay > 3 && !subscription?.paid_at && subscription?.status !== 'active' && subscription?.status !== 'paid') ? (
                                     <Link
                                       href={lessonUrl}
                                       style={lessonCardStyle}
