@@ -321,6 +321,7 @@ export default function TaskCard({
           />
         );
       case 'writing_optional':
+      case 'writing': // Support both types for backward compatibility
         return (
           <WritingTask
             task={task}
@@ -377,8 +378,8 @@ export default function TaskCard({
 
   return (
     <div className="space-y-4">
-      {/* Task Header - Hide for rules, listening_comprehension, attention, and writing_optional tasks */}
-      {task.type !== 'rules' && task.type !== 'listening_comprehension' && task.type !== 'attention' && task.type !== 'writing_optional' && (
+      {/* Task Header - Hide for rules, listening_comprehension, attention, and writing_optional/writing tasks */}
+      {task.type !== 'rules' && task.type !== 'listening_comprehension' && task.type !== 'attention' && task.type !== 'writing_optional' && task.type !== 'writing' && (
         <div className="bg-white rounded-lg border-2 border-gray-200 p-6">
           <div className="mb-4">
             <h2 className="text-xl font-bold text-black mb-2">{getTaskTitle(task, appLanguage)}</h2>
@@ -397,8 +398,8 @@ export default function TaskCard({
         </div>
       )}
 
-      {/* Task Content for rules, listening_comprehension, attention, and writing_optional - without header wrapper */}
-      {(task.type === 'rules' || task.type === 'listening_comprehension' || task.type === 'attention' || task.type === 'writing_optional') && renderTask()}
+      {/* Task Content for rules, listening_comprehension, attention, and writing_optional/writing - without header wrapper */}
+      {(task.type === 'rules' || task.type === 'listening_comprehension' || task.type === 'attention' || task.type === 'writing_optional' || task.type === 'writing') && renderTask()}
 
       {/* Navigation is now handled inside each task component (cross-task navigation panel) */}
     </div>

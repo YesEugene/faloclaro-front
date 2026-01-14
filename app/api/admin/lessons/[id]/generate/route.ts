@@ -244,6 +244,19 @@ export async function POST(
           throw new Error('Task 4 (Attention) must have exactly 3 items');
         }
 
+        // Normalize task types to match frontend expectations
+        generatedLesson.tasks = generatedLesson.tasks.map((task: any) => {
+          // Convert "writing" to "writing_optional" (frontend expects writing_optional)
+          if (task.type === 'writing') {
+            task.type = 'writing_optional';
+          }
+          // Convert "listening" to "listening_comprehension" (frontend expects listening_comprehension)
+          if (task.type === 'listening') {
+            task.type = 'listening_comprehension';
+          }
+          return task;
+        });
+
         // Success!
         break;
       } catch (error: any) {
