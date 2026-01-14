@@ -740,7 +740,16 @@ function LessonEditorContent() {
               {!editingLesson && (
                 <>
                   <button
-                    onClick={() => setShowGenerateModal(true)}
+                    onClick={() => {
+                      // Pre-fill topic fields with lesson titles if available
+                      if (lessonTitle.ru) {
+                        setGenerateTopicRu(lessonTitle.ru);
+                      }
+                      if (lessonTitle.en) {
+                        setGenerateTopicEn(lessonTitle.en);
+                      }
+                      setShowGenerateModal(true);
+                    }}
                     disabled={isGenerating}
                     className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                     title="Сгенерировать урок с помощью AI"
