@@ -253,7 +253,9 @@ function LessonEditorContent() {
         // Redirect to dashboard after deletion
         router.push('/admin/dashboard');
       } else {
-        alert('Ошибка при удалении урока: ' + (data.error || 'Unknown error'));
+        const errorMessage = data.error || data.details || 'Unknown error';
+        console.error('Delete lesson error:', data);
+        alert(`Ошибка при удалении урока: ${errorMessage}\n\nДетали: ${JSON.stringify(data, null, 2)}`);
       }
     } catch (err: any) {
       console.error('Error deleting lesson:', err);

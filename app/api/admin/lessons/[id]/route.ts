@@ -307,7 +307,22 @@ export async function DELETE(
       console.warn('⚠️  Warning deleting audio_files (may not exist):', err.message);
     }
 
-    // 4. Finally, delete the lesson itself (this will cascade delete any remaining related data)
+    // 4. Check if lesson exists before deletion
+    const { data: lessonCheck, error: checkError } = await supabase
+      .from('lessons')
+      .select('id, day_number, title_ru')
+      .eq('id', id)
+      .single();
+
+    if (checkError || !lessonCheck) {
+      console.error('❌ Lesson not found:', checkError);
+      return NextResponse.json(
+        { error: 'Lesson not found', details: checkError?.message || 'Lesson does not exist' },
+        { status: 404 }
+      );
+    }
+
+    // 5. Finally, delete the lesson itself (this will cascade delete any remaining related data)
     const { error } = await supabase
       .from('lessons')
       .delete()
@@ -315,8 +330,17 @@ export async function DELETE(
 
     if (error) {
       console.error('❌ Error deleting lesson:', error);
+      console.error('❌ Error details:', JSON.stringify(error, null, 2));
+      console.error('❌ Error code:', error.code);
+      console.error('❌ Error hint:', error.hint);
       return NextResponse.json(
-        { error: 'Failed to delete lesson', details: error.message },
+        { 
+          error: 'Failed to delete lesson', 
+          details: error.message,
+          code: error.code,
+          hint: error.hint,
+          fullError: error
+        },
         { status: 500 }
       );
     }
