@@ -658,7 +658,7 @@ function OverviewPageContent() {
 
         {/* Lessons Navigation - Grouped by Levels - Expandable Cards */}
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-20" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
-          <div className="max-w-md mx-auto px-4 py-3">
+          <div className="max-w-md mx-auto px-4 py-3 md:max-w-full md:w-full">
             <div className="overflow-x-auto -mx-4 px-4">
               <div className="flex gap-3" style={{ minWidth: 'max-content' }}>
                 {/* Render levels with their lessons */}
@@ -708,13 +708,13 @@ function OverviewPageContent() {
                         {/* Level Number and Title - Always visible */}
                         <div className="flex flex-col items-center flex-shrink-0">
                           <span 
-                            className="text-3xl font-bold"
+                            className="text-2xl md:text-3xl font-bold"
                             style={{ color: levelTextColor, lineHeight: '1.2' }}
                           >
                             {level.level_number}
                           </span>
                           <span 
-                            className="text-xs font-medium"
+                            className="text-[10px] md:text-xs font-medium"
                             style={{ color: levelTextColor, marginTop: '4px' }}
                           >
                             {appLanguage === 'ru' ? 'УРОВЕНЬ' : 'LEVEL'}
@@ -743,10 +743,10 @@ function OverviewPageContent() {
                                   iconSrc = '/Img/eyeopen.svg';
                                 }
                                 
-                                // Smaller lesson cards for inside level card (70x70 as per design)
+                                // Smaller lesson cards for inside level card (56x56 on mobile, 70x70 on desktop)
                                 const lessonCardStyle: React.CSSProperties = {
-                                  width: '70px',
-                                  height: '70px',
+                                  width: '56px',
+                                  height: '56px',
                                   borderRadius: '8px',
                                   display: 'flex',
                                   flexDirection: 'column',
@@ -754,8 +754,8 @@ function OverviewPageContent() {
                                   justifyContent: 'flex-start',
                                   cursor: 'pointer',
                                   flexShrink: 0,
-                                  paddingTop: '8px',
-                                  paddingBottom: '6px',
+                                  paddingTop: '6px',
+                                  paddingBottom: '5px',
                                   backgroundColor: 'white',
                                   border: '1px solid #E5E7EB',
                                   boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
