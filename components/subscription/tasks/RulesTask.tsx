@@ -663,21 +663,41 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                 <div className="space-y-2">
                   {block.task_2.options?.map((option: any, index: number) => {
                     const taskKey = 'task_2';
-                    let optionText: string;
-                    if (block.task_2.format === 'single_choice') {
-                      optionText = getTranslatedText(option.text, appLanguage);
-                    } else {
-                      if (typeof option.text === 'string') {
-                        optionText = option.text;
-                      } else if (option.text && typeof option.text === 'object') {
-                        optionText = option.text.pt || option.text.portuguese || getTranslatedText(option.text, appLanguage);
+                    // Safely extract option text - handle both string and object formats
+                    let optionText: string = '';
+                    if (option.text) {
+                      if (block.task_2.format === 'single_choice') {
+                        // For single_choice, use getTranslatedText
+                        optionText = getTranslatedText(option.text, appLanguage);
+                        // Fallback if getTranslatedText returns empty or non-string
+                        if (!optionText || typeof optionText !== 'string') {
+                          if (typeof option.text === 'string') {
+                            optionText = option.text;
+                          } else if (typeof option.text === 'object' && !Array.isArray(option.text)) {
+                            optionText = option.text.ru || option.text.en || option.text.pt || option.text.portuguese || '';
+                          } else {
+                            optionText = String(option.text || '');
+                          }
+                        }
                       } else {
-                        optionText = String(option.text || '');
+                        // For other formats (situation_to_phrase)
+                        if (typeof option.text === 'string') {
+                          optionText = option.text;
+                        } else if (typeof option.text === 'object' && !Array.isArray(option.text)) {
+                          optionText = option.text.pt || option.text.portuguese || getTranslatedText(option.text, appLanguage);
+                          if (!optionText || typeof optionText !== 'string') {
+                            optionText = option.text.ru || option.text.en || '';
+                          }
+                        } else {
+                          optionText = String(option.text || '');
+                        }
                       }
                     }
-                    if (!optionText || typeof optionText !== 'string') {
-                      optionText = '';
+                    // Ensure optionText is always a string
+                    if (typeof optionText !== 'string') {
+                      optionText = String(optionText || '');
                     }
+                    
                     const isSelected = selectedAnswers[taskKey] === optionText || (option.text && typeof option.text === 'object' && selectedAnswers[taskKey] === getTranslatedText(option.text, appLanguage));
                     // Check both correct and is_correct fields
                     const isCorrect = option.correct === true || option.is_correct === true;
