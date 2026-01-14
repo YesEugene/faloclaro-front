@@ -1125,7 +1125,6 @@ function LessonsSection() {
             })}
           </tbody>
         </table>
-        </div>
       </div>
 
       {/* Create Level Modal */}
