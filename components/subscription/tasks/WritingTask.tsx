@@ -398,25 +398,36 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
 
       {/* Complete Button (if not using alternative speak out loud) */}
       {!alternative.action_button && (
-        <button
-          onClick={() => {
-            if (!localIsCompleted || isReplaying) {
-              handleComplete();
-            } else {
-              handleReplay();
-            }
-          }}
-          disabled={localIsCompleted && !isReplaying}
-          className={`w-full py-3 rounded-lg font-medium transition-colors ${
-            localIsCompleted && !isReplaying
-              ? 'bg-green-600 text-white hover:bg-green-700'
-              : 'bg-green-600 text-white hover:bg-green-700'
-          }`}
-        >
-          {localIsCompleted && !isReplaying
-            ? (appLanguage === 'ru' ? 'Пройти заново' : appLanguage === 'en' ? 'Replay' : 'Repetir')
-            : (appLanguage === 'ru' ? 'Завершить' : appLanguage === 'en' ? 'Complete' : 'Concluir')}
-        </button>
+        localIsCompleted && !isReplaying ? (
+          // Completed state - show gray button with green checkmark (like block 6 in task 2)
+          <div 
+            className="w-full py-3 rounded-lg font-medium flex items-center justify-center"
+            style={{
+              backgroundColor: '#F1F2F6',
+              border: '1px solid #E5E7EB',
+            }}
+          >
+            <svg className="w-6 h-6 mr-2" fill="none" stroke="#109929" viewBox="0 0 24 24" strokeWidth={3}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+            <span style={{ color: '#6B7280' }}>
+              {appLanguage === 'ru' ? 'Выполнено' : appLanguage === 'en' ? 'Completed' : 'Concluído'}
+            </span>
+          </div>
+        ) : (
+          <button
+            onClick={() => {
+              if (!localIsCompleted || isReplaying) {
+                handleComplete();
+              } else {
+                handleReplay();
+              }
+            }}
+            className="w-full py-3 rounded-lg font-medium transition-colors bg-green-600 text-white hover:bg-green-700"
+          >
+            {appLanguage === 'ru' ? 'Завершить' : appLanguage === 'en' ? 'Complete' : 'Concluir'}
+          </button>
+        )
       )}
 
 
