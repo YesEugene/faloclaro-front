@@ -916,8 +916,8 @@ function OverviewPageContent() {
                               }
                               
                                 const lessonCardStyle: React.CSSProperties = {
-                                  width: '70px',
-                                  height: '70px',
+                                  width: '56px',
+                                  height: '56px',
                                   borderRadius: '8px',
                                   display: 'flex',
                                   flexDirection: 'column',
@@ -925,8 +925,8 @@ function OverviewPageContent() {
                                   justifyContent: 'flex-start',
                                   cursor: 'pointer',
                                   flexShrink: 0,
-                                  paddingTop: '8px',
-                                  paddingBottom: '6px',
+                                  paddingTop: '6px',
+                                  paddingBottom: '5px',
                                   backgroundColor: 'white',
                                   border: '1px solid #E5E7EB',
                                   boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
@@ -956,7 +956,7 @@ function OverviewPageContent() {
                                     <Link
                                       href={lessonUrl}
                                       style={lessonCardStyle}
-                                      className="transition-all hover:opacity-80 cursor-pointer"
+                                      className="transition-all hover:opacity-80 cursor-pointer md:w-[70px] md:h-[70px] md:pt-[8px] md:pb-[6px]"
                                     >
                                       <div className="flex-shrink-0 mb-1">
                                         <Image
