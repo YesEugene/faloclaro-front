@@ -110,9 +110,10 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
   }, [writtenText, speakOutLoud, hasLoadedSavedData, localIsCompleted]);
 
   const handleComplete = (forceSpeakOutLoud?: boolean) => {
-    // Writing task is optional - can be completed with either text or speaking out loud
+    // Writing task is optional - can be completed without filling the form
     // If user clicked "I said it out loud" button, complete immediately
-    const shouldComplete = forceSpeakOutLoud || speakOutLoud || writtenText.trim();
+    // Otherwise, allow completion even if form is empty
+    const shouldComplete = forceSpeakOutLoud || speakOutLoud || true; // Always allow completion
     if (shouldComplete) {
       // Update local state first to show "Пройти заново" button immediately
       if (forceSpeakOutLoud) {
@@ -490,15 +491,21 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
                   </button>
                   {showTooltip && (
                     <div
-                      className="absolute bottom-full right-0 mb-2 px-3 py-2 bg-black text-white text-xs rounded-lg whitespace-nowrap z-50"
-                      style={{ maxWidth: '200px' }}
+                      className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-black text-white text-xs rounded-lg z-50"
+                      style={{ 
+                        maxWidth: 'calc(100vw - 32px)',
+                        whiteSpace: 'normal',
+                        wordWrap: 'break-word',
+                        minWidth: '200px',
+                        maxWidth: '280px'
+                      }}
                     >
                       {appLanguage === 'ru' 
                         ? 'Нужно выполнить все задания для перехода на следующее задание'
                         : appLanguage === 'en'
                         ? 'You need to complete all tasks to proceed to the next task'
                         : 'Você precisa concluir todas as tarefas para prosseguir para a próxima tarefa'}
-                      <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-black"></div>
+                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-black"></div>
                     </div>
                   )}
                 </div>
@@ -521,15 +528,22 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
                     </button>
                     {showTooltip && (
                       <div
-                        className="absolute bottom-full right-0 mb-2 px-3 py-2 bg-black text-white text-xs rounded-lg whitespace-nowrap"
-                        style={{ maxWidth: '200px', zIndex: 9999 }}
+                        className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-black text-white text-xs rounded-lg"
+                        style={{ 
+                          maxWidth: 'calc(100vw - 32px)',
+                          whiteSpace: 'normal',
+                          wordWrap: 'break-word',
+                          minWidth: '200px',
+                          maxWidth: '280px',
+                          zIndex: 9999
+                        }}
                       >
                         {appLanguage === 'ru' 
                           ? `Перейти к уроку ${dayNumber ? dayNumber + 1 : 2}`
                           : appLanguage === 'en'
                           ? `Go to lesson ${dayNumber ? dayNumber + 1 : 2}`
                           : `Ir para a lição ${dayNumber ? dayNumber + 1 : 2}`}
-                        <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-black"></div>
+                        <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-black"></div>
                       </div>
                     )}
                   </>
@@ -552,15 +566,22 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
                     </button>
                     {showTooltip && (
                       <div
-                        className="absolute bottom-full right-0 mb-2 px-3 py-2 bg-black text-white text-xs rounded-lg whitespace-nowrap"
-                        style={{ maxWidth: '200px', zIndex: 9999 }}
+                        className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-black text-white text-xs rounded-lg"
+                        style={{ 
+                          maxWidth: 'calc(100vw - 32px)',
+                          whiteSpace: 'normal',
+                          wordWrap: 'break-word',
+                          minWidth: '200px',
+                          maxWidth: '280px',
+                          zIndex: 9999
+                        }}
                       >
                         {appLanguage === 'ru' 
                           ? `Выполните задание, чтобы перейти к уроку ${dayNumber ? dayNumber + 1 : 2}`
                           : appLanguage === 'en'
                           ? `Complete the task to proceed to lesson ${dayNumber ? dayNumber + 1 : 2}`
                           : `Complete a tarefa para prosseguir para a lição ${dayNumber ? dayNumber + 1 : 2}`}
-                        <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-black"></div>
+                        <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-black"></div>
                       </div>
                     )}
                   </>
