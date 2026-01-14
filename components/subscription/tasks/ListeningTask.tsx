@@ -242,7 +242,8 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
     if (checkAllItemsAnswered()) {
       const correctCount = items.filter((item: any, index: number) => {
         const selectedAnswer = answers[index];
-        const correctOption = item.options?.find((opt: any) => opt.correct);
+        // Check both correct and is_correct fields
+        const correctOption = item.options?.find((opt: any) => opt.correct === true || opt.is_correct === true);
         const correctOptionText = correctOption ? normalizeOptionText(correctOption) : '';
         return selectedAnswer === correctOptionText;
       }).length;
@@ -357,7 +358,8 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
           {item.options?.map((option: any, index: number) => {
             const optionText = normalizeOptionText(option);
             const isSelected = currentAnswer === optionText;
-            const isCorrect = option.correct;
+            // Check both correct and is_correct fields
+            const isCorrect = option.correct === true || option.is_correct === true;
             const showResultForOption = showResult;
 
             return (

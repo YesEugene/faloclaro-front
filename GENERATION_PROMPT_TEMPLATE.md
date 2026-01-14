@@ -339,6 +339,14 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
 • Instruction must require at least 2 sentences
 • One sentence must be more complex than block_1 phrases
 
+**CRITICAL INSTRUCTION FOR instruction_text:**
+• The Portuguese phrase inside the instruction MUST remain in Portuguese in BOTH Russian and English versions
+• DO NOT translate the Portuguese phrase to Russian or English
+• Only translate the instruction part ("Скажи вслух" / "Say out loud"), NOT the Portuguese phrase itself
+• Example: 
+  - ✅ CORRECT: "ru": "Скажи вслух: 'Olá, chamo-me Ana.'" / "en": "Say out loud: 'Olá, chamo-me Ana.'"
+  - ❌ WRONG: "ru": "Скажи вслух: 'Привет, меня зовут Ана.'" / "en": "Say out loud: 'Hello, my name is Ana.'"
+
 ---
 
 ## TASK 3: LISTENING (type: "listening")

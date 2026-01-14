@@ -191,7 +191,8 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
     if (checkAllItemsAnswered()) {
       const correctCount = items.filter((item: any, index: number) => {
         const selectedAnswer = answers[index];
-        const correctOption = item.options?.find((opt: any) => opt.correct);
+        // Check both correct and is_correct fields
+        const correctOption = item.options?.find((opt: any) => opt.correct === true || opt.is_correct === true);
         if (!correctOption) return false;
         const optText = getTranslatedText(correctOption.text, appLanguage);
         const correctOptionText = typeof correctOption.text === 'string' 
@@ -240,7 +241,8 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
   const renderItem = (item: any, itemIndex: number) => {
     const currentAnswer = answers[itemIndex];
     const showResult = showResults[itemIndex] || false;
-    const correctOption = item.options?.find((opt: any) => opt.correct);
+    // Check both correct and is_correct fields
+    const correctOption = item.options?.find((opt: any) => opt.correct === true || opt.is_correct === true);
 
     return (
       <div key={itemIndex} className="space-y-4 mb-8">
