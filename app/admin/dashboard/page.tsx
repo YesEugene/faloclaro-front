@@ -346,7 +346,7 @@ function UsersSection() {
       )}
 
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto" style={{ WebkitOverflowScrolling: 'touch' }}>
           <table className="min-w-full divide-y divide-gray-200" style={{ minWidth: '800px' }}>
             <thead className="bg-gray-50">
               <tr>
@@ -588,8 +588,8 @@ function StatsSection() {
                         {stats.lessons && stats.lessons.length > 0 && (
                           <div>
                             <h4 className="font-semibold mb-3 text-gray-900">По урокам:</h4>
-                            <div className="overflow-x-auto">
-                              <table className="min-w-full divide-y divide-gray-200">
+                            <div className="overflow-x-auto" style={{ WebkitOverflowScrolling: 'touch' }}>
+                              <table className="min-w-full divide-y divide-gray-200" style={{ minWidth: '700px' }}>
                                 <thead className="bg-gray-50">
                                   <tr>
                                     <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
@@ -702,65 +702,67 @@ function PaymentsSection() {
       </div>
 
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Email
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Сумма
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Статус
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Дата оплаты
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Stripe ID
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {payments.length === 0 ? (
+        <div className="overflow-x-auto" style={{ WebkitOverflowScrolling: 'touch' }}>
+          <table className="min-w-full divide-y divide-gray-200" style={{ minWidth: '800px' }}>
+            <thead className="bg-gray-50">
               <tr>
-                <td colSpan={5} className="px-6 py-4 text-center text-sm text-gray-500">
-                  Нет данных об оплатах
-                </td>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Email
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Сумма
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Статус
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Дата оплаты
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Stripe ID
+                </th>
               </tr>
-            ) : (
-              payments.map((payment) => (
-                <tr key={payment.id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {payment.user_email || '-'}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {payment.amount ? `${payment.amount / 100} ${payment.currency || 'EUR'}` : '-'}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    <span className={`px-2 py-1 rounded text-xs ${
-                      payment.status === 'paid' 
-                        ? 'bg-green-100 text-green-800'
-                        : payment.status === 'pending'
-                        ? 'bg-yellow-100 text-yellow-800'
-                        : 'bg-gray-100 text-gray-800'
-                    }`}>
-                      {payment.status === 'paid' ? 'Оплачено' :
-                       payment.status === 'pending' ? 'Ожидает' : payment.status || '-'}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {payment.created_at ? new Date(payment.created_at).toLocaleDateString('ru-RU') : '-'}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono text-xs">
-                    {payment.stripe_payment_intent_id || payment.stripe_session_id || '-'}
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {payments.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="px-6 py-4 text-center text-sm text-gray-500">
+                    Нет данных об оплатах
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : (
+                payments.map((payment) => (
+                  <tr key={payment.id}>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {payment.user_email || '-'}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {payment.amount ? `${payment.amount / 100} ${payment.currency || 'EUR'}` : '-'}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <span className={`px-2 py-1 rounded text-xs ${
+                        payment.status === 'paid' 
+                          ? 'bg-green-100 text-green-800'
+                          : payment.status === 'pending'
+                          ? 'bg-yellow-100 text-yellow-800'
+                          : 'bg-gray-100 text-gray-800'
+                      }`}>
+                        {payment.status === 'paid' ? 'Оплачено' :
+                         payment.status === 'pending' ? 'Ожидает' : payment.status || '-'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {payment.created_at ? new Date(payment.created_at).toLocaleDateString('ru-RU') : '-'}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono text-xs">
+                      {payment.stripe_payment_intent_id || payment.stripe_session_id || '-'}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
@@ -1123,6 +1125,7 @@ function LessonsSection() {
             })}
           </tbody>
         </table>
+        </div>
       </div>
 
       {/* Create Level Modal */}
