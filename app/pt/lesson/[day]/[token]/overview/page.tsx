@@ -132,6 +132,10 @@ function OverviewPageContent() {
     if (subscription?.status === 'active' || subscription?.status === 'paid') {
       return true;
     }
+    // For trial users: only first 3 lessons are unlocked
+    if (subscription?.status === 'trial' || !subscription?.paid_at) {
+      return lessonDay <= 3 && userTokens.size > 0;
+    }
     // First 3 lessons are always unlocked if user has any token
     if (lessonDay <= 3 && userTokens.size > 0) {
       return true;
@@ -947,9 +951,12 @@ function OverviewPageContent() {
                                 
                               const lessonToken = userTokens.get(lessonDay) || (isUnlocked ? token : null);
                               const canNavigate = (isUnlocked || isCompleted) && lessonToken;
+                              // For trial users, redirect locked lessons (> 3) to payment page
                               const lessonUrl = canNavigate
                                 ? `/pt/lesson/${lessonDay}/${lessonToken}/overview`
-                                : '#';
+                                : lessonDay > 3 && (!subscription?.paid_at && subscription?.status !== 'active' && subscription?.status !== 'paid')
+                                  ? `/pt/payment?day=${lessonDay}&token=${token}`
+                                  : '#';
 
                               return (
                                 <div key={lessonDay} onClick={(e) => e.stopPropagation()}>

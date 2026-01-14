@@ -271,6 +271,13 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
       }
       const allCompleted = completedTasks >= (yamlContent.tasks?.length || 5);
 
+      // Get user ID for email sending
+      const { data: tokenData } = await supabase
+        .from('lesson_access_tokens')
+        .select('user_id')
+        .eq('token', token)
+        .single();
+
       await supabase
         .from('user_progress')
         .update({
@@ -280,6 +287,37 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
           started_at: userProgress.started_at || new Date().toISOString(),
         })
         .eq('id', userProgress.id);
+
+      // If lesson 3 is completed and user is on trial, send payment email
+      if (allCompleted && lesson.day_number === 3 && tokenData?.user_id) {
+        // Check if user has paid subscription
+        const { data: subscriptionData } = await supabase
+          .from('subscriptions')
+          .select('status, paid_at')
+          .eq('user_id', tokenData.user_id)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        const hasPaidAccess = subscriptionData?.status === 'active' || subscriptionData?.status === 'paid' || subscriptionData?.paid_at;
+        
+        if (!hasPaidAccess) {
+          // Send payment email after lesson 3 completion
+          try {
+            await fetch('/api/send-payment-email', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                userId: tokenData.user_id,
+                lessonDay: 3,
+                token: token,
+              }),
+            });
+          } catch (err) {
+            console.error('Error sending payment email:', err);
+          }
+        }
+      }
 
       // Update local state immediately to reflect completion
       // This ensures isCompleted is set correctly in TaskCard
@@ -373,6 +411,35 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
       // Get next lesson
       const nextDayNumber = lesson.day_number + 1;
       
+      // Get user ID from token
+      const { data: tokenData } = await supabase
+        .from('lesson_access_tokens')
+        .select('user_id')
+        .eq('token', token)
+        .single();
+
+      if (!tokenData) {
+        console.error('Token not found');
+        return;
+      }
+
+      // Check subscription status
+      const { data: subscriptionData } = await supabase
+        .from('subscriptions')
+        .select('status, paid_at')
+        .eq('user_id', tokenData.user_id)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      const hasPaidAccess = subscriptionData?.status === 'active' || subscriptionData?.status === 'paid' || subscriptionData?.paid_at;
+
+      // If trying to access lesson > 3 without paid access, redirect to payment
+      if (nextDayNumber > 3 && !hasPaidAccess) {
+        router.push(`/pt/payment?day=${nextDayNumber}&token=${token}`);
+        return;
+      }
+      
       // Check if next lesson exists
       const { data: nextLesson, error: lessonError } = await supabase
         .from('lessons')
@@ -384,18 +451,6 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
       if (lessonError || !nextLesson) {
         // No next lesson available - redirect to course overview
         router.push('/pt/course');
-        return;
-      }
-
-      // Get user ID from token
-      const { data: tokenData } = await supabase
-        .from('lesson_access_tokens')
-        .select('user_id')
-        .eq('token', token)
-        .single();
-
-      if (!tokenData) {
-        console.error('Token not found');
         return;
       }
 
@@ -431,10 +486,10 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
         }
 
         // Navigate to next lesson
-        router.push(`/pt/lesson/${nextDayNumber}/${newTokenData.token}`);
+        router.push(`/pt/lesson/${nextDayNumber}/${newTokenData.token}/overview`);
       } else if (nextTokenData) {
         // Token exists, navigate to next lesson
-        router.push(`/pt/lesson/${nextDayNumber}/${nextTokenData.token}`);
+        router.push(`/pt/lesson/${nextDayNumber}/${nextTokenData.token}/overview`);
       }
     } catch (error) {
       console.error('Error navigating to next lesson:', error);

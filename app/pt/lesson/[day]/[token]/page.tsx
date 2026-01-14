@@ -64,6 +64,26 @@ function LessonPageContent() {
       // Sync user language from database
       await syncUserLanguageFromDB(tokenData.user_id, setLanguage);
 
+      // Check subscription status
+      const { data: subscriptionData } = await supabase
+        .from('subscriptions')
+        .select('status, paid_at')
+        .eq('user_id', tokenData.user_id)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      // Check if user is trying to access lesson > 3 with trial subscription
+      // Redirect to payment page if so
+      if (day > 3) {
+        const hasPaidAccess = subscriptionData?.status === 'active' || subscriptionData?.status === 'paid' || subscriptionData?.paid_at;
+        if (!hasPaidAccess) {
+          // Redirect to payment page
+          router.push(`/pt/payment?day=${day}&token=${token}`);
+          return;
+        }
+      }
+
       // Get lesson
       const { data: lessonData, error: lessonError } = await supabase
         .from('lessons')
