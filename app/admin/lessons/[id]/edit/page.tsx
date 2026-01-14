@@ -1060,8 +1060,7 @@ function LessonEditorContent() {
           onGenerate={handleGenerateLesson}
           onClose={() => {
             setShowGenerateModal(false);
-            setGenerateTopicRu('');
-            setGenerateTopicEn('');
+            // Don't clear topic fields - keep them for next time
             setGenerateError('');
             setGenerateProgress({ step: '', progress: 0 });
           }}
