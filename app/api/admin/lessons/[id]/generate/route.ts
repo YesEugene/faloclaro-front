@@ -452,19 +452,57 @@ export async function POST(
               task.blocks.forEach((block: any) => {
                 // Ensure block_3_answers has hints array (MANDATORY)
                 if (block.block_id === 'block_3_answers' && block.block_type === 'explanation' && block.content) {
-                  if (!block.content.hints || !Array.isArray(block.content.hints) || block.content.hints.length === 0) {
+                  // Check if hints exist and are valid
+                  const hasHints = block.content.hints && Array.isArray(block.content.hints) && block.content.hints.length > 0;
+                  
+                  if (!hasHints) {
                     console.warn('⚠️ block_3_answers missing hints - adding default hints');
                     // Generate default hints from examples
                     const examples = block.content.examples || [];
-                    block.content.hints = examples.map((ex: any, idx: number) => ({
-                      ru: `Пример ${idx + 1}: "${ex.text || ''}" - объяснение значения и грамматики.`,
-                      en: `Example ${idx + 1}: "${ex.text || ''}" - explanation of meaning and grammar.`
-                    }));
-                    // If still no hints, add at least one
-                    if (block.content.hints.length === 0) {
+                    if (examples.length > 0) {
+                      // Create hints explaining each example
+                      block.content.hints = examples.map((ex: any, idx: number) => ({
+                        ru: `Пример ${idx + 1}: "${ex.text || ''}" - объяснение значения, новых слов и грамматических конструкций.`,
+                        en: `Example ${idx + 1}: "${ex.text || ''}" - explanation of meaning, new words and grammatical constructions.`
+                      }));
+                    } else {
+                      // If no examples, add at least one generic hint
                       block.content.hints = [{
-                        ru: 'Объяснение новых слов и грамматических конструкций в примерах.',
-                        en: 'Explanation of new words and grammatical constructions in examples.'
+                        ru: 'Объяснение новых слов и грамматических конструкций в примерах. Каждое предложение содержит важную информацию для понимания.',
+                        en: 'Explanation of new words and grammatical constructions in examples. Each sentence contains important information for understanding.'
+                      }];
+                    }
+                  } else {
+                    // Ensure all hints have both ru and en
+                    block.content.hints = block.content.hints.map((hint: any) => {
+                      if (typeof hint === 'string') {
+                        return { ru: hint, en: hint };
+                      } else if (typeof hint === 'object') {
+                        return {
+                          ru: hint.ru || hint.RU || hint.text || 'Объяснение',
+                          en: hint.en || hint.EN || hint.text || 'Explanation'
+                        };
+                      }
+                      return { ru: 'Объяснение', en: 'Explanation' };
+                    });
+                  }
+                }
+                
+                // Ensure block_1 and block_2 also have hints (if they are explanation blocks)
+                if ((block.block_id === 'block_1_build' || block.block_id === 'block_2_transform') && 
+                    block.block_type === 'explanation' && block.content) {
+                  // Check if hint exists (can be single hint or array)
+                  const hasHint = block.content.hint && (
+                    Array.isArray(block.content.hint) ? block.content.hint.length > 0 : true
+                  );
+                  
+                  if (!hasHint) {
+                    console.warn(`⚠️ ${block.block_id} missing hint - adding default hint`);
+                    const examples = block.content.examples || [];
+                    if (examples.length > 0) {
+                      block.content.hint = [{
+                        ru: `Объяснение грамматической конструкции и значения примеров.`,
+                        en: `Explanation of grammatical construction and meaning of examples.`
                       }];
                     }
                   }
