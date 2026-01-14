@@ -27,14 +27,6 @@ export default function NotFound() {
       button: 'Back to home',
       emoji: '🇵🇹',
     },
-    pt: {
-      title: 'Opa! 🐙',
-      subtitle: 'Esta página decidiu tirar férias',
-      message: 'Parece que foi aprender português algures em Lisboa. Procurámos, mas não responde.',
-      suggestion: 'Talvez se tenha perdido na gramática?',
-      button: 'Voltar ao início',
-      emoji: '🇵🇹',
-    },
   };
 
   const t = translations[appLanguage] || translations.en;
