@@ -43,11 +43,13 @@ function LessonPageContent() {
       setLoading(true);
 
       // Verify token and get user
-      const { data: tokenData, error: tokenError } = await supabase
+      const { data: tokenRows, error: tokenError } = await supabase
         .from('lesson_access_tokens')
         .select('user_id, lesson_id, expires_at, used_at')
         .eq('token', token)
-        .single();
+        .limit(1);
+
+      const tokenData = tokenRows && tokenRows.length > 0 ? tokenRows[0] : null;
 
       if (tokenError || !tokenData) {
         setError('Invalid or expired link');
@@ -85,11 +87,13 @@ function LessonPageContent() {
       }
 
       // Get lesson
-      const { data: lessonData, error: lessonError } = await supabase
+      const { data: lessonRows, error: lessonError } = await supabase
         .from('lessons')
         .select('*')
         .eq('day_number', day)
-        .single();
+        .limit(1);
+
+      const lessonData = lessonRows && lessonRows.length > 0 ? lessonRows[0] : null;
 
       if (lessonError || !lessonData) {
         setError('Lesson not found');
@@ -98,16 +102,18 @@ function LessonPageContent() {
       }
 
       // Get or create user progress
-      let { data: progressData, error: progressError } = await supabase
+      let { data: progressRows, error: progressError } = await supabase
         .from('user_progress')
         .select('*, task_progress(*)')
         .eq('user_id', tokenData.user_id)
         .eq('lesson_id', lessonData.id)
-        .single();
+        .limit(1);
 
-      if (progressError && progressError.code === 'PGRST116') {
+      let progressData = progressRows && progressRows.length > 0 ? progressRows[0] : null;
+
+      if ((progressError && progressError.code === 'PGRST116') || (!progressError && !progressData)) {
         // Create new progress
-        const { data: newProgress, error: createError } = await supabase
+        const { data: createdRows, error: createError } = await supabase
           .from('user_progress')
           .insert({
             user_id: tokenData.user_id,
@@ -117,15 +123,21 @@ function LessonPageContent() {
             total_tasks: 5,
           })
           .select('*, task_progress(*)')
-          .single();
+          .limit(1);
 
         if (createError) {
           throw createError;
         }
 
-        progressData = newProgress;
+        progressData = createdRows && createdRows.length > 0 ? createdRows[0] : null;
       } else if (progressError) {
         throw progressError;
+      }
+
+      if (!progressData) {
+        setError('Failed to load progress');
+        setLoading(false);
+        return;
       }
 
       setLesson(lessonData);

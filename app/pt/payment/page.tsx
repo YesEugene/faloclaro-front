@@ -26,19 +26,23 @@ function PaymentPageContent() {
 
       try {
         // Get user from token
-        const { data: tokenData } = await supabase
+        const { data: tokenRows } = await supabase
           .from('lesson_access_tokens')
           .select('user_id')
           .eq('token', token)
-          .single();
+          .limit(1);
+
+        const tokenData = tokenRows && tokenRows.length > 0 ? tokenRows[0] : null;
 
         if (tokenData?.user_id) {
           // Get user email
-          const { data: userData } = await supabase
+          const { data: userRows } = await supabase
             .from('subscription_users')
             .select('email')
             .eq('id', tokenData.user_id)
-            .single();
+            .limit(1);
+
+          const userData = userRows && userRows.length > 0 ? userRows[0] : null;
 
           if (userData?.email) {
             setUserEmail(userData.email);
