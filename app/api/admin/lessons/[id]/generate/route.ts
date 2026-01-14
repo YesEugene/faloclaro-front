@@ -244,18 +244,43 @@ export async function POST(
           throw new Error('Task 4 (Attention) must have exactly 3 items');
         }
 
-        // Normalize task types to match frontend expectations
-        generatedLesson.tasks = generatedLesson.tasks.map((task: any) => {
-          // Convert "writing" to "writing_optional" (frontend expects writing_optional)
-          if (task.type === 'writing') {
-            task.type = 'writing_optional';
+        // Normalize and validate tasks structure
+        generatedLesson.tasks = generatedLesson.tasks
+          .filter((task: any) => task && typeof task === 'object') // Remove null/undefined tasks
+          .map((task: any, index: number) => {
+            // Ensure task_id is set (use index + 1 if missing)
+            if (!task.task_id) {
+              task.task_id = index + 1;
+            }
+            
+            // Convert "writing" to "writing_optional" (frontend expects writing_optional)
+            if (task.type === 'writing') {
+              task.type = 'writing_optional';
+            }
+            // Convert "listening" to "listening_comprehension" (frontend expects listening_comprehension)
+            if (task.type === 'listening') {
+              task.type = 'listening_comprehension';
+            }
+            
+            return task;
+          })
+          .sort((a: any, b: any) => (a.task_id || 0) - (b.task_id || 0)); // Sort by task_id
+        
+        // Ensure we have exactly 5 tasks with task_id 1-5
+        if (generatedLesson.tasks.length !== 5) {
+          throw new Error(`Expected 5 tasks, got ${generatedLesson.tasks.length}`);
+        }
+        
+        // Validate all tasks have required fields
+        for (let i = 0; i < generatedLesson.tasks.length; i++) {
+          const task = generatedLesson.tasks[i];
+          if (!task.task_id || task.task_id !== i + 1) {
+            throw new Error(`Task at index ${i} has incorrect task_id: ${task.task_id}, expected ${i + 1}`);
           }
-          // Convert "listening" to "listening_comprehension" (frontend expects listening_comprehension)
-          if (task.type === 'listening') {
-            task.type = 'listening_comprehension';
+          if (!task.type) {
+            throw new Error(`Task ${task.task_id} is missing type field`);
           }
-          return task;
-        });
+        }
 
         // Success!
         break;
