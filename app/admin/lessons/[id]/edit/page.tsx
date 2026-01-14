@@ -542,14 +542,19 @@ function LessonEditorContent() {
           const items = task.items || task.blocks?.find((b: any) => b.block_type === 'check_meaning')?.content?.items || [];
           for (let itemIndex = 0; itemIndex < items.length; itemIndex++) {
             const item = items[itemIndex];
-            const text = typeof item.text === 'string' ? item.text.trim() : (item.text?.pt || item.text?.ru || item.text?.en || '').trim();
-            if (text && !item.audio_url) {
+            // NOTE: In Attention task, the Portuguese phrase lives in `item.audio` (admin shows "Аудио: ...")
+            const audioText =
+              (typeof item.audio === 'string' ? item.audio : '')?.trim() ||
+              (typeof item.text === 'string' ? item.text : '')?.trim() ||
+              (typeof item.text === 'object' ? (item.text?.pt || item.text?.ru || item.text?.en || '') : '')?.trim();
+
+            if (audioText && !item.audio_url) {
               try {
                 const response = await fetch('/api/admin/audio/generate', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({
-                    text,
+                    text: audioText,
                     lessonId: lessonDay.toString(),
                     taskId: taskId,
                     blockId: 'check_meaning',
