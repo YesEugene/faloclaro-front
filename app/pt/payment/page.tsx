@@ -110,9 +110,9 @@ function PaymentPageContent() {
     <div className="min-h-screen bg-white">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-4 md:px-8">
-        <Link href="/pt">
+        <Link href="/">
           <div className="flex items-center gap-2">
-            <div className="relative w-12 h-12 md:w-16 md:h-16">
+            <div className="relative w-24 h-24 md:w-32 md:h-32">
               <Image
                 src="/Img/Website/logo.svg"
                 alt="Falo Claro"
