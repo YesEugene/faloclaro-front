@@ -94,7 +94,7 @@ Do not include things like:
 • Obrigado + Obrigada (pick one)
 
 ### Required structure for each card:
-```json
+\`\`\`json
 {
   "word": "Olá",                    // PT - REQUIRED
   "transcription": "[oˈla]",         // REQUIRED - IPA in square brackets
@@ -104,7 +104,7 @@ Do not include things like:
   "word_translation_ru": "Привет",   // REQUIRED
   "word_translation_en": "Hello"    // REQUIRED
 }
-```
+\`\`\`
 
 ### Platform constraints:
 • Minimum: 8 cards
@@ -125,7 +125,7 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
 • Include translations in hints
 
 **Structure:**
-```json
+\`\`\`json
 {
   "block_id": "block_1_build",
   "block_type": "explanation",
@@ -144,7 +144,7 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
     ]
   }
 }
-```
+\`\`\`
 
 **Platform constraints:**
 • Minimum: 2 examples
@@ -187,7 +187,7 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
 **Purpose:** Show that different forms can have same meaning, or statements vs questions differ only by structure
 
 **Structure:**
-```json
+\`\`\`json
 {
   "block_id": "block_4_equivalence",
   "block_type": "comparison",
@@ -203,7 +203,7 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
     }
   }
 }
-```
+\`\`\`
 
 **Platform constraints:**
 • Minimum: 2 comparison cards
@@ -221,7 +221,7 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
 • Correct answer must NOT always be in position 1 (randomize)
 
 **Structure:**
-```json
+\`\`\`json
 {
   "block_id": "block_5_reinforcement",
   "block_type": "reinforcement",
@@ -255,7 +255,7 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
     }
   }
 }
-```
+\`\`\`
 
 **Platform constraints:**
 • Both task_1 and task_2 are REQUIRED
@@ -274,7 +274,7 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
 • One must be longer and more complex than the ones in block_1
 
 **Structure:**
-```json
+\`\`\`json
 {
   "block_id": "block_6_speak",
   "block_type": "speak_out_loud",
@@ -289,7 +289,7 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
     }
   }
 }
-```
+\`\`\`
 
 **Platform constraints:**
 • Instruction must require at least 2 sentences
@@ -308,7 +308,7 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
 • Must require meaning understanding, not word matching
 
 **Structure:**
-```json
+\`\`\`json
 {
   "task_id": 3,
   "type": "listening",
@@ -330,7 +330,7 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
     }
   ]
 }
-```
+\`\`\`
 
 **Platform constraints:**
 • Exactly 3 items (no more, no less)
@@ -353,7 +353,7 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
 • Correct answer must be randomized in position
 
 **Structure:**
-```json
+\`\`\`json
 {
   "task_id": 4,
   "type": "attention",
@@ -379,7 +379,7 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
     }
   ]
 }
-```
+\`\`\`
 
 **Platform constraints:**
 • Exactly 3 items
@@ -401,7 +401,7 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
 • Must offer text input option and speak-aloud alternative
 
 **Structure:**
-```json
+\`\`\`json
 {
   "task_id": 5,
   "type": "writing",
@@ -428,7 +428,7 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
     "show_button": true
   }
 }
-```
+\`\`\`
 
 **Platform constraints:**
 • Must be more complex than block_1 phrases
