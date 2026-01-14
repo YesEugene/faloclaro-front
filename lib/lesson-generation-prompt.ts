@@ -324,9 +324,9 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
         "en": "What does this phrase mean?" 
       },
       "options": [
-        { "text": "Мне нужна помощь сейчас", "is_correct": true },
-        { "text": "Мне нужна помощь завтра", "is_correct": false },
-        { "text": "Я могу помочь", "is_correct": false }
+        { "text": { "ru": "Мне нужна помощь сейчас", "en": "I need help now" }, "is_correct": true },
+        { "text": { "ru": "Мне нужна помощь завтра", "en": "I need help tomorrow" }, "is_correct": false },
+        { "text": { "ru": "Я могу помочь", "en": "I can help" }, "is_correct": false }
       ]
     }
   ]
@@ -336,10 +336,11 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
 **Platform constraints:**
 • Exactly 3 items (no more, no less)
 • Exactly 3 options per item
-• Options text in PT (Portuguese) ONLY - NO English translations (admin panel doesn't have EN fields)
+• Options text in RU/EN (bilingual object: { "ru": "...", "en": "..." }) - BOTH languages required
 • One correct answer per item - MUST set "is_correct": true for the correct option
 • Must use phrases from Task 2 blocks
 • CRITICAL: Always set "is_correct": true for exactly one option in each item
+• CRITICAL: Each option must have both "ru" and "en" translations in the text object
 
 ---
 

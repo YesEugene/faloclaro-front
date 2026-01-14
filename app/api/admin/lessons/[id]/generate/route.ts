@@ -343,15 +343,28 @@ export async function POST(
             }
             
             // Ensure is_correct is set for all choice-based tasks
-            // Task 3 (listening)
+            // Task 3 (listening) - normalize options to have ru/en structure
             if (task.type === 'listening_comprehension' && task.items) {
               task.items.forEach((item: any) => {
                 if (item.options && Array.isArray(item.options)) {
-                  const correctCount = item.options.filter((opt: any) => opt.is_correct === true).length;
+                  item.options.forEach((opt: any) => {
+                    // Convert old string format to new object format
+                    if (typeof opt.text === 'string') {
+                      opt.text = { ru: opt.text, en: '' };
+                    } else if (!opt.text || typeof opt.text !== 'object') {
+                      opt.text = { ru: '', en: '' };
+                    }
+                    // Ensure both ru and en exist
+                    if (!opt.text.ru) opt.text.ru = '';
+                    if (!opt.text.en) opt.text.en = '';
+                  });
+                  
+                  const correctCount = item.options.filter((opt: any) => opt.is_correct === true || opt.correct === true).length;
                   if (correctCount === 0) {
                     // If no correct answer set, set first option as correct
                     if (item.options.length > 0) {
                       item.options[0].is_correct = true;
+                      item.options[0].correct = true;
                     }
                   }
                 }

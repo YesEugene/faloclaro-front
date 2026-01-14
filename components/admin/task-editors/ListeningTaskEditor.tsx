@@ -9,7 +9,7 @@ interface ListeningTaskEditorProps {
 }
 
 export default function ListeningTaskEditor({ task, onChange, lessonDay }: ListeningTaskEditorProps) {
-  // Normalize options in items - ensure option.text is always a string
+  // Normalize options in items - convert old string format to new object format (ru/en)
   const normalizeItemOptions = (item: any): any => {
     if (!item || typeof item !== 'object') return item;
     if (item.options && Array.isArray(item.options)) {
@@ -17,18 +17,28 @@ export default function ListeningTaskEditor({ task, onChange, lessonDay }: Liste
         ...item,
         options: item.options.map((opt: any) => {
           if (!opt || typeof opt !== 'object') return opt;
-          // If text is an object, extract string value (prefer pt/portuguese, then ru, then en)
+          // If text is a string (old format), convert to object with ru/en
+          if (opt.text && typeof opt.text === 'string') {
+            return {
+              ...opt,
+              text: { ru: opt.text, en: '' },
+            };
+          }
+          // If text is an object but missing ru/en, normalize it
           if (opt.text && typeof opt.text === 'object' && !Array.isArray(opt.text)) {
             return {
               ...opt,
-              text: opt.text.pt || opt.text.portuguese || opt.text.ru || opt.text.en || String(opt.text),
+              text: {
+                ru: opt.text.ru || opt.text.pt || opt.text.portuguese || opt.text.en || '',
+                en: opt.text.en || '',
+              },
             };
           }
-          // If text is not a string, convert to string
-          if (opt.text && typeof opt.text !== 'string') {
+          // If text is missing, add default structure
+          if (!opt.text) {
             return {
               ...opt,
-              text: String(opt.text),
+              text: { ru: '', en: '' },
             };
           }
           return opt;
@@ -52,7 +62,7 @@ export default function ListeningTaskEditor({ task, onChange, lessonDay }: Liste
       // Old structure: task.items
       items = task.items || [];
     }
-    // Normalize all items - ensure options have text as string
+    // Normalize all items - ensure options have text as object with ru/en
     return items.map(normalizeItemOptions);
   };
 
@@ -234,7 +244,8 @@ export default function ListeningTaskEditor({ task, onChange, lessonDay }: Liste
   // Option handlers
   const handleAddOption = (itemIndex: number) => {
     const item = items[itemIndex];
-    const newOptions = [...(item.options || []), { text: '', correct: false }];
+    // Support both old format (string) and new format (object with ru/en)
+    const newOptions = [...(item.options || []), { text: { ru: '', en: '' }, correct: false }];
     handleUpdateItem(itemIndex, 'options', newOptions);
   };
 
@@ -428,7 +439,11 @@ export default function ListeningTaskEditor({ task, onChange, lessonDay }: Liste
               </div>
               <div className="space-y-2">
                 {(item.options || []).map((option: any, optionIndex: number) => {
-                  const optionText = typeof option.text === 'string' ? option.text : (option.text?.pt || option.text?.portuguese || option.text?.ru || option.text?.en || '');
+                  // Support both old format (string) and new format (object with ru/en)
+                  const optionText = typeof option.text === 'string' 
+                    ? { ru: option.text, en: '' } 
+                    : (option.text || { ru: '', en: '' });
+                  
                   return (
                     <div
                       key={optionIndex}
@@ -437,16 +452,24 @@ export default function ListeningTaskEditor({ task, onChange, lessonDay }: Liste
                       <div className="flex items-center gap-2 mb-2">
                         <input
                           type="text"
-                          value={optionText}
-                          onChange={(e) => handleUpdateOption(index, optionIndex, 'text', e.target.value)}
-                          placeholder="Текст варианта (PT) *"
+                          value={optionText.ru || ''}
+                          onChange={(e) => handleUpdateOption(index, optionIndex, 'text', { ...optionText, ru: e.target.value })}
+                          placeholder="Текст варианта (RU) *"
                           className="flex-1 px-3 py-2 border border-gray-300 rounded-lg"
                           onClick={(e) => e.stopPropagation()}
                         />
-                        <label className="flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-lg bg-white">
+                        <input
+                          type="text"
+                          value={optionText.en || ''}
+                          onChange={(e) => handleUpdateOption(index, optionIndex, 'text', { ...optionText, en: e.target.value })}
+                          placeholder="Текст варианта (EN) *"
+                          className="flex-1 px-3 py-2 border border-gray-300 rounded-lg"
+                          onClick={(e) => e.stopPropagation()}
+                        />
+                        <label className="flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-lg bg-white whitespace-nowrap">
                           <input
                             type="checkbox"
-                            checked={option.correct || false}
+                            checked={option.correct || option.is_correct || false}
                             onChange={(e) => handleUpdateOption(index, optionIndex, 'correct', e.target.checked)}
                             className="rounded"
                             onClick={(e) => e.stopPropagation()}
