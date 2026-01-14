@@ -276,20 +276,51 @@ export async function POST(
                 }
               }
               
-              // Normalize template: convert array of objects to array of strings
+              // Normalize template: ensure it's an array of strings with "___" for blanks
               if (task.main_task && Array.isArray(task.main_task.template)) {
                 const templateArray = task.main_task.template;
-                // Check if template is array of objects (new format) or strings (old format)
+                // Check if template is array of objects (old format) or strings (new format)
                 if (templateArray.length > 0 && typeof templateArray[0] === 'object') {
-                  // Convert [{ type: "text", content: "..." }, { type: "input", placeholder: "..." }] to strings
-                  task.main_task.template = templateArray.map((item: any) => {
+                  // Convert [{ type: "text", content: "..." }, { type: "input", placeholder: "..." }] to strings with ___
+                  let currentString = '';
+                  const result: string[] = [];
+                  templateArray.forEach((item: any) => {
                     if (item.type === 'text') {
-                      return item.content || '';
+                      currentString += (item.content || '');
                     } else if (item.type === 'input') {
-                      return '___';
+                      currentString += '___';
                     }
-                    return '';
-                  }).filter((s: string) => s.length > 0);
+                    // If we hit a new line or end, save current string
+                    if (item.newline || item === templateArray[templateArray.length - 1]) {
+                      if (currentString.trim()) {
+                        result.push(currentString.trim());
+                        currentString = '';
+                      }
+                    }
+                  });
+                  if (currentString.trim()) {
+                    result.push(currentString.trim());
+                  }
+                  task.main_task.template = result.length > 0 ? result : ['___'];
+                }
+                // If already strings, ensure they have ___ for blanks
+                task.main_task.template = task.main_task.template.map((t: string) => {
+                  if (typeof t === 'string' && !t.includes('___')) {
+                    // If no blanks, add one at the end
+                    return t + ' ___';
+                  }
+                  return t;
+                });
+              }
+              
+              // Ensure hints array exists if template has blanks
+              if (task.main_task && Array.isArray(task.main_task.template)) {
+                const totalBlanks = task.main_task.template.reduce((count: number, t: string) => {
+                  return count + (t.match(/___/g) || []).length;
+                }, 0);
+                if (totalBlanks > 0 && (!task.main_task.hints || task.main_task.hints.length === 0)) {
+                  // Generate placeholder hints if missing
+                  task.main_task.hints = Array(totalBlanks).fill('word');
                 }
               }
               
@@ -309,6 +340,37 @@ export async function POST(
                   };
                 }
               }
+            }
+            
+            // Ensure is_correct is set for all choice-based tasks
+            // Task 3 (listening)
+            if (task.type === 'listening_comprehension' && task.items) {
+              task.items.forEach((item: any) => {
+                if (item.options && Array.isArray(item.options)) {
+                  const correctCount = item.options.filter((opt: any) => opt.is_correct === true).length;
+                  if (correctCount === 0) {
+                    // If no correct answer set, set first option as correct
+                    if (item.options.length > 0) {
+                      item.options[0].is_correct = true;
+                    }
+                  }
+                }
+              });
+            }
+            
+            // Task 4 (attention)
+            if (task.type === 'attention' && task.items) {
+              task.items.forEach((item: any) => {
+                if (item.options && Array.isArray(item.options)) {
+                  const correctCount = item.options.filter((opt: any) => opt.is_correct === true).length;
+                  if (correctCount === 0) {
+                    // If no correct answer set, set first option as correct
+                    if (item.options.length > 0) {
+                      item.options[0].is_correct = true;
+                    }
+                  }
+                }
+              });
             }
             
             return task;
