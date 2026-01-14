@@ -373,6 +373,26 @@ export async function POST(
               });
             }
             
+            // Task 2 block_5_reinforcement - ensure is_correct is set
+            if (task.type === 'rules' && task.blocks) {
+              task.blocks.forEach((block: any) => {
+                if (block.block_type === 'reinforcement' && block.content) {
+                  ['task_1', 'task_2'].forEach((taskKey: string) => {
+                    const reinforcementTask = block.content[taskKey];
+                    if (reinforcementTask && reinforcementTask.options && Array.isArray(reinforcementTask.options)) {
+                      const correctCount = reinforcementTask.options.filter((opt: any) => opt.is_correct === true).length;
+                      if (correctCount === 0) {
+                        // If no correct answer set, set first option as correct
+                        if (reinforcementTask.options.length > 0) {
+                          reinforcementTask.options[0].is_correct = true;
+                        }
+                      }
+                    }
+                  });
+                }
+              });
+            }
+            
             return task;
           })
           .sort((a: any, b: any) => (a.task_id || 0) - (b.task_id || 0)); // Sort by task_id
