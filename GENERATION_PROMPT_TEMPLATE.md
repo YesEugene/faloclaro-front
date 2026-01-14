@@ -417,15 +417,39 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
 
 ### block_6_speak (block_type: "speak_out_loud")
 
-**Purpose:** Force speech production - this is the culmination of the lesson
+**Purpose:** Force speech production - THIS IS THE FINAL RESULT
+• **CRITICAL:** This block MUST use block_type: "speak_out_loud" (NOT "explanation")
 
 **CRITICAL REQUIREMENTS - MANDATORY:**
-• **MUST instruct the learner to say exactly 2 sentences** - this is NOT optional
-• **Each sentence must be 4-7 words long** (NOT 2-3 words like block_1)
+• **MUST use the EXACT FINAL RESULT sentences** defined at the start of lesson generation
+• This can be ONE longer sentence (6-8 words) OR TWO connected sentences (4-5 words each)
 • Both sentences must be included in the instruction_text
-• This represents the progression: block_1 (2-3 words) → block_6 (4-7 words per sentence, 2 sentences)
-• Example: "Chamo-me Ana. Sou de Lisboa e estou bem." (first sentence: 3 words, second: 6 words)
-• By the end of block_6, learners should be able to say longer, more complex phrases than in block_1
+• This is the CULMINATION - the exact sentences the learner must be able to say
+• Example: "Hoje eu trabalho de manhã. À tarde vou ao parque." (2 sentences: 5 + 4 words)
+• Example: "Chamo-me Ana e sou de Lisboa." (1 sentence: 6 words)
+
+**CRITICAL:** These sentences MUST:
+- Use ONLY words from Task 1
+- Be the result of progressive building from block_1 → block_6
+- Represent what the learner can say at the end of the lesson
+
+**Structure:**
+```json
+{
+  "block_id": "block_6_speak",
+  "block_type": "speak_out_loud",  // ← MUST be this type
+  "content": {
+    "instruction_text": { 
+      "ru": "Скажи вслух: 'Hoje eu trabalho de manhã. À tarde vou ao parque.'",
+      "en": "Say out loud: 'Hoje eu trabalho de manhã. À tarde vou ao parque.'"
+    },
+    "action_button": {
+      "text": { "ru": "✔ Я сказал(а) вслух", "en": "✔ I said it out loud" },
+      "completes_task": true
+    }
+  }
+}
+```
 
 **Structure:**
 ```json
