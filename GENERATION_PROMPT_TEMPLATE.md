@@ -36,19 +36,46 @@ ${lessonMethodology}
 
 ### What a lesson is
 
-Each lesson is a controlled language-building cycle.
+Each lesson is a controlled language-building cycle based on **DECOMPOSITION FROM FINAL RESULT**.
 
-Its purpose is not to "teach content", but to:
-• install a new speaking reflex
-• expand the learner's active phrase inventory
-• move the learner from recognition → production in 15–25 minutes
+**CRITICAL METHODOLOGY - REVERSE ENGINEERING:**
 
-Every lesson must end with the learner being able to say a longer, more complex sentence than at the beginning.
+1. **FIRST:** Define the IDEAL FINAL RESULT - what the learner MUST be able to say at the end of the lesson
+   - This can be ONE longer sentence (6-8 words) OR TWO connected sentences (4-5 words each)
+   - Example: "Hoje eu trabalho de manhã. À tarde vou ao parque." (2 sentences, 5 and 4 words)
+   - Example: "Chamo-me Ana e sou de Lisboa." (1 sentence, 6 words)
+
+2. **SECOND:** Decompose the final result into ALL words and add them to Task 1 (Vocabulary)
+   - Extract every word from the final sentences
+   - Add supporting words needed for intermediate steps (time markers, connectors, etc.)
+   - Total: 10 core words from final result + 3-5 supporting words = 13-15 cards
+
+3. **THIRD:** Build progressive examples that grow brick-by-brick from Task 2 block_1 to the final result
+   - block_1: Start with 2-3 word phrases (simplest parts of final result)
+   - block_2: Extend to 3-4 words (add one element)
+   - block_3: Learn to respond (4-5 words)
+   - block_4: Variations (4-5 words)
+   - block_5: Reinforcement with longer phrases (6-7 words)
+   - block_6: Final result (the exact sentences from step 1)
+   - Task 3: Even longer phrases (6-8+ words) building on Task 2
+   - Task 4: Even longer or differently structured (7-10+ words)
+   - Task 5: Final result again (same as block_6)
+
+4. **FOURTH:** Add ALL new words that appear in intermediate examples to Task 1
+   - If a new word appears in block_2, add it to Task 1
+   - If a new word appears in block_3, add it to Task 1
+   - Task 1 must contain ALL words used throughout the lesson
+
+5. **FIFTH:** Add hints to EVERY block explaining:
+   - What the sentence means
+   - What new words mean
+   - Grammatical constructions
+   - Usage context
 
 ### Success condition
 
 A lesson is valid only if:
-By the end, a learner can say something they could not say at the beginning, using new words and a new structure.
+By the end, a learner can say the EXACT final result sentences that were defined at the start, using all the words from Task 1.
 Not recognize. Not translate. Say.
 
 ---
@@ -73,14 +100,33 @@ The lesson must escalate from isolated words → full phrases → spoken output.
 
 ### Function
 This block creates the closed vocabulary set for the entire lesson.
-All later tasks (2–5) must be built ONLY from these words + already learned global words.
+**CRITICAL:** Task 1 is built FROM the final result sentences, not independently.
+
+### Generation Process
+
+**STEP 1: Extract words from FINAL RESULT**
+- Take the final result sentences (from Task 2 block_6 or Task 5)
+- Extract ALL words from these sentences
+- These become the CORE 10 words (minimum)
+
+**STEP 2: Add supporting words**
+- Add 3-5 supporting words needed for intermediate steps:
+  - Time markers (hoje, agora, depois, etc.)
+  - Connectors (e, mas, com, etc.)
+  - Polite words (por favor, obrigado, etc.)
+  - Words that appear in intermediate examples but not in final result
+
+**STEP 3: Add words from intermediate examples**
+- As you build Task 2 blocks, if new words appear, ADD them to Task 1
+- Task 1 must contain EVERY word used in the entire lesson
 
 ### Rules for word selection
 
 For each lesson:
-• **Exactly 10 words or phrases** must belong directly to the lesson theme (core vocabulary)
-• **3-5 additional words** are REQUIRED as supporting infrastructure (time, connectors, polite words, etc) - these will be used in example sentences
-• **Total: 13-15 cards REQUIRED** (10 core + 3-5 supporting)
+• **Minimum 10 words** extracted from the final result sentences (core vocabulary)
+• **3-5 additional words** are REQUIRED as supporting infrastructure
+• **Additional words** may be added from intermediate examples in Task 2
+• **Total: 13-15 cards REQUIRED** (10+ core + 3-5 supporting + any from intermediates)
 • **CRITICAL:** You MUST generate at least 13 cards. Never generate only 10 cards.
 
 **CRITICAL CONSTRAINTS:**
@@ -665,28 +711,68 @@ Generate a complete lesson JSON for:
 • Phase: ${phase}
 • Topic: "${topicRu}" / "${topicEn}"
 
+**CRITICAL GENERATION PROCESS - FOLLOW EXACTLY:**
+
+**STEP 1: DEFINE FINAL RESULT FIRST**
+- Decide: ONE longer sentence (6-8 words) OR TWO connected sentences (4-5 words each)
+- Example: "Hoje eu trabalho de manhã. À tarde vou ao parque." (2 sentences: 5 + 4 words)
+- Example: "Chamo-me Ana e sou de Lisboa." (1 sentence: 6 words)
+- This is what the learner MUST say at the end
+
+**STEP 2: BUILD TASK 1 FROM FINAL RESULT**
+- Extract ALL words from final result sentences → 10+ core words
+- Add 3-5 supporting words (time markers, connectors, etc.)
+- Add any new words that appear in intermediate examples
+- Total: 13-15 cards minimum
+
+**STEP 3: BUILD TASK 2 PROGRESSIVELY**
+- block_1: 2-3 words (simplest fragments from final result)
+- block_2: 3-4 words (add one element)
+- block_3: 4-5 words (learn to ask/respond)
+- block_4: 4-5 words (variations)
+- block_5: 6-7 words (longer combinations)
+- block_6: FINAL RESULT (exact sentences from Step 1)
+- **MANDATORY:** Add hints to EVERY block explaining meaning and new words
+
+**STEP 4: BUILD TASK 3 (6-8+ words)**
+- Longer phrases building on Task 2, toward final result
+- Use same vocabulary from Task 1
+
+**STEP 5: BUILD TASK 4 (7-10+ words)**
+- Even longer or differently structured phrases
+- Use same vocabulary from Task 1
+
+**STEP 6: BUILD TASK 5 (FINAL RESULT)**
+- Exact same sentences as block_6
+- Template matching final result
+
 **CRITICAL REQUIREMENTS:**
 1. Use ONLY words NOT in: ${usedWordsList}
-2. Task 1: **EXACTLY 13-15 vocabulary cards** (10 core theme words + 3-5 supporting words) - NEVER generate only 10 cards
-3. Task 2: Exactly 6 blocks in the specified order:
-   - block_1_build: **VERY SIMPLE phrases (2-3 words)** - e.g., "Chamo-me Ana", "Sou de Lisboa". Hint must explain construction of ALL examples
-   - block_2_transform: Hint must explain what changed between phrases
-   - block_3_answers: **MANDATORY hints** explaining new words/grammar (minimum 1-2 hints)
-   - block_4_equivalence: Comparison of variants
-   - block_5_reinforcement: Knowledge check with 2 tasks
-   - block_6_speak: **MANDATORY 2 sentences (4-7 words each)** in instruction_text - e.g., "Chamo-me Ana. Sou de Lisboa e estou bem."
-4. Task 3: Exactly 3 listening items - **MUST review Task 2 phrases first, create LONGER phrases (4-7+ words) that differ from Task 2, NO word-for-word repetition**
-5. Task 4: Exactly 3 attention items - **MUST review Task 3 phrases first, create LONGER or DIFFERENTLY STRUCTURED phrases (5-10+ words), NO word-for-word repetition**
-6. Task 5: Writing task with template using Task 1 words - **MUST review all previous tasks, create COMPLEX templates (4-7+ words per line), NO repetition of short 2-3 word phrases from block_1**
-7. **MANDATORY complexity progression:**
-   - Task 2 block_1: 2-3 words (start simple)
-   - Task 2 block_6: 4-7 words per sentence, 2 sentences (culmination)
-   - Task 3: 4-7+ words (longer, different from Task 2)
-   - Task 4: 5-10+ words (longer or different structure from Task 3)
-   - Task 5: 4-7+ words per template line (final production)
-8. **NO PHRASE REPETITION:** Do NOT use the same phrases word-for-word across tasks. Each task must build on previous tasks with longer or differently structured phrases.
-9. Match phase level based on day number
-10. **Methodology compliance: 100%** - Every requirement must be met exactly as specified
+2. **START WITH FINAL RESULT** - define it first, then build everything else
+3. Task 1: **13-15 vocabulary cards** (extracted from final result + supporting + intermediate words)
+4. Task 2: Exactly 6 blocks with MANDATORY hints in EVERY block:
+   - block_1_build: 2-3 words + hints
+   - block_2_transform: 3-4 words + hints
+   - block_3_answers: 4-5 words + MANDATORY hints (minimum 1-2)
+   - block_4_equivalence: Variations + hints
+   - block_5_reinforcement: 6-7 words + hints
+   - block_6_speak: FINAL RESULT sentences (exact from Step 1)
+5. Task 3: Exactly 3 listening items, 6-8+ words each
+6. Task 4: Exactly 3 attention items, 7-10+ words each
+7. Task 5: FINAL RESULT template (same as block_6)
+8. **MANDATORY complexity progression:**
+   - block_1: 2-3 words
+   - block_2: 3-4 words
+   - block_3: 4-5 words
+   - block_5: 6-7 words
+   - block_6: FINAL RESULT (4-8 words per sentence)
+   - Task 3: 6-8+ words
+   - Task 4: 7-10+ words
+   - Task 5: FINAL RESULT (same as block_6)
+9. **ALL NEW WORDS** from intermediate examples must be added to Task 1
+10. **ALL BLOCKS** must have hints explaining meaning and new words
+11. Match phase level: ${phaseDescription}
+12. **Methodology compliance: 100%** - Every requirement must be met exactly as specified
 
 **Return ONLY valid JSON object matching the platform structure. No markdown, no explanations.
 
