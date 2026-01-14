@@ -262,6 +262,55 @@ export async function POST(
               task.type = 'listening_comprehension';
             }
             
+            // Normalize Task 5 (writing) structure to match frontend expectations
+            if (task.type === 'writing_optional' && task.task_id === 5) {
+              // Normalize instruction: convert { ru: "...", en: "..." } to { text: { ru: "...", en: "..." } }
+              if (task.instruction && typeof task.instruction === 'object' && !task.instruction.text) {
+                if (task.instruction.ru || task.instruction.en) {
+                  task.instruction = {
+                    text: {
+                      ru: task.instruction.ru || '',
+                      en: task.instruction.en || ''
+                    }
+                  };
+                }
+              }
+              
+              // Normalize template: convert array of objects to array of strings
+              if (task.main_task && Array.isArray(task.main_task.template)) {
+                const templateArray = task.main_task.template;
+                // Check if template is array of objects (new format) or strings (old format)
+                if (templateArray.length > 0 && typeof templateArray[0] === 'object') {
+                  // Convert [{ type: "text", content: "..." }, { type: "input", placeholder: "..." }] to strings
+                  task.main_task.template = templateArray.map((item: any) => {
+                    if (item.type === 'text') {
+                      return item.content || '';
+                    } else if (item.type === 'input') {
+                      return '___';
+                    }
+                    return '';
+                  }).filter((s: string) => s.length > 0);
+                }
+              }
+              
+              // Normalize example: convert { text: "...", show_button: true } to { content: ["..."], show_by_button: true, button_text: { ru: "...", en: "..." } }
+              if (task.example && typeof task.example === 'object') {
+                if (task.example.text && !task.example.content) {
+                  // Convert single text string to array
+                  task.example.content = [task.example.text];
+                }
+                if (task.example.show_button !== undefined && task.example.show_by_button === undefined) {
+                  task.example.show_by_button = task.example.show_button;
+                }
+                if (!task.example.button_text) {
+                  task.example.button_text = {
+                    ru: 'Показать пример',
+                    en: 'Show example'
+                  };
+                }
+              }
+            }
+            
             return task;
           })
           .sort((a: any, b: any) => (a.task_id || 0) - (b.task_id || 0)); // Sort by task_id
