@@ -681,10 +681,10 @@ function OverviewPageContent() {
                         style={{
                           backgroundColor: levelBackgroundColor,
                           borderRadius: '12px',
-                          padding: isExpanded ? '12px 16px' : '12px 16px',
-                          width: isExpanded ? 'auto' : '100px',
-                          minWidth: '100px',
-                          height: '100px',
+                          padding: isExpanded ? '12px 16px' : '10px 13px',
+                          width: isExpanded ? 'auto' : '80px',
+                          minWidth: '80px',
+                          height: '80px',
                           display: 'flex',
                           flexDirection: isExpanded ? 'row' : 'column',
                           alignItems: isExpanded ? 'center' : 'center',
@@ -694,6 +694,7 @@ function OverviewPageContent() {
                           flexShrink: 0,
                           gap: isExpanded ? '12px' : '0',
                         }}
+                        className="md:h-[100px] md:w-[100px] md:min-w-[100px] md:p-[12px_16px] hover:opacity-90"
                         onClick={() => {
                           const newExpanded = new Set(expandedLevels);
                           if (newExpanded.has(level.id)) {
@@ -703,7 +704,6 @@ function OverviewPageContent() {
                           }
                           setExpandedLevels(newExpanded);
                         }}
-                        className="hover:opacity-90"
                       >
                         {/* Level Number and Title - Always visible */}
                         <div className="flex flex-col items-center flex-shrink-0">
@@ -826,9 +826,10 @@ function OverviewPageContent() {
                               })
                             ) : (
                               <div
+                                className="md:w-[70px] md:h-[70px]"
                                 style={{
-                                  width: '70px',
-                                  height: '70px',
+                                  width: '56px',
+                                  height: '56px',
                                   borderRadius: '8px',
                                   backgroundColor: 'rgba(255, 255, 255, 0.2)',
                                   border: '1px solid rgba(255, 255, 255, 0.3)',
@@ -866,10 +867,10 @@ function OverviewPageContent() {
                         style={{
                           backgroundColor: levelBackgroundColor,
                           borderRadius: '12px',
-                          padding: isExpanded ? '12px 16px' : '12px 16px',
-                          width: isExpanded ? 'auto' : '100px',
-                          minWidth: '100px',
-                          height: '100px',
+                          padding: isExpanded ? '12px 16px' : '10px 13px',
+                          width: isExpanded ? 'auto' : '80px',
+                          minWidth: '80px',
+                          height: '80px',
                           display: 'flex',
                           flexDirection: isExpanded ? 'row' : 'column',
                           alignItems: isExpanded ? 'center' : 'center',
@@ -879,6 +880,7 @@ function OverviewPageContent() {
                           flexShrink: 0,
                           gap: isExpanded ? '12px' : '0',
                         }}
+                        className="md:h-[100px] md:w-[100px] md:min-w-[100px] md:p-[12px_16px] hover:opacity-90"
                         onClick={() => {
                           const newExpanded = new Set(expandedLevels);
                           if (newExpanded.has('no-level')) {
@@ -888,7 +890,6 @@ function OverviewPageContent() {
                           }
                           setExpandedLevels(newExpanded);
                         }}
-                        className="hover:opacity-90"
                       >
                         <span 
                           className="text-xs font-medium flex-shrink-0"
