@@ -19,6 +19,12 @@ function LessonEditorContent() {
   const [lessonTitle, setLessonTitle] = useState<{ ru: string; en: string; pt: string }>({ ru: '', en: '', pt: '' });
   const [lessonSubtitle, setLessonSubtitle] = useState<{ ru: string; en: string; pt: string }>({ ru: '', en: '', pt: '' });
   const [isGeneratingAllAudio, setIsGeneratingAllAudio] = useState(false);
+  const [showGenerateModal, setShowGenerateModal] = useState(false);
+  const [generateTopicRu, setGenerateTopicRu] = useState('');
+  const [generateTopicEn, setGenerateTopicEn] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generateProgress, setGenerateProgress] = useState({ step: '', progress: 0 });
+  const [generateError, setGenerateError] = useState('');
 
   useEffect(() => {
     if (lessonId) {
@@ -56,6 +62,71 @@ function LessonEditorContent() {
       console.error('Error loading lesson:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGenerateLesson = async () => {
+    if (!generateTopicRu.trim() || !generateTopicEn.trim()) {
+      alert('Пожалуйста, заполните обе темы (RU и EN)');
+      return;
+    }
+
+    setIsGenerating(true);
+    setGenerateError('');
+    setGenerateProgress({ step: 'Загрузка методологий...', progress: 10 });
+
+    try {
+      // Simulate progress stages
+      const progressStages = [
+        { step: 'Загрузка методологий...', progress: 10 },
+        { step: 'Получение примера урока...', progress: 25 },
+        { step: 'Подготовка промпта...', progress: 40 },
+        { step: 'Генерация урока с помощью AI...', progress: 60 },
+        { step: 'Проверка и валидация...', progress: 80 },
+        { step: 'Сохранение урока...', progress: 95 },
+      ];
+
+      for (const stage of progressStages) {
+        setGenerateProgress(stage);
+        await new Promise(resolve => setTimeout(resolve, 300));
+      }
+
+      const response = await fetch(`/api/admin/lessons/${lessonId}/generate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          topic_ru: generateTopicRu.trim(),
+          topic_en: generateTopicEn.trim(),
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+        throw new Error(errorData.error || 'Failed to generate lesson');
+      }
+
+      const data = await response.json();
+      
+      if (data.success) {
+        setGenerateProgress({ step: 'Генерация завершена!', progress: 100 });
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // Reload lesson to show new content
+        await loadLesson();
+        
+        setShowGenerateModal(false);
+        setGenerateTopicRu('');
+        setGenerateTopicEn('');
+        alert('Урок успешно сгенерирован!');
+      } else {
+        throw new Error(data.error || 'Failed to generate lesson');
+      }
+    } catch (err: any) {
+      console.error('Error generating lesson:', err);
+      setGenerateError(err.message || 'Ошибка при генерации урока');
+      setGenerateProgress({ step: '', progress: 0 });
+    } finally {
+      setIsGenerating(false);
     }
   };
 
@@ -669,6 +740,14 @@ function LessonEditorContent() {
               {!editingLesson && (
                 <>
                   <button
+                    onClick={() => setShowGenerateModal(true)}
+                    disabled={isGenerating}
+                    className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                    title="Сгенерировать урок с помощью AI"
+                  >
+                    🤖 Сгенерировать урок
+                  </button>
+                  <button
                     onClick={handleGenerateAllAudio}
                     disabled={isGeneratingAllAudio}
                     className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
@@ -960,6 +1039,185 @@ function LessonEditorContent() {
           onClose={() => setShowTaskTypeModal(false)}
         />
       )}
+
+      {/* Generate Lesson Modal */}
+      {showGenerateModal && lesson && (
+        <GenerateLessonModal
+          lessonDay={lesson.day_number || 1}
+          topicRu={generateTopicRu}
+          topicEn={generateTopicEn}
+          onTopicRuChange={setGenerateTopicRu}
+          onTopicEnChange={setGenerateTopicEn}
+          onGenerate={handleGenerateLesson}
+          onClose={() => {
+            setShowGenerateModal(false);
+            setGenerateTopicRu('');
+            setGenerateTopicEn('');
+            setGenerateError('');
+            setGenerateProgress({ step: '', progress: 0 });
+          }}
+          isGenerating={isGenerating}
+          progress={generateProgress}
+          error={generateError}
+        />
+      )}
+    </div>
+  );
+}
+
+// Generate Lesson Modal Component
+function GenerateLessonModal({
+  lessonDay,
+  topicRu,
+  topicEn,
+  onTopicRuChange,
+  onTopicEnChange,
+  onGenerate,
+  onClose,
+  isGenerating,
+  progress,
+  error,
+}: {
+  lessonDay: number;
+  topicRu: string;
+  topicEn: string;
+  onTopicRuChange: (value: string) => void;
+  onTopicEnChange: (value: string) => void;
+  onGenerate: () => void;
+  onClose: () => void;
+  isGenerating: boolean;
+  progress: { step: string; progress: number };
+  error: string;
+}) {
+  // Determine phase based on day number
+  const getPhase = (day: number): string => {
+    if (day <= 10) return 'A1';
+    if (day <= 30) return 'A2';
+    if (day <= 50) return 'B1';
+    return 'B2';
+  };
+
+  const phase = getPhase(lessonDay);
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+        <div className="p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-gray-900">🤖 Сгенерировать урок</h2>
+            <button
+              onClick={onClose}
+              disabled={isGenerating}
+              className="text-gray-400 hover:text-gray-600 text-2xl font-bold disabled:opacity-50"
+            >
+              &times;
+            </button>
+          </div>
+
+          {/* Lesson Info */}
+          <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">День урока</label>
+                <input
+                  type="text"
+                  value={lessonDay}
+                  disabled
+                  className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-lg text-gray-600"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Фаза курса</label>
+                <input
+                  type="text"
+                  value={phase}
+                  disabled
+                  className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-lg text-gray-600"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Topic Inputs */}
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Тема урока (RU) *
+            </label>
+            <input
+              type="text"
+              value={topicRu}
+              onChange={(e) => onTopicRuChange(e.target.value)}
+              disabled={isGenerating}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg disabled:bg-gray-100 disabled:cursor-not-allowed"
+              placeholder="Например: В магазине"
+            />
+          </div>
+
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Тема урока (EN) *
+            </label>
+            <input
+              type="text"
+              value={topicEn}
+              onChange={(e) => onTopicEnChange(e.target.value)}
+              disabled={isGenerating}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg disabled:bg-gray-100 disabled:cursor-not-allowed"
+              placeholder="For example: In the shop"
+            />
+          </div>
+
+          {/* Progress Bar */}
+          {isGenerating && progress.step && (
+            <div className="mb-6">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-gray-700">{progress.step}</span>
+                <span className="text-sm text-gray-500">{progress.progress}%</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div
+                  className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                  style={{ width: `${progress.progress}%` }}
+                ></div>
+              </div>
+            </div>
+          )}
+
+          {/* Error Message */}
+          {error && (
+            <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+              <strong>Ошибка:</strong> {error}
+            </div>
+          )}
+
+          {/* Actions */}
+          <div className="flex gap-3 justify-end">
+            <button
+              onClick={onClose}
+              disabled={isGenerating}
+              className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Отмена
+            </button>
+            <button
+              onClick={onGenerate}
+              disabled={isGenerating || !topicRu.trim() || !topicEn.trim()}
+              className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            >
+              {isGenerating ? (
+                <>
+                  <span className="animate-spin">⏳</span>
+                  Генерация...
+                </>
+              ) : (
+                <>
+                  🔄 Генерировать урок
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

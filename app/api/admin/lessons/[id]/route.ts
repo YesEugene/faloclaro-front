@@ -118,6 +118,85 @@ export async function PUT(
       );
     }
 
+    // Auto-extract words from Task 1 (vocabulary) and update global vocabulary
+    if (updateData.yaml_content && updateData.yaml_content.tasks) {
+      try {
+        const tasks = updateData.yaml_content.tasks;
+        const vocabularyTask = tasks.find((t: any) => t.type === 'vocabulary' && t.task_id === 1);
+        
+        if (vocabularyTask) {
+          const words: string[] = [];
+          
+          // Extract words from cards
+          if (vocabularyTask.content && vocabularyTask.content.cards) {
+            vocabularyTask.content.cards.forEach((card: any) => {
+              if (card.word && typeof card.word === 'string') {
+                words.push(card.word.trim());
+              }
+            });
+          }
+          
+          // Extract words from blocks (if structure uses blocks)
+          if (vocabularyTask.blocks) {
+            Object.values(vocabularyTask.blocks).forEach((block: any) => {
+              if (block.content && block.content.cards) {
+                block.content.cards.forEach((card: any) => {
+                  if (card.word && typeof card.word === 'string') {
+                    words.push(card.word.trim());
+                  }
+                });
+              }
+            });
+          }
+
+          // Update global vocabulary if we found words
+          if (words.length > 0) {
+            const supabaseAdmin = getSupabaseAdmin();
+            
+            // Get current vocabulary
+            const { data: vocabData, error: vocabError } = await supabaseAdmin
+              .from('admin_methodologies')
+              .select('content')
+              .eq('type', 'vocabulary')
+              .single();
+
+            if (!vocabError && vocabData) {
+              try {
+                const vocabContent = typeof vocabData.content === 'string' 
+                  ? JSON.parse(vocabData.content) 
+                  : vocabData.content;
+                
+                const usedWords = new Set(vocabContent.used_words || []);
+                
+                // Add new words
+                words.forEach(word => {
+                  if (word && word.length > 0) {
+                    usedWords.add(word);
+                  }
+                });
+
+                // Update vocabulary
+                await supabaseAdmin
+                  .from('admin_methodologies')
+                  .update({
+                    content: JSON.stringify({ used_words: Array.from(usedWords).sort() }),
+                    updated_at: new Date().toISOString(),
+                  })
+                  .eq('type', 'vocabulary');
+
+                console.log(`✅ Updated global vocabulary with ${words.length} new words`);
+              } catch (parseError) {
+                console.error('Error parsing vocabulary:', parseError);
+              }
+            }
+          }
+        }
+      } catch (extractError) {
+        // Don't fail the request if word extraction fails
+        console.error('Error extracting words from lesson:', extractError);
+      }
+    }
+
     return NextResponse.json({
       success: true,
       lesson: data,
