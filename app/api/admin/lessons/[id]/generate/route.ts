@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseAdmin } from '@/lib/supabase-admin';
+import { buildLessonGenerationPrompt } from '@/lib/lesson-generation-prompt';
 import OpenAI from 'openai';
 
 const openai = new OpenAI({
@@ -135,8 +136,8 @@ export async function POST(
       // Continue without example if not found
     }
 
-    // Step 5: Build system prompt
-    const systemPrompt = buildSystemPrompt(
+    // Step 5: Build system prompt using the new detailed prompt builder
+    const systemPrompt = buildLessonGenerationPrompt(
       courseMethodology,
       lessonMethodology,
       usedWords,
@@ -192,6 +193,24 @@ export async function POST(
           throw new Error('Lesson must have exactly 5 tasks');
         }
 
+        // Validate Task 2 has exactly 6 blocks
+        const task2 = generatedLesson.tasks.find((t: any) => t.task_id === 2 && t.type === 'rules');
+        if (task2 && (!task2.blocks || !Array.isArray(task2.blocks) || task2.blocks.length !== 6)) {
+          throw new Error('Task 2 (Rules) must have exactly 6 blocks');
+        }
+
+        // Validate Task 3 has exactly 3 items
+        const task3 = generatedLesson.tasks.find((t: any) => t.task_id === 3 && (t.type === 'listening' || t.type === 'listening_comprehension'));
+        if (task3 && (!task3.items || !Array.isArray(task3.items) || task3.items.length !== 3)) {
+          throw new Error('Task 3 (Listening) must have exactly 3 items');
+        }
+
+        // Validate Task 4 has exactly 3 items
+        const task4 = generatedLesson.tasks.find((t: any) => t.task_id === 4 && t.type === 'attention');
+        if (task4 && (!task4.items || !Array.isArray(task4.items) || task4.items.length !== 3)) {
+          throw new Error('Task 4 (Attention) must have exactly 3 items');
+        }
+
         // Success!
         break;
       } catch (error: any) {
@@ -244,71 +263,6 @@ export async function POST(
   }
 }
 
-// Build system prompt
-function buildSystemPrompt(
-  courseMethodology: string,
-  lessonMethodology: string,
-  usedWords: string[],
-  dayNumber: number,
-  phase: string,
-  topicRu: string,
-  topicEn: string,
-  exampleLesson: any
-): string {
-  const exampleJson = exampleLesson ? JSON.stringify(exampleLesson, null, 2) : 'No example available';
-
-  return `You are an AI lesson generator for FaloClaro, a Portuguese language learning course.
-
-## COURSE METHODOLOGY
-${courseMethodology}
-
-## LESSON METHODOLOGY
-${lessonMethodology}
-
-## ALREADY USED WORDS (DO NOT USE THESE)
-${usedWords.length > 0 ? usedWords.join(', ') : 'None yet'}
-
-## LESSON PARAMETERS
-- Day: ${dayNumber}
-- Phase: ${phase}
-- Topic (RU): ${topicRu}
-- Topic (EN): ${topicEn}
-
-## PLATFORM STRUCTURE
-
-Each lesson must have exactly 5 tasks:
-
-1. **TASK 1 - Vocabulary (type: "vocabulary")**
-   - Contains cards with: word (PT), word_translation_ru, word_translation_en, transcription (optional), example_sentence (PT), sentence_translation_ru, sentence_translation_en
-   - Structure: { task_id: 1, type: "vocabulary", content: { cards: [...] }, ui: {...}, completion_rule: "..." }
-
-2. **TASK 2 - Rules (type: "rules")**
-   - Contains blocks: explanation, comparison, reinforcement, speak_out_loud
-   - Each block can have examples, hints, tasks, etc.
-   - Structure: { task_id: 2, type: "rules", blocks: [...] }
-
-3. **TASK 3 - Listening (type: "listening")**
-   - Contains items with: audio_text (PT), question (RU/EN), options (PT), correct answer
-   - Structure: { task_id: 3, type: "listening", items: [...] }
-
-4. **TASK 4 - Attention (type: "attention")**
-   - Similar to listening but with attention checking
-   - Structure: { task_id: 4, type: "attention", items: [...] }
-
-5. **TASK 5 - Writing (type: "writing")**
-   - Contains template forms and practice
-   - Structure: { task_id: 5, type: "writing", main_task: { format: "...", template: [...] } }
-
-## EXAMPLE LESSON (Day 4)
-${exampleJson.substring(0, 5000)}${exampleJson.length > 5000 ? '...' : ''}
-
-## YOUR TASK
-
-Generate a complete lesson JSON matching the structure above:
-- Use ONLY words NOT in the used_words list
-- Match the phase level (${phase})
-- Be creative - vary the number of blocks, examples, items
-- Return ONLY valid JSON object, no markdown, no explanations
-- The JSON must be parseable and valid`;
-}
+// Note: buildSystemPrompt function has been moved to lib/lesson-generation-prompt.ts
+// This function is kept for backward compatibility but now uses the new prompt builder
 
