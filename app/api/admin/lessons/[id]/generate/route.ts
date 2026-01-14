@@ -302,7 +302,29 @@ export async function POST(
       throw lastError || new Error('Failed to generate lesson');
     }
 
-    // Step 7: Update lesson in database
+    // Step 7: Ensure tasks array is at top level (not nested in day)
+    // Frontend expects: yaml_content.tasks (not yaml_content.day.tasks)
+    if (generatedLesson.day && generatedLesson.day.tasks && !generatedLesson.tasks) {
+      generatedLesson.tasks = generatedLesson.day.tasks;
+    }
+    
+    // Ensure tasks array exists and is valid
+    if (!generatedLesson.tasks || !Array.isArray(generatedLesson.tasks)) {
+      throw new Error('Generated lesson must have a tasks array at top level');
+    }
+    
+    // Log final structure for debugging
+    console.log('✅ Final lesson structure:', {
+      hasTasks: !!generatedLesson.tasks,
+      tasksCount: generatedLesson.tasks.length,
+      tasks: generatedLesson.tasks.map((t: any) => ({
+        task_id: t.task_id,
+        type: t.type,
+        hasTitle: !!t.title
+      }))
+    });
+
+    // Step 8: Update lesson in database
     const { data: updatedLesson, error: updateError } = await supabase
       .from('lessons')
       .update({
