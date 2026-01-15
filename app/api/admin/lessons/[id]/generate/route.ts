@@ -105,6 +105,193 @@ function dedupeTask1CardsInPlace(lesson: any): { removed: number } {
   return { removed };
 }
 
+function getTask1FreshnessStats(lesson: any, usedWords: string[]) {
+  const cards = ensureTask1CardsArray(lesson);
+  const used = new Set((usedWords || []).map(normalizeWordForComparison).filter(Boolean));
+  const normalizedWords = cards
+    .map((c: any) => normalizeWordForComparison(typeof c?.word === 'string' ? c.word : ''))
+    .filter(Boolean);
+  const overlaps = Array.from(new Set(normalizedWords.filter((w) => used.has(w))));
+  const newCount = normalizedWords.length - overlaps.length;
+  return { newCount, overlaps, total: normalizedWords.length };
+}
+
+const OVERLAP_KEEP_WHITELIST = new Set(
+  [
+    // very common function words / basic verbs that are OK to overlap as "supporting"
+    'eu',
+    'voce',
+    'você',
+    'e',
+    'de',
+    'em',
+    'a',
+    'o',
+    'um',
+    'uma',
+    'nao',
+    'não',
+    'sim',
+    'por',
+    'para',
+    'com',
+    'sou',
+    'estou',
+    'ser',
+    'estar',
+    'muito',
+  ].map(normalizeWordForComparison)
+);
+
+async function replaceOverlapsToMeetFreshnessOrThrow(opts: {
+  lesson: any;
+  usedWords: string[];
+  topicRu: string;
+  topicEn: string;
+  phase: string;
+}) {
+  const cards = ensureTask1CardsArray(opts.lesson);
+  if (!cards.length) return;
+
+  const used = new Set((opts.usedWords || []).map(normalizeWordForComparison).filter(Boolean));
+  const wordNorms = cards.map((c: any) => normalizeWordForComparison(typeof c?.word === 'string' ? c.word : ''));
+
+  // Gather overlaps (indices) in task 1
+  const overlapIdxs: number[] = [];
+  for (let i = 0; i < wordNorms.length; i++) {
+    const wn = wordNorms[i];
+    if (wn && used.has(wn)) overlapIdxs.push(i);
+  }
+  if (overlapIdxs.length === 0) return;
+
+  // Choose up to 5 overlaps to KEEP (prefer whitelist)
+  const keepIdxs: number[] = [];
+  for (const idx of overlapIdxs) {
+    if (keepIdxs.length >= 5) break;
+    if (OVERLAP_KEEP_WHITELIST.has(wordNorms[idx])) keepIdxs.push(idx);
+  }
+  for (const idx of overlapIdxs) {
+    if (keepIdxs.length >= 5) break;
+    if (!keepIdxs.includes(idx)) keepIdxs.push(idx);
+  }
+
+  const keepSet = new Set(keepIdxs);
+  const overlapsToReplace = overlapIdxs.filter((i) => !keepSet.has(i));
+
+  // Compute how many replacements we need to satisfy BOTH:
+  // - overlaps <= 5
+  // - newCount >= 10
+  const overlapsAfterCap = Math.min(overlapIdxs.length, 5);
+  const newCountNow = cards.length - overlapIdxs.length;
+  const minReplaceForNewCount = Math.max(0, 10 - newCountNow);
+  const minReplaceForOverlapCap = Math.max(0, overlapIdxs.length - overlapsAfterCap);
+  const replacementsNeeded = Math.max(minReplaceForNewCount, minReplaceForOverlapCap);
+
+  if (replacementsNeeded <= 0) return;
+
+  // Ensure we replace enough indices
+  let targets = overlapsToReplace.slice(0, replacementsNeeded);
+  if (targets.length < replacementsNeeded) {
+    // If overlapsToReplace is short (shouldn't happen), include extra from keepIdxs end
+    const extra = keepIdxs.slice(0).reverse().filter((i) => !targets.includes(i)).slice(0, replacementsNeeded - targets.length);
+    targets = targets.concat(extra);
+  }
+
+  // Forbidden includes: all usedWords + all current Task 1 words except those we are replacing
+  const forbidden = new Set<string>((opts.usedWords || []).map(normalizeWordForComparison).filter(Boolean));
+  for (let i = 0; i < cards.length; i++) {
+    if (targets.includes(i)) continue;
+    const wn = normalizeWordForComparison(typeof cards[i]?.word === 'string' ? cards[i].word : '');
+    if (wn) forbidden.add(wn);
+  }
+
+  const allowedWordsForExamples = cards
+    .filter((_: any, i: number) => !targets.includes(i))
+    .map((c: any) => (typeof c?.word === 'string' ? c.word.trim() : ''))
+    .filter(Boolean)
+    .join(', ');
+
+  let lastErr: any = null;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      const candidateCount = Math.min(20, Math.max(replacementsNeeded + 4, replacementsNeeded * 4));
+      const completion = await openai.chat.completions.create({
+        model: 'gpt-4o-mini',
+        messages: [
+          {
+            role: 'system',
+            content: 'Return ONLY valid JSON. No markdown, no extra text.',
+          },
+          {
+            role: 'user',
+            content:
+              `Task 1 vocabulary violates freshness.\nWe need to REPLACE ${replacementsNeeded} overlapping cards with NEW unique words.\n\nGenerate ${candidateCount} CANDIDATE vocabulary cards (we will pick ${replacementsNeeded}).\n- phase: ${opts.phase}\n- topic_ru: "${opts.topicRu}"\n- topic_en: "${opts.topicEn}"\n\nSTRICT RULES:\n- Return ONLY a JSON array of cards.\n- All candidate card.word MUST be UNIQUE.\n- Each card MUST have fields: word, transcription (IPA in square brackets), example_sentence (PT), sentence_translation_ru, sentence_translation_en, word_translation_ru, word_translation_en.\n- card.word MUST NOT match any forbidden word (case/diacritics-insensitive).\n- Forbidden words: ${Array.from(forbidden).join(', ')}\n- For example_sentence, DO NOT introduce new vocabulary if possible: use ONLY words from this allowed list plus the new word: ${allowedWordsForExamples}\n\nReturn ONLY the JSON array.`,
+          },
+        ],
+        temperature: 0.25,
+        max_tokens: 2500,
+      });
+
+      let text = completion.choices[0]?.message?.content || '';
+      text = text.replace(/```json\n?/gi, '').replace(/```\n?/g, '').trim();
+      const jsonMatch = text.match(/\[[\s\S]*\]/);
+      if (jsonMatch) text = jsonMatch[0];
+      const arr = parseJsonSafely(text);
+      if (!Array.isArray(arr)) throw new Error('Replacement response is not an array');
+      if (arr.length < replacementsNeeded) throw new Error(`Need at least ${replacementsNeeded} candidate cards, got ${arr.length}`);
+
+      const requiredFields = [
+        'word',
+        'transcription',
+        'example_sentence',
+        'sentence_translation_ru',
+        'sentence_translation_en',
+        'word_translation_ru',
+        'word_translation_en',
+      ];
+
+      const picked: any[] = [];
+      const seen = new Set<string>();
+      for (const c of arr) {
+        if (picked.length >= replacementsNeeded) break;
+        const w = typeof c?.word === 'string' ? c.word.trim() : '';
+        const wn = normalizeWordForComparison(w);
+        if (!wn) continue;
+        if (forbidden.has(wn)) continue;
+        if (seen.has(wn)) continue;
+        let ok = true;
+        for (const f of requiredFields) {
+          if (typeof c?.[f] !== 'string' || !c[f].trim()) {
+            ok = false;
+            break;
+          }
+        }
+        if (!ok) continue;
+        seen.add(wn);
+        forbidden.add(wn);
+        picked.push(c);
+      }
+
+      if (picked.length < replacementsNeeded) {
+        throw new Error(`Too many candidates were forbidden/invalid. Needed ${replacementsNeeded}, picked ${picked.length}.`);
+      }
+
+      // Apply replacements
+      for (let i = 0; i < replacementsNeeded; i++) {
+        cards[targets[i]] = picked[i];
+      }
+
+      return;
+    } catch (e) {
+      lastErr = e;
+    }
+  }
+
+  throw new Error(
+    `Failed to repair vocabulary freshness by replacing overlaps. ${lastErr instanceof Error ? lastErr.message : String(lastErr)}`
+  );
+}
+
 async function topUpVocabularyToMinimumOrThrow(opts: {
   lesson: any;
   usedWords: string[];
@@ -525,6 +712,29 @@ export async function POST(
         // After removing duplicates, top-up again to ensure we still have >= 13.
         const { removed: removedDuplicates } = dedupeTask1CardsInPlace(generatedLesson);
         if (removedDuplicates > 0) {
+          await topUpVocabularyToMinimumOrThrow({
+            lesson: generatedLesson,
+            usedWords: usedWordsForValidation,
+            topicRu: topic_ru,
+            topicEn: topic_en,
+            phase,
+          });
+        }
+
+        // Auto-fix: if OpenAI reused too many global words, replace overlapping cards until we have:
+        // - at least 10 NEW words
+        // - at most 5 overlaps
+        const freshness = getTask1FreshnessStats(generatedLesson, usedWordsForValidation);
+        if (freshness.newCount < 10 || freshness.overlaps.length > 5) {
+          await replaceOverlapsToMeetFreshnessOrThrow({
+            lesson: generatedLesson,
+            usedWords: usedWordsForValidation,
+            topicRu: topic_ru,
+            topicEn: topic_en,
+            phase,
+          });
+          // After replacements, re-dedupe + ensure minimum count
+          dedupeTask1CardsInPlace(generatedLesson);
           await topUpVocabularyToMinimumOrThrow({
             lesson: generatedLesson,
             usedWords: usedWordsForValidation,
