@@ -279,7 +279,7 @@ export async function POST(
       try {
         const retryContext =
           attempt > 0 && lastError
-            ? `\n\nIMPORTANT: Your previous output was INVALID.\nReason: ${lastError.message}\nYou MUST regenerate the ENTIRE lesson JSON.\nCRITICAL: Task 1 vocabulary must be 13-15 UNIQUE cards and MUST NOT contain ANY words from usedWordsList (case-insensitive and accent-insensitive; e.g. "Hoje" vs "hoje" are the same).\nUpdate Tasks 2-5 accordingly to match the new vocabulary.\n`
+            ? `\n\nIMPORTANT: Your previous output was INVALID.\nReason: ${lastError.message}\nYou MUST regenerate the ENTIRE lesson JSON.\n\nCRITICAL FAILURE MODE TO AVOID:\n- Do NOT return a "task shell" (tasks with only task_id/type and empty/missing content/blocks/items).\n- Every task MUST include its full data arrays.\n\nHARD REQUIREMENTS (MUST PASS VALIDATION):\n- Task 1 MUST contain 13–15 cards at: tasks[].content.cards (or CRM blocks that transform into it).\n- Task 2 MUST contain exactly 6 blocks at: tasks[].blocks (with block_id/block_type/content).\n- Task 3 MUST contain items/options (not empty).\n- Task 4 MUST contain items/options + feedback (not empty).\n- Task 5 MUST contain main_task.template (not empty) + example.\n\nSCHEMA HINT (USE THIS SHAPE):\n{\n  \"tasks\": [\n    { \"task_id\": 1, \"type\": \"vocabulary\", \"content\": { \"cards\": [ { \"word\": \"...\", \"transcription\": \"[...]\", \"example_sentence\": \"...\", \"sentence_translation_ru\": \"...\", \"sentence_translation_en\": \"...\", \"word_translation_ru\": \"...\", \"word_translation_en\": \"...\" } ] } },\n    { \"task_id\": 2, \"type\": \"rules\", \"blocks\": [ { \"block_id\": \"block_1_build\", \"block_type\": \"explanation\", \"content\": { \"title\": {\"ru\":\"\",\"en\":\"\"}, \"examples\": [ {\"text\":\"...\"} ], \"hints\": [ {\"ru\":\"\",\"en\":\"\"} ] } } ] },\n    { \"task_id\": 3, \"type\": \"listening\", \"items\": [ { \"audio\": \"...\", \"question\": {\"ru\":\"\",\"en\":\"\"}, \"options\": [ {\"text\": {\"ru\":\"\",\"en\":\"\"}, \"is_correct\": false } ] } ] },\n    { \"task_id\": 4, \"type\": \"attention\", \"items\": [ { \"audio\": \"...\", \"question\": {\"ru\":\"\",\"en\":\"\"}, \"options\": [ {\"text\": {\"ru\":\"\",\"en\":\"\"}, \"is_correct\": false } ], \"feedback\": {\"ru\":\"\",\"en\":\"\"} } ] },\n    { \"task_id\": 5, \"type\": \"writing_optional\", \"instruction\": {\"ru\":\"\",\"en\":\"\"}, \"main_task\": { \"template\": [\"...\"], \"hints\": [\"...\"] }, \"example\": { \"show_by_button\": true, \"button_text\": {\"ru\":\"\",\"en\":\"\"}, \"content\": [\"...\"] } }\n  ]\n}\n`
             : '';
 
         const completion = await openai.chat.completions.create({
@@ -291,7 +291,7 @@ export async function POST(
             },
             {
               role: 'user',
-              content: `Generate a complete lesson JSON for day ${dayNumber}, phase ${phase}, topic "${topic_ru}" / "${topic_en}". Return ONLY valid JSON object, no explanations, no markdown code blocks, no text before or after JSON.${retryContext}`,
+              content: `Generate a complete lesson JSON for day ${dayNumber}, phase ${phase}, topic "${topic_ru}" / "${topic_en}".\n\nCRITICAL:\n- Return a FULL lesson with ALL task content filled.\n- Do NOT return placeholders or empty arrays.\n- Ensure Task 1 has 13–15 cards at tasks[0].content.cards.\n\nReturn ONLY a valid JSON object, no explanations, no markdown code blocks, no text before or after JSON.${retryContext}`,
             },
           ],
           temperature: 0.3,
@@ -331,6 +331,22 @@ export async function POST(
         // Validate structure - be more lenient to avoid blocking valid lessons
         if (!generatedLesson.tasks || !Array.isArray(generatedLesson.tasks)) {
           throw new Error('Lesson must have a tasks array');
+        }
+
+        // Guard: detect "task shell" outputs (tasks exist but contain no actual payload).
+        // We want to trigger retry with a clear error rather than failing later with confusing "0 cards".
+        const hasAnyPayload = generatedLesson.tasks.some((t: any) => {
+          const hasBlocks = Array.isArray(t?.blocks) && t.blocks.length > 0;
+          const hasCards = Array.isArray(t?.content?.cards) && t.content.cards.length > 0;
+          const hasItems = Array.isArray(t?.items) && t.items.length > 0;
+          const hasMainTemplate =
+            Array.isArray(t?.main_task?.template) ? t.main_task.template.length > 0 : typeof t?.main_task?.template === 'string';
+          return hasBlocks || hasCards || hasItems || hasMainTemplate;
+        });
+        if (!hasAnyPayload) {
+          throw new Error(
+            'OpenAI returned task shells without content (no cards/blocks/items). You must output full tasks with populated arrays.'
+          );
         }
 
         // Log tasks before filtering for debugging
