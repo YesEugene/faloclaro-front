@@ -40,30 +40,12 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
     if (!option || typeof option !== 'object') return String(option || '');
     if (typeof option.text === 'string') return option.text;
     if (option.text && typeof option.text === 'object' && !Array.isArray(option.text)) {
-      return option.text.pt || option.text.portuguese || option.text.ru || option.text.en || JSON.stringify(option.text);
+      // IMPORTANT: option.text for listening options is { ru, en } (meaning translations).
+      // Do NOT collapse to ru only; respect current UI language.
+      const translated = getTranslatedText(option.text, appLanguage);
+      return translated || option.text.en || option.text.ru || JSON.stringify(option.text);
     }
     return String(option.text || '');
-  };
-
-  // Normalize items - ensure all options have text as string
-  const normalizeItems = (itemsArray: any[]): any[] => {
-    if (!Array.isArray(itemsArray)) return [];
-    return itemsArray.map(item => {
-      if (!item || typeof item !== 'object') return item;
-      if (item.options && Array.isArray(item.options)) {
-        return {
-          ...item,
-          options: item.options.map((opt: any) => {
-            if (!opt || typeof opt !== 'object') return opt;
-            return {
-              ...opt,
-              text: normalizeOptionText(opt),
-            };
-          }),
-        };
-      }
-      return item;
-    });
   };
 
   // Get items from task - support both old structure (task.items) and new structure (task.blocks[].content.items)
@@ -85,8 +67,8 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
     return items;
   };
   
-  // Normalize items to ensure option.text is always a string
-  const items = normalizeItems(getItemsFromTask(task));
+  // IMPORTANT: Keep original option.text objects (ru/en) so UI can switch languages correctly.
+  const items = getItemsFromTask(task);
 
   // Load saved answers on mount
   const [hasLoadedSavedData, setHasLoadedSavedData] = useState(false);
@@ -244,8 +226,15 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
         const selectedAnswer = answers[index];
         // Check both correct and is_correct fields
         const correctOption = item.options?.find((opt: any) => opt.correct === true || opt.is_correct === true);
-        const correctOptionText = correctOption ? normalizeOptionText(correctOption) : '';
-        return selectedAnswer === correctOptionText;
+        if (!correctOption) return false;
+        const correctTextCurrentLang = normalizeOptionText(correctOption);
+        const correctTextRu = correctOption?.text && typeof correctOption.text === 'object' ? correctOption.text.ru : '';
+        const correctTextEn = correctOption?.text && typeof correctOption.text === 'object' ? correctOption.text.en : '';
+        return (
+          selectedAnswer === correctTextCurrentLang ||
+          (correctTextRu && selectedAnswer === correctTextRu) ||
+          (correctTextEn && selectedAnswer === correctTextEn)
+        );
       }).length;
 
       setLocalIsCompleted(true);
@@ -357,7 +346,9 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
         <div className="space-y-2">
           {item.options?.map((option: any, index: number) => {
             const optionText = normalizeOptionText(option);
-            const isSelected = currentAnswer === optionText;
+            const optionTextRu = option?.text && typeof option.text === 'object' ? option.text.ru : '';
+            const optionTextEn = option?.text && typeof option.text === 'object' ? option.text.en : '';
+            const isSelected = currentAnswer === optionText || (optionTextRu && currentAnswer === optionTextRu) || (optionTextEn && currentAnswer === optionTextEn);
             // Check both correct and is_correct fields
             const isCorrect = option.correct === true || option.is_correct === true;
             const showResultForOption = showResult;

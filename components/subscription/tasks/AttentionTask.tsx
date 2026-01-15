@@ -339,11 +339,8 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
           })}
         </div>
 
-        {/* Show feedback if available */}
-        {showResult && item.options?.find((opt: any) => {
-          const optText = getTranslatedText(opt.text, appLanguage);
-          return (optText === currentAnswer || opt.text === currentAnswer) && opt.feedback;
-        }) && (
+        {/* Show feedback after answer (admin stores feedback on item, not on option) */}
+        {showResult && item.feedback && (
           <div 
             className="rounded-lg p-4 mt-4"
             style={{ 
@@ -354,10 +351,7 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
             }}
           >
             <p className="text-black font-medium">
-              {getTranslatedText(item.options.find((opt: any) => {
-                const optText = getTranslatedText(opt.text, appLanguage);
-                return (optText === currentAnswer || opt.text === currentAnswer) && opt.feedback;
-              })?.feedback, appLanguage)}
+              {getTranslatedText(item.feedback, appLanguage)}
             </p>
           </div>
         )}
