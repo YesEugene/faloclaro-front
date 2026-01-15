@@ -2,11 +2,25 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseAdmin } from '@/lib/supabase-admin';
 import { buildLessonGenerationPrompt } from '@/lib/lesson-generation-prompt';
 import OpenAI from 'openai';
-import idealExampleLesson from '@/lesson-examples/day01-faloclaro-ideal.json';
+import { readFile } from 'node:fs/promises';
+import path from 'node:path';
+
+export const runtime = 'nodejs';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
+
+async function loadIdealExampleLesson(): Promise<any | null> {
+  try {
+    const p = path.join(process.cwd(), 'lesson-examples', 'day01-faloclaro-ideal.json');
+    const raw = await readFile(p, 'utf8');
+    return JSON.parse(raw);
+  } catch (e) {
+    console.error('Failed to load ideal example lesson JSON from repo:', e);
+    return null;
+  }
+}
 
 function normalizeWordForComparison(input: unknown): string {
   if (typeof input !== 'string') return '';
@@ -139,6 +153,9 @@ export async function POST(
     };
 
     const phase = getPhase(dayNumber);
+
+    // Load canonical ideal example lesson (repo file). Used in both default and custom prompts.
+    const idealExampleLesson = await loadIdealExampleLesson();
 
     // Step 3: Load methodologies
     const { data: methodologies, error: methodologiesError } = await supabase
