@@ -210,7 +210,7 @@ function validateVocabularyIsNewOrThrow(generatedLesson: any, usedWords: string[
     );
   }
 
-  const forbidden = new Set((usedWords || []).map(normalizeWordForComparison).filter(Boolean));
+  const used = new Set((usedWords || []).map(normalizeWordForComparison).filter(Boolean));
   const normalized = lessonWords.map(normalizeWordForComparison).filter(Boolean);
 
   // Internal duplicates inside the lesson
@@ -221,16 +221,26 @@ function validateVocabularyIsNewOrThrow(generatedLesson: any, usedWords: string[
     .map(([w]) => w);
 
   // Overlaps with global vocabulary (previous lessons)
-  const overlaps = Array.from(new Set(normalized.filter((w) => forbidden.has(w))));
+  // Methodology rule: at least 10 words must be NEW for this lesson topic (core),
+  // while 3–5 can be supporting words that may overlap with already learned vocabulary.
+  const overlaps = Array.from(new Set(normalized.filter((w) => used.has(w))));
+  const newWordsCount = normalized.length - overlaps.length;
 
-  if (internalDuplicates.length > 0 || overlaps.length > 0) {
+  if (internalDuplicates.length > 0) {
     const details = [
       internalDuplicates.length > 0 ? `Internal duplicates in Task 1: ${internalDuplicates.join(', ')}` : null,
-      overlaps.length > 0 ? `Words already used in previous lessons (forbidden): ${overlaps.join(', ')}` : null,
     ]
       .filter(Boolean)
       .join('. ');
     throw new Error(`Vocabulary uniqueness violation. ${details}`);
+  }
+
+  // Enforce "10 new + up to 5 overlaps"
+  if (newWordsCount < 10 || overlaps.length > 5) {
+    throw new Error(
+      `Vocabulary freshness violation. Task 1 must contain at least 10 NEW words (not in global vocabulary) and may include at most 5 supporting overlaps. ` +
+      `Got new=${newWordsCount}, overlaps=${overlaps.length}. Overlaps: ${overlaps.join(', ')}`
+    );
   }
 }
 
@@ -408,7 +418,7 @@ export async function POST(
       try {
         const retryContext =
           attempt > 0 && lastError
-            ? `\n\nIMPORTANT: Your previous output was INVALID.\nReason: ${lastError.message}\nYou MUST regenerate the ENTIRE lesson JSON.\n\nCRITICAL FAILURE MODE TO AVOID:\n- Do NOT return a "task shell" (tasks with only task_id/type and empty/missing content/blocks/items).\n- Every task MUST include its full data arrays.\n\nHARD REQUIREMENTS (MUST PASS VALIDATION):\n- Task 1 MUST contain 13–15 cards at: tasks[].content.cards (or CRM blocks that transform into it).\n- Task 2 MUST contain exactly 6 blocks at: tasks[].blocks (with block_id/block_type/content).\n- Task 3 MUST contain items/options (not empty).\n- Task 4 MUST contain items/options + feedback (not empty).\n- Task 5 MUST contain main_task.template (not empty) + example.\n\nSCHEMA HINT (USE THIS SHAPE):\n{\n  \"tasks\": [\n    { \"task_id\": 1, \"type\": \"vocabulary\", \"content\": { \"cards\": [ { \"word\": \"...\", \"transcription\": \"[...]\", \"example_sentence\": \"...\", \"sentence_translation_ru\": \"...\", \"sentence_translation_en\": \"...\", \"word_translation_ru\": \"...\", \"word_translation_en\": \"...\" } ] } },\n    { \"task_id\": 2, \"type\": \"rules\", \"blocks\": [ { \"block_id\": \"block_1_build\", \"block_type\": \"explanation\", \"content\": { \"title\": {\"ru\":\"\",\"en\":\"\"}, \"examples\": [ {\"text\":\"...\"} ], \"hints\": [ {\"ru\":\"\",\"en\":\"\"} ] } } ] },\n    { \"task_id\": 3, \"type\": \"listening\", \"items\": [ { \"audio\": \"...\", \"question\": {\"ru\":\"\",\"en\":\"\"}, \"options\": [ {\"text\": {\"ru\":\"\",\"en\":\"\"}, \"is_correct\": false } ] } ] },\n    { \"task_id\": 4, \"type\": \"attention\", \"items\": [ { \"audio\": \"...\", \"question\": {\"ru\":\"\",\"en\":\"\"}, \"options\": [ {\"text\": {\"ru\":\"\",\"en\":\"\"}, \"is_correct\": false } ], \"feedback\": {\"ru\":\"\",\"en\":\"\"} } ] },\n    { \"task_id\": 5, \"type\": \"writing_optional\", \"instruction\": {\"ru\":\"\",\"en\":\"\"}, \"main_task\": { \"template\": [\"...\"], \"hints\": [\"...\"] }, \"example\": { \"show_by_button\": true, \"button_text\": {\"ru\":\"\",\"en\":\"\"}, \"content\": [\"...\"] } }\n  ]\n}\n`
+            ? `\n\nIMPORTANT: Your previous output was INVALID.\nReason: ${lastError.message}\nYou MUST regenerate the ENTIRE lesson JSON.\n\nCRITICAL FAILURE MODE TO AVOID:\n- Do NOT return a "task shell" (tasks with only task_id/type and empty/missing content/blocks/items).\n- Every task MUST include its full data arrays.\n\nHARD REQUIREMENTS (MUST PASS VALIDATION):\n- Task 1 MUST contain 13–15 cards at: tasks[].content.cards (or CRM blocks that transform into it).\n- Task 1 freshness rule: at least 10 cards MUST be NEW (not present in usedWordsList); up to 5 can overlap as supporting words.\n- Task 2 MUST contain exactly 6 blocks at: tasks[].blocks (with block_id/block_type/content).\n- Task 3 MUST contain items/options (not empty).\n- Task 4 MUST contain items/options + feedback (not empty).\n- Task 5 MUST contain main_task.template (not empty) + example.\n\nSCHEMA HINT (USE THIS SHAPE):\n{\n  \"tasks\": [\n    { \"task_id\": 1, \"type\": \"vocabulary\", \"content\": { \"cards\": [ { \"word\": \"...\", \"transcription\": \"[...]\", \"example_sentence\": \"...\", \"sentence_translation_ru\": \"...\", \"sentence_translation_en\": \"...\", \"word_translation_ru\": \"...\", \"word_translation_en\": \"...\" } ] } },\n    { \"task_id\": 2, \"type\": \"rules\", \"blocks\": [ { \"block_id\": \"block_1_build\", \"block_type\": \"explanation\", \"content\": { \"title\": {\"ru\":\"\",\"en\":\"\"}, \"examples\": [ {\"text\":\"...\"} ], \"hints\": [ {\"ru\":\"\",\"en\":\"\"} ] } } ] },\n    { \"task_id\": 3, \"type\": \"listening\", \"items\": [ { \"audio\": \"...\", \"question\": {\"ru\":\"\",\"en\":\"\"}, \"options\": [ {\"text\": {\"ru\":\"\",\"en\":\"\"}, \"is_correct\": false } ] } ] },\n    { \"task_id\": 4, \"type\": \"attention\", \"items\": [ { \"audio\": \"...\", \"question\": {\"ru\":\"\",\"en\":\"\"}, \"options\": [ {\"text\": {\"ru\":\"\",\"en\":\"\"}, \"is_correct\": false } ], \"feedback\": {\"ru\":\"\",\"en\":\"\"} } ] },\n    { \"task_id\": 5, \"type\": \"writing_optional\", \"instruction\": {\"ru\":\"\",\"en\":\"\"}, \"main_task\": { \"template\": [\"...\"], \"hints\": [\"...\"] }, \"example\": { \"show_by_button\": true, \"button_text\": {\"ru\":\"\",\"en\":\"\"}, \"content\": [\"...\"] } }\n  ]\n}\n`
             : '';
 
         const completion = await openai.chat.completions.create({
