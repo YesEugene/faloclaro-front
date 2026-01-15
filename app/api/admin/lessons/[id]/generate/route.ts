@@ -33,9 +33,31 @@ function normalizeWordForComparison(input: unknown): string {
 }
 
 function getTask1VocabularyWords(lesson: any): string[] {
-  const tasks = Array.isArray(lesson?.tasks) ? lesson.tasks : [];
-  const t1 = tasks.find((t: any) => t?.task_id === 1 && t?.type === 'vocabulary');
-  const cards = Array.isArray(t1?.content?.cards) ? t1.content.cards : [];
+  const tasks = Array.isArray(lesson?.tasks)
+    ? lesson.tasks
+    : Array.isArray(lesson?.day?.tasks)
+      ? lesson.day.tasks
+      : [];
+
+  // Be tolerant: OpenAI may omit type or use a different type naming.
+  const t1 =
+    tasks.find((t: any) => t?.task_id === 1) ||
+    tasks.find((t: any) => t?.type === 'vocabulary') ||
+    null;
+
+  // Cards can appear in different shapes:
+  // - t1.content.cards (frontend structure)
+  // - t1.blocks[].content.cards (CRM-like)
+  let cards: any[] = [];
+  if (Array.isArray(t1?.content?.cards)) {
+    cards = t1.content.cards;
+  } else if (Array.isArray(t1?.blocks)) {
+    const listenBlock = t1.blocks.find((b: any) => b?.block_type === 'listen_and_repeat' || b?.block_type === 'vocabulary');
+    if (Array.isArray(listenBlock?.content?.cards)) {
+      cards = listenBlock.content.cards;
+    }
+  }
+
   return cards
     .map((c: any) => (typeof c?.word === 'string' ? c.word.trim() : ''))
     .filter((w: string) => w.length > 0);
@@ -45,7 +67,17 @@ function validateVocabularyIsNewOrThrow(generatedLesson: any, usedWords: string[
   const lessonWords = getTask1VocabularyWords(generatedLesson);
 
   if (lessonWords.length < 13) {
-    throw new Error(`Task 1 vocabulary must have at least 13 cards. Got ${lessonWords.length}.`);
+    // Add minimal debug context to make failures actionable
+    const tasks = Array.isArray(generatedLesson?.tasks) ? generatedLesson.tasks : [];
+    const summary = tasks.map((t: any) => ({
+      task_id: t?.task_id,
+      type: t?.type,
+      hasContentCards: Array.isArray(t?.content?.cards) ? t.content.cards.length : 0,
+      hasBlocks: Array.isArray(t?.blocks) ? t.blocks.length : 0,
+    }));
+    throw new Error(
+      `Task 1 vocabulary must have at least 13 cards. Got ${lessonWords.length}. Tasks summary: ${JSON.stringify(summary)}`
+    );
   }
 
   const forbidden = new Set((usedWords || []).map(normalizeWordForComparison).filter(Boolean));
