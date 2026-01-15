@@ -109,10 +109,12 @@ async function topUpVocabularyToMinimumOrThrow(opts: {
 
   const allowedWordsForExamples = currentWords.join(', ');
 
-  // Try up to 2 quick attempts to get the missing cards.
+  // Try a few quick attempts and be tolerant:
+  // request EXTRA candidates and pick the first valid unique ones.
   let lastErr: any = null;
-  for (let i = 0; i < 2; i++) {
+  for (let i = 0; i < 4; i++) {
     try {
+      const candidateCount = Math.min(10, Math.max(missing + 2, missing * 3));
       const completion = await openai.chat.completions.create({
         model: 'gpt-4o-mini',
         messages: [
@@ -124,7 +126,7 @@ async function topUpVocabularyToMinimumOrThrow(opts: {
           {
             role: 'user',
             content:
-              `We have a Portuguese lesson generator.\n\nTask 1 vocabulary is SHORT by ${missing} cards.\nGenerate EXACTLY ${missing} additional UNIQUE vocabulary cards for:\n- phase: ${opts.phase}\n- topic_ru: "${opts.topicRu}"\n- topic_en: "${opts.topicEn}"\n\nSTRICT RULES:\n- Return ONLY a JSON array of cards (not an object).\n- Each card MUST have fields: word, transcription (IPA in square brackets), example_sentence (PT), sentence_translation_ru, sentence_translation_en, word_translation_ru, word_translation_en.\n- New card.word MUST NOT match any forbidden word (case/diacritics-insensitive).\n- Forbidden words (do not use): ${(opts.usedWords || []).join(', ') || 'None'}\n- Already in this lesson (do not repeat): ${currentWords.join(', ') || 'None'}\n- Prefer SUPPORTING words useful for building phrases (connectors/time/polite words/actions) that fit the topic.\n- For example_sentence, DO NOT introduce new vocabulary if possible: use ONLY words from this allowed list plus the new word: ${allowedWordsForExamples}\n\nReturn ONLY the JSON array.`,
+              `We have a Portuguese lesson generator.\n\nTask 1 vocabulary is SHORT by ${missing} cards.\nGenerate ${candidateCount} CANDIDATE vocabulary cards (we will pick ${missing} valid ones) for:\n- phase: ${opts.phase}\n- topic_ru: "${opts.topicRu}"\n- topic_en: "${opts.topicEn}"\n\nSTRICT RULES:\n- Return ONLY a JSON array of cards (not an object).\n- All candidate card.word values MUST be UNIQUE in the returned array.\n- Each card MUST have fields: word, transcription (IPA in square brackets), example_sentence (PT), sentence_translation_ru, sentence_translation_en, word_translation_ru, word_translation_en.\n- New card.word MUST NOT match any forbidden word (case/diacritics-insensitive).\n- Forbidden words (do not use): ${(opts.usedWords || []).join(', ') || 'None'}\n- Already in this lesson (do not repeat): ${currentWords.join(', ') || 'None'}\n- Prefer SUPPORTING words useful for building phrases (connectors/time/polite words/actions) that fit the topic.\n- For example_sentence, DO NOT introduce new vocabulary if possible: use ONLY words from this allowed list plus the new word: ${allowedWordsForExamples}\n\nReturn ONLY the JSON array.`,
           },
         ],
         temperature: 0.2,
@@ -138,36 +140,48 @@ async function topUpVocabularyToMinimumOrThrow(opts: {
 
       const arr = parseJsonSafely(text);
       if (!Array.isArray(arr)) throw new Error('Top-up response is not a JSON array');
-      if (arr.length !== missing) throw new Error(`Top-up must return exactly ${missing} cards, got ${arr.length}`);
+      if (arr.length < missing) throw new Error(`Top-up must return at least ${missing} candidate cards, got ${arr.length}`);
 
       // Validate and filter (strict)
-      const newCards: any[] = [];
-      for (const c of arr) {
-        const w = typeof c?.word === 'string' ? c.word.trim() : '';
-        if (!w) throw new Error('Top-up card missing word');
-        const wn = normalizeWordForComparison(w);
-        if (!wn) throw new Error('Top-up card has invalid word');
-        if (forbiddenNormalized.has(wn)) throw new Error(`Top-up word is forbidden/duplicate: ${w}`);
-        forbiddenNormalized.add(wn);
+      const picked: any[] = [];
+      const seenInBatch = new Set<string>();
+      const requiredFields = [
+        'transcription',
+        'example_sentence',
+        'sentence_translation_ru',
+        'sentence_translation_en',
+        'word_translation_ru',
+        'word_translation_en',
+      ];
 
-        // Minimal field checks
-        const requiredFields = [
-          'transcription',
-          'example_sentence',
-          'sentence_translation_ru',
-          'sentence_translation_en',
-          'word_translation_ru',
-          'word_translation_en',
-        ];
+      for (const c of arr) {
+        if (picked.length >= missing) break;
+        const w = typeof c?.word === 'string' ? c.word.trim() : '';
+        if (!w) continue;
+        const wn = normalizeWordForComparison(w);
+        if (!wn) continue;
+        if (forbiddenNormalized.has(wn)) continue;
+        if (seenInBatch.has(wn)) continue;
+
+        let ok = true;
         for (const f of requiredFields) {
           if (typeof c?.[f] !== 'string' || !c[f].trim()) {
-            throw new Error(`Top-up card missing required field "${f}" for word "${w}"`);
+            ok = false;
+            break;
           }
         }
-        newCards.push(c);
+        if (!ok) continue;
+
+        seenInBatch.add(wn);
+        forbiddenNormalized.add(wn);
+        picked.push(c);
       }
 
-      cards.push(...newCards);
+      if (picked.length < missing) {
+        throw new Error(`Top-up returned too many forbidden/invalid/duplicate candidates. Needed ${missing}, picked ${picked.length}.`);
+      }
+
+      cards.push(...picked);
       return;
     } catch (e) {
       lastErr = e;
