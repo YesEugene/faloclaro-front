@@ -172,7 +172,44 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
 
   const instructionText = getTranslatedText(task.instruction?.text || task.instruction, appLanguage);
   const mainTask = task.main_task || {};
-  const template = mainTask.template || task.template || [];
+  // Template can be:
+  // - string[] (frontend format)
+  // - parts[] from admin modal: [{ type: 'text', text }, { type: 'input', placeholder }]
+  // Normalize to string[] so we never render objects (React #31).
+  const normalizeTemplateToLines = (tpl: any): string[] => {
+    if (!tpl) return [];
+    if (!Array.isArray(tpl)) return [];
+    if (tpl.length === 0) return [];
+
+    // If it's already string[]
+    if (typeof tpl[0] === 'string') {
+      return tpl.map((x: any) => String(x ?? '')).filter(Boolean);
+    }
+
+    // If it's parts[]
+    if (typeof tpl[0] === 'object') {
+      let s = '';
+      for (const part of tpl) {
+        if (!part || typeof part !== 'object') continue;
+        if (part.type === 'text') {
+          s += String(part.text ?? '');
+        } else if (part.type === 'input') {
+          // Render input as blanks
+          s += '__________';
+        } else {
+          // Unknown part type - ignore safely
+        }
+      }
+      return s
+        .split('\n')
+        .map(line => line.trimEnd())
+        .filter(line => line.trim().length > 0);
+    }
+
+    return [];
+  };
+
+  const template = normalizeTemplateToLines(mainTask.template || task.template || mainTask.template_parts || []);
   const hints = mainTask.hints || task.hints || [];
   const example = task.example || {};
   const alternative = task.alternative || {};

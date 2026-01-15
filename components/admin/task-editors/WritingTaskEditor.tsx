@@ -29,6 +29,38 @@ export default function WritingTaskEditor({ task, onChange, lessonDay }: Writing
   const content = getContent();
   const [showTemplateEditor, setShowTemplateEditor] = useState(false);
 
+  // Helpers to keep admin editing (parts) + frontend rendering (string lines) compatible.
+  const templatePartsToLines = (parts: any[]): string[] => {
+    if (!Array.isArray(parts) || parts.length === 0) return [];
+    let s = '';
+    for (const part of parts) {
+      if (!part || typeof part !== 'object') continue;
+      if (part.type === 'text') s += String(part.text ?? '');
+      else if (part.type === 'input') s += '__________';
+    }
+    return s
+      .split('\n')
+      .map(line => line.trimEnd())
+      .filter(line => line.trim().length > 0);
+  };
+
+  const templateLinesToParts = (lines: any[]): any[] => {
+    if (!Array.isArray(lines) || lines.length === 0) return [];
+    // Represent each line as a text part; keep line breaks so parts->lines is stable.
+    return lines.map((line, idx) => ({
+      type: 'text',
+      text: `${String(line ?? '')}${idx < lines.length - 1 ? '\n' : ''}`,
+    }));
+  };
+
+  const getTemplatePartsForEditor = (): any[] => {
+    const mt = content.main_task || {};
+    if (Array.isArray(mt.template_parts)) return mt.template_parts;
+    if (Array.isArray(mt.template) && mt.template.length > 0 && typeof mt.template[0] === 'object') return mt.template;
+    if (Array.isArray(mt.template) && mt.template.length > 0 && typeof mt.template[0] === 'string') return templateLinesToParts(mt.template);
+    return [];
+  };
+
   const updateTask = (updates: any) => {
     if (task.blocks && Array.isArray(task.blocks)) {
       // New structure: update write_by_hand block
@@ -144,18 +176,99 @@ export default function WritingTaskEditor({ task, onChange, lessonDay }: Writing
         </div>
         {content.main_task?.template && Array.isArray(content.main_task.template) && (
           <div className="mt-4">
-            <p className="text-sm text-gray-600 mb-2">Шаблон ({content.main_task.template.length} частей):</p>
+            <p className="text-sm text-gray-600 mb-2">
+              Шаблон ({Array.isArray(content.main_task?.template_parts) ? content.main_task.template_parts.length : content.main_task.template.length} частей):
+            </p>
             <div className="space-y-2">
-              {content.main_task.template.map((part: any, index: number) => (
-                <div key={index} className="p-2 bg-gray-50 rounded border border-gray-200">
-                  <span className="text-sm text-gray-700">
-                    {part.type === 'text' ? part.text : `[${part.type}]`}
-                  </span>
-                </div>
-              ))}
+              {(Array.isArray(content.main_task?.template_parts) ? content.main_task.template_parts : getTemplatePartsForEditor()).map((part: any, index: number) => (
+                  <div key={index} className="p-2 bg-gray-50 rounded border border-gray-200">
+                    <span className="text-sm text-gray-700">
+                      {part?.type === 'text' ? (part.text || '') : part?.type === 'input' ? '[input]' : '[part]'}
+                    </span>
+                  </div>
+                ))}
             </div>
           </div>
         )}
+      </div>
+
+      {/* Example (Show by button) */}
+      <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold text-gray-900">Пример (по кнопке)</h2>
+          <label className="flex items-center gap-2 text-sm text-gray-700">
+            <input
+              type="checkbox"
+              checked={!!content.example?.show_by_button}
+              onChange={(e) => {
+                updateTask({
+                  example: {
+                    ...(content.example || {}),
+                    show_by_button: e.target.checked,
+                  },
+                });
+              }}
+            />
+            Показывать пример по кнопке
+          </label>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4 mb-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Текст кнопки (RU)</label>
+            <input
+              type="text"
+              value={content.example?.button_text?.ru || ''}
+              onChange={(e) => {
+                updateTask({
+                  example: {
+                    ...(content.example || {}),
+                    button_text: { ...(content.example?.button_text || {}), ru: e.target.value },
+                  },
+                });
+              }}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              placeholder="Показать пример"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Текст кнопки (EN)</label>
+            <input
+              type="text"
+              value={content.example?.button_text?.en || ''}
+              onChange={(e) => {
+                updateTask({
+                  example: {
+                    ...(content.example || {}),
+                    button_text: { ...(content.example?.button_text || {}), en: e.target.value },
+                  },
+                });
+              }}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              placeholder="Show example"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Текст примера (PT) — по строкам (1 строка = 1 предложение)
+          </label>
+          <textarea
+            value={Array.isArray(content.example?.content) ? content.example.content.join('\n') : ''}
+            onChange={(e) => {
+              const lines = e.target.value.split('\n').map(l => l.trimEnd()).filter(l => l.trim().length > 0);
+              updateTask({
+                example: {
+                  ...(content.example || {}),
+                  content: lines,
+                },
+              });
+            }}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg h-32"
+            placeholder={'Olá, chamo-me Ana.\nPrazer em conhecer.\nE você, como se chama?'}
+          />
+        </div>
       </div>
 
       {/* Alternative (Speak Out Loud) */}
@@ -216,12 +329,16 @@ export default function WritingTaskEditor({ task, onChange, lessonDay }: Writing
       {/* Template Editor Modal */}
       {showTemplateEditor && (
         <TemplateEditorModal
-          template={content.main_task?.template || []}
+          template={getTemplatePartsForEditor()}
           onSave={(template) => {
+            const templateLines = templatePartsToLines(template);
             updateTask({
               main_task: {
                 ...content.main_task,
-                template,
+                // Frontend-safe string[] (used by WritingTask)
+                template: templateLines,
+                // Editor-friendly parts[] (used by this admin modal)
+                template_parts: template,
               },
             });
             setShowTemplateEditor(false);
