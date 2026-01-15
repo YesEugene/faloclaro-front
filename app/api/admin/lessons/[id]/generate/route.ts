@@ -292,6 +292,107 @@ async function replaceOverlapsToMeetFreshnessOrThrow(opts: {
   );
 }
 
+function getTaskById(lesson: any, taskId: number): any | null {
+  const tasks = Array.isArray(lesson?.tasks) ? lesson.tasks : [];
+  return tasks.find((t: any) => t?.task_id === taskId) || null;
+}
+
+function needsTasksRepair(lesson: any): { needsRepair: boolean; reasons: string[] } {
+  const reasons: string[] = [];
+  const t2 = getTaskById(lesson, 2);
+  const t3 = getTaskById(lesson, 3);
+  const t4 = getTaskById(lesson, 4);
+  const t5 = getTaskById(lesson, 5);
+
+  if (!t2 || !Array.isArray(t2.blocks) || t2.blocks.length === 0) reasons.push('Task 2 rules blocks missing/empty');
+  if (!t3 || !Array.isArray(t3.items) || t3.items.length === 0) reasons.push('Task 3 listening items missing/empty');
+  if (!t4 || !Array.isArray(t4.items) || t4.items.length === 0) reasons.push('Task 4 attention items missing/empty');
+
+  const instructionText =
+    t5?.instruction?.text?.ru ||
+    t5?.instruction?.text?.en ||
+    t5?.instruction?.ru ||
+    t5?.instruction?.en ||
+    '';
+  if (!t5 || typeof instructionText !== 'string' || instructionText.trim().length === 0) reasons.push('Task 5 instruction missing/empty');
+
+  return { needsRepair: reasons.length > 0, reasons };
+}
+
+async function repairTasks2345OrThrow(opts: {
+  lesson: any;
+  dayNumber: number;
+  phase: string;
+  topicRu: string;
+  topicEn: string;
+}) {
+  const vocabCards = ensureTask1CardsArray(opts.lesson);
+  if (!Array.isArray(vocabCards) || vocabCards.length < 13) {
+    throw new Error('Cannot repair tasks without valid Task 1 vocabulary cards (need >= 13).');
+  }
+
+  const completion = await openai.chat.completions.create({
+    model: 'gpt-4o-mini',
+    messages: [
+      {
+        role: 'system',
+        content:
+          'You are a strict JSON generator for a lesson editor. Return ONLY valid JSON. No markdown, no extra text.',
+      },
+      {
+        role: 'user',
+        content:
+          `We already have Task 1 vocabulary cards for a Portuguese lesson.\n` +
+          `Your job: generate COMPLETE tasks 2, 3, 4, 5 using ONLY these vocabulary cards (do not introduce new Portuguese words).\n\n` +
+          `Context:\n- day: ${opts.dayNumber}\n- phase: ${opts.phase}\n- topic_ru: "${opts.topicRu}"\n- topic_en: "${opts.topicEn}"\n\n` +
+          `Task 1 vocabulary cards (USE ONLY THESE WORDS in PT strings):\n${JSON.stringify(vocabCards, null, 2)}\n\n` +
+          `REQUIREMENTS:\n` +
+          `- Return a JSON object with keys: task2, task3, task4, task5.\n` +
+          `- task2.type MUST be "rules" and MUST have blocks (exactly 6 blocks, each with block_id and block_type and content).\n` +
+          `- task3.type MUST be "listening_comprehension" and MUST have items (exactly 3). Each item has audio (PT), question {ru,en}, options (exactly 3) with text {ru,en} and is_correct boolean (exactly one true).\n` +
+          `- task4.type MUST be "attention" and MUST have items (exactly 3). Each item has audio (PT), question {ru,en}, options (exactly 3) with text {ru,en} and is_correct boolean (exactly one true), and feedback {ru,en}.\n` +
+          `- task5.type MUST be "writing_optional" and MUST include instruction as {\"text\": {\"ru\":\"...\",\"en\":\"...\"}} and main_task.template as string[] with blanks (___). Must include example: {show_by_button, button_text {ru,en}, content string[]}.\n` +
+          `- Do NOT leave arrays empty. Do NOT return placeholders.\n\n` +
+          `Return ONLY the JSON object.`,
+      },
+    ],
+    temperature: 0.35,
+    max_tokens: 6000,
+  });
+
+  let text = completion.choices[0]?.message?.content || '';
+  if (!text) throw new Error('Empty repair response from OpenAI');
+  text = text.replace(/```json\n?/gi, '').replace(/```\n?/g, '').trim();
+  const jsonMatch = text.match(/\{[\s\S]*\}/);
+  if (jsonMatch) text = jsonMatch[0];
+
+  const repaired = parseJsonSafely(text);
+  const task2 = repaired?.task2;
+  const task3 = repaired?.task3;
+  const task4 = repaired?.task4;
+  const task5 = repaired?.task5;
+
+  if (!task2 || !task3 || !task4 || !task5) {
+    throw new Error('Repair output must include task2, task3, task4, task5');
+  }
+
+  // Force correct task_id values
+  task2.task_id = 2;
+  task3.task_id = 3;
+  task4.task_id = 4;
+  task5.task_id = 5;
+
+  // Merge into lesson (replace existing tasks by id)
+  const tasks = Array.isArray(opts.lesson.tasks) ? opts.lesson.tasks : [];
+  const byId = new Map<number, any>();
+  for (const t of tasks) if (t?.task_id) byId.set(t.task_id, t);
+  byId.set(2, task2);
+  byId.set(3, task3);
+  byId.set(4, task4);
+  byId.set(5, task5);
+  opts.lesson.tasks = Array.from(byId.values()).sort((a: any, b: any) => (a.task_id || 0) - (b.task_id || 0));
+}
+
 async function topUpVocabularyToMinimumOrThrow(opts: {
   lesson: any;
   usedWords: string[];
@@ -741,6 +842,19 @@ export async function POST(
             topicRu: topic_ru,
             topicEn: topic_en,
             phase,
+          });
+        }
+
+        // If tasks 2-4 are empty or task 5 instruction missing, auto-repair those tasks
+        const repairCheck = needsTasksRepair(generatedLesson);
+        if (repairCheck.needsRepair) {
+          console.warn('⚠️ Tasks incomplete, running repair for tasks 2-5:', repairCheck.reasons);
+          await repairTasks2345OrThrow({
+            lesson: generatedLesson,
+            dayNumber,
+            phase,
+            topicRu: topic_ru,
+            topicEn: topic_en,
           });
         }
 
