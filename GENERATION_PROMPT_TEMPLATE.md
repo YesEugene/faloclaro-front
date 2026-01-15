@@ -19,6 +19,7 @@
 - `${phase}` - Фаза курса (A1/A2/B1/B2)
 - `${topicRu}` - Тема урока (RU)
 - `${topicEn}` - Тема урока (EN)
+- `${exampleLessonJson}` - Идеальный пример урока (JSON), который OpenAI должен копировать по структуре и качеству
 
 ---
 
@@ -157,6 +158,27 @@ Do not include things like:
 • **Maximum: 15 cards** (10 core theme words + 5 supporting words)
 • All fields are required for each card
 • Always generate the minimum (13 cards) or more, never fewer
+
+---
+
+## PLATFORM CONSTRAINTS (MUST FOLLOW EXACTLY)
+
+- UI languages are **RU/EN only**. Any translated fields must be objects with keys: `{ "ru": "...", "en": "..." }`.
+- Portuguese learning content is stored as plain PT strings in specific fields (e.g., vocabulary.word, examples[].text, items[].audio).
+- Return **ONLY** a single valid JSON object. No markdown, no explanations.
+
+### Task 5 (Writing) - CRITICAL FIELD RULES
+- `instruction` (RU/EN): only explains what to do. **Do NOT paste the 3 PT exercise lines here.**
+- `main_task.template` (string[]): this IS the "Основное задание" shown as 3 PT lines (underscores are just visual blanks)
+- `example`: must use `show_by_button=true`, include `button_text` (RU/EN) and `content` (PT lines)
+- `alternative.instruction` (RU/EN): subtitle shown above the "I said it out loud" button
+- `alternative.action_button.text` (RU/EN): button label (no checkmark required)
+
+---
+
+## IDEAL EXAMPLE LESSON (CANONICAL REFERENCE)
+
+${exampleLessonJson}
 
 ---
 

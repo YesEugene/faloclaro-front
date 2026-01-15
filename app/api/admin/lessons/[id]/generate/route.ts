@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseAdmin } from '@/lib/supabase-admin';
 import { buildLessonGenerationPrompt } from '@/lib/lesson-generation-prompt';
 import OpenAI from 'openai';
+import idealExampleLesson from '@/lesson-examples/day01-faloclaro-ideal.json';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -185,7 +186,8 @@ export async function POST(
         .replace(/\$\{dayNumber\}/g, dayNumber.toString())
         .replace(/\$\{phase\}/g, phase)
         .replace(/\$\{topicRu\}/g, topic_ru)
-        .replace(/\$\{topicEn\}/g, topic_en);
+        .replace(/\$\{topicEn\}/g, topic_en)
+        .replace(/\$\{exampleLessonJson\}/g, JSON.stringify(idealExampleLesson, null, 2));
     } else {
       // Use default prompt builder
       const courseMethodology = methodologies?.find(m => m.type === 'course')?.content || 'Course methodology not set';
@@ -203,24 +205,8 @@ export async function POST(
       }
       usedWordsForValidation = usedWords;
 
-      // Step 4: Get example lesson 4
-      let exampleLesson: any = null;
-      try {
-        const { data: lesson4, error: lesson4Error } = await supabase
-          .from('lessons')
-          .select('yaml_content')
-          .eq('day_number', 4)
-          .single();
-
-        if (!lesson4Error && lesson4) {
-          exampleLesson = typeof lesson4.yaml_content === 'string' 
-            ? JSON.parse(lesson4.yaml_content) 
-            : lesson4.yaml_content;
-        }
-      } catch (e) {
-        console.error('Error loading example lesson 4:', e);
-        // Continue without example if not found
-      }
+      // Step 4: Use canonical ideal example lesson from repo (stable gold-standard reference)
+      const exampleLesson: any = idealExampleLesson || null;
 
       // Step 5: Build system prompt using the new detailed prompt builder
       systemPrompt = buildLessonGenerationPrompt(

@@ -872,8 +872,15 @@ ${phaseDescription}
 • Task 3 must have exactly 3 items
 • Task 4 must have exactly 3 items
 • All audio will be generated automatically (you only provide text)
-• All translations must be in RU and EN
+• UI languages are RU/EN only: translated fields must be objects with keys { ru, en }
 • All Portuguese content must be in PT
+
+### Task 5 (Writing) - CRITICAL FIELD RULES:
+• instruction (RU/EN): only explain what to do. Do NOT paste the 3 PT exercise lines here.
+• main_task.template (string[]): this IS the "Основное задание" shown as 3 PT lines (underscores are just visual blanks)
+• example: must use show_by_button=true, button_text (RU/EN), content (PT lines)
+• alternative.instruction (RU/EN): subtitle before the "I said it out loud" button
+• alternative.action_button.text (RU/EN): button label (no checkmark required)
 
 ### JSON Structure Requirements:
 • Return ONLY valid JSON object
@@ -885,7 +892,7 @@ ${phaseDescription}
 
 ---
 
-## EXAMPLE LESSON (Day 4)
+## IDEAL EXAMPLE LESSON (CANONICAL REFERENCE - COPY THIS QUALITY & STRUCTURE)
 
 ${exampleJson.substring(0, 8000)}${exampleJson.length > 8000 ? '...' : ''}
 
