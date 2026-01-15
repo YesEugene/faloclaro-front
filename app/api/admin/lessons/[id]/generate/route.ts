@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseAdmin } from '@/lib/supabase-admin';
 import { buildLessonGenerationPrompt } from '@/lib/lesson-generation-prompt';
+import { transformLessonForFrontend } from '@/lib/lesson-transformer';
 import OpenAI from 'openai';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
@@ -319,6 +320,13 @@ export async function POST(
         // Some models nest tasks under day.tasks instead of top-level tasks.
         if ((!generatedLesson.tasks || !Array.isArray(generatedLesson.tasks)) && generatedLesson.day?.tasks && Array.isArray(generatedLesson.day.tasks)) {
           generatedLesson.tasks = generatedLesson.day.tasks;
+        }
+        
+        // Accept CRM-style output and transform to frontend structure:
+        // If tasks have task_type + blocks, convert listen_and_repeat → vocabulary content.cards, etc.
+        if (Array.isArray(generatedLesson.tasks) && generatedLesson.tasks.some((t: any) => t?.task_type && Array.isArray(t?.blocks))) {
+          const transformed = transformLessonForFrontend({ yaml_content: generatedLesson });
+          generatedLesson = transformed?.yaml_content || generatedLesson;
         }
         // Validate structure - be more lenient to avoid blocking valid lessons
         if (!generatedLesson.tasks || !Array.isArray(generatedLesson.tasks)) {
