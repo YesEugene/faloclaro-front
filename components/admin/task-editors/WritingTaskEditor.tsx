@@ -121,23 +121,6 @@ export default function WritingTaskEditor({ task, onChange, lessonDay }: Writing
     return lines.join('\n');
   }, [content.main_task]);
 
-  const linesToTemplateParts = (lines: string[]): any[] => {
-    // Split each line by runs of underscores to create input parts.
-    const parts: any[] = [];
-    lines.forEach((line, lineIdx) => {
-      const raw = String(line ?? '');
-      const chunks = raw.split(/_{2,}/g);
-      const blanks = raw.match(/_{2,}/g) || [];
-      for (let i = 0; i < chunks.length; i++) {
-        const textChunk = chunks[i];
-        if (textChunk) parts.push({ type: 'text', text: textChunk });
-        if (i < blanks.length) parts.push({ type: 'input', placeholder: '' });
-      }
-      if (lineIdx < lines.length - 1) parts.push({ type: 'text', text: '\n' });
-    });
-    return parts;
-  };
-
   return (
     <div className="space-y-6">
       {/* Titles */}
@@ -224,9 +207,9 @@ export default function WritingTaskEditor({ task, onChange, lessonDay }: Writing
 
       {/* Main Task */}
       <div className="bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Основное задание (шаблон)</h2>
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Основное задание</h2>
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          Шаблон (PT) — по строкам (используйте подчёркивания для пропусков, например: `Olá, chamo-me _______.`)
+          Текст задания (PT) — по строкам. Подчёркивания — это просто “пропуски”, без специальной логики.
         </label>
         <textarea
           value={templateLinesString}
@@ -235,7 +218,9 @@ export default function WritingTaskEditor({ task, onChange, lessonDay }: Writing
               .split('\n')
               .map(l => l.trimEnd())
               .filter(l => l.trim().length > 0);
-            const parts = linesToTemplateParts(lines);
+            // Keep template_parts as text-only (no parsing into inputs),
+            // so admin stays simple and frontend remains compatible.
+            const parts = templateLinesToParts(lines);
             updateTask({
               main_task: {
                 ...(content.main_task || {}),
