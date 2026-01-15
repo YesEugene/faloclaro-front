@@ -297,6 +297,43 @@ function getTaskById(lesson: any, taskId: number): any | null {
   return tasks.find((t: any) => t?.task_id === taskId) || null;
 }
 
+function normalizeRulesBlockType(blockType: any): string {
+  const bt = typeof blockType === 'string' ? blockType : '';
+  const allowed = new Set(['how_to_say', 'explanation', 'comparison', 'reinforcement', 'speak_out_loud']);
+  if (allowed.has(bt)) return bt;
+  // Common LLM mistakes
+  if (bt === 'content') return 'explanation';
+  if (bt === 'how_to') return 'how_to_say';
+  return 'explanation';
+}
+
+function normalizeRulesBlocksInPlace(task2: any) {
+  if (!task2 || !Array.isArray(task2.blocks)) return;
+  task2.blocks = task2.blocks.map((b: any, idx: number) => {
+    const block = b && typeof b === 'object' ? b : {};
+    const normalizedType = normalizeRulesBlockType(block.block_type || block.type);
+    const content =
+      block.content && typeof block.content === 'object' && !Array.isArray(block.content) ? block.content : {};
+
+    // Unify hint naming: editor expects "hint", but prompt(s) sometimes produce "hints"
+    if (normalizedType === 'how_to_say' || normalizedType === 'explanation') {
+      if (!Array.isArray((content as any).hint) && Array.isArray((content as any).hints)) {
+        (content as any).hint = (content as any).hints;
+        delete (content as any).hints;
+      }
+      if (!Array.isArray((content as any).examples)) (content as any).examples = [];
+      if (!Array.isArray((content as any).hint)) (content as any).hint = [];
+    }
+
+    return {
+      ...block,
+      block_id: block.block_id || block.id || `block_${idx + 1}`,
+      block_type: normalizedType,
+      content,
+    };
+  });
+}
+
 function needsTasksRepair(lesson: any): { needsRepair: boolean; reasons: string[] } {
   const reasons: string[] = [];
   const t2 = getTaskById(lesson, 2);
@@ -304,17 +341,35 @@ function needsTasksRepair(lesson: any): { needsRepair: boolean; reasons: string[
   const t4 = getTaskById(lesson, 4);
   const t5 = getTaskById(lesson, 5);
 
-  if (!t2 || !Array.isArray(t2.blocks) || t2.blocks.length === 0) reasons.push('Task 2 rules blocks missing/empty');
+  if (!t2 || !Array.isArray(t2.blocks) || t2.blocks.length === 0) {
+    reasons.push('Task 2 rules blocks missing/empty');
+  } else {
+    if (t2.blocks.length !== 6) reasons.push(`Task 2 has ${t2.blocks.length} blocks (expected 6)`);
+    const rawTypes = t2.blocks.map((b: any) => b?.block_type || b?.type);
+    const hasContentType = rawTypes.some((t: any) => t === 'content');
+    if (hasContentType) reasons.push('Task 2 has invalid block_type "content"');
+  }
   if (!t3 || !Array.isArray(t3.items) || t3.items.length === 0) reasons.push('Task 3 listening items missing/empty');
   if (!t4 || !Array.isArray(t4.items) || t4.items.length === 0) reasons.push('Task 4 attention items missing/empty');
 
-  const instructionText =
-    t5?.instruction?.text?.ru ||
-    t5?.instruction?.text?.en ||
-    t5?.instruction?.ru ||
-    t5?.instruction?.en ||
-    '';
+  const instructionText = t5?.instruction?.ru || t5?.instruction?.en || t5?.instruction?.text?.ru || t5?.instruction?.text?.en || '';
   if (!t5 || typeof instructionText !== 'string' || instructionText.trim().length === 0) reasons.push('Task 5 instruction missing/empty');
+
+  const templateOk =
+    Array.isArray(t5?.main_task?.template) &&
+    t5.main_task.template.length > 0 &&
+    t5.main_task.template.every((l: any) => typeof l === 'string' && l.trim().length > 0);
+  if (!templateOk) reasons.push('Task 5 main_task.template missing/invalid');
+
+  const exampleContent = t5?.example?.content;
+  const exampleOk =
+    t5?.example?.show_by_button === true &&
+    typeof t5?.example?.button_text?.ru === 'string' &&
+    typeof t5?.example?.button_text?.en === 'string' &&
+    Array.isArray(exampleContent) &&
+    exampleContent.length > 0 &&
+    exampleContent.every((l: any) => typeof l === 'string' && l.trim().length > 0);
+  if (!exampleOk) reasons.push('Task 5 example missing/invalid');
 
   return { needsRepair: reasons.length > 0, reasons };
 }
@@ -348,10 +403,19 @@ async function repairTasks2345OrThrow(opts: {
           `Task 1 vocabulary cards (USE ONLY THESE WORDS in PT strings):\n${JSON.stringify(vocabCards, null, 2)}\n\n` +
           `REQUIREMENTS:\n` +
           `- Return a JSON object with keys: task2, task3, task4, task5.\n` +
-          `- task2.type MUST be "rules" and MUST have blocks (exactly 6 blocks, each with block_id and block_type and content).\n` +
+          `- task2.type MUST be "rules" and MUST have blocks (exactly 6 blocks).\n` +
+          `  - Allowed block_type ONLY: "explanation" (or "how_to_say"), "comparison", "reinforcement", "speak_out_loud".\n` +
+          `  - block_1..block_3: block_type="explanation" (or "how_to_say") with content {title{ru,en}, explanation_text{ru,en}, examples[{text}], hint[{ru,en}]}\n` +
+          `  - block_4: block_type="comparison" with content {title{ru,en}, comparison_card[{text}], note{ru,en}}\n` +
+          `  - block_5: block_type="reinforcement" with content {title{ru,en}, task_1, task_2} where each task is {format:"single_choice", audio:"PT", question{ru,en}, options[3] with text{ru,en} and is_correct boolean}\n` +
+          `  - block_6: block_type="speak_out_loud" with content {instruction_text{ru,en}, action_button{text{ru,en}, completes_task:true}}\n` +
           `- task3.type MUST be "listening_comprehension" and MUST have items (exactly 3). Each item has audio (PT), question {ru,en}, options (exactly 3) with text {ru,en} and is_correct boolean (exactly one true).\n` +
           `- task4.type MUST be "attention" and MUST have items (exactly 3). Each item has audio (PT), question {ru,en}, options (exactly 3) with text {ru,en} and is_correct boolean (exactly one true), and feedback {ru,en}.\n` +
-          `- task5.type MUST be "writing_optional" and MUST include instruction as {\"text\": {\"ru\":\"...\",\"en\":\"...\"}} and main_task.template as string[] with blanks (___). Must include example: {show_by_button, button_text {ru,en}, content string[]}.\n` +
+          `  - feedback MUST be educational: 2-4 sentences. Explain WHY the correct option fits, briefly explain the sentence structure, and (when helpful) add a cognate/association (e.g., "centro" ~ "center/центр").\n` +
+          `- task5.type MUST be "writing_optional" and MUST include:\n` +
+          `  - instruction as {ru:"... ", en:"..."} (multiline allowed) including a short section like "Для решения задачи используй слова: ..."\n` +
+          `  - main_task.template as string[] (PT lines) with blanks marked by "___" or "__________" (no objects)\n` +
+          `  - example REQUIRED: {show_by_button:true, button_text{ru,en}, content:string[]} where content is the same PT lines but WITHOUT blanks (fully filled)\n` +
           `- Do NOT leave arrays empty. Do NOT return placeholders.\n\n` +
           `Return ONLY the JSON object.`,
       },
@@ -381,6 +445,9 @@ async function repairTasks2345OrThrow(opts: {
   task3.task_id = 3;
   task4.task_id = 4;
   task5.task_id = 5;
+
+  // Normalize Task 2 blocks to avoid invalid block_type like "content"
+  normalizeRulesBlocksInPlace(task2);
 
   // Merge into lesson (replace existing tasks by id)
   const tasks = Array.isArray(opts.lesson.tasks) ? opts.lesson.tasks : [];
@@ -858,6 +925,9 @@ export async function POST(
           });
         }
 
+        // Normalize Task 2 block types post-generation (defensive)
+        normalizeRulesBlocksInPlace(getTaskById(generatedLesson, 2));
+
         // Log tasks before filtering for debugging
         console.log('📋 Tasks before validation:', generatedLesson.tasks.map((t: any) => ({
           task_id: t?.task_id,
@@ -920,14 +990,19 @@ export async function POST(
             
             // Normalize Task 5 (writing) structure to match frontend expectations
             if (task.type === 'writing_optional' && task.task_id === 5) {
-              // Normalize instruction: convert { ru: "...", en: "..." } to { text: { ru: "...", en: "..." } }
-              if (task.instruction && typeof task.instruction === 'object' && !task.instruction.text) {
-                if (task.instruction.ru || task.instruction.en) {
+              // Normalize instruction to admin+frontend compatible shape:
+              // - Admin editor expects { ru, en }
+              // - Frontend supports both { ru, en } and { text: { ru, en } }
+              if (task.instruction && typeof task.instruction === 'object') {
+                if (task.instruction.text && typeof task.instruction.text === 'object') {
                   task.instruction = {
-                    text: {
-                      ru: task.instruction.ru || '',
-                      en: task.instruction.en || ''
-                    }
+                    ru: task.instruction.text.ru || '',
+                    en: task.instruction.text.en || '',
+                  };
+                } else if (task.instruction.ru || task.instruction.en) {
+                  task.instruction = {
+                    ru: task.instruction.ru || '',
+                    en: task.instruction.en || '',
                   };
                 }
               }
@@ -996,6 +1071,24 @@ export async function POST(
                   };
                 }
               }
+              // Ensure example exists and is structurally valid (generation sometimes omits it)
+              if (!task.example || typeof task.example !== 'object') {
+                task.example = {
+                  show_by_button: true,
+                  button_text: { ru: 'Показать пример', en: 'Show example' },
+                  content: [],
+                };
+              }
+              if (typeof task.example.show_by_button !== 'boolean') task.example.show_by_button = true;
+              if (!task.example.button_text || typeof task.example.button_text !== 'object') {
+                task.example.button_text = { ru: 'Показать пример', en: 'Show example' };
+              } else {
+                task.example.button_text = {
+                  ru: task.example.button_text.ru || 'Показать пример',
+                  en: task.example.button_text.en || 'Show example',
+                };
+              }
+              if (!Array.isArray(task.example.content)) task.example.content = [];
             }
             
             // Ensure is_correct is set for all choice-based tasks

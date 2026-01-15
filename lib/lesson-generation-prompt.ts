@@ -339,7 +339,7 @@ The platform supports 4 different block types. You MUST use different types to c
 • These phrases should continue building toward the final result
 
 **CRITICAL REQUIREMENT - MANDATORY HINTS (THIS IS THE MOST IMPORTANT):**
-• **MUST include "hints" array** - this is NOT optional, NOT optional, NOT optional
+• **MUST include "hint" array** - this is NOT optional, NOT optional, NOT optional
 • **Minimum 1-2 hints** - if you skip this, the lesson is INVALID
 • **EVERY example sentence MUST have at least one hint explaining:**
   - What the sentence means (full translation and meaning)
@@ -348,9 +348,9 @@ The platform supports 4 different block types. You MUST use different types to c
   - How to use the phrases in context (when/why to use it)
   - How this relates to the final result (connection to lesson goal)
 • Hints are CRITICAL for learning - without them, learners cannot understand
-• **If block_3_answers has NO hints, the lesson is INVALID and will be rejected**
+• **If block_3_answers has NO hint entries, the lesson is INVALID and will be rejected**
 
-**STRUCTURE - hints MUST be an array:**
+**STRUCTURE - hint MUST be an array:**
 \`\`\`json
 {
   "block_id": "block_3_answers",
@@ -364,7 +364,7 @@ The platform supports 4 different block types. You MUST use different types to c
     "examples": [
       { "text": "Claro, posso ajudar agora." }
     ],
-    "hints": [  // ← THIS ARRAY IS MANDATORY
+    "hint": [  // ← THIS ARRAY IS MANDATORY
       {
         "ru": "'Claro' означает 'конечно' или 'разумеется'. Это вежливый способ согласиться. 'Posso ajudar' означает 'я могу помочь'.",
         "en": "'Claro' means 'of course' or 'certainly'. It's a polite way to agree. 'Posso ajudar' means 'I can help'."
@@ -405,7 +405,7 @@ The platform supports 4 different block types. You MUST use different types to c
         "audio_url": "..."
       }
     ],
-    "hints": [
+    "hint": [
       {
         "ru": "'Claro' означает 'конечно' или 'разумеется'. Это вежливый способ согласиться.",
         "en": "'Claro' means 'of course' or 'certainly'. It's a polite way to agree."
@@ -422,7 +422,7 @@ The platform supports 4 different block types. You MUST use different types to c
 **Platform constraints:**
 • Minimum: 2 examples
 • Examples must use words from Task 1
-• MUST include at least 1-2 hints explaining new words or grammar rules
+• MUST include at least 1-2 hint entries explaining new words or grammar rules
 • Hints should be educational and help learners understand the language better
 
 ---
@@ -720,8 +720,8 @@ The platform supports 4 different block types. You MUST use different types to c
         { "text": { "ru": "Утверждение", "en": "Statement" }, "is_correct": false }
       ],
       "feedback": { 
-        "ru": "Правильно! Это просьба о помощи.", 
-        "en": "Correct! This is a request for help." 
+        "ru": "Правильно! Это просьба о помощи. Здесь важна конструкция: 'Preciso de ...' = 'Мне нужно ...'. Слово 'ajuda' легко запомнить через ассоциацию: оно похоже на 'help' по смыслу.", 
+        "en": "Correct! This is a request for help. Notice the structure: 'Preciso de ...' = 'I need ...'. You can remember 'ajuda' via association: it’s close in meaning to 'help'." 
       }
     }
   ]
@@ -735,6 +735,11 @@ The platform supports 4 different block types. You MUST use different types to c
 • One correct answer per item - MUST set "is_correct": true for the correct option
 • Feedback is required for each item
 • CRITICAL: Always set "is_correct": true for exactly one option in each item
+• **Feedback must be educational (not just “Correct!”):**
+  - 2–4 sentences
+  - explain WHY this option is correct (meaning/type of phrase)
+  - briefly explain the sentence structure / construction
+  - when helpful, add a cognate/association with EN/RU (e.g. "centro" ~ "center/центр")
 
 ---
 
@@ -769,10 +774,8 @@ The platform supports 4 different block types. You MUST use different types to c
   "title": { "ru": "Практикуемся", "en": "Practice" },
   "optional": true,
   "instruction": { 
-    "text": {
-      "ru": "Используй слова и фразы из сегодняшнего урока. Напиши или скажи вслух.",
-      "en": "Use words and phrases from today's lesson. Write or say out loud."
-    }
+    "ru": "Теперь собери полноценную фразу по теме урока.\nИспользуй слова и фразы из этого урока.\nТы можешь написать ответ или просто сказать его вслух.\n\nДля решения задачи используй слова: ...",
+    "en": "Now build a complete phrase for this lesson.\nUse the words and phrases from this lesson.\nYou can write your answer or say it out loud.\n\nUse these words: ..."
   },
   "main_task": {
     "format": "template_fill_or_speak",
@@ -780,11 +783,6 @@ The platform supports 4 different block types. You MUST use different types to c
       "Preciso de ___.",
       "Pode ___?",
       "Obrigado pela ___."
-    ],
-    "hints": [
-      "ajuda",
-      "ajudar",
-      "ajuda"
     ]
   },
   "example": {
@@ -924,9 +922,9 @@ GENERATION PROCESS (FOLLOW EXACTLY)
 - Total: 13-15 cards minimum
 
 **STEP 3: BUILD TASK 2 PROGRESSIVELY - USE DIFFERENT BLOCK TYPES**
-- block_1_build: 2-3 words, block_type: "explanation", MUST have hints
-- block_2_transform: 3-4 words, block_type: "explanation", MUST have hints
-- block_3_answers: 4-5 words, block_type: "explanation", **MUST have "hints" array (MANDATORY)**
+- block_1_build: 2-3 words, block_type: "explanation", MUST have hint entries
+- block_2_transform: 3-4 words, block_type: "explanation", MUST have hint entries
+- block_3_answers: 4-5 words, block_type: "explanation", **MUST have "hint" array (MANDATORY)**
 - block_4_equivalence: variations, block_type: "comparison" (NOT explanation)
 - block_5_reinforcement: 6-7 words, block_type: "reinforcement" (NOT explanation)
 - block_6_speak: FINAL RESULT, block_type: "speak_out_loud" (NOT explanation)
@@ -984,7 +982,7 @@ Before returning JSON, verify:
 ✔ Each task increases sentence length  
 ✔ No phrase appears twice  
 ✔ Lesson leads from words → sentences → speech  
-✔ block_3_answers has hints array (MANDATORY)
+✔ block_3_answers has hint array (MANDATORY)
 ✔ Different block types used (not all "explanation")
 ✔ block_4 uses "comparison"
 ✔ block_5 uses "reinforcement"
