@@ -64,6 +64,121 @@ function getTask1VocabularyWords(lesson: any): string[] {
     .filter((w: string) => w.length > 0);
 }
 
+function ensureTask1CardsArray(lesson: any): any[] {
+  const tasks = Array.isArray(lesson?.tasks)
+    ? lesson.tasks
+    : Array.isArray(lesson?.day?.tasks)
+      ? lesson.day.tasks
+      : [];
+
+  const t1 =
+    tasks.find((t: any) => t?.task_id === 1) ||
+    tasks.find((t: any) => t?.type === 'vocabulary') ||
+    null;
+
+  if (!t1) return [];
+  if (!t1.content || typeof t1.content !== 'object') t1.content = {};
+  if (!Array.isArray(t1.content.cards)) t1.content.cards = [];
+  return t1.content.cards;
+}
+
+async function topUpVocabularyToMinimumOrThrow(opts: {
+  lesson: any;
+  usedWords: string[];
+  topicRu: string;
+  topicEn: string;
+  phase: string;
+}) {
+  const cards = ensureTask1CardsArray(opts.lesson);
+  const currentWords = cards
+    .map((c: any) => (typeof c?.word === 'string' ? c.word.trim() : ''))
+    .filter(Boolean);
+
+  if (currentWords.length >= 13) return;
+
+  const missing = 13 - currentWords.length;
+  if (missing <= 0) return;
+  if (missing > 5) {
+    // If we’re missing a lot, better to fail and let the main retry regenerate the whole lesson.
+    throw new Error(`Task 1 is missing too many cards to auto-complete (missing ${missing}). Regenerate the full lesson.`);
+  }
+
+  const forbiddenNormalized = new Set(
+    [...(opts.usedWords || []), ...currentWords].map(normalizeWordForComparison).filter(Boolean)
+  );
+
+  const allowedWordsForExamples = currentWords.join(', ');
+
+  // Try up to 2 quick attempts to get the missing cards.
+  let lastErr: any = null;
+  for (let i = 0; i < 2; i++) {
+    try {
+      const completion = await openai.chat.completions.create({
+        model: 'gpt-4o-mini',
+        messages: [
+          {
+            role: 'system',
+            content:
+              'You are a strict JSON generator. Return ONLY valid JSON. No markdown, no extra text.',
+          },
+          {
+            role: 'user',
+            content:
+              `We have a Portuguese lesson generator.\n\nTask 1 vocabulary is SHORT by ${missing} cards.\nGenerate EXACTLY ${missing} additional UNIQUE vocabulary cards for:\n- phase: ${opts.phase}\n- topic_ru: "${opts.topicRu}"\n- topic_en: "${opts.topicEn}"\n\nSTRICT RULES:\n- Return ONLY a JSON array of cards (not an object).\n- Each card MUST have fields: word, transcription (IPA in square brackets), example_sentence (PT), sentence_translation_ru, sentence_translation_en, word_translation_ru, word_translation_en.\n- New card.word MUST NOT match any forbidden word (case/diacritics-insensitive).\n- Forbidden words (do not use): ${(opts.usedWords || []).join(', ') || 'None'}\n- Already in this lesson (do not repeat): ${currentWords.join(', ') || 'None'}\n- Prefer SUPPORTING words useful for building phrases (connectors/time/polite words/actions) that fit the topic.\n- For example_sentence, DO NOT introduce new vocabulary if possible: use ONLY words from this allowed list plus the new word: ${allowedWordsForExamples}\n\nReturn ONLY the JSON array.`,
+          },
+        ],
+        temperature: 0.2,
+        max_tokens: 1500,
+      });
+
+      let text = completion.choices[0]?.message?.content || '';
+      text = text.replace(/```json\n?/gi, '').replace(/```\n?/g, '').trim();
+      const jsonMatch = text.match(/\[[\s\S]*\]/);
+      if (jsonMatch) text = jsonMatch[0];
+
+      const arr = parseJsonSafely(text);
+      if (!Array.isArray(arr)) throw new Error('Top-up response is not a JSON array');
+      if (arr.length !== missing) throw new Error(`Top-up must return exactly ${missing} cards, got ${arr.length}`);
+
+      // Validate and filter (strict)
+      const newCards: any[] = [];
+      for (const c of arr) {
+        const w = typeof c?.word === 'string' ? c.word.trim() : '';
+        if (!w) throw new Error('Top-up card missing word');
+        const wn = normalizeWordForComparison(w);
+        if (!wn) throw new Error('Top-up card has invalid word');
+        if (forbiddenNormalized.has(wn)) throw new Error(`Top-up word is forbidden/duplicate: ${w}`);
+        forbiddenNormalized.add(wn);
+
+        // Minimal field checks
+        const requiredFields = [
+          'transcription',
+          'example_sentence',
+          'sentence_translation_ru',
+          'sentence_translation_en',
+          'word_translation_ru',
+          'word_translation_en',
+        ];
+        for (const f of requiredFields) {
+          if (typeof c?.[f] !== 'string' || !c[f].trim()) {
+            throw new Error(`Top-up card missing required field "${f}" for word "${w}"`);
+          }
+        }
+        newCards.push(c);
+      }
+
+      cards.push(...newCards);
+      return;
+    } catch (e) {
+      lastErr = e;
+    }
+  }
+
+  throw new Error(
+    `Failed to auto-complete Task 1 vocabulary to 13 cards. ${lastErr instanceof Error ? lastErr.message : String(lastErr)}`
+  );
+}
+
 function validateVocabularyIsNewOrThrow(generatedLesson: any, usedWords: string[]) {
   const lessonWords = getTask1VocabularyWords(generatedLesson);
 
@@ -348,6 +463,16 @@ export async function POST(
             'OpenAI returned task shells without content (no cards/blocks/items). You must output full tasks with populated arrays.'
           );
         }
+
+        // If OpenAI generated 10–12 vocabulary cards, auto-top-up to the minimum 13
+        // with a tiny follow-up completion. This makes generation much more reliable.
+        await topUpVocabularyToMinimumOrThrow({
+          lesson: generatedLesson,
+          usedWords: usedWordsForValidation,
+          topicRu: topic_ru,
+          topicEn: topic_en,
+          phase,
+        });
 
         // Log tasks before filtering for debugging
         console.log('📋 Tasks before validation:', generatedLesson.tasks.map((t: any) => ({
