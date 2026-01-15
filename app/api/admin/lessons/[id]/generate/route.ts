@@ -315,6 +315,11 @@ export async function POST(
         // Try to parse JSON
         generatedLesson = parseJsonSafely(responseText);
         
+        // Normalize common shapes BEFORE validation:
+        // Some models nest tasks under day.tasks instead of top-level tasks.
+        if ((!generatedLesson.tasks || !Array.isArray(generatedLesson.tasks)) && generatedLesson.day?.tasks && Array.isArray(generatedLesson.day.tasks)) {
+          generatedLesson.tasks = generatedLesson.day.tasks;
+        }
         // Validate structure - be more lenient to avoid blocking valid lessons
         if (!generatedLesson.tasks || !Array.isArray(generatedLesson.tasks)) {
           throw new Error('Lesson must have a tasks array');
