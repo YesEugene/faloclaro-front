@@ -82,6 +82,29 @@ function ensureTask1CardsArray(lesson: any): any[] {
   return t1.content.cards;
 }
 
+function dedupeTask1CardsInPlace(lesson: any): { removed: number } {
+  const cards = ensureTask1CardsArray(lesson);
+  if (!Array.isArray(cards) || cards.length === 0) return { removed: 0 };
+
+  const seen = new Set<string>();
+  const deduped: any[] = [];
+  for (const c of cards) {
+    const w = typeof c?.word === 'string' ? c.word.trim() : '';
+    const wn = normalizeWordForComparison(w);
+    if (!wn) continue;
+    if (seen.has(wn)) continue;
+    seen.add(wn);
+    deduped.push(c);
+  }
+
+  const removed = cards.length - deduped.length;
+  if (removed > 0) {
+    // mutate in place to preserve references
+    cards.splice(0, cards.length, ...deduped);
+  }
+  return { removed };
+}
+
 async function topUpVocabularyToMinimumOrThrow(opts: {
   lesson: any;
   usedWords: string[];
@@ -497,6 +520,19 @@ export async function POST(
           topicEn: topic_en,
           phase,
         });
+
+        // Auto-fix: de-duplicate Task 1 by word (sometimes OpenAI repeats e.g. "estou").
+        // After removing duplicates, top-up again to ensure we still have >= 13.
+        const { removed: removedDuplicates } = dedupeTask1CardsInPlace(generatedLesson);
+        if (removedDuplicates > 0) {
+          await topUpVocabularyToMinimumOrThrow({
+            lesson: generatedLesson,
+            usedWords: usedWordsForValidation,
+            topicRu: topic_ru,
+            topicEn: topic_en,
+            phase,
+          });
+        }
 
         // Log tasks before filtering for debugging
         console.log('📋 Tasks before validation:', generatedLesson.tasks.map((t: any) => ({
