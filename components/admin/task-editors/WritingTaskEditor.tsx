@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo } from 'react';
 
 interface WritingTaskEditorProps {
   task: any;
@@ -27,7 +27,6 @@ export default function WritingTaskEditor({ task, onChange, lessonDay }: Writing
   };
 
   const content = getContent();
-  const [showTemplateEditor, setShowTemplateEditor] = useState(false);
 
   // Helpers to keep admin editing (parts) + frontend rendering (string lines) compatible.
   const templatePartsToLines = (parts: any[]): string[] => {
@@ -59,6 +58,14 @@ export default function WritingTaskEditor({ task, onChange, lessonDay }: Writing
     if (Array.isArray(mt.template) && mt.template.length > 0 && typeof mt.template[0] === 'object') return mt.template;
     if (Array.isArray(mt.template) && mt.template.length > 0 && typeof mt.template[0] === 'string') return templateLinesToParts(mt.template);
     return [];
+  };
+
+  const updateTaskMeta = (updates: any) => {
+    onChange({
+      ...task,
+      ...updates,
+      optional: task.optional !== false,
+    });
   };
 
   const updateTask = (updates: any) => {
@@ -104,8 +111,80 @@ export default function WritingTaskEditor({ task, onChange, lessonDay }: Writing
     }
   };
 
+  const templateLinesString = useMemo(() => {
+    const mt = content.main_task || {};
+    if (Array.isArray(mt.template) && mt.template.length > 0 && typeof mt.template[0] === 'string') {
+      return mt.template.join('\n');
+    }
+    const parts = getTemplatePartsForEditor();
+    const lines = templatePartsToLines(parts);
+    return lines.join('\n');
+  }, [content.main_task]);
+
+  const linesToTemplateParts = (lines: string[]): any[] => {
+    // Split each line by runs of underscores to create input parts.
+    const parts: any[] = [];
+    lines.forEach((line, lineIdx) => {
+      const raw = String(line ?? '');
+      const chunks = raw.split(/_{2,}/g);
+      const blanks = raw.match(/_{2,}/g) || [];
+      for (let i = 0; i < chunks.length; i++) {
+        const textChunk = chunks[i];
+        if (textChunk) parts.push({ type: 'text', text: textChunk });
+        if (i < blanks.length) parts.push({ type: 'input', placeholder: '' });
+      }
+      if (lineIdx < lines.length - 1) parts.push({ type: 'text', text: '\n' });
+    });
+    return parts;
+  };
+
   return (
     <div className="space-y-6">
+      {/* Titles */}
+      <div className="bg-white rounded-lg shadow-md p-6">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Заголовки (видно на фронте)</h2>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Заголовок (RU)</label>
+            <input
+              type="text"
+              value={typeof task.title === 'string' ? task.title : (task.title?.ru || '')}
+              onChange={(e) => updateTaskMeta({ title: { ...(typeof task.title === 'object' ? task.title : {}), ru: e.target.value } })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              placeholder="Напиши от руки или проговори вслух"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Заголовок (EN)</label>
+            <input
+              type="text"
+              value={typeof task.title === 'string' ? '' : (task.title?.en || '')}
+              onChange={(e) => updateTaskMeta({ title: { ...(typeof task.title === 'object' ? task.title : {}), en: e.target.value } })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              placeholder="Write by hand or say out loud"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Подзаголовок (RU)</label>
+            <textarea
+              value={typeof task.subtitle === 'string' ? task.subtitle : (task.subtitle?.ru || '')}
+              onChange={(e) => updateTaskMeta({ subtitle: { ...(typeof task.subtitle === 'object' ? task.subtitle : {}), ru: e.target.value } })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg h-24"
+              placeholder="Теперь собери полноценное знакомство. Используй слова и фразы из этого урока."
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Подзаголовок (EN)</label>
+            <textarea
+              value={typeof task.subtitle === 'string' ? '' : (task.subtitle?.en || '')}
+              onChange={(e) => updateTaskMeta({ subtitle: { ...(typeof task.subtitle === 'object' ? task.subtitle : {}), en: e.target.value } })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg h-24"
+              placeholder="Now build a full introduction. Use the words and phrases from this lesson."
+            />
+          </div>
+        </div>
+      </div>
+
       {/* Instruction */}
       <div className="bg-white rounded-lg shadow-md p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Инструкция</h2>
@@ -145,51 +224,30 @@ export default function WritingTaskEditor({ task, onChange, lessonDay }: Writing
 
       {/* Main Task */}
       <div className="bg-white rounded-lg shadow-md p-6">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold text-gray-900">Основное задание</h2>
-          <button
-            onClick={() => setShowTemplateEditor(true)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Редактировать шаблон
-          </button>
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Формат
-          </label>
-          <select
-            value={content.main_task?.format || 'template_fill_or_speak'}
-            onChange={(e) => {
-              updateTask({
-                main_task: {
-                  ...content.main_task,
-                  format: e.target.value,
-                },
-              });
-            }}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-          >
-            <option value="template_fill_or_speak">Шаблон для заполнения или произнесения</option>
-            <option value="free_text">Свободный текст</option>
-          </select>
-        </div>
-        {content.main_task?.template && Array.isArray(content.main_task.template) && (
-          <div className="mt-4">
-            <p className="text-sm text-gray-600 mb-2">
-              Шаблон ({Array.isArray(content.main_task?.template_parts) ? content.main_task.template_parts.length : content.main_task.template.length} частей):
-            </p>
-            <div className="space-y-2">
-              {(Array.isArray(content.main_task?.template_parts) ? content.main_task.template_parts : getTemplatePartsForEditor()).map((part: any, index: number) => (
-                  <div key={index} className="p-2 bg-gray-50 rounded border border-gray-200">
-                    <span className="text-sm text-gray-700">
-                      {part?.type === 'text' ? (part.text || '') : part?.type === 'input' ? '[input]' : '[part]'}
-                    </span>
-                  </div>
-                ))}
-            </div>
-          </div>
-        )}
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Основное задание (шаблон)</h2>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Шаблон (PT) — по строкам (используйте подчёркивания для пропусков, например: `Olá, chamo-me _______.`)
+        </label>
+        <textarea
+          value={templateLinesString}
+          onChange={(e) => {
+            const lines = e.target.value
+              .split('\n')
+              .map(l => l.trimEnd())
+              .filter(l => l.trim().length > 0);
+            const parts = linesToTemplateParts(lines);
+            updateTask({
+              main_task: {
+                ...(content.main_task || {}),
+                format: 'template_fill_or_speak',
+                template: lines,
+                template_parts: parts,
+              },
+            });
+          }}
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg h-32"
+          placeholder={'Olá, chamo-me ______.\n_____ em conhecer.\nE você, como__ ____?'}
+        />
       </div>
 
       {/* Example (Show by button) */}
@@ -273,24 +331,63 @@ export default function WritingTaskEditor({ task, onChange, lessonDay }: Writing
 
       {/* Alternative (Speak Out Loud) */}
       <div className="bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Альтернатива (Скажи вслух)</h2>
-        <div className="grid grid-cols-2 gap-4">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Кнопка “Я сказал(а) вслух”</h2>
+
+        <div className="grid grid-cols-2 gap-4 mb-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Текст кнопки (RU)
-            </label>
-            <input
-              type="text"
-              value={typeof content.alternative?.button_text === 'string' 
-                ? content.alternative?.button_text 
-                : (content.alternative?.button_text?.ru || '')}
+            <label className="block text-sm font-medium text-gray-700 mb-2">Подзаголовок (RU)</label>
+            <textarea
+              value={typeof content.alternative?.instruction === 'string' ? content.alternative?.instruction : (content.alternative?.instruction?.ru || '')}
               onChange={(e) => {
                 updateTask({
                   alternative: {
-                    ...content.alternative,
-                    button_text: {
-                      ...(typeof content.alternative?.button_text === 'object' ? content.alternative.button_text : {}),
+                    ...(content.alternative || {}),
+                    instruction: {
+                      ...(typeof content.alternative?.instruction === 'object' ? content.alternative.instruction : {}),
                       ru: e.target.value,
+                    },
+                  },
+                });
+              }}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg h-24"
+              placeholder="Если не хочется писать, тогда просто скажи всё вслух, как цельную речь."
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Подзаголовок (EN)</label>
+            <textarea
+              value={typeof content.alternative?.instruction === 'string' ? '' : (content.alternative?.instruction?.en || '')}
+              onChange={(e) => {
+                updateTask({
+                  alternative: {
+                    ...(content.alternative || {}),
+                    instruction: {
+                      ...(typeof content.alternative?.instruction === 'object' ? content.alternative.instruction : {}),
+                      en: e.target.value,
+                    },
+                  },
+                });
+              }}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg h-24"
+              placeholder="If you don’t want to write, just say everything out loud as one coherent speech."
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Текст кнопки (RU)</label>
+            <input
+              type="text"
+              value={content.alternative?.action_button?.text?.ru || content.alternative?.button_text?.ru || ''}
+              onChange={(e) => {
+                updateTask({
+                  alternative: {
+                    ...(content.alternative || {}),
+                    button_text: { ...(content.alternative?.button_text || {}), ru: e.target.value },
+                    action_button: {
+                      ...(content.alternative?.action_button || {}),
+                      text: { ...(content.alternative?.action_button?.text || {}), ru: e.target.value },
                     },
                   },
                 });
@@ -300,21 +397,18 @@ export default function WritingTaskEditor({ task, onChange, lessonDay }: Writing
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Текст кнопки (EN)
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Текст кнопки (EN)</label>
             <input
               type="text"
-              value={typeof content.alternative?.button_text === 'string' 
-                ? '' 
-                : (content.alternative?.button_text?.en || '')}
+              value={content.alternative?.action_button?.text?.en || content.alternative?.button_text?.en || ''}
               onChange={(e) => {
                 updateTask({
                   alternative: {
-                    ...content.alternative,
-                    button_text: {
-                      ...(typeof content.alternative?.button_text === 'object' ? content.alternative.button_text : {}),
-                      en: e.target.value,
+                    ...(content.alternative || {}),
+                    button_text: { ...(content.alternative?.button_text || {}), en: e.target.value },
+                    action_button: {
+                      ...(content.alternative?.action_button || {}),
+                      text: { ...(content.alternative?.action_button?.text || {}), en: e.target.value },
                     },
                   },
                 });
@@ -325,27 +419,6 @@ export default function WritingTaskEditor({ task, onChange, lessonDay }: Writing
           </div>
         </div>
       </div>
-
-      {/* Template Editor Modal */}
-      {showTemplateEditor && (
-        <TemplateEditorModal
-          template={getTemplatePartsForEditor()}
-          onSave={(template) => {
-            const templateLines = templatePartsToLines(template);
-            updateTask({
-              main_task: {
-                ...content.main_task,
-                // Frontend-safe string[] (used by WritingTask)
-                template: templateLines,
-                // Editor-friendly parts[] (used by this admin modal)
-                template_parts: template,
-              },
-            });
-            setShowTemplateEditor(false);
-          }}
-          onCancel={() => setShowTemplateEditor(false)}
-        />
-      )}
     </div>
   );
 }

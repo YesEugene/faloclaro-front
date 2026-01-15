@@ -215,6 +215,37 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
   const alternative = task.alternative || {};
   const reflection = task.reflection || {};
 
+  const taskTitle =
+    getTranslatedText(task.title, appLanguage) ||
+    (appLanguage === 'ru'
+      ? 'Напиши от руки или проговори вслух'
+      : appLanguage === 'en'
+        ? 'Write by hand or say out loud'
+        : 'Escreva à mão ou diga em voz alta');
+
+  const taskSubtitle =
+    getTranslatedText(task.subtitle, appLanguage) ||
+    instructionText ||
+    '';
+
+  const writeAnswerTitle =
+    getTranslatedText(task.ui_texts?.write_answer_title, appLanguage) ||
+    (appLanguage === 'ru' ? 'Напиши ответ' : appLanguage === 'en' ? 'Write your answer' : 'Escreva sua resposta');
+
+  const showExampleLabel =
+    getTranslatedText(task.ui_texts?.show_example_label, appLanguage) ||
+    getTranslatedText(example.button_text, appLanguage) ||
+    (appLanguage === 'ru' ? 'Показать пример' : appLanguage === 'en' ? 'Show example' : 'Mostrar exemplo');
+
+  const speakSubtitle =
+    getTranslatedText(task.ui_texts?.speak_subtitle, appLanguage) ||
+    getTranslatedText(alternative.instruction, appLanguage) ||
+    (appLanguage === 'ru'
+      ? 'Если не хочется писать, тогда просто скажи всё вслух, как цельную речь.'
+      : appLanguage === 'en'
+        ? "If you don’t want to write, just say everything out loud as one coherent speech."
+        : 'Se não quiser escrever, diga tudo em voz alta como uma fala completa.');
+
   return (
     <div className="space-y-6 w-full" style={{ paddingBottom: '140px' }}>
       {/* Task Content - Full width - Always show, even if completed */}
@@ -229,79 +260,52 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
               : `Bloco 1 / 1`}
           </div>
           
-          {/* Title */}
-          <h3 className="text-xl font-bold text-black mb-4">
-            {appLanguage === 'ru' 
-              ? 'Напиши от руки или проговори вслух'
-              : appLanguage === 'en'
-              ? 'Write by hand or say out loud'
-              : 'Escreva à mão ou diga em voz alta'}
+          {/* Title (editable in admin via task.title) */}
+          <h3 className="text-3xl font-bold text-black" style={{ lineHeight: '1.15' }}>
+            {taskTitle}
           </h3>
-          
-          {/* Instruction */}
-          {instructionText && (
-            <div 
-              className="rounded-lg p-4"
-              style={{ 
-                borderWidth: '1px',
-                borderColor: 'rgba(194, 194, 194, 1)',
-                borderStyle: 'solid',
-                backgroundColor: '#F4F5F8'
-              }}
-            >
-              <p className="text-black font-medium whitespace-pre-line">{instructionText}</p>
-            </div>
+
+          {/* Subtitle (editable in admin via task.subtitle) */}
+          {taskSubtitle && (
+            <p className="text-black whitespace-pre-line" style={{ fontSize: '22px', lineHeight: '1.35' }}>
+              {taskSubtitle}
+            </p>
           )}
 
           {/* Template */}
           {template.length > 0 && (
             <div className="space-y-2">
-              <p className="text-sm font-semibold text-black mb-2">
-                {appLanguage === 'ru' ? 'Шаблон:' : appLanguage === 'en' ? 'Template:' : 'Modelo:'}
-              </p>
-              {template.map((line: string, index: number) => (
-                <div
-                  key={index}
-                  className="w-full px-4 rounded-lg flex items-center"
-                  style={{
-                    height: '55px',
-                    backgroundColor: 'white',
-                    border: 'none'
-                  }}
-                >
-                  <p className="text-black font-mono text-sm">{line}</p>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Hints */}
-          {hints.length > 0 && (
-            <div 
-              className="rounded-lg p-4"
-              style={{ 
-                borderWidth: '1px',
-                borderColor: 'rgba(194, 194, 194, 1)',
-                borderStyle: 'solid',
-                backgroundColor: '#F4F5F8'
-              }}
-            >
-              <p className="text-sm font-semibold text-black mb-2">
-                {appLanguage === 'ru' ? 'Подсказки:' : appLanguage === 'en' ? 'Hints:' : 'Dicas:'}
-              </p>
-              <ul className="list-disc list-inside space-y-1">
-                {hints.map((hint: string, index: number) => (
-                  <li key={index} className="text-sm text-black" style={{ marginTop: '2px', marginBottom: '2px' }}>
-                    {hint}
-                  </li>
+              <div
+                className="w-full rounded-2xl px-6 py-5"
+                style={{
+                  backgroundColor: 'white',
+                  border: '1px solid rgba(194, 194, 194, 1)',
+                }}
+              >
+                {template.map((line: string, index: number) => (
+                  <p
+                    key={index}
+                    className="text-black font-bold"
+                    style={{
+                      fontSize: '26px',
+                      lineHeight: '1.35',
+                      letterSpacing: '-0.01em',
+                      marginTop: index === 0 ? 0 : '10px',
+                    }}
+                  >
+                    {line}
+                  </p>
                 ))}
-              </ul>
+              </div>
             </div>
           )}
 
           {/* Writing Area (if not using speak out loud alternative) */}
           {!speakOutLoud && (
             <div>
+              <p className="text-black font-semibold" style={{ fontSize: '22px' }}>
+                {writeAnswerTitle}
+              </p>
               <textarea
                 ref={textareaRef}
                 value={writtenText}
@@ -323,31 +327,26 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
             </div>
           )}
 
-          {/* Example - Show by button */}
-          {example.show_by_button && example.content && (
+          {/* Show example button + example content */}
+          {example.show_by_button && Array.isArray(example.content) && example.content.length > 0 && (
             <div className="space-y-2">
-              {!showExample && (
+              {!showExample ? (
                 <button
                   onClick={() => setShowExample(true)}
-                  className="w-full px-4 py-3 rounded-lg font-medium transition-colors"
-                  style={{
-                    backgroundColor: '#EDF3FF',
-                    color: 'rgb(55, 65, 81)',
-                    border: 'none'
-                  }}
+                  className="flex items-center gap-3 text-left"
+                  style={{ color: '#111827' }}
                 >
-                  {getTranslatedText(example.button_text, appLanguage) || (appLanguage === 'ru' ? 'Показать пример' : appLanguage === 'en' ? 'Show example' : 'Mostrar exemplo')}
+                  <span style={{ fontSize: '22px', lineHeight: '22px' }}>👁</span>
+                  <span style={{ fontSize: '20px', fontWeight: 500 }}>{showExampleLabel}</span>
                 </button>
-              )}
-              
-              {showExample && (
-                <div 
+              ) : (
+                <div
                   className="rounded-lg p-4"
-                  style={{ 
+                  style={{
                     borderWidth: '1px',
                     borderColor: 'rgba(194, 194, 194, 1)',
                     borderStyle: 'solid',
-                    backgroundColor: '#F4F5F8'
+                    backgroundColor: '#F4F5F8',
                   }}
                 >
                   <p className="text-sm font-semibold text-black mb-2">
@@ -363,25 +362,14 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
             </div>
           )}
 
-          {/* Alternative: Speak Out Loud */}
+          {/* Speak out loud section */}
           {alternative.action_button && (
             <div className="space-y-4">
-              {getTranslatedText(alternative.title, appLanguage) && (
-                <p className="text-lg font-semibold text-black">{getTranslatedText(alternative.title, appLanguage)}</p>
-              )}
-              
-              {getTranslatedText(alternative.instruction, appLanguage) && (
-                <div 
-                  className="rounded-lg p-4"
-                  style={{ 
-                    borderWidth: '1px',
-                    borderColor: 'rgba(194, 194, 194, 1)',
-                    borderStyle: 'solid',
-                    backgroundColor: '#F4F5F8'
-                  }}
-                >
-                  <p className="text-black font-medium whitespace-pre-line">{getTranslatedText(alternative.instruction, appLanguage)}</p>
-                </div>
+              {/* Subtitle before button (editable via task.ui_texts.speak_subtitle or alternative.instruction) */}
+              {speakSubtitle && (
+                <p className="text-black whitespace-pre-line" style={{ fontSize: '22px', lineHeight: '1.35' }}>
+                  {speakSubtitle}
+                </p>
               )}
 
               {!speakOutLoud ? (
