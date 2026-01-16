@@ -26,6 +26,56 @@ function LessonEditorContent() {
   const [generateProgress, setGenerateProgress] = useState({ step: '', progress: 0 });
   const [generateError, setGenerateError] = useState('');
 
+  const handleDownloadLessonJson = () => {
+    if (!lesson) {
+      alert('Урок ещё не загружен');
+      return;
+    }
+    const dayNumber = lesson.day_number || lesson?.yaml_content?.day?.day_number || null;
+    const yamlDay = (typeof lesson.yaml_content === 'string'
+      ? JSON.parse(lesson.yaml_content || '{}')
+      : lesson.yaml_content || {})?.day;
+
+    const exportData: any = {
+      // New-format fields (also accepted by importer)
+      day_number: dayNumber,
+      title_ru: lesson.title_ru || '',
+      title_en: lesson.title_en || '',
+      title_pt: lesson.title_pt || '',
+      subtitle_ru: lesson.subtitle_ru || '',
+      subtitle_en: lesson.subtitle_en || '',
+      subtitle_pt: lesson.subtitle_pt || '',
+      estimated_time: yamlDay?.estimated_time || lesson.estimated_time || '',
+      tasks: tasks || [],
+
+      // Old-format wrapper (also accepted by importer)
+      day: {
+        day_number: dayNumber,
+        title: {
+          ru: lesson.title_ru || '',
+          en: lesson.title_en || '',
+          pt: lesson.title_pt || '',
+        },
+        subtitle: {
+          ru: lesson.subtitle_ru || '',
+          en: lesson.subtitle_en || '',
+          pt: lesson.subtitle_pt || '',
+        },
+        estimated_time: yamlDay?.estimated_time || lesson.estimated_time || '',
+      },
+    };
+
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `lesson_${dayNumber ?? 'x'}_${lessonId}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  };
+
   useEffect(() => {
     if (lessonId) {
       loadLesson();
@@ -933,45 +983,55 @@ function LessonEditorContent() {
           <div className="p-4">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-semibold text-gray-900">Задания урока</h2>
-              <label className="px-3 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors cursor-pointer text-sm">
-                📥 Импорт
-                <input
-                  type="file"
-                  accept=".json,.yaml,.yml"
-                  className="hidden"
-                  onChange={async (e) => {
-                    const file = e.target.files?.[0];
-                    if (!file) return;
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={handleDownloadLessonJson}
+                      className="px-3 py-1.5 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 transition-colors cursor-pointer text-sm flex items-center gap-1.5"
+                      title="Скачать урок (JSON)"
+                    >
+                      ⬇️ Экспорт
+                    </button>
+                    <label className="px-3 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors cursor-pointer text-sm">
+                      📥 Импорт
+                      <input
+                        type="file"
+                        accept=".json,.yaml,.yml"
+                        className="hidden"
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          if (!file) return;
 
-                    if (!confirm('Импорт из файла заменит все текущие данные урока. Продолжить?')) {
-                      return;
-                    }
+                          if (!confirm('Импорт из файла заменит все текущие данные урока. Продолжить?')) {
+                            return;
+                          }
 
-                    try {
-                      const formData = new FormData();
-                      formData.append('file', file);
-                      formData.append('lessonId', lessonId);
+                          try {
+                            const formData = new FormData();
+                            formData.append('file', file);
+                            formData.append('lessonId', lessonId);
 
-                      const response = await fetch('/api/admin/lessons/import', {
-                        method: 'POST',
-                        body: formData,
-                      });
+                            const response = await fetch('/api/admin/lessons/import', {
+                              method: 'POST',
+                              body: formData,
+                            });
 
-                      const data = await response.json();
+                            const data = await response.json();
 
-                      if (data.success) {
-                        alert('Урок успешно импортирован!');
-                        loadLesson(); // Reload lesson data
-                      } else {
-                        alert('Ошибка при импорте: ' + (data.error || 'Unknown error'));
-                      }
-                    } catch (err) {
-                      console.error('Error importing lesson:', err);
-                      alert('Ошибка при импорте урока');
-                    }
-                  }}
-                />
-              </label>
+                            if (data.success) {
+                              alert('Урок успешно импортирован!');
+                              loadLesson(); // Reload lesson data
+                            } else {
+                              alert('Ошибка при импорте: ' + (data.error || 'Unknown error'));
+                            }
+                          } catch (err) {
+                            console.error('Error importing lesson:', err);
+                            alert('Ошибка при импорте урока');
+                          }
+                        }}
+                      />
+                    </label>
+                  </div>
             </div>
             {tasks.length === 0 ? (
               <p className="text-gray-500 text-sm text-center py-8">
