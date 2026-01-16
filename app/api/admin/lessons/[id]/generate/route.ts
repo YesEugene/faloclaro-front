@@ -12,22 +12,35 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-async function loadIdealExampleLesson(): Promise<any | null> {
+async function loadReferenceExampleLessons(): Promise<any | null> {
   try {
-    // Prefer the canonical reference file (editable + committed):
-    // reference/methodology/ideal_lesson_day01.json
-    const preferred = path.join(process.cwd(), 'reference', 'methodology', 'ideal_lesson_day01.json');
+    // Preferred: use the more “correct” reference lessons (2 + 3) as multi-example guidance.
+    const p2 = path.join(process.cwd(), 'reference', 'methodology', 'lesson_2.json');
+    const p3 = path.join(process.cwd(), 'reference', 'methodology', 'lesson_3.json');
     try {
-      const raw = await readFile(preferred, 'utf8');
-      return JSON.parse(raw);
+      const [raw2, raw3] = await Promise.all([readFile(p2, 'utf8'), readFile(p3, 'utf8')]);
+      const lesson2 = JSON.parse(raw2);
+      const lesson3 = JSON.parse(raw3);
+      return {
+        reference_lessons: [lesson2, lesson3],
+        note:
+          'These are canonical reference lessons. Follow their structure and quality closely (brick-by-brick progression, no placeholders, valid schema).',
+      };
     } catch {
-      // Backward-compatibility fallback (older path)
-      const legacy = path.join(process.cwd(), 'lesson-examples', 'day01-faloclaro-ideal.json');
-      const raw = await readFile(legacy, 'utf8');
-      return JSON.parse(raw);
+      // Fallback: older single-file reference
+      const preferred = path.join(process.cwd(), 'reference', 'methodology', 'ideal_lesson_day01.json');
+      try {
+        const raw = await readFile(preferred, 'utf8');
+        return JSON.parse(raw);
+      } catch {
+        // Backward-compatibility fallback (older path)
+        const legacy = path.join(process.cwd(), 'lesson-examples', 'day01-faloclaro-ideal.json');
+        const raw = await readFile(legacy, 'utf8');
+        return JSON.parse(raw);
+      }
     }
   } catch (e) {
-    console.error('Failed to load ideal example lesson JSON from repo:', e);
+    console.error('Failed to load reference example lesson(s) JSON from repo:', e);
     return null;
   }
 }
@@ -749,8 +762,8 @@ export async function POST(
 
     const phase = getPhase(dayNumber);
 
-    // Load canonical ideal example lesson (repo file). Used in both default and custom prompts.
-    const idealExampleLesson = await loadIdealExampleLesson();
+    // Load canonical reference examples (repo files). Used in both default and custom prompts.
+    const idealExampleLesson = await loadReferenceExampleLessons();
 
     // Step 3: Load methodologies
     const { data: methodologies, error: methodologiesError } = await supabase
