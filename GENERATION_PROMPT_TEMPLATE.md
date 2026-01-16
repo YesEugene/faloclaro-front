@@ -406,9 +406,9 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
         "en": "What does this phrase mean?" 
       },
       "options": [
-        { "text": { "ru": "Мне нужна помощь сейчас", "en": "I need help now" }, "is_correct": false },
-        { "text": { "ru": "Мне нужна помощь завтра", "en": "I need help tomorrow" }, "is_correct": false },
-        { "text": { "ru": "Мне нужна помощь сейчас", "en": "I need help now" }, "is_correct": true }
+        { "text": { "ru": "Мне нужна помощь сейчас", "en": "I need help now" }, "correct": false },
+        { "text": { "ru": "Мне нужна помощь завтра", "en": "I need help tomorrow" }, "correct": false },
+        { "text": { "ru": "Мне нужна помощь сейчас", "en": "I need help now" }, "correct": true }
       ]
     },
     "task_2": {
@@ -419,9 +419,9 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
         "en": "Is this a question or statement?" 
       },
       "options": [
-        { "text": { "ru": "Вопрос", "en": "Question" }, "is_correct": true },
-        { "text": { "ru": "Утверждение", "en": "Statement" }, "is_correct": false },
-        { "text": { "ru": "Восклицание", "en": "Exclamation" }, "is_correct": false }
+        { "text": { "ru": "Вопрос", "en": "Question" }, "correct": true },
+        { "text": { "ru": "Утверждение", "en": "Statement" }, "correct": false },
+        { "text": { "ru": "Восклицание", "en": "Exclamation" }, "correct": false }
       ]
     }
   }
@@ -431,9 +431,9 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
 **Platform constraints:**
 • Both task_1 and task_2 are REQUIRED
 • Minimum 3 options per task
-• Exactly one correct answer per task - MUST set "is_correct": true for the correct option
+• Exactly one correct answer per task - MUST set "correct": true for the correct option
 • Use phrases from previous blocks
-• CRITICAL: Always set "is_correct": true for exactly one option in each task (task_1 and task_2)
+• CRITICAL: Always set "correct": true for exactly one option in each task (task_1 and task_2)
 
 ---
 
@@ -557,9 +557,9 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
         "en": "What does this phrase mean?" 
       },
       "options": [
-        { "text": { "ru": "Мне нужна помощь сейчас", "en": "I need help now" }, "is_correct": true },
-        { "text": { "ru": "Мне нужна помощь завтра", "en": "I need help tomorrow" }, "is_correct": false },
-        { "text": { "ru": "Я могу помочь", "en": "I can help" }, "is_correct": false }
+        { "text": { "ru": "Мне нужна помощь сейчас", "en": "I need help now" }, "correct": true },
+        { "text": { "ru": "Мне нужна помощь завтра", "en": "I need help tomorrow" }, "correct": false },
+        { "text": { "ru": "Я могу помочь", "en": "I can help" }, "correct": false }
       ]
     }
   ]
@@ -570,9 +570,9 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
 • Exactly 3 items (no more, no less)
 • Exactly 3 options per item
 • Options text in RU/EN (bilingual object: { "ru": "...", "en": "..." }) - BOTH languages required
-• One correct answer per item - MUST set "is_correct": true for the correct option
+• One correct answer per item - MUST set "correct": true for the correct option
 • Must use phrases from Task 2 blocks
-• CRITICAL: Always set "is_correct": true for exactly one option in each item
+• CRITICAL: Always set "correct": true for exactly one option in each item
 • CRITICAL: Each option must have both "ru" and "en" translations in the text object
 
 ---
@@ -622,9 +622,9 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
         "en": "What is this: request, answer, or statement?" 
       },
       "options": [
-        { "text": { "ru": "Просьба", "en": "Request" }, "is_correct": true },
-        { "text": { "ru": "Ответ", "en": "Answer" }, "is_correct": false },
-        { "text": { "ru": "Утверждение", "en": "Statement" }, "is_correct": false }
+        { "text": { "ru": "Просьба", "en": "Request" }, "correct": true },
+        { "text": { "ru": "Ответ", "en": "Answer" }, "correct": false },
+        { "text": { "ru": "Утверждение", "en": "Statement" }, "correct": false }
       ],
       "feedback": { 
         "ru": "Правильно! Это просьба о помощи.", 
@@ -639,9 +639,9 @@ This is the core cognitive engine of the lesson. It must have exactly 6 blocks i
 • Exactly 3 items
 • Exactly 3 options per item
 • Options text in RU/EN (bilingual object: { "ru": "...", "en": "..." })
-• One correct answer per item - MUST set "is_correct": true for the correct option
+• One correct answer per item - MUST set "correct": true for the correct option
 • Feedback is required for each item
-• CRITICAL: Always set "is_correct": true for exactly one option in each item
+• CRITICAL: Always set "correct": true for exactly one option in each item
 
 ---
 
