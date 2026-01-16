@@ -1,0 +1,241 @@
+day:
+  number: 1
+  title:
+    ru: "Знакомство"
+    en: "Acquaintance"
+  subtitle:
+    ru: "Первые фразы, чтобы услышать язык и начать говорить"
+    en: "First phrases to hear the language and start speaking"
+  estimated_time: "15–25"
+
+email:
+  subject: "День 1 из 60 — первый шаг в португальском"
+  preview: "Короткий урок, чтобы услышать язык и начать говорить"
+  summary:
+    - "Знакомство"
+    - "Первые фразы"
+    - "Понимание на слух"
+
+progress:
+  day_progress_text: "1 / 60"
+  completion_message: "День завершён. Отличное начало."
+
+tasks:
+  - task_id: 1
+    type: "vocabulary"
+    title:
+      ru: "Слова и фразы"
+      en: "Words and phrases"
+    subtitle:
+      ru: "Слушай, повторяй и привыкай к звучанию языка"
+      en: "Listen, repeat and get used to the sound of the language"
+    recommended_time: "10"
+    completion_rule: "auto_after_audio_10_min"
+
+    ui:
+      show_audio_settings: true
+      show_timer: true
+      allow_repeat: true
+
+    card_format:
+      show_word: true
+      show_transcription: true
+      show_example_sentence: true
+      show_word_translation_ru: true
+      show_sentence_translation_ru: true
+      show_sentence_translation_en: true
+
+    content:
+      cards:
+        - word: "Olá"
+          transcription: "[oˈla]"
+          example_sentence: "Olá, chamo-me Ana."
+          sentence_translation_ru: "Привет, меня зовут Ана."
+          sentence_translation_en: "Hello, my name is Ana."
+          word_translation_ru: "Привет"
+          word_translation_en: "Hello"
+
+        - word: "Bom dia"
+          transcription: "[bõ ˈdiɐ]"
+          example_sentence: "Bom dia, eu sou João."
+          sentence_translation_ru: "Доброе утро, я Жоао."
+          sentence_translation_en: "Good morning, I am João."
+          word_translation_ru: "Доброе утро"
+          word_translation_en: "Good morning"
+
+        - word: "Boa noite"
+          transcription: "[ˈboɐ ˈnoitɨ]"
+          example_sentence: "Boa noite, chamo-me Maria."
+          sentence_translation_ru: "Добрый вечер, меня зовут Мария."
+          sentence_translation_en: "Good evening, my name is Maria."
+          word_translation_ru: "Добрый вечер"
+          word_translation_en: "Good evening"
+
+        - word: "Chamo-me"
+          transcription: "[ˈʃɐmu mi]"
+          example_sentence: "Chamo-me Maria."
+          sentence_translation_ru: "Меня зовут Мария."
+          sentence_translation_en: "My name is Maria."
+          word_translation_ru: "Меня зовут"
+          word_translation_en: "My name is"
+
+        - word: "Eu sou"
+          transcription: "[ew so]"
+          example_sentence: "Eu sou Pedro."
+          sentence_translation_ru: "Я — Педру."
+          sentence_translation_en: "I am Pedro."
+          word_translation_ru: "Я есть / Я —"
+          word_translation_en: "I am"
+
+        - word: "Eu"
+          transcription: "[ew]"
+          example_sentence: "Eu sou Ana."
+          sentence_translation_ru: "Я — Ана."
+          sentence_translation_en: "I am Ana."
+          word_translation_ru: "Я"
+          word_translation_en: "I"
+
+        - word: "Sou"
+          transcription: "[so]"
+          example_sentence: "Eu sou João."
+          sentence_translation_ru: "Я — Жоао."
+          sentence_translation_en: "I am João."
+          word_translation_ru: "Есть / Являюсь"
+          word_translation_en: "Am / Is"
+
+        - word: "Nome"
+          transcription: "[ˈnomɨ]"
+          example_sentence: "O meu nome é Ana."
+          sentence_translation_ru: "Моё имя — Ана."
+          sentence_translation_en: "My name is Ana."
+          word_translation_ru: "Имя"
+          word_translation_en: "Name"
+
+        - word: "Prazer"
+          transcription: "[pɾɐˈzeɾ]"
+          example_sentence: "Prazer em conhecê-la."
+          sentence_translation_ru: "Приятно познакомиться."
+          sentence_translation_en: "Nice to meet you."
+          word_translation_ru: "Приятно / Удовольствие"
+          word_translation_en: "Pleasure / Nice"
+
+        - word: "E você?"
+          transcription: "[i voˈse]"
+          example_sentence: "Olá, eu sou Ana. E você?"
+          sentence_translation_ru: "Привет, я — Ана. А вы?"
+          sentence_translation_en: "Hello, I am Ana. And you?"
+          word_translation_ru: "А вы? / А ты?"
+          word_translation_en: "And you?"
+
+    completion_message: "Уровень прогресса: Начало"
+
+  - task_id: 2
+    type: "rules"
+    title: "Как сказать, кто ты"
+
+    rules:
+      - rule_id: "ser_identity"
+        explanation: "Чтобы сказать, кто ты, используют: Eu sou + имя"
+        examples:
+          - text: "Eu sou Ana"
+            audio: true
+          - text: "Eu sou João"
+            audio: true
+
+      - rule_id: "chamar_se"
+        explanation: "Чтобы сказать своё имя, говорят: Chamo-me + имя"
+        examples:
+          - text: "Chamo-me Ana"
+            audio: true
+          - text: "Chamo-me João"
+            audio: true
+
+    reinforcement:
+      type: "meaning_check"
+      audio: "Chamo-me Maria"
+      question: "О чём говорит фраза?"
+      options:
+        - text: "Как её зовут"
+          correct: true
+        - text: "Где она живёт"
+          correct: false
+        - text: "Сколько ей лет"
+          correct: false
+
+    completion_message: "Уровень прогресса: Разогрев"
+
+  - task_id: 3
+    type: "listening_comprehension"
+    title: "Предложения и понимание"
+
+    items:
+      - audio: "Olá, chamo-me Ana"
+        show_text_after_answer: true
+        question: "Como se chama a pessoa?"
+        options:
+          - text: "Ana"
+            correct: true
+          - text: "João"
+            correct: false
+          - text: "Maria"
+            correct: false
+
+      - audio: "Bom dia. Eu sou João"
+        show_text_after_answer: true
+        question: "Quem é?"
+        options:
+          - text: "João"
+            correct: true
+          - text: "Ana"
+            correct: false
+          - text: "Não sabemos"
+            correct: false
+
+    completion_message: "Уровень прогресса: Понимание"
+
+  - task_id: 4
+    type: "attention"
+    title: "Внимательность"
+
+    items:
+      - audio: "Olá, chamo-me Ana"
+        question: "В какой ситуации это говорят?"
+        options:
+          - text: "Знакомство"
+            correct: true
+          - text: "Прощание"
+            correct: false
+          - text: "Просьба"
+            correct: false
+
+      - audio: "Prazer em conhecê-la"
+        question: "Когда так говорят?"
+        options:
+          - text: "При знакомстве"
+            correct: true
+          - text: "Когда уходят"
+            correct: false
+          - text: "Когда просят помощи"
+            correct: false
+
+    completion_message: "Уровень прогресса: Уверенность"
+
+  - task_id: 5
+    type: "writing_optional"
+    title: "Письмо"
+
+    instruction: "Можно написать от руки или просто сказать вслух"
+
+    template:
+      - "Olá, ___-me ___."
+      - "Eu ___ ___."
+
+    hints:
+      - "chamo-me"
+      - "sou"
+
+    alternative:
+      speak_out_loud: true
+      phrase: "Olá, chamo-me … Eu sou …"
+
+    completion_message: "Уровень прогресса: Закреплено"

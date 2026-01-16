@@ -120,6 +120,25 @@ export default function MethodologiesPage() {
     }
   };
 
+  const handleDownloadMethodologies = () => {
+    const exportData = {
+      exported_at: new Date().toISOString(),
+      course: courseMethodology || '',
+      lesson: lessonMethodology || '',
+      generation_prompt: generationPrompt || '',
+      vocabulary: vocabulary || { used_words: [] },
+    };
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `methodologies.export.${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -150,6 +169,13 @@ export default function MethodologiesPage() {
               />
               <h1 className="text-xl font-bold text-gray-900">Методологии</h1>
             </div>
+            <button
+              onClick={handleDownloadMethodologies}
+              className="px-3 py-2 bg-gray-100 text-gray-900 rounded-lg hover:bg-gray-200 transition-colors text-sm"
+              title="Скачать методологии (JSON)"
+            >
+              ⬇️ Скачать методологии
+            </button>
           </div>
         </div>
       </header>
