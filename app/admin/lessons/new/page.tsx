@@ -91,7 +91,7 @@ export default function NewLessonPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <button
-                onClick={() => router.push('/admin/dashboard')}
+                onClick={() => router.push('/admin/dashboard?tab=lessons')}
                 className="text-gray-600 hover:text-gray-900"
               >
                 ← Назад
@@ -250,7 +250,7 @@ export default function NewLessonPage() {
 
           <div className="flex justify-end gap-2 pt-4 border-t border-gray-200">
             <button
-              onClick={() => router.push('/admin/dashboard')}
+              onClick={() => router.push('/admin/dashboard?tab=lessons')}
               className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
               disabled={loading}
             >

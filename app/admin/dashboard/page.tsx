@@ -1,12 +1,21 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 
 export default function AdminDashboard() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<'users' | 'stats' | 'payments' | 'lessons'>('users');
+
+  // Allow deep-linking to a specific tab (e.g. /admin/dashboard?tab=lessons)
+  useEffect(() => {
+    const tab = searchParams.get('tab');
+    if (tab === 'users' || tab === 'stats' || tab === 'payments' || tab === 'lessons') {
+      setActiveTab(tab);
+    }
+  }, [searchParams]);
 
   const handleLogout = () => {
     localStorage.removeItem('admin_authenticated');

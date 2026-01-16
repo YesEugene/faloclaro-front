@@ -309,7 +309,7 @@ function LessonEditorContent() {
       if (data.success) {
         alert('Урок успешно удален!');
         // Redirect to dashboard after deletion
-        router.push('/admin/dashboard');
+        router.push('/admin/dashboard?tab=lessons');
       } else {
         const errorMessage = data.error || data.details || 'Unknown error';
         console.error('Delete lesson error:', data);
@@ -703,7 +703,7 @@ function LessonEditorContent() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <button
-                onClick={() => router.push('/admin/dashboard')}
+                onClick={() => router.push('/admin/dashboard?tab=lessons')}
                 className="text-gray-600 hover:text-gray-900"
               >
                 ← Назад
