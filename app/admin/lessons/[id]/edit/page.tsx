@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import TaskEditor from '@/components/admin/TaskEditor';
 import { normalizeTasksArray } from '@/lib/lesson-tasks-normalizer';
+import { buildAuthoringLessonExport } from '@/lib/lesson-authoring-export';
 
 function LessonEditorContent() {
   const params = useParams();
@@ -37,11 +38,8 @@ function LessonEditorContent() {
       ? JSON.parse(lesson.yaml_content || '{}')
       : lesson.yaml_content || {})?.day;
 
-    const normalizedTasks = normalizeTasksArray(tasks || []);
-
-    const exportData: any = {
-      // New-format fields (also accepted by importer)
-      day_number: dayNumber,
+    const exportData: any = buildAuthoringLessonExport({
+      dayNumber,
       title_ru: lesson.title_ru || '',
       title_en: lesson.title_en || '',
       title_pt: lesson.title_pt || '',
@@ -49,24 +47,8 @@ function LessonEditorContent() {
       subtitle_en: lesson.subtitle_en || '',
       subtitle_pt: lesson.subtitle_pt || '',
       estimated_time: yamlDay?.estimated_time || lesson.estimated_time || '',
-      tasks: normalizedTasks,
-
-      // Old-format wrapper (also accepted by importer)
-      day: {
-        day_number: dayNumber,
-        title: {
-          ru: lesson.title_ru || '',
-          en: lesson.title_en || '',
-          pt: lesson.title_pt || '',
-        },
-        subtitle: {
-          ru: lesson.subtitle_ru || '',
-          en: lesson.subtitle_en || '',
-          pt: lesson.subtitle_pt || '',
-        },
-        estimated_time: yamlDay?.estimated_time || lesson.estimated_time || '',
-      },
-    };
+      tasks: tasks || [],
+    });
 
     const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json;charset=utf-8' });
     const url = URL.createObjectURL(blob);
