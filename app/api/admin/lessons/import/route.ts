@@ -105,6 +105,21 @@ export async function POST(request: NextRequest) {
       normalizedDay = dayWithoutNumber;
     }
     
+    const normalizeOptionCorrectnessInPlace = (obj: any) => {
+      if (!obj || typeof obj !== 'object') return;
+      const options = obj.options;
+      if (!Array.isArray(options)) return;
+      for (const opt of options) {
+        if (!opt || typeof opt !== 'object') continue;
+        if (opt.is_correct !== undefined && opt.correct === undefined) {
+          opt.correct = !!opt.is_correct;
+        }
+        if (opt.correct !== undefined && opt.is_correct === undefined) {
+          opt.is_correct = !!opt.correct;
+        }
+      }
+    };
+
     // Normalize tasks structure - keep original structure but fix common issues
     const normalizedTasks = (lessonData.tasks || []).map((task: any) => {
       const normalizedTask = { ...task };
@@ -123,7 +138,28 @@ export async function POST(request: NextRequest) {
             }
             return item;
           });
+
+          // Fix correctness flag naming for admin UI checkboxes
+          normalizedTask.items.forEach((item: any) => normalizeOptionCorrectnessInPlace(item));
         }
+      }
+
+      // Fix correctness flag naming for listening task items
+      if (normalizedTask.type === 'listening_comprehension' || normalizedTask.type === 'listening') {
+        if (normalizedTask.items && Array.isArray(normalizedTask.items)) {
+          normalizedTask.items.forEach((item: any) => normalizeOptionCorrectnessInPlace(item));
+        }
+      }
+
+      // Fix correctness flag naming for rules reinforcement block
+      if (normalizedTask.type === 'rules' && Array.isArray(normalizedTask.blocks)) {
+        normalizedTask.blocks.forEach((block: any) => {
+          if (!block || typeof block !== 'object') return;
+          if (block.block_type !== 'reinforcement') return;
+          const c = block.content || {};
+          if (c.task_1) normalizeOptionCorrectnessInPlace(c.task_1);
+          if (c.task_2) normalizeOptionCorrectnessInPlace(c.task_2);
+        });
       }
       
       // Note: Listening tasks with 'questions' array are kept as-is

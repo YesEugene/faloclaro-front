@@ -1,241 +1,533 @@
 day:
-  number: 1
+  day_number: 1
   title:
-    ru: "Знакомство"
-    en: "Acquaintance"
+    ru: Знакомство
+    en: Introduction
+    pt: Introduction
   subtitle:
-    ru: "Первые фразы, чтобы услышать язык и начать говорить"
-    en: "First phrases to hear the language and start speaking"
-  estimated_time: "15–25"
-
-email:
-  subject: "День 1 из 60 — первый шаг в португальском"
-  preview: "Короткий урок, чтобы услышать язык и начать говорить"
-  summary:
-    - "Знакомство"
-    - "Первые фразы"
-    - "Понимание на слух"
-
-progress:
-  day_progress_text: "1 / 60"
-  completion_message: "День завершён. Отличное начало."
-
+    ru: Первые фразы, чтобы услышать язык и начать говорить
+    en: First phrases to hear the language and start speaking
+    pt: ''
+  estimated_time: 15–25
 tasks:
-  - task_id: 1
-    type: "vocabulary"
-    title:
-      ru: "Слова и фразы"
-      en: "Words and phrases"
-    subtitle:
-      ru: "Слушай, повторяй и привыкай к звучанию языка"
-      en: "Listen, repeat and get used to the sound of the language"
-    recommended_time: "10"
-    completion_rule: "auto_after_audio_10_min"
-
-    ui:
-      show_audio_settings: true
+  - ui:
       show_timer: true
       allow_repeat: true
-
-    card_format:
-      show_word: true
-      show_transcription: true
-      show_example_sentence: true
-      show_word_translation_ru: true
-      show_sentence_translation_ru: true
-      show_sentence_translation_en: true
-
+      show_audio_settings: true
+    type: vocabulary
+    title:
+      en: Words and phrases
+      ru: Слова и фразы
     content:
       cards:
-        - word: "Olá"
-          transcription: "[oˈla]"
-          example_sentence: "Olá, chamo-me Ana."
-          sentence_translation_ru: "Привет, меня зовут Ана."
-          sentence_translation_en: "Hello, my name is Ana."
-          word_translation_ru: "Привет"
-          word_translation_en: "Hello"
+        - word: Olá
+          audio_url: https://youvkbqaruadfpqxxbwi.supabase.co/storage/v1/object/public/audio/lesson-1/lesson-1-word-ola.mp3
+          transcription: '[oˈla]'
+          example_sentence: Olá, chamo-me Ana.
+          word_translation_en: Hello
+          word_translation_ru: Привет
+          sentence_translation_en: Hello, my name is Ana.
+          sentence_translation_ru: Привет, меня зовут Ана.
+        - word: Chamo-me
+          audio_url: https://youvkbqaruadfpqxxbwi.supabase.co/storage/v1/object/public/audio/lesson-1/lesson-1-word-chamo-me.mp3
+          transcription: '[ˈʃɐmu mi]'
+          example_sentence: Chamo-me Ana.
+          word_translation_en: My name is
+          word_translation_ru: Меня зовут
+          sentence_translation_en: My name is Ana.
+          sentence_translation_ru: Меня зовут Ана.
+        - word: Sou
+          audio_url: https://youvkbqaruadfpqxxbwi.supabase.co/storage/v1/object/public/audio/lesson-1/lesson-1-word-sou.mp3
+          transcription: '[so]'
+          example_sentence: Sou Ana.
+          word_translation_en: I am
+          word_translation_ru: Я есть / Я —
+          sentence_translation_en: I am Ana.
+          sentence_translation_ru: Я — Ана.
+        - word: Nome
+          audio_url: https://youvkbqaruadfpqxxbwi.supabase.co/storage/v1/object/public/audio/lesson-1/lesson-1-word-nome.mp3
+          transcription: '[ˈnomɨ]'
+          example_sentence: O meu nome é Ana.
+          word_translation_en: Name
+          word_translation_ru: Имя
+          sentence_translation_en: My name is Ana.
+          sentence_translation_ru: Моё имя — Ана.
+        - word: Prazer
+          audio_url: https://youvkbqaruadfpqxxbwi.supabase.co/storage/v1/object/public/audio/lesson-1/lesson-1-word-prazer.mp3
+          transcription: '[pɾɐˈzeɾ]'
+          example_sentence: Muito prazer.
+          word_translation_en: Pleasure / nice
+          word_translation_ru: Приятно / удовольствие
+          sentence_translation_en: Nice to meet you.
+          sentence_translation_ru: Очень приятно.
+        - word: Conhecer
+          audio_url: https://youvkbqaruadfpqxxbwi.supabase.co/storage/v1/object/public/audio/lesson-1/lesson-1-word-conhecer.mp3
+          transcription: '[kunɨˈseɾ]'
+          example_sentence: Prazer em conhecer você.
+          word_translation_en: To meet
+          word_translation_ru: Знакомиться
+          sentence_translation_en: Nice to meet you.
+          sentence_translation_ru: Приятно познакомиться с вами.
+        - word: Você
+          audio_url: https://youvkbqaruadfpqxxbwi.supabase.co/storage/v1/object/public/audio/lesson-1/lesson-1-word-voce.mp3
+          transcription: '[voˈse]'
+          example_sentence: E você?
+          word_translation_en: You
+          word_translation_ru: Ты / вы
+          sentence_translation_en: And you?
+          sentence_translation_ru: А вы?
+        - word: Eu
+          audio_url: https://youvkbqaruadfpqxxbwi.supabase.co/storage/v1/object/public/audio/lesson-1/lesson-1-word-eu.mp3
+          transcription: '[ew]'
+          example_sentence: Eu sou Ana.
+          word_translation_en: I
+          word_translation_ru: Я
+          sentence_translation_en: I am Ana.
+          sentence_translation_ru: Я — Ана.
+        - word: Muito
+          audio_url: https://youvkbqaruadfpqxxbwi.supabase.co/storage/v1/object/public/audio/lesson-1/lesson-1-word-muito.mp3
+          transcription: '[ˈmũjtu]'
+          example_sentence: Muito prazer.
+          word_translation_en: Very
+          word_translation_ru: Очень
+          sentence_translation_en: Nice to meet you.
+          sentence_translation_ru: Очень приятно.
+        - word: Também
+          audio_url: https://youvkbqaruadfpqxxbwi.supabase.co/storage/v1/object/public/audio/lesson-1/lesson-1-word-tambem.mp3
+          transcription: '[tɐ̃ˈbẽj̃]'
+          example_sentence: Eu também.
+          word_translation_en: Also / too
+          word_translation_ru: Тоже
+          sentence_translation_en: Me too.
+          sentence_translation_ru: Я тоже.
+        - word: Hoje
+          audio_url: https://youvkbqaruadfpqxxbwi.supabase.co/storage/v1/object/public/audio/lesson-1/lesson-1-word-hoje.mp3
+          transcription: '[ˈoʒɨ]'
+          example_sentence: Hoje, muito prazer.
+          word_translation_en: Today
+          word_translation_ru: Сегодня
+          sentence_translation_en: Today, nice to meet you.
+          sentence_translation_ru: Сегодня очень приятно.
+        - word: Aqui
+          audio_url: https://youvkbqaruadfpqxxbwi.supabase.co/storage/v1/object/public/audio/lesson-1/lesson-1-word-aqui.mp3
+          transcription: '[ɐˈki]'
+          example_sentence: Eu estou aqui.
+          word_translation_en: Here
+          word_translation_ru: Здесь
+          sentence_translation_en: I am here.
+          sentence_translation_ru: Я здесь.
+        - word: Feliz
+          audio_url: https://youvkbqaruadfpqxxbwi.supabase.co/storage/v1/object/public/audio/lesson-1/lesson-1-word-feliz.mp3
+          transcription: '[fɨˈliʃ]'
+          example_sentence: Hoje, eu estou feliz.
+          word_translation_en: Happy
+          word_translation_ru: Счастлив / рад
+          sentence_translation_en: Today, I am happy.
+          sentence_translation_ru: Сегодня я счастлив(а).
+        - word: E
+          audio_url: https://youvkbqaruadfpqxxbwi.supabase.co/storage/v1/object/public/audio/lesson-1/lesson-1-word-e.mp3
+          transcription: '[i]'
+          example_sentence: E você?
+          word_translation_en: And
+          word_translation_ru: И / а
+          sentence_translation_en: And you?
+          sentence_translation_ru: А вы?
+    task_id: 1
+    subtitle:
+      en: Listen, repeat and get used to the sound of the language
+      ru: Слушай, повторяй и привыкай к звучанию языка
+    completion_rule: auto_after_audio_10_min
+    recommended_time: '10'
+    completion_message:
+      en: Great. You’ve heard the words — now let’s build the thought.
+      ru: Отлично. Ты услышал(а) слова — теперь начнём собирать мысль.
+  - type: rules
+    title:
+      en: How the thought is built
+      ru: Как строится мысль
+    blocks:
+      - content:
+          hint:
+            - en: chamo-me = “my name is”
+              ru: chamo-me = «меня зовут»
+            - en: sou = “I am”
+              ru: sou = «я есть / я»
+            - en: The name goes at the end.
+              ru: Имя просто ставим в конце.
+            - en: Both options are equally natural in real speech.
+              ru: Оба варианта равнозначны в живой речи.
+          title:
+            en: How to say your name
+            ru: Как сказать, как тебя зовут
+          examples:
+            - text: Chamo-me Ana.
+              audio: true
+              pause_after_audio_sec: 1.5
+            - text: Sou Ana.
+              audio: true
+              pause_after_audio_sec: 1.5
+          explanation_text:
+            en: Let’s start with the simplest natural way to introduce yourself. We’ll say the same idea in two ways.
+            ru: Начнём с самой простой и естественной формы представления. Мы скажем одно и то же двумя способами.
+        block_id: block_1_build
+        block_type: explanation
+      - content:
+          hint:
+            - en: Put Olá at the beginning.
+              ru: Olá ставим в начале.
+            - en: Muito prazer = “nice to meet you”.
+              ru: Muito prazer = «очень приятно».
+          title:
+            en: Add a greeting and emotion
+            ru: Добавляем приветствие и эмоцию
+          examples:
+            - text: Olá, chamo-me Ana.
+              audio: true
+              pause_after_audio_sec: 1.5
+            - text: Olá, sou Ana. Muito prazer.
+              audio: true
+              pause_after_audio_sec: 1.5
+          explanation_text:
+            en: Now we’ll make it sound real — like in an actual conversation.
+            ru: Теперь сделаем фразу живой, как в реальном разговоре.
+        block_id: block_2_transform
+        block_type: explanation
+      - content:
+          hint:
+            - en: E você? = “And you?” — short and very natural.
+              ru: E você? = «А вы?» — коротко и очень естественно.
+            - en: Você também? = “You too?” — gently returns the focus to the other person.
+              ru: Você também? = «Вы тоже?» — мягко возвращает разговор к собеседнику.
+          title:
+            en: How to ask back
+            ru: Как спросить в ответ
+          examples:
+            - text: E você?
+              audio: true
+              pause_after_audio_sec: 1.5
+            - text: Você também?
+              audio: true
+              pause_after_audio_sec: 1.5
+          explanation_text:
+            en: After introducing yourself, the natural next step is to involve the other person.
+            ru: После представления логично сделать следующий шаг — вовлечь собеседника.
+        block_id: block_3_answers
+        block_type: explanation
+      - content:
+          note:
+            en: Both phrases mean the same thing. Choose the one that feels easier for you.
+            ru: Обе фразы означают одно и то же. Выбирай ту, которая проще именно тебе.
+          title:
+            en: You can say it in different ways
+            ru: Можно сказать по-разному
+          comparison_card:
+            - text: Chamo-me Ana.
+              audio: true
+            - text: O meu nome é Ana.
+              audio: true
+              audio_url: >-
+                https://youvkbqaruadfpqxxbwi.supabase.co/storage/v1/object/public/audio/lesson-1/lesson-1-word-o-meu-nome-e-ana.mp3
+        block_id: block_4_equivalence
+        block_type: comparison
+      - content:
+          title:
+            en: ''
+            ru: Тест
+          task_1:
+            audio: Olá, chamo-me António. Muito prazer.
+            format: single_choice
+            options:
+              - text:
+                  en: Saying goodbye
+                  ru: Прощание
+                correct: false
+              - text:
+                  en: Greeting and introduction
+                  ru: Знакомство и приветствие
+                correct: true
+              - text:
+                  en: Asking for help
+                  ru: Просьба о помощи
+                correct: false
+            question:
+              en: What is this phrase about?
+              ru: О чём эта фраза?
+            audio_url: >-
+              https://youvkbqaruadfpqxxbwi.supabase.co/storage/v1/object/public/audio/lesson-1/lesson-1-word-ola-chamo-me-antonio-muito-prazer.mp3
+          task_2:
+            audio: Olá, eu sou Ana. E você?
+            format: single_choice
+            options:
+              - text:
+                  en: Introduces themselves and asks back
+                  ru: Представляется и задаёт встречный вопрос
+                correct: true
+              - text:
+                  en: Says goodbye immediately
+                  ru: Сразу прощается
+                correct: false
+              - text:
+                  en: Says they are also Ana
+                  ru: Говорит, что он тоже Ана
+                correct: false
+            question:
+              en: What is the speaker doing?
+              ru: Что делает говорящий?
+        block_id: block_5_reinforcement
+        block_type: reinforcement
+      - content:
+          action_button:
+            text:
+              en: ✔ I said it out loud
+              ru: ✔ Я сказал(а) вслух
+            completes_task: true
+          instruction_text:
+            en: |-
+              Say out loud, without reading:
 
-        - word: "Bom dia"
-          transcription: "[bõ ˈdiɐ]"
-          example_sentence: "Bom dia, eu sou João."
-          sentence_translation_ru: "Доброе утро, я Жоао."
-          sentence_translation_en: "Good morning, I am João."
-          word_translation_ru: "Доброе утро"
-          word_translation_en: "Good morning"
+              Olá, chamo-me Ana. Muito prazer em conhecer você.
+            ru: |-
+              Скажи вслух, не читая:
 
-        - word: "Boa noite"
-          transcription: "[ˈboɐ ˈnoitɨ]"
-          example_sentence: "Boa noite, chamo-me Maria."
-          sentence_translation_ru: "Добрый вечер, меня зовут Мария."
-          sentence_translation_en: "Good evening, my name is Maria."
-          word_translation_ru: "Добрый вечер"
-          word_translation_en: "Good evening"
-
-        - word: "Chamo-me"
-          transcription: "[ˈʃɐmu mi]"
-          example_sentence: "Chamo-me Maria."
-          sentence_translation_ru: "Меня зовут Мария."
-          sentence_translation_en: "My name is Maria."
-          word_translation_ru: "Меня зовут"
-          word_translation_en: "My name is"
-
-        - word: "Eu sou"
-          transcription: "[ew so]"
-          example_sentence: "Eu sou Pedro."
-          sentence_translation_ru: "Я — Педру."
-          sentence_translation_en: "I am Pedro."
-          word_translation_ru: "Я есть / Я —"
-          word_translation_en: "I am"
-
-        - word: "Eu"
-          transcription: "[ew]"
-          example_sentence: "Eu sou Ana."
-          sentence_translation_ru: "Я — Ана."
-          sentence_translation_en: "I am Ana."
-          word_translation_ru: "Я"
-          word_translation_en: "I"
-
-        - word: "Sou"
-          transcription: "[so]"
-          example_sentence: "Eu sou João."
-          sentence_translation_ru: "Я — Жоао."
-          sentence_translation_en: "I am João."
-          word_translation_ru: "Есть / Являюсь"
-          word_translation_en: "Am / Is"
-
-        - word: "Nome"
-          transcription: "[ˈnomɨ]"
-          example_sentence: "O meu nome é Ana."
-          sentence_translation_ru: "Моё имя — Ана."
-          sentence_translation_en: "My name is Ana."
-          word_translation_ru: "Имя"
-          word_translation_en: "Name"
-
-        - word: "Prazer"
-          transcription: "[pɾɐˈzeɾ]"
-          example_sentence: "Prazer em conhecê-la."
-          sentence_translation_ru: "Приятно познакомиться."
-          sentence_translation_en: "Nice to meet you."
-          word_translation_ru: "Приятно / Удовольствие"
-          word_translation_en: "Pleasure / Nice"
-
-        - word: "E você?"
-          transcription: "[i voˈse]"
-          example_sentence: "Olá, eu sou Ana. E você?"
-          sentence_translation_ru: "Привет, я — Ана. А вы?"
-          sentence_translation_en: "Hello, I am Ana. And you?"
-          word_translation_ru: "А вы? / А ты?"
-          word_translation_en: "And you?"
-
-    completion_message: "Уровень прогресса: Начало"
-
-  - task_id: 2
-    type: "rules"
-    title: "Как сказать, кто ты"
-
-    rules:
-      - rule_id: "ser_identity"
-        explanation: "Чтобы сказать, кто ты, используют: Eu sou + имя"
-        examples:
-          - text: "Eu sou Ana"
-            audio: true
-          - text: "Eu sou João"
-            audio: true
-
-      - rule_id: "chamar_se"
-        explanation: "Чтобы сказать своё имя, говорят: Chamo-me + имя"
-        examples:
-          - text: "Chamo-me Ana"
-            audio: true
-          - text: "Chamo-me João"
-            audio: true
-
-    reinforcement:
-      type: "meaning_check"
-      audio: "Chamo-me Maria"
-      question: "О чём говорит фраза?"
-      options:
-        - text: "Как её зовут"
-          correct: true
-        - text: "Где она живёт"
-          correct: false
-        - text: "Сколько ей лет"
-          correct: false
-
-    completion_message: "Уровень прогресса: Разогрев"
-
-  - task_id: 3
-    type: "listening_comprehension"
-    title: "Предложения и понимание"
-
+              Olá, chamo-me Ana. Muito prazer em conhecer você.
+        block_id: block_6_speak
+        block_type: speak_out_loud
+    task_id: 2
+    subtitle:
+      en: Step by step we assemble an introduction
+      ru: Шаг за шагом собираем знакомство
+    structure:
+      blocks_order:
+        - block_1_build
+        - block_2_transform
+        - block_3_answers
+        - block_4_equivalence
+        - block_5_reinforcement
+        - block_6_speak
+    completion_message:
+      en: Great. Now you’re ready to recognize it by ear.
+      ru: Супер. Теперь ты готов(а) понимать это на слух.
+  - type: listening_comprehension
     items:
-      - audio: "Olá, chamo-me Ana"
-        show_text_after_answer: true
-        question: "Como se chama a pessoa?"
+      - audio: Olá, sou Ana.
+        item_id: 1
         options:
-          - text: "Ana"
+          - text:
+              en: Nice to meet you.
+              ru: Приятно познакомиться.
+            correct: false
+          - text:
+              en: Hello, my name is Ana.
+              ru: Привет, меня зовут Ана.
             correct: true
-          - text: "João"
+          - text:
+              en: Where are you?
+              ru: Где вы?
             correct: false
-          - text: "Maria"
-            correct: false
-
-      - audio: "Bom dia. Eu sou João"
-        show_text_after_answer: true
-        question: "Quem é?"
+        question:
+          en: What does this phrase mean?
+          ru: Что означает эта фраза?
+        audio_url: https://youvkbqaruadfpqxxbwi.supabase.co/storage/v1/object/public/audio/lesson-1/lesson-1-word-ola-sou-ana.mp3
+        text_hidden_before_answer: true
+      - audio: Chamo-me Pedro. Muito prazer.
+        item_id: 2
         options:
-          - text: "João"
+          - text:
+              en: 'He asks: “And you?”'
+              ru: 'Он спрашивает: «А вы?»'
+            correct: false
+          - text:
+              en: He says he is also Pedro.
+              ru: Он говорит, что он тоже Педру.
+            correct: false
+          - text:
+              en: He introduces himself and says it’s a pleasure.
+              ru: Он представляется и говорит, что ему приятно.
             correct: true
-          - text: "Ana"
+        question:
+          en: What is the person saying?
+          ru: О чём говорит человек?
+        audio_url: >-
+          https://youvkbqaruadfpqxxbwi.supabase.co/storage/v1/object/public/audio/lesson-1/lesson-1-word-chamo-me-pedro-muito-prazer.mp3
+        text_hidden_before_answer: true
+      - audio: Olá, chamo-me Ana. Muito prazer.
+        item_id: 3
+        options:
+          - text:
+              en: The person is saying goodbye.
+              ru: Человек прощается.
             correct: false
-          - text: "Não sabemos"
+          - text:
+              en: The person is introducing themselves.
+              ru: Человек знакомится.
+            correct: true
+          - text:
+              en: The person is asking for help.
+              ru: Человек просит помочь.
             correct: false
-
-    completion_message: "Уровень прогресса: Понимание"
-
-  - task_id: 4
-    type: "attention"
-    title: "Внимательность"
-
+        question:
+          en: What is happening in this situation?
+          ru: Что происходит в этой ситуации?
+        audio_url: >-
+          https://youvkbqaruadfpqxxbwi.supabase.co/storage/v1/object/public/audio/lesson-1/lesson-1-word-ola-chamo-me-ana-muito-prazer.mp3
+        text_hidden_before_answer: true
+    title:
+      en: Listen and understand
+      ru: Слушай и пойми
+    task_id: 3
+    subtitle:
+      en: Listen to the phrase and pick the meaning
+      ru: Слушай фразу и выбери смысл
+    ui_rules:
+      audio_plays_first: true
+      show_text_after_answer: true
+    completion_message:
+      en: Nice. Next — attention check.
+      ru: Класс. Дальше — проверка внимательности.
+  - type: attention
     items:
-      - audio: "Olá, chamo-me Ana"
-        question: "В какой ситуации это говорят?"
+      - audio: Olá, chamo-me Pedro. Muito prazer.
+        item_id: 1
         options:
-          - text: "Знакомство"
+          - text:
+              en: A request
+              ru: Просьба
+            correct: false
+          - text:
+              en: A question
+              ru: Вопрос
+            correct: false
+          - text:
+              en: Greeting and introduction
+              ru: Знакомство
             correct: true
-          - text: "Прощание"
-            correct: false
-          - text: "Просьба"
-            correct: false
-
-      - audio: "Prazer em conhecê-la"
-        question: "Когда так говорят?"
+        feedback:
+          en: Correct. This is an introduction. Say the full sentence out loud as one phrase.
+          ru: Верно. Это фраза знакомства. Проговори её вслух полностью, как одно целое.
+        question:
+          en: What is happening in this phrase?
+          ru: Что происходит в этой фразе?
+        audio_url: >-
+          https://youvkbqaruadfpqxxbwi.supabase.co/storage/v1/object/public/audio/lesson-1/lesson-1-word-ola-chamo-me-pedro-muito-prazer.mp3
+        text_hidden_before_answer: true
+      - audio: Sou Ana. E você?
+        item_id: 2
         options:
-          - text: "При знакомстве"
+          - text:
+              en: Only an answer
+              ru: Только ответ
+            correct: false
+          - text:
+              en: Only a question
+              ru: Только вопрос
+            correct: false
+          - text:
+              en: Answer + question
+              ru: Ответ + вопрос
             correct: true
-          - text: "Когда уходят"
+        feedback:
+          en: First the person talks about themselves, then asks the other person. Try saying it without pauses.
+          ru: Сначала человек говорит о себе, затем задаёт вопрос собеседнику. Попробуй сказать фразу без пауз.
+        question:
+          en: What is happening here?
+          ru: Что здесь происходит?
+        audio_url: >-
+          https://youvkbqaruadfpqxxbwi.supabase.co/storage/v1/object/public/audio/lesson-1/lesson-1-word-sou-ana-e-voce.mp3
+        text_hidden_before_answer: true
+      - audio: Olá. Muito prazer. E você?
+        item_id: 3
+        options:
+          - text:
+              en: Goodbye
+              ru: Прощание
             correct: false
-          - text: "Когда просят помощи"
+          - text:
+              en: Introduction with a follow-up
+              ru: Знакомство с уточнением
+            correct: true
+          - text:
+              en: Asking for help
+              ru: Просьба о помощи
             correct: false
-
-    completion_message: "Уровень прогресса: Уверенность"
-
-  - task_id: 5
-    type: "writing_optional"
-    title: "Письмо"
-
-    instruction: "Можно написать от руки или просто сказать вслух"
-
-    template:
-      - "Olá, ___-me ___."
-      - "Eu ___ ___."
-
-    hints:
-      - "chamo-me"
-      - "sou"
-
+        feedback:
+          en: Yes. You’re introducing yourself and engaging the other person. Say it out loud as one friendly phrase.
+          ru: Да. Здесь ты представляешься и вовлекаешь собеседника. Проговори вслух и представь, что ты улыбаешься.
+        question:
+          en: What kind of interaction is this?
+          ru: Какой это тип общения?
+        audio_url: >-
+          https://youvkbqaruadfpqxxbwi.supabase.co/storage/v1/object/public/audio/lesson-1/lesson-1-word-ola-muito-prazer-e-voce.mp3
+        text_hidden_before_answer: true
+    title:
+      en: Attention check
+      ru: Проверка внимательности
+    task_id: 4
+    subtitle:
+      en: Identify the message type and say the phrase out loud
+      ru: Определи тип высказывания и проговори фразу вслух
+    ui_rules:
+      only_known_words: true
+      audio_plays_first: true
+      no_similar_distractors: true
+      show_text_after_answer: true
+    completion_message:
+      en: Great. Final — assemble it yourself.
+      ru: Отлично. Финал — собрать всё самому.
+  - type: writing_optional
+    title:
+      en: Write by hand or say out loud
+      ru: Напиши от руки или проговори вслух
+    example:
+      content:
+        - Olá, chamo-me Ana.
+        - Prazer em conhecer.
+        - E você, como se chama?
+      button_text:
+        en: Show example
+        ru: Показать пример
+      show_by_button: true
+    task_id: 5
+    optional: true
+    subtitle:
+      en: Build a full introduction
+      ru: Собери полноценное знакомство
+    main_task:
+      hints:
+        - '[ваше имя]'
+      format: template_fill_or_speak
+      template:
+        - Olá, chamo-me ____________.
+        - ____ em conhecer.
+        - E você, como __ ____?
+      template_parts:
+        - text: |
+            Olá, chamo-me ____________.
+          type: text
+        - text: |
+            ____ em conhecer.
+          type: text
+        - text: E você, como __ ____?
+          type: text
     alternative:
-      speak_out_loud: true
-      phrase: "Olá, chamo-me … Eu sou …"
+      title:
+        en: If you don’t want to write
+        ru: Если не хочется писать
+      instruction:
+        en: If you don’t want to write, just say everything out loud as one coherent speech.
+        ru: Если не хочется писать, тогда просто скажи всё вслух, как цельную речь.
+      action_button:
+        text:
+          en: I said it out loud
+          ru: Я сказал(а) вслух
+    instruction:
+      en: |-
+        Now build a full introduction. Use the words and phrases from this lesson.
 
-    completion_message: "Уровень прогресса: Закреплено"
+        You can write it down or just say it out loud.
+      ru: |-
+        Теперь собери полноценное знакомство. Используй слова и фразы из этого урока.
+
+        Ты можешь написать ответ или просто сказать его вслух.
+    completion_message:
+      en: Day completed. Great start.
+      ru: День завершён. Отличное начало.

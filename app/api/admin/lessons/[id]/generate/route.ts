@@ -14,12 +14,56 @@ const openai = new OpenAI({
 
 async function loadIdealExampleLesson(): Promise<any | null> {
   try {
-    const p = path.join(process.cwd(), 'lesson-examples', 'day01-faloclaro-ideal.json');
-    const raw = await readFile(p, 'utf8');
-    return JSON.parse(raw);
+    // Prefer the canonical reference file (editable + committed):
+    // reference/methodology/ideal_lesson_day01.json
+    const preferred = path.join(process.cwd(), 'reference', 'methodology', 'ideal_lesson_day01.json');
+    try {
+      const raw = await readFile(preferred, 'utf8');
+      return JSON.parse(raw);
+    } catch {
+      // Backward-compatibility fallback (older path)
+      const legacy = path.join(process.cwd(), 'lesson-examples', 'day01-faloclaro-ideal.json');
+      const raw = await readFile(legacy, 'utf8');
+      return JSON.parse(raw);
+    }
   } catch (e) {
     console.error('Failed to load ideal example lesson JSON from repo:', e);
     return null;
+  }
+}
+
+function throwIfPlaceholderPortugueseAudioOrThrow(lesson: any) {
+  const bad: string[] = [];
+  const isPlaceholder = (v: any) => typeof v === 'string' && v.trim().toLowerCase() === 'pt';
+
+  const tasks = Array.isArray(lesson?.tasks) ? lesson.tasks : [];
+  const t2 = tasks.find((t: any) => t?.task_id === 2);
+  if (t2?.type === 'rules' && Array.isArray(t2?.blocks)) {
+    const b5 = t2.blocks.find((b: any) => b?.block_id === 'block_5_reinforcement' || b?.block_type === 'reinforcement');
+    const c = b5?.content;
+    if (c?.task_1 && isPlaceholder(c.task_1.audio)) bad.push('task2.block5.task_1.audio');
+    if (c?.task_2 && isPlaceholder(c.task_2.audio)) bad.push('task2.block5.task_2.audio');
+  }
+
+  const t3 = tasks.find((t: any) => t?.task_id === 3);
+  if (t3 && Array.isArray(t3?.items)) {
+    t3.items.forEach((it: any, i: number) => {
+      if (isPlaceholder(it?.audio)) bad.push(`task3.items[${i}].audio`);
+    });
+  }
+
+  const t4 = tasks.find((t: any) => t?.task_id === 4);
+  if (t4 && Array.isArray(t4?.items)) {
+    t4.items.forEach((it: any, i: number) => {
+      if (isPlaceholder(it?.audio)) bad.push(`task4.items[${i}].audio`);
+    });
+  }
+
+  if (bad.length > 0) {
+    throw new Error(
+      `Invalid placeholder audio text detected (${bad.join(', ')}). ` +
+        `Audio fields must contain REAL Portuguese phrases, not "PT".`
+    );
   }
 }
 
@@ -407,16 +451,17 @@ async function repairTasks2345OrThrow(opts: {
           `  - Allowed block_type ONLY: "explanation" (or "how_to_say"), "comparison", "reinforcement", "speak_out_loud".\n` +
           `  - block_1..block_3: block_type="explanation" (or "how_to_say") with content {title{ru,en}, explanation_text{ru,en}, examples[{text}], hint[{ru,en}]}\n` +
           `  - block_4: block_type="comparison" with content {title{ru,en}, comparison_card[{text}], note{ru,en}}\n` +
-          `  - block_5: block_type="reinforcement" with content {title{ru,en}, task_1, task_2} where each task is {format:"single_choice", audio:"PT", question{ru,en}, options[3] with text{ru,en} and is_correct boolean}\n` +
+          `  - block_5: block_type="reinforcement" with content {title{ru,en}, task_1, task_2} where each task is {format:"single_choice", audio:"<PORTUGUESE_PHRASE>", question{ru,en}, options[3] with text{ru,en} and correct boolean}\n` +
           `  - block_6: block_type="speak_out_loud" with content {instruction_text{ru,en}, action_button{text{ru,en}, completes_task:true}}\n` +
-          `- task3.type MUST be "listening_comprehension" and MUST have items (exactly 3). Each item has audio (PT), question {ru,en}, options (exactly 3) with text {ru,en} and is_correct boolean (exactly one true).\n` +
-          `- task4.type MUST be "attention" and MUST have items (exactly 3). Each item has audio (PT), question {ru,en}, options (exactly 3) with text {ru,en} and is_correct boolean (exactly one true), and feedback {ru,en}.\n` +
+          `- task3.type MUST be "listening_comprehension" and MUST have items (exactly 3). Each item has audio (REAL Portuguese phrase string), question {ru,en}, options (exactly 3) with text {ru,en} and correct boolean (exactly one true).\n` +
+          `- task4.type MUST be "attention" and MUST have items (exactly 3). Each item has audio (REAL Portuguese phrase string), question {ru,en}, options (exactly 3) with text {ru,en} and correct boolean (exactly one true), and feedback {ru,en}.\n` +
           `  - feedback MUST be educational: 2-4 sentences. Explain WHY the correct option fits, briefly explain the sentence structure, and (when helpful) add a cognate/association (e.g., "centro" ~ "center/центр").\n` +
           `- task5.type MUST be "writing_optional" and MUST include:\n` +
           `  - instruction as {ru:"... ", en:"..."} (multiline allowed) including a short section like "Для решения задачи используй слова: ..."\n` +
           `  - main_task.template as string[] (PT lines) with blanks marked by "___" or "__________" (no objects)\n` +
           `  - example REQUIRED: {show_by_button:true, button_text{ru,en}, content:string[]} where content is the same PT lines but WITHOUT blanks (fully filled)\n` +
-          `- Do NOT leave arrays empty. Do NOT return placeholders.\n\n` +
+          `- Do NOT leave arrays empty. Do NOT return placeholders.\n` +
+          `- NEVER use "PT" as a placeholder in any audio/text field. Always write the real Portuguese sentence.\n\n` +
           `Return ONLY the JSON object.`,
       },
     ],
@@ -796,7 +841,7 @@ export async function POST(
       try {
         const retryContext =
           attempt > 0 && lastError
-            ? `\n\nIMPORTANT: Your previous output was INVALID.\nReason: ${lastError.message}\nYou MUST regenerate the ENTIRE lesson JSON.\n\nCRITICAL FAILURE MODE TO AVOID:\n- Do NOT return a "task shell" (tasks with only task_id/type and empty/missing content/blocks/items).\n- Every task MUST include its full data arrays.\n\nHARD REQUIREMENTS (MUST PASS VALIDATION):\n- Task 1 MUST contain 13–15 cards at: tasks[].content.cards (or CRM blocks that transform into it).\n- Task 1 freshness rule: at least 10 cards MUST be NEW (not present in usedWordsList); up to 5 can overlap as supporting words.\n- Task 2 MUST contain exactly 6 blocks at: tasks[].blocks (with block_id/block_type/content).\n- Task 3 MUST contain items/options (not empty).\n- Task 4 MUST contain items/options + feedback (not empty).\n- Task 5 MUST contain main_task.template (not empty) + example.\n\nSCHEMA HINT (USE THIS SHAPE):\n{\n  \"tasks\": [\n    { \"task_id\": 1, \"type\": \"vocabulary\", \"content\": { \"cards\": [ { \"word\": \"...\", \"transcription\": \"[...]\", \"example_sentence\": \"...\", \"sentence_translation_ru\": \"...\", \"sentence_translation_en\": \"...\", \"word_translation_ru\": \"...\", \"word_translation_en\": \"...\" } ] } },\n    { \"task_id\": 2, \"type\": \"rules\", \"blocks\": [ { \"block_id\": \"block_1_build\", \"block_type\": \"explanation\", \"content\": { \"title\": {\"ru\":\"\",\"en\":\"\"}, \"examples\": [ {\"text\":\"...\"} ], \"hints\": [ {\"ru\":\"\",\"en\":\"\"} ] } } ] },\n    { \"task_id\": 3, \"type\": \"listening\", \"items\": [ { \"audio\": \"...\", \"question\": {\"ru\":\"\",\"en\":\"\"}, \"options\": [ {\"text\": {\"ru\":\"\",\"en\":\"\"}, \"is_correct\": false } ] } ] },\n    { \"task_id\": 4, \"type\": \"attention\", \"items\": [ { \"audio\": \"...\", \"question\": {\"ru\":\"\",\"en\":\"\"}, \"options\": [ {\"text\": {\"ru\":\"\",\"en\":\"\"}, \"is_correct\": false } ], \"feedback\": {\"ru\":\"\",\"en\":\"\"} } ] },\n    { \"task_id\": 5, \"type\": \"writing_optional\", \"instruction\": {\"ru\":\"\",\"en\":\"\"}, \"main_task\": { \"template\": [\"...\"], \"hints\": [\"...\"] }, \"example\": { \"show_by_button\": true, \"button_text\": {\"ru\":\"\",\"en\":\"\"}, \"content\": [\"...\"] } }\n  ]\n}\n`
+            ? `\n\nIMPORTANT: Your previous output was INVALID.\nReason: ${lastError.message}\nYou MUST regenerate the ENTIRE lesson JSON.\n\nCRITICAL FAILURE MODE TO AVOID:\n- Do NOT return a "task shell" (tasks with only task_id/type and empty/missing content/blocks/items).\n- Every task MUST include its full data arrays.\n\nHARD REQUIREMENTS (MUST PASS VALIDATION):\n- Task 1 MUST contain 13–15 cards at: tasks[].content.cards (or CRM blocks that transform into it).\n- Task 1 freshness rule: at least 10 cards MUST be NEW (not present in usedWordsList); up to 5 can overlap as supporting words.\n- Task 2 MUST contain exactly 6 blocks at: tasks[].blocks (with block_id/block_type/content).\n- Task 3 MUST contain items/options (not empty).\n- Task 4 MUST contain items/options + feedback (not empty).\n- Task 5 MUST contain main_task.template (not empty) + example.\n- NEVER output placeholder audio like \"PT\". Every audio field must be a REAL Portuguese phrase string.\n\nSCHEMA HINT (USE THIS SHAPE):\n{\n  \"tasks\": [\n    { \"task_id\": 1, \"type\": \"vocabulary\", \"content\": { \"cards\": [ { \"word\": \"...\", \"transcription\": \"[...]\", \"example_sentence\": \"...\", \"sentence_translation_ru\": \"...\", \"sentence_translation_en\": \"...\", \"word_translation_ru\": \"...\", \"word_translation_en\": \"...\" } ] } },\n    { \"task_id\": 2, \"type\": \"rules\", \"blocks\": [ { \"block_id\": \"block_1_build\", \"block_type\": \"explanation\", \"content\": { \"title\": {\"ru\":\"\",\"en\":\"\"}, \"examples\": [ {\"text\":\"...\"} ], \"hints\": [ {\"ru\":\"\",\"en\":\"\"} ] } } ] },\n    { \"task_id\": 3, \"type\": \"listening_comprehension\", \"items\": [ { \"audio\": \"<PORTUGUESE_PHRASE>\", \"question\": {\"ru\":\"\",\"en\":\"\"}, \"options\": [ {\"text\": {\"ru\":\"\",\"en\":\"\"}, \"correct\": false } ] } ] },\n    { \"task_id\": 4, \"type\": \"attention\", \"items\": [ { \"audio\": \"<PORTUGUESE_PHRASE>\", \"question\": {\"ru\":\"\",\"en\":\"\"}, \"options\": [ {\"text\": {\"ru\":\"\",\"en\":\"\"}, \"correct\": false } ], \"feedback\": {\"ru\":\"\",\"en\":\"\"} } ] },\n    { \"task_id\": 5, \"type\": \"writing_optional\", \"instruction\": {\"ru\":\"\",\"en\":\"\"}, \"main_task\": { \"template\": [\"...\"], \"hints\": [\"...\"] }, \"example\": { \"show_by_button\": true, \"button_text\": {\"ru\":\"\",\"en\":\"\"}, \"content\": [\"...\"] } }\n  ]\n}\n`
             : '';
 
         const completion = await openai.chat.completions.create({
@@ -1303,6 +1348,7 @@ export async function POST(
 
         // CRITICAL: Enforce "no reused vocabulary across lessons" server-side.
         // This prevents OpenAI from reusing Task 1 words even if it ignores the prompt.
+        throwIfPlaceholderPortugueseAudioOrThrow(generatedLesson);
         validateVocabularyIsNewOrThrow(generatedLesson, usedWordsForValidation);
         
         // Ensure we have exactly 5 tasks with task_id 1-5
