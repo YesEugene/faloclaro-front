@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseAdmin } from '@/lib/supabase-admin';
+import { normalizeTasksArray } from '@/lib/lesson-tasks-normalizer';
 
 export async function POST(request: NextRequest) {
   try {
@@ -121,7 +122,7 @@ export async function POST(request: NextRequest) {
     };
 
     // Normalize tasks structure - keep original structure but fix common issues
-    const normalizedTasks = (lessonData.tasks || []).map((task: any) => {
+    const normalizedTasks = normalizeTasksArray((lessonData.tasks || []).map((task: any) => {
       const normalizedTask = { ...task };
       
       // Fix attention task - ensure it has audio field if it has text
@@ -166,7 +167,7 @@ export async function POST(request: NextRequest) {
       // The CRM editor will handle the conversion if needed
       
       return normalizedTask;
-    });
+    }));
     
     const yamlContent: any = {
       day: normalizedDay || {

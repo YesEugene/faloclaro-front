@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import TaskEditor from '@/components/admin/TaskEditor';
+import { normalizeTasksArray } from '@/lib/lesson-tasks-normalizer';
 
 function LessonEditorContent() {
   const params = useParams();
@@ -36,6 +37,8 @@ function LessonEditorContent() {
       ? JSON.parse(lesson.yaml_content || '{}')
       : lesson.yaml_content || {})?.day;
 
+    const normalizedTasks = normalizeTasksArray(tasks || []);
+
     const exportData: any = {
       // New-format fields (also accepted by importer)
       day_number: dayNumber,
@@ -46,7 +49,7 @@ function LessonEditorContent() {
       subtitle_en: lesson.subtitle_en || '',
       subtitle_pt: lesson.subtitle_pt || '',
       estimated_time: yamlDay?.estimated_time || lesson.estimated_time || '',
-      tasks: tasks || [],
+      tasks: normalizedTasks,
 
       // Old-format wrapper (also accepted by importer)
       day: {
@@ -104,7 +107,7 @@ function LessonEditorContent() {
         const yamlContent = typeof data.lesson.yaml_content === 'string' 
           ? JSON.parse(data.lesson.yaml_content || '{}')
           : data.lesson.yaml_content || {};
-        setTasks(yamlContent.tasks || []);
+        setTasks(normalizeTasksArray(yamlContent.tasks || yamlContent?.day?.tasks || []));
       } else {
         console.error('Failed to load lesson:', data);
       }
@@ -183,9 +186,16 @@ function LessonEditorContent() {
   const handleCreateTask = (taskType: 'vocabulary' | 'rules' | 'listening' | 'attention' | 'writing') => {
     setShowTaskTypeModal(false);
     // Create new task based on type
+    const taskIdByType: Record<string, number> = {
+      vocabulary: 1,
+      rules: 2,
+      listening: 3,
+      attention: 4,
+      writing: 5,
+    };
     const newTask: any = {
-      task_id: tasks.length + 1,
-      type: taskType,
+      task_id: taskIdByType[taskType] || tasks.length + 1,
+      type: taskType === 'listening' ? 'listening_comprehension' : taskType === 'writing' ? 'writing_optional' : taskType,
       title: { ru: '', en: '' },
       subtitle: { ru: '', en: '' },
       estimated_time: '',
@@ -227,15 +237,13 @@ function LessonEditorContent() {
       updatedTasks.push(task);
     }
 
-    // Sort by task_id
-    updatedTasks.sort((a, b) => (a.task_id || 0) - (b.task_id || 0));
-
-    setTasks(updatedTasks);
+    const normalized = normalizeTasksArray(updatedTasks);
+    setTasks(normalized);
 
     // Update lesson in database
     const yamlContent = {
       ...(lesson.yaml_content || {}),
-      tasks: updatedTasks,
+      tasks: normalized,
     };
 
     try {

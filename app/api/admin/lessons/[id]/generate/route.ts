@@ -5,6 +5,7 @@ import { transformLessonForFrontend } from '@/lib/lesson-transformer';
 import OpenAI from 'openai';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
+import { normalizeTasksArray } from '@/lib/lesson-tasks-normalizer';
 
 export const runtime = 'nodejs';
 
@@ -1378,40 +1379,11 @@ export async function POST(
           generatedLesson.tasks = generatedLesson.tasks.slice(0, 5);
         }
         
-        // Validate all tasks have required fields
-        for (let i = 0; i < generatedLesson.tasks.length; i++) {
-          const task = generatedLesson.tasks[i];
-          if (!task) {
-            console.error(`❌ Task at index ${i} is null or undefined`);
-            continue;
-          }
-          
-          // Ensure task_id is set correctly
-          if (!task.task_id) {
-            task.task_id = i + 1;
-            console.warn(`⚠️ Task at index ${i} missing task_id, set to ${i + 1}`);
-          } else if (task.task_id !== i + 1) {
-            console.warn(`⚠️ Task at index ${i} has task_id ${task.task_id}, expected ${i + 1}. Correcting...`);
-            task.task_id = i + 1;
-          }
-          
-          // Ensure type is set
-          if (!task.type) {
-            console.error(`❌ Task ${task.task_id} is missing type field`);
-            // Try to infer type from task_id if missing
-            const typeMap: Record<number, string> = {
-              1: 'vocabulary',
-              2: 'rules',
-              3: 'listening_comprehension',
-              4: 'attention',
-              5: 'writing_optional'
-            };
-            if (typeMap[task.task_id]) {
-              task.type = typeMap[task.task_id];
-              console.warn(`⚠️ Task ${task.task_id} missing type, inferred as ${task.type}`);
-            }
-          }
-        }
+        // Final canonical normalization:
+        // - task_id 1..5 based on task.type
+        // - fix legacy shapes (e.g. Task 5 main_task as string[])
+        // This prevents “shifted numbering” bugs in admin export/import.
+        generatedLesson.tasks = normalizeTasksArray(generatedLesson.tasks);
 
         // Success!
         break;
