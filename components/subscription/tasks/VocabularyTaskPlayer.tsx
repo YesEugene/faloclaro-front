@@ -692,9 +692,9 @@ export default function VocabularyTaskPlayer({
     });
   };
 
-  // Handle next task - ONLY navigate if the task is truly completed (timer rule).
+  // Handle next task - navigation should NOT auto-complete Task 1.
+  // Completion happens only via the 10-min timer rule (handleComplete()).
   const handleNextTask = () => {
-    if (!localIsCompleted && !isCompleted) return;
     if (!onNextTask) return;
     onNextTask();
   };
@@ -1058,7 +1058,7 @@ export default function VocabularyTaskPlayer({
             taskId={task?.task_id || 1}
             lang={appLanguage}
             canGoPrevious={false}
-            canGoNext={!!onNextTask && (localIsCompleted || isCompleted)}
+            canGoNext={!!onNextTask}
             onPrevious={undefined}
             onNext={handleNextTask}
             isLastTask={false}
