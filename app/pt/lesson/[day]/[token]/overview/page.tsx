@@ -582,7 +582,7 @@ function OverviewPageContent() {
           {/* Заголовок урока - уменьшенное межстрочное расстояние при переносе на две строки */}
           <h1
             className="text-black text-left leading-tight"
-            style={{ fontSize: '29px', lineHeight: '1.2', marginBottom: '10px', fontFamily: 'Orelega One', fontWeight: 400 }}
+            style={{ fontSize: '34px', lineHeight: '1.2', marginBottom: '10px', fontFamily: 'Orelega One', fontWeight: 400 }}
           >
             {getDayTitle(dayInfo, appLanguage)}
           </h1>
