@@ -130,18 +130,38 @@ function setTargetPhraseOnDraft(draft: any, target: { pt: string; ru: string; en
 
 async function loadReferenceExampleLessons(): Promise<any | null> {
   try {
-    // Preferred: use the more “correct” reference lessons (2 + 3) as multi-example guidance.
+    // Preferred: use lessons 1–5 as multi-example guidance (best canonical references).
+    const p1 = path.join(process.cwd(), 'reference', 'methodology', 'lesson_1.json');
     const p2 = path.join(process.cwd(), 'reference', 'methodology', 'lesson_2.json');
     const p3 = path.join(process.cwd(), 'reference', 'methodology', 'lesson_3.json');
+    const p4 = path.join(process.cwd(), 'reference', 'methodology', 'lesson_4.json');
+    const p5 = path.join(process.cwd(), 'reference', 'methodology', 'lesson_5.json');
     try {
-      const [raw2, raw3] = await Promise.all([readFile(p2, 'utf8'), readFile(p3, 'utf8')]);
-      const lesson2 = JSON.parse(raw2);
-      const lesson3 = JSON.parse(raw3);
-      return {
-        reference_lessons: [lesson2, lesson3],
-        note:
-          'These are canonical reference lessons. Follow their structure and quality closely (brick-by-brick progression, no placeholders, valid schema).',
-      };
+      const raws = await Promise.allSettled([
+        readFile(p1, 'utf8'),
+        readFile(p2, 'utf8'),
+        readFile(p3, 'utf8'),
+        readFile(p4, 'utf8'),
+        readFile(p5, 'utf8'),
+      ]);
+
+      const lessons: any[] = [];
+      for (const r of raws) {
+        if (r.status !== 'fulfilled') continue;
+        try {
+          lessons.push(JSON.parse(r.value));
+        } catch {
+          // ignore bad JSON, fall back below if none load
+        }
+      }
+
+      if (lessons.length > 0) {
+        return {
+          reference_lessons: lessons,
+          note:
+            'These are canonical reference lessons (1–5). Follow their structure and quality closely (brick-by-brick progression, no placeholders, valid schema).',
+        };
+      }
     } catch {
       // Fallback: older single-file reference
       const preferred = path.join(process.cwd(), 'reference', 'methodology', 'ideal_lesson_day01.json');
