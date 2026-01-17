@@ -259,58 +259,45 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
       }
     }
     
-    // Check speak out loud block (last block)
+    // Check speak out loud block (last block) only if it has an action_button (mandatory completion step)
     const lastBlockKey = blocksOrder[blocksOrder.length - 1];
     const lastBlock = lastBlockKey ? blocks[lastBlockKey] : null;
-    if (lastBlock && lastBlock.type === 'speak_out_loud' && !speakOutLoudCompleted) {
+    const requiresSpeak = !!(lastBlock && lastBlock.type === 'speak_out_loud' && lastBlock.action_button);
+    if (requiresSpeak && !speakOutLoudCompleted) {
       return false;
     }
     
     return true;
   };
 
+  // Auto-complete: as soon as all mandatory steps are done, mark task as completed.
+  useEffect(() => {
+    if (isReplaying) return;
+    if (localIsCompleted) return;
+
+    const allDone = checkAllBlocksCompleted();
+    if (!allDone) return;
+
+    setLocalIsCompleted(true);
+    onComplete({
+      selectedAnswers,
+      showResults,
+      speakOutLoudCompleted,
+      completedAt: new Date().toISOString(),
+    });
+  }, [selectedAnswers, showResults, speakOutLoudCompleted, isReplaying, localIsCompleted]);
+
+
   // Handle final completion button
+  // Completion in Task 2 happens automatically on the last mandatory interaction.
+  // For RulesTask this is usually the speak-out-loud button (block 6), but if no speak block exists,
+  // completion happens after the last reinforcement answer.
   const handleSpeakOutLoudComplete = () => {
-    const newSpeakOutLoudCompleted = true;
-    setSpeakOutLoudCompleted(newSpeakOutLoudCompleted);
-    // If this is the last task, check if all blocks are completed
-    if (isLastTask) {
-      // Check if all blocks are completed (using the new speakOutLoudCompleted value)
-      const blocksStructure = getBlocksStructure();
-      const { blocks, blocksOrder } = blocksStructure;
-      
-      // Check all reinforcement blocks
-      let allBlocksCompleted = true;
-      for (let i = 0; i < blocksOrder.length; i++) {
-        const blockKey = blocksOrder[i];
-        const block = blocks[blockKey];
-        if (block.type === 'reinforcement' && !checkBlockReinforcementCompleted(block)) {
-          allBlocksCompleted = false;
-          break;
-        }
-      }
-      
-      // Check speak out loud block (last block) - use the new value
-      if (allBlocksCompleted) {
-        const lastBlockKey = blocksOrder[blocksOrder.length - 1];
-        const lastBlock = lastBlockKey ? blocks[lastBlockKey] : null;
-        if (lastBlock && lastBlock.type === 'speak_out_loud' && !newSpeakOutLoudCompleted) {
-          allBlocksCompleted = false;
-        }
-      }
-      
-      if (allBlocksCompleted) {
-        // Auto-complete last task when "I said it out loud" is clicked
-        setLocalIsCompleted(true);
-        onComplete({
-          selectedAnswers,
-          showResults,
-          speakOutLoudCompleted: newSpeakOutLoudCompleted,
-          completedAt: new Date().toISOString(),
-        });
-      }
+    if (!speakOutLoudCompleted) {
+      setSpeakOutLoudCompleted(true);
     }
   };
+
   
   // Handle replay - reset all progress
   const handleReplay = () => {

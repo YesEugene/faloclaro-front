@@ -181,8 +181,7 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
     // Auto-complete as soon as the last required exercise is done.
     // No separate "Complete" button needed; this unlocks "Next" immediately.
     const allAnsweredNow = items.every((_: any, idx: number) => {
-      const v = newAnswers[idx];
-      return v !== undefined && v !== null && v !== '';
+      return newShowResults[idx] === true;
     });
     if (allAnsweredNow && !localIsCompleted && !isReplaying) {
       const correctCount = items.filter((item: any, index: number) => {
