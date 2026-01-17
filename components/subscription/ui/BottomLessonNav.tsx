@@ -1,6 +1,7 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 type Lang = 'ru' | 'en' | 'pt' | string;
 
@@ -40,11 +41,15 @@ function pickText(t: { ru: string; en: string }, lang: Lang): string {
 
 function ArrowIcon({ direction, color }: { direction: 'left' | 'right'; color: string }) {
   const isLeft = direction === 'left';
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
+    (
     <svg className="w-6 h-6" fill="none" stroke={color} viewBox="0 0 24 24" strokeWidth={3}>
       <path strokeLinecap="round" strokeLinejoin="round" d={isLeft ? 'M15 19l-7-7 7-7' : 'M9 5l7 7-7 7'} />
     </svg>
-  );
+    )
+  ), document.body);
 }
 
 export function BottomLessonNav(props: {
@@ -59,6 +64,10 @@ export function BottomLessonNav(props: {
 }) {
   const labels = useMemo(() => LABELS_BY_TASK_ID[props.taskId] || LABELS_BY_TASK_ID[1], [props.taskId]);
 
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+
   const prevVisible = props.taskId !== 1;
   const prevEnabled = !!(props.canGoPrevious && props.onPrevious) && prevVisible;
 
@@ -68,7 +77,10 @@ export function BottomLessonNav(props: {
   const pillBg = 'rgba(255, 255, 255, 0.8)';
   const inactivePillBg = 'rgba(255, 255, 255, 0.5)';
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
+    (
     <div
       className="fixed bottom-0 left-0 right-0 z-30"
       style={{
@@ -116,7 +128,7 @@ export function BottomLessonNav(props: {
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'center',
-                gap: '4px',
+                gap: '3px',
               }}
             >
               <div style={{ fontSize: '14px', lineHeight: '1.25', color: 'rgba(0,0,0,1)' }}>
@@ -142,5 +154,6 @@ export function BottomLessonNav(props: {
         </div>
       </div>
     </div>
-  );
+    )
+  ), document.body);
 }
