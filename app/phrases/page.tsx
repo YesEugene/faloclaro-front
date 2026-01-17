@@ -261,7 +261,7 @@ function PhrasesContent() {
           {/* Logo */}
           <Link href="/clusters" className="flex items-center cursor-pointer">
             <Image
-              src="/Img/Logo FaloClaro.svg"
+              src="/Img/Website/logo.svg"
               alt="FaloClaro"
               width={120}
               height={40}
@@ -285,9 +285,8 @@ function PhrasesContent() {
                 router.push(`/pt/lesson/${lessonDay}/${lessonToken}?task=${taskId || '1'}`);
                 return;
               }
-              
+
               if (returnPhraseId) {
-                // Return to player page with saved phrase
                 const params = new URLSearchParams();
                 params.set('phraseId', returnPhraseId);
                 params.set('index', returnIndex || '0');
@@ -302,12 +301,22 @@ function PhrasesContent() {
                 router.push('/clusters');
               }
             }}
-            className="block w-full px-4 py-2 rounded-[10px] transition-colors text-center"
-            style={{ 
-              backgroundColor: '#EDF3FF',
+            className="text-black"
+            style={{
+              fontSize: '16px',
+              fontWeight: 400,
+              lineHeight: '1.2',
+              background: 'transparent',
+              padding: 0,
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
             }}
           >
-            <span className="text-gray-700">← {t.back}</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M15 19l-7-7 7-7" />
+            </svg>
+            <span>{t.back}</span>
           </button>
         </div>
       </div>

@@ -603,14 +603,14 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
                 onClick={() => router.push(`/pt/lesson/${lesson.day_number}/${token}/overview`)}
                 className="text-black"
                 style={{
-                  fontSize: '22px',
+                  fontSize: '16px',
                   fontWeight: 400,
                   lineHeight: '1.2',
                   background: 'transparent',
                   padding: 0,
                 }}
               >
-                <span style={{ fontSize: '26px', fontWeight: 600, marginRight: '8px', verticalAlign: 'middle' }}>&lt;</span>
+                <span style={{ display: 'inline-flex', width: '18px', height: '18px', marginRight: '8px', verticalAlign: 'middle' }}>
                 {appLanguage === 'ru'
                   ? `Меню урока ${lesson.day_number}`
                   : appLanguage === 'en'
@@ -630,7 +630,7 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
                   }}
                   className="text-black"
                   style={{
-                    fontSize: '22px',
+                    fontSize: '16px',
                     fontWeight: 400,
                     lineHeight: '1.2',
                     background: 'transparent',
@@ -661,7 +661,7 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
                 />
               </div>
 
-              <div style={{ marginTop: '10px', fontSize: '22px', color: 'rgba(0,0,0,0.85)' }}>
+              <div style={{ marginTop: '10px', fontSize: '16px', color: 'rgba(0,0,0,0.85)' }}>
                 {appLanguage === 'ru'
                   ? `Задание ${currentTaskNumber}/${totalTasksCount}`
                   : appLanguage === 'en'
