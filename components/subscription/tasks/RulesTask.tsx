@@ -270,19 +270,6 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
   };
 
   // Handle final completion button
-  const handleFinalComplete = () => {
-    if (checkAllBlocksCompleted()) {
-      setLocalIsCompleted(true);
-      onComplete({
-        selectedAnswers,
-        showResults,
-        speakOutLoudCompleted,
-        completedAt: new Date().toISOString(),
-      });
-    }
-  };
-
-  // Handle speak out loud completion
   const handleSpeakOutLoudComplete = () => {
     const newSpeakOutLoudCompleted = true;
     setSpeakOutLoudCompleted(newSpeakOutLoudCompleted);
@@ -323,7 +310,6 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
         });
       }
     }
-    // For non-last tasks, don't auto-complete - let user click "All tasks completed" button explicitly
   };
   
   // Handle replay - reset all progress
@@ -812,8 +798,6 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
     );
   }
 
-  const allCompleted = checkAllBlocksCompleted();
-
   return (
     <div className="space-y-6 w-full" style={{ paddingBottom: '140px' }}>
       {/* All Blocks - Displayed on one page */}
@@ -827,28 +811,6 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
           );
         })}
       </div>
-
-      {/* Final Completion Button - Floating above navigation panel, only show if all blocks are completed and NOT last task */}
-      {allCompleted && !localIsCompleted && !isLastTask && (
-        <div 
-          className="fixed left-0 right-0 z-40 flex justify-center"
-          style={{ 
-            bottom: '59px', // Above navigation panel
-            paddingLeft: '16px',
-            paddingRight: '16px',
-          }}
-        >
-          <div className="w-full max-w-md flex justify-center">
-            <button
-              onClick={handleFinalComplete}
-              className="bg-green-600 text-white py-2 rounded-lg font-semibold text-sm hover:bg-green-700 transition-colors"
-              style={{ width: '70%' }} // 30% smaller (was 100%)
-            >
-              {appLanguage === 'ru' ? 'Все задания выполнены' : 'All tasks completed'}
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* Replay Button - Floating above navigation panel, show if task is completed */}
       {localIsCompleted && (
@@ -1016,8 +978,8 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                         style={{ maxWidth: '200px', zIndex: 9999 }}
                       >
                         {appLanguage === 'ru' 
-                          ? `Выполните задание, чтобы перейти к уроку ${dayNumber ? dayNumber + 1 : 2}`
-                          : `Complete the task to proceed to lesson ${dayNumber ? dayNumber + 1 : 2}`}
+                          ? `Закончите последнее упражнение, чтобы перейти к уроку ${dayNumber ? dayNumber + 1 : 2}`
+                          : `Finish the last exercise to proceed to lesson ${dayNumber ? dayNumber + 1 : 2}`}
                         <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-black"></div>
                       </div>
                     )}

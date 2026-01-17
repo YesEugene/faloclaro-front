@@ -88,28 +88,10 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
     }
   }, [isCompleted, isReplaying]);
   
-  // Also check if task should be considered completed based on speakOutLoud or writtenText
-  useEffect(() => {
-    // If user has completed the task (either by writing or speaking), mark as completed
-    if (!localIsCompleted && (speakOutLoud || writtenText.trim())) {
-      // Only auto-complete if this is the last task and user clicked "I said it out loud"
-      // For other cases, let the explicit completion handle it
-      if (isLastTask && speakOutLoud) {
-        setLocalIsCompleted(true);
-        // Ensure onComplete is called to update parent state
-        onComplete({
-          writtenText: null,
-          speakOutLoud: true,
-          completedAt: new Date().toISOString(),
-        });
-      }
-    }
-  }, [speakOutLoud, writtenText, localIsCompleted, isLastTask, onComplete]);
-  
   // Save answers to completion_data whenever they change (for persistence)
   // BUT only if task is not completed yet - don't overwrite completion
   useEffect(() => {
-    if (hasLoadedSavedData && !localIsCompleted && (writtenText.trim() || speakOutLoud)) {
+    if (hasLoadedSavedData && !isReplaying && !localIsCompleted && (writtenText.trim() || speakOutLoud)) {
       // Save current state to completion_data without marking as completed
       onComplete({
         writtenText: speakOutLoud ? null : writtenText,
@@ -123,7 +105,7 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
     // Writing task is optional - can be completed without filling the form
     // If user clicked "I said it out loud" button, complete immediately
     // Otherwise, allow completion even if form is empty
-    const shouldComplete = forceSpeakOutLoud || speakOutLoud || true; // Always allow completion
+    const shouldComplete = !!(forceSpeakOutLoud || speakOutLoud); // Complete only on "I said it out loud"
     if (shouldComplete) {
       // Update local state first to show "Пройти заново" button immediately
       if (forceSpeakOutLoud) {
@@ -421,40 +403,30 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
         </div>
       </div>
 
-      {/* Complete Button (if not using alternative speak out loud) */}
-      {!alternative.action_button && (
-        localIsCompleted && !isReplaying ? (
-          // Completed state - show gray button with green checkmark (like block 6 in task 2)
-          <div 
-            className="w-full py-3 rounded-lg font-medium flex items-center justify-center"
-            style={{
-              backgroundColor: '#F1F2F6',
-              border: '1px solid #E5E7EB',
-            }}
-          >
-            <svg className="w-6 h-6 mr-2" fill="none" stroke="#109929" viewBox="0 0 24 24" strokeWidth={3}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-            </svg>
-            <span style={{ color: '#6B7280' }}>
-              {appLanguage === 'ru' ? 'Выполнено' : appLanguage === 'en' ? 'Completed' : 'Concluído'}
-            </span>
-          </div>
-        ) : (
-          <button
-            onClick={() => {
-              if (!localIsCompleted || isReplaying) {
-                handleComplete();
-              } else {
-                handleReplay();
-              }
-            }}
-            className="w-full py-3 rounded-lg font-medium transition-colors bg-green-600 text-white hover:bg-green-700"
-          >
-            {appLanguage === 'ru' ? 'Завершить' : appLanguage === 'en' ? 'Complete' : 'Concluir'}
-          </button>
-        )
-      )}
 
+
+
+      {/* Replay Button - Floating above navigation panel, show after completion */}
+      {localIsCompleted && !isReplaying && (
+        <div
+          className="fixed left-0 right-0 z-40 flex justify-center"
+          style={{
+            bottom: '59px',
+            paddingLeft: '16px',
+            paddingRight: '16px',
+          }}
+        >
+          <div className="w-full max-w-md flex justify-center">
+            <button
+              onClick={handleReplay}
+              className="bg-blue-600 text-white py-2 rounded-lg font-semibold text-sm hover:bg-blue-700 transition-colors"
+              style={{ width: '70%' }}
+            >
+              {appLanguage === 'ru' ? 'Пройти заново' : appLanguage === 'en' ? 'Replay' : 'Repetir'}
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Navigation Panel - Fixed at bottom (Cross-task navigation) */}
       <div className="fixed bottom-0 left-0 right-0 bg-black z-30" style={{ borderRadius: '0px', borderTopLeftRadius: '0px', borderTopRightRadius: '0px', borderBottomRightRadius: '0px', borderBottomLeftRadius: '0px', height: '59px', verticalAlign: 'bottom', marginBottom: '0px', opacity: 1, color: 'rgba(255, 255, 255, 1)' }}>
@@ -627,10 +599,10 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
                         }}
                       >
                         {appLanguage === 'ru' 
-                          ? `Выполните задание, чтобы перейти к уроку ${dayNumber ? dayNumber + 1 : 2}`
+                          ? `Закончите последнее упражнение, чтобы перейти к уроку ${dayNumber ? dayNumber + 1 : 2}`
                           : appLanguage === 'en'
-                          ? `Complete the task to proceed to lesson ${dayNumber ? dayNumber + 1 : 2}`
-                          : `Complete a tarefa para prosseguir para a lição ${dayNumber ? dayNumber + 1 : 2}`}
+                          ? `Finish the last exercise to proceed to lesson ${dayNumber ? dayNumber + 1 : 2}`
+                          : `Termine o último exercício para prosseguir para a lição ${dayNumber ? dayNumber + 1 : 2}`}
                         <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-black"></div>
                       </div>
                     )}
