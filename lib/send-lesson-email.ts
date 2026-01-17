@@ -15,16 +15,22 @@ export async function sendLessonEmail(userId: string, lessonId: string, dayNumbe
   });
 
   try {
-    // Get user
+    // Get user (select * to stay compatible with optional settings columns)
     const { data: user, error: userError } = await supabase
       .from('subscription_users')
-      .select('email, language_preference')
+      .select('*')
       .eq('id', userId)
       .single();
 
     if (userError || !user) {
       console.error('Error fetching user:', userError);
       return { success: false, error: 'User not found' };
+    }
+
+    // Optional: allow users to disable emails globally
+    if ((user as any)?.email_notifications_enabled === false) {
+      console.log('📭 Email notifications disabled for user. Skipping send.', { userId });
+      return { success: true, skipped: true };
     }
 
     // Get lesson
@@ -449,16 +455,22 @@ export async function sendFullAccessEmail(userId: string, token: string) {
   });
 
   try {
-    // Get user
+    // Get user (select * to stay compatible with optional settings columns)
     const { data: user, error: userError } = await supabase
       .from('subscription_users')
-      .select('email, language_preference')
+      .select('*')
       .eq('id', userId)
       .single();
 
     if (userError || !user) {
       console.error('Error fetching user:', userError);
       return { success: false, error: 'User not found' };
+    }
+
+    // Optional: allow users to disable emails globally
+    if ((user as any)?.email_notifications_enabled === false) {
+      console.log('📭 Email notifications disabled for user. Skipping send.', { userId });
+      return { success: true, skipped: true };
     }
 
     // Get first lesson for URL

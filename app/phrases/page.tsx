@@ -6,8 +6,8 @@ import { supabase } from '@/lib/supabase';
 import { Phrase, Translation } from '@/types';
 import Link from 'next/link';
 import { useAppLanguage } from '@/lib/language-context';
-import { LanguageSelector } from '@/components/LanguageSelector';
 import Image from 'next/image';
+import { SettingsPanel } from '@/components/subscription/ui/SettingsPanel';
 
 function PhrasesContent() {
   const searchParams = useSearchParams();
@@ -25,6 +25,7 @@ function PhrasesContent() {
   const [phrases, setPhrases] = useState<Phrase[]>([]);
   const [translations, setTranslations] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   useEffect(() => {
     if (clusterIds || clusterId || (lessonDay && lessonToken && taskId)) {
@@ -272,7 +273,19 @@ function PhrasesContent() {
           
           {/* Language Selector */}
           <div className="flex items-center">
-            <LanguageSelector />
+            <button
+            onClick={() => setSettingsOpen(true)}
+            aria-label="Settings"
+            style={{ width: '36px', height: '36px', padding: 0, background: 'transparent', border: 'none', cursor: 'pointer' }}
+          >
+            <Image
+              src="/Img/Website/Settings.svg"
+              alt="Settings"
+              width={36}
+              height={36}
+              style={{ width: '36px', height: '36px' }}
+            />
+          </button>
           </div>
         </div>
 

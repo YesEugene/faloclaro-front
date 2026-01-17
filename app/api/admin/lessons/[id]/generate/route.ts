@@ -9,9 +9,16 @@ import { normalizeTasksArray } from '@/lib/lesson-tasks-normalizer';
 
 export const runtime = 'nodejs';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+let _openai: OpenAI | null = null;
+function getOpenAI(): OpenAI {
+  if (_openai) return _openai;
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) {
+    throw new Error('OPENAI_API_KEY is not configured');
+  }
+  _openai = new OpenAI({ apiKey });
+  return _openai;
+}
 
 async function loadReferenceExampleLessons(): Promise<any | null> {
   try {
@@ -273,7 +280,7 @@ async function replaceOverlapsToMeetFreshnessOrThrow(opts: {
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
       const candidateCount = Math.min(20, Math.max(replacementsNeeded + 4, replacementsNeeded * 4));
-      const completion = await openai.chat.completions.create({
+      const completion = await getOpenAI().chat.completions.create({
         model: 'gpt-4o-mini',
         messages: [
           {
@@ -444,7 +451,7 @@ async function repairTasks2345OrThrow(opts: {
     throw new Error('Cannot repair tasks without valid Task 1 vocabulary cards (need >= 13).');
   }
 
-  const completion = await openai.chat.completions.create({
+  const completion = await getOpenAI().chat.completions.create({
     model: 'gpt-4o-mini',
     messages: [
       {
@@ -552,7 +559,7 @@ async function topUpVocabularyToMinimumOrThrow(opts: {
   for (let i = 0; i < 4; i++) {
     try {
       const candidateCount = Math.min(10, Math.max(missing + 2, missing * 3));
-      const completion = await openai.chat.completions.create({
+      const completion = await getOpenAI().chat.completions.create({
         model: 'gpt-4o-mini',
         messages: [
           {
@@ -735,6 +742,8 @@ export async function POST(
       );
     }
 
+    const openai = getOpenAI();
+
     const supabase = getSupabaseAdmin();
 
     // Step 1: Get lesson data
@@ -858,7 +867,7 @@ export async function POST(
             ? `\n\nIMPORTANT: Your previous output was INVALID.\nReason: ${lastError.message}\nYou MUST regenerate the ENTIRE lesson JSON.\n\nCRITICAL FAILURE MODE TO AVOID:\n- Do NOT return a "task shell" (tasks with only task_id/type and empty/missing content/blocks/items).\n- Every task MUST include its full data arrays.\n\nHARD REQUIREMENTS (MUST PASS VALIDATION):\n- Task 1 MUST contain 13–15 cards at: tasks[].content.cards (or CRM blocks that transform into it).\n- Task 1 freshness rule: at least 10 cards MUST be NEW (not present in usedWordsList); up to 5 can overlap as supporting words.\n- Task 2 MUST contain exactly 6 blocks at: tasks[].blocks (with block_id/block_type/content).\n- Task 3 MUST contain items/options (not empty).\n- Task 4 MUST contain items/options + feedback (not empty).\n- Task 5 MUST contain main_task.template (not empty) + example.\n- NEVER output placeholder audio like \"PT\". Every audio field must be a REAL Portuguese phrase string.\n\nSCHEMA HINT (USE THIS SHAPE):\n{\n  \"tasks\": [\n    { \"task_id\": 1, \"type\": \"vocabulary\", \"content\": { \"cards\": [ { \"word\": \"...\", \"transcription\": \"[...]\", \"example_sentence\": \"...\", \"sentence_translation_ru\": \"...\", \"sentence_translation_en\": \"...\", \"word_translation_ru\": \"...\", \"word_translation_en\": \"...\" } ] } },\n    { \"task_id\": 2, \"type\": \"rules\", \"blocks\": [ { \"block_id\": \"block_1_build\", \"block_type\": \"explanation\", \"content\": { \"title\": {\"ru\":\"\",\"en\":\"\"}, \"examples\": [ {\"text\":\"...\"} ], \"hints\": [ {\"ru\":\"\",\"en\":\"\"} ] } } ] },\n    { \"task_id\": 3, \"type\": \"listening_comprehension\", \"items\": [ { \"audio\": \"<PORTUGUESE_PHRASE>\", \"question\": {\"ru\":\"\",\"en\":\"\"}, \"options\": [ {\"text\": {\"ru\":\"\",\"en\":\"\"}, \"correct\": false } ] } ] },\n    { \"task_id\": 4, \"type\": \"attention\", \"items\": [ { \"audio\": \"<PORTUGUESE_PHRASE>\", \"question\": {\"ru\":\"\",\"en\":\"\"}, \"options\": [ {\"text\": {\"ru\":\"\",\"en\":\"\"}, \"correct\": false } ], \"feedback\": {\"ru\":\"\",\"en\":\"\"} } ] },\n    { \"task_id\": 5, \"type\": \"writing_optional\", \"instruction\": {\"ru\":\"\",\"en\":\"\"}, \"main_task\": { \"template\": [\"...\"], \"hints\": [\"...\"] }, \"example\": { \"show_by_button\": true, \"button_text\": {\"ru\":\"\",\"en\":\"\"}, \"content\": [\"...\"] } }\n  ]\n}\n`
             : '';
 
-        const completion = await openai.chat.completions.create({
+        const completion = await getOpenAI().chat.completions.create({
           model: 'gpt-4o-mini',
           messages: [
             {

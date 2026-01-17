@@ -5,9 +5,9 @@ import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { useAppLanguage, syncUserLanguageFromDB } from '@/lib/language-context';
 import { getDayTitle, getDaySubtitle, getTaskTitle, getTaskSubtitle } from '@/lib/lesson-translations';
-import { LanguageSelector } from '@/components/LanguageSelector';
 import Link from 'next/link';
 import Image from 'next/image';
+import { SettingsPanel } from '@/components/subscription/ui/SettingsPanel';
 
 function OverviewPageContent() {
   const params = useParams();
@@ -25,6 +25,7 @@ function OverviewPageContent() {
   const [levels, setLevels] = useState<any[]>([]); // All levels from DB
   const [expandedLevels, setExpandedLevels] = useState<Set<string>>(new Set()); // Expanded level IDs
   const [loading, setLoading] = useState(true);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -537,10 +538,24 @@ function OverviewPageContent() {
           
           {/* Language Selector */}
           <div className="flex items-center">
-            <LanguageSelector />
+            <button
+              onClick={() => setSettingsOpen(true)}
+              aria-label="Settings"
+              style={{ width: '36px', height: '36px', padding: 0, background: 'transparent', border: 'none', cursor: 'pointer' }}
+            >
+              <Image
+                src="/Img/Website/Settings.svg"
+                alt="Settings"
+                width={36}
+                height={36}
+                style={{ width: '36px', height: '36px' }}
+              />
+            </button>
           </div>
         </div>
       </div>
+
+      <SettingsPanel open={settingsOpen} onClose={() => setSettingsOpen(false)} lessonToken={token} />
 
       {/* Main Content */}
       <div className="max-w-md mx-auto px-4 py-6">

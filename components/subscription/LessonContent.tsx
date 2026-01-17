@@ -4,9 +4,9 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { useAppLanguage } from '@/lib/language-context';
-import { LanguageSelector } from '@/components/LanguageSelector';
 import Link from 'next/link';
 import Image from 'next/image';
+import { SettingsPanel } from '@/components/subscription/ui/SettingsPanel';
 import TaskCard from './TaskCard';
 
 interface LessonContentProps {
@@ -24,6 +24,7 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
   const [timerData, setTimerData] = useState<{ elapsed: number; required: number } | null>(null);
   const [userProgress, setUserProgress] = useState(initialUserProgress);
   const [totalLessons, setTotalLessons] = useState<number>(0);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   
   // Update userProgress when initialUserProgress changes
   useEffect(() => {
@@ -589,9 +590,21 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
             />
           </Link>
           
-          {/* Language Selector */}
+          {/* Settings */}
           <div className="flex items-center">
-            <LanguageSelector />
+            <button
+              onClick={() => setSettingsOpen(true)}
+              aria-label="Settings"
+              style={{ width: '36px', height: '36px', padding: 0, background: 'transparent', border: 'none', cursor: 'pointer' }}
+            >
+              <Image
+                src="/Img/Website/Settings.svg"
+                alt="Settings"
+                width={36}
+                height={36}
+                style={{ width: '36px', height: '36px' }}
+              />
+            </button>
           </div>
         </div>
 
@@ -680,6 +693,8 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
 
         {/* Progress Bar is now in each task component (above navigation panel) */}
       </div>
+
+      <SettingsPanel open={settingsOpen} onClose={() => setSettingsOpen(false)} lessonToken={token} />
 
       {/* Tasks List (Collapsed View) */}
 

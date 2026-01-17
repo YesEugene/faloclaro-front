@@ -2,10 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export async function POST(request: NextRequest) {
   try {
+    const resendKey = process.env.RESEND_API_KEY;
+    if (!resendKey) {
+      return NextResponse.json({ success: false, error: 'Resend not configured' }, { status: 500 });
+    }
+    const resend = new Resend(resendKey);
+
     const body = await request.json();
     const { userId, lessonDay, token } = body;
 
@@ -19,7 +23,7 @@ export async function POST(request: NextRequest) {
     // Get user email
     const { data: userData, error: userError } = await supabase
       .from('subscription_users')
-      .select('email, language_preference')
+      .select('*')
       .eq('id', userId)
       .single();
 
@@ -28,6 +32,10 @@ export async function POST(request: NextRequest) {
         { success: false, error: 'User not found' },
         { status: 404 }
       );
+    }
+
+    if ((userData as any)?.email_notifications_enabled === false) {
+      return NextResponse.json({ success: true, skipped: true, message: 'Email notifications disabled' });
     }
 
     // Check if email was already sent for lesson 3 completion

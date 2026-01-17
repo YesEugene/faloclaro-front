@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS subscription_users (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   email TEXT NOT NULL UNIQUE,
   language_preference TEXT NOT NULL DEFAULT 'ru', -- 'ru', 'en', 'pt'
+  email_notifications_enabled BOOLEAN NOT NULL DEFAULT true,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

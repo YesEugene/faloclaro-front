@@ -4,9 +4,9 @@ import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { useAppLanguage } from '@/lib/language-context';
-import { LanguageSelector } from '@/components/LanguageSelector';
 import Link from 'next/link';
 import Image from 'next/image';
+import { SettingsPanel } from '@/components/subscription/ui/SettingsPanel';
 
 function PaymentPageContent() {
   const searchParams = useSearchParams();
@@ -15,6 +15,7 @@ function PaymentPageContent() {
   const day = searchParams.get('day');
   const token = searchParams.get('token');
   const [loading, setLoading] = useState(true);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [userEmail, setUserEmail] = useState<string>('');
 
   useEffect(() => {
@@ -126,8 +127,22 @@ function PaymentPageContent() {
             </div>
           </div>
         </Link>
-        <LanguageSelector />
+        <button
+          onClick={() => setSettingsOpen(true)}
+          aria-label="Settings"
+          style={{ width: '36px', height: '36px', padding: 0, background: 'transparent', border: 'none', cursor: 'pointer' }}
+        >
+          <Image
+            src="/Img/Website/Settings.svg"
+            alt="Settings"
+            width={36}
+            height={36}
+            style={{ width: '36px', height: '36px' }}
+          />
+        </button>
       </div>
+
+      <SettingsPanel open={settingsOpen} onClose={() => setSettingsOpen(false)} lessonToken={token} />
 
       {/* Main Content */}
       <div className="max-w-2xl mx-auto px-4 py-8 md:py-12">
