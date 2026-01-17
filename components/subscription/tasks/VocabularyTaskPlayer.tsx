@@ -1063,11 +1063,11 @@ export default function VocabularyTaskPlayer({
             taskId={task?.task_id || 1}
             lang={appLanguage}
             canGoPrevious={canGoPrevious && !!onPreviousTask}
-            canGoNext={localIsCompleted && ((isLastTask && !!onNextLesson) || (!isLastTask && !!onNextTask))}
+            canGoNext={localIsCompleted && !!onNextTask}
             onPrevious={onPreviousTask}
             onNext={onNextTask}
-            isLastTask={isLastTask}
-            onNextLesson={onNextLesson}
+            isLastTask={false}
+            onNextLesson={undefined}
           />
 
       {/* Settings Panel (from existing player) */}
