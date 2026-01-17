@@ -233,7 +233,10 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
   return (
     <div className="space-y-6 w-full" style={{ paddingBottom: '140px' }}>
       {/* Task Content - Full width - Always show, even if completed */}
-      <div className="rounded-lg border-2 border-gray-200 p-6 w-full" style={{ backgroundColor: '#F4F5F8' }}>
+      <div
+        className="border-2 border-gray-200 p-6 w-full"
+        style={{ backgroundColor: '#F4F5F8', borderRadius: '20px' }}
+      >
         <div className="space-y-4">
           {/* Block indicator - Writing task is always block 1/1 */}
           <div className="text-sm text-gray-500 mb-2">
@@ -331,6 +334,7 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
                     borderColor: 'rgba(194, 194, 194, 1)',
                     borderStyle: 'solid',
                     backgroundColor: '#F4F5F8',
+                  borderRadius: '20px',
                   }}
                 >
                   <p className="text-sm font-semibold text-black mb-2">
@@ -396,7 +400,8 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
                 borderWidth: '1px',
                 borderColor: 'rgba(194, 194, 194, 1)',
                 borderStyle: 'solid',
-                backgroundColor: '#F4F5F8'
+                backgroundColor: '#F4F5F8',
+                  borderRadius: '20px'
               }}
             >
               <p className="text-black font-medium whitespace-pre-line">{getTranslatedText(reflection.text, appLanguage)}</p>

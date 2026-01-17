@@ -399,7 +399,11 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
       {/* All Items - Displayed on one page */}
       <div className="space-y-6">
         {items.map((item: any, index: number) => (
-          <div key={index} className="rounded-lg border-2 border-gray-200 p-6 w-full" style={{ backgroundColor: '#F4F5F8' }}>
+          <div
+            key={index}
+            className="border-2 border-gray-200 p-6 w-full"
+            style={{ backgroundColor: '#F4F5F8', borderRadius: '20px' }}
+          >
             {renderItem(item, index)}
           </div>
         ))}

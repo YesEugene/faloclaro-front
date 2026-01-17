@@ -616,18 +616,26 @@ function OverviewPageContent() {
                   <div
                     key={`task-${task.task_id}-${index}`}
                     onClick={() => handleTaskClick(task.task_id)}
-                    className={`rounded-lg p-4 border-2 transition-all ${
+                    className={`p-4 border-2 transition-all ${
                       status === 'current'
-                        ? 'border-black bg-white cursor-pointer hover:bg-gray-50'
+                        ? 'cursor-pointer hover:bg-gray-50'
                         : status === 'completed'
-                        ? 'border-green-500 bg-green-50 cursor-pointer hover:bg-green-100'
-                        : 'border-gray-300 bg-gray-100 opacity-60 cursor-not-allowed'
+                        ? 'cursor-pointer hover:bg-gray-50'
+                        : 'opacity-60 cursor-not-allowed'
                     }`}
-                    style={{ 
-                      display: 'block', 
+                    style={{
+                      display: 'block',
                       visibility: 'visible',
                       opacity: status === 'locked' ? 0.6 : 1,
-                      minHeight: '80px'
+                      minHeight: '80px',
+                      borderRadius: '20px',
+                      backgroundColor: status === 'locked' ? '#F3F5F8' : '#FFFFFF',
+                      borderColor:
+                        status === 'completed'
+                          ? '#34BF5D'
+                          : status === 'current'
+                          ? '#1A8CFF'
+                          : '#CED2D6',
                     }}
                   >
                     <div className="flex items-start gap-3">

@@ -458,7 +458,8 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                   borderWidth: '1px',
                   borderColor: 'rgba(194, 194, 194, 1)',
                   borderStyle: 'solid',
-                  backgroundColor: '#F4F5F8'
+                  backgroundColor: '#F4F5F8',
+                  borderRadius: '20px'
                 }}
               >
                 <p className="text-sm font-semibold mb-2" style={{ color: 'rgba(0, 0, 0, 1)' }}>
@@ -501,7 +502,8 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                   borderWidth: '1px',
                   borderColor: 'rgba(194, 194, 194, 1)',
                   borderStyle: 'solid',
-                  backgroundColor: '#F4F5F8'
+                  backgroundColor: '#F4F5F8',
+                  borderRadius: '20px'
                 }}
               >
                 <p className="text-sm text-gray-700 whitespace-pre-line">{getBlockNote(block, appLanguage)}</p>
@@ -819,7 +821,11 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
         {blocksOrder.map((blockKey: string, index: number) => {
           const block = blocks[blockKey];
           return (
-            <div key={blockKey} className="rounded-lg border-2 border-gray-200 p-6 w-full" style={{ backgroundColor: '#F4F5F8' }}>
+            <div
+            key={blockKey}
+            className="border-2 border-gray-200 p-6 w-full"
+            style={{ backgroundColor: '#F4F5F8', borderRadius: '20px' }}
+          >
               {renderBlock(block, index)}
             </div>
           );

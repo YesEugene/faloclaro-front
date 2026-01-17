@@ -356,7 +356,8 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
               borderWidth: '1px',
               borderColor: 'rgba(194, 194, 194, 1)',
               borderStyle: 'solid',
-              backgroundColor: '#F4F5F8'
+              backgroundColor: '#F4F5F8',
+                  borderRadius: '20px'
             }}
           >
             <p className="text-black font-medium">
@@ -382,7 +383,11 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
       {/* All Items - Displayed on one page */}
       <div className="space-y-6">
         {items.map((item: any, index: number) => (
-          <div key={index} className="rounded-lg border-2 border-gray-200 p-6 w-full" style={{ backgroundColor: '#F4F5F8' }}>
+          <div
+            key={index}
+            className="border-2 border-gray-200 p-6 w-full"
+            style={{ backgroundColor: '#F4F5F8', borderRadius: '20px' }}
+          >
             {renderItem(item, index)}
           </div>
         ))}
