@@ -228,6 +228,80 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
     }
   }, [audioUrls]);
 
+
+  const getAudioPrompt = () => {
+    if (appLanguage === 'ru') return 'Прослушай аудио';
+    if (appLanguage === 'en') return 'Listen to the audio';
+    return 'Ouve o áudio';
+  };
+
+  const renderAudioPillRow = (opts: { displayText: string; audioKey: string }) => {
+    const { displayText, audioKey } = opts;
+    const canPlay = !!audioUrls[audioKey];
+    return (
+      <div
+        className="w-full"
+        style={{
+          minHeight: '50px',
+          backgroundColor: 'rgba(255, 255, 255, 1)',
+          borderRadius: '14px',
+          border: 'none',
+          padding: '12px 14px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '12px',
+        }}
+      >
+        <p
+          className="text-black font-medium text-lg"
+          style={{
+            margin: 0,
+            flex: 1,
+            minWidth: 0,
+            whiteSpace: 'normal',
+            overflowWrap: 'anywhere',
+            lineHeight: '1.25',
+          }}
+        >
+          {displayText}
+        </p>
+        {canPlay && (
+          <button
+            onClick={() => playAudio(audioKey)}
+            disabled={isPlayingAudio[audioKey]}
+            className="flex-shrink-0 transition-colors"
+            style={{
+              width: '36px',
+              height: '36px',
+              padding: 0,
+              borderRadius: '999px',
+              backgroundColor: 'transparent',
+            }}
+          >
+            {isPlayingAudio[audioKey] ? (
+              <svg className="w-9 h-9 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fillRule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            ) : (
+              <svg className="w-9 h-9" fill="currentColor" viewBox="0 0 20 20" style={{ color: 'rgba(59, 130, 246, 1)' }}>
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            )}
+          </button>
+        )}
+      </div>
+    );
+  };
+
   // Handle answer selection for reinforcement tasks
   const handleAnswerSelect = (taskKey: string, answer: string, blockIndex: number) => {
     const updatedAnswers = { ...selectedAnswers, [taskKey]: answer };
@@ -350,47 +424,8 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
             {block.examples && block.examples.length > 0 && (
               <div className="space-y-3">
                 {block.examples.map((example: any, index: number) => (
-                  <div 
-                    key={index} 
-                    className="p-4"
-                    style={{ 
-                      height: '50px',
-                      backgroundColor: 'rgba(255, 255, 255, 1)',
-                      borderRadius: '6px',
-                      border: 'none'
-                    }}
-                  >
-                    <div className="flex items-center justify-between" style={{ height: '10px', marginTop: '3px', marginBottom: '3px' }}>
-                      <p className="text-black font-medium text-lg">{example.text}</p>
-                      {example.audio && audioUrls[example.text] && (
-                        <button
-                          onClick={() => playAudio(example.text)}
-                          disabled={isPlayingAudio[example.text]}
-                          className="flex-shrink-0 ml-3 transition-colors"
-                          style={{
-                            width: '30px',
-                            height: '30px',
-                            paddingTop: '0px',
-                            paddingBottom: '0px',
-                            paddingLeft: '11px',
-                            paddingRight: '11px',
-                            borderRadius: '0px',
-                            backgroundColor: 'transparent',
-                            color: 'rgba(255, 255, 255, 0.58)'
-                          }}
-                        >
-                          {isPlayingAudio[example.text] ? (
-                            <svg className="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-                            </svg>
-                          ) : (
-                            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" style={{ color: 'rgba(59, 130, 246, 1)' }}>
-                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
-                            </svg>
-                          )}
-                        </button>
-                      )}
-                    </div>
+                  <div key={index}>
+                    {renderAudioPillRow({ displayText: example.text, audioKey: example.text })}
                   </div>
                 ))}
               </div>
@@ -432,47 +467,8 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
             {block.comparison_card && (
               <div className="grid grid-cols-1 gap-4">
                 {block.comparison_card.map((card: any, index: number) => (
-                  <div 
-                    key={index} 
-                    className="p-4"
-                    style={{ 
-                      height: '50px',
-                      backgroundColor: 'rgba(255, 255, 255, 1)',
-                      borderRadius: '6px',
-                      border: 'none'
-                    }}
-                  >
-                    <div className="flex items-center justify-between" style={{ height: '9px', marginTop: '3px', marginBottom: '3px' }}>
-                      <p className="text-black font-medium text-lg">{card.text}</p>
-                      {card.audio && audioUrls[card.text] && (
-                        <button
-                          onClick={() => playAudio(card.text)}
-                          disabled={isPlayingAudio[card.text]}
-                          className="flex-shrink-0 ml-3 transition-colors"
-                          style={{
-                            width: '30px',
-                            height: '30px',
-                            paddingTop: '0px',
-                            paddingBottom: '0px',
-                            paddingLeft: '11px',
-                            paddingRight: '11px',
-                            borderRadius: '0px',
-                            backgroundColor: 'transparent',
-                            color: 'rgba(255, 255, 255, 0.58)'
-                          }}
-                        >
-                          {isPlayingAudio[card.text] ? (
-                            <svg className="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-                            </svg>
-                          ) : (
-                            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" style={{ color: 'rgba(59, 130, 246, 1)' }}>
-                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
-                            </svg>
-                          )}
-                        </button>
-                      )}
-                    </div>
+                  <div key={index}>
+                    {renderAudioPillRow({ displayText: card.text, audioKey: card.text })}
                   </div>
                 ))}
               </div>
@@ -515,23 +511,8 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                 <p className="text-lg font-semibold text-black mb-4">{getQuestionText(block.task_1, appLanguage)}</p>
                 
                 {block.task_1.audio && (
-                  <div className="flex items-center justify-center mb-4">
-                    <button
-                      onClick={() => playAudio(block.task_1.audio)}
-                      disabled={isPlayingAudio[block.task_1.audio]}
-                      className="p-4 rounded-full transition-colors"
-                      style={{ backgroundColor: '#F4F5F8' }}
-                    >
-                      {isPlayingAudio[block.task_1.audio] ? (
-                        <svg className="w-10 h-10 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-                        </svg>
-                      ) : (
-                        <svg className="w-10 h-10 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
-                        </svg>
-                      )}
-                    </button>
+                  <div className="mb-4">
+                    {renderAudioPillRow({ displayText: getAudioPrompt(), audioKey: block.task_1.audio })}
                   </div>
                 )}
                 
@@ -611,23 +592,8 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                     <p className="text-lg font-semibold text-black mb-4">{getQuestionText(block.task_2, appLanguage)}</p>
                     
                     {block.task_2.audio && (
-                      <div className="flex items-center justify-center mb-4">
-                        <button
-                          onClick={() => playAudio(block.task_2.audio)}
-                          disabled={isPlayingAudio[block.task_2.audio]}
-                          className="p-4 rounded-full transition-colors"
-                          style={{ backgroundColor: '#F4F5F8' }}
-                        >
-                          {isPlayingAudio[block.task_2.audio] ? (
-                            <svg className="w-10 h-10 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-                            </svg>
-                          ) : (
-                            <svg className="w-10 h-10 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
-                            </svg>
-                          )}
-                        </button>
+                      <div className="mb-4">
+                        {renderAudioPillRow({ displayText: getAudioPrompt(), audioKey: block.task_2.audio })}
                       </div>
                     )}
                   </>
