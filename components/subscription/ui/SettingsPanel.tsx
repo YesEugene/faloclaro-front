@@ -59,7 +59,7 @@ export function SettingsPanel(props: { open: boolean; onClose: () => void; lesso
         : 'We send lesson reminders and your stats. You can disable emails or change your email address.',
       youReceiveEmails: isRu ? 'Вы получаете письма' : 'You receive emails',
       emailPlaceholder: isRu ? 'Ваш e-mail' : 'Your e-mail',
-      save: isRu ? 'Сохранить' : 'Save',
+      save: isRu ? 'Сохранить настройки' : 'Save settings',
       caution: isRu ? 'Этот email используется для входа. Меняйте осторожно.' : 'This email is used for login. Change carefully.',
       closeAria: isRu ? 'Закрыть' : 'Close',
       langEn: 'English',
@@ -311,11 +311,36 @@ export function SettingsPanel(props: { open: boolean; onClose: () => void; lesso
             />
           </div>
 
+
+          <div style={{ marginTop: '10px', fontSize: '13px', color: 'rgba(0,0,0,0.65)' }}>
+            <span style={{ marginRight: '8px' }}>⚠</span>
+            {labels.caution}
+          </div>
+
+          {loading ? (
+            <div style={{ marginTop: '10px', fontSize: '13px', color: 'rgba(0,0,0,0.55)' }}>Loading…</div>
+          ) : null}
+          {error ? (
+            <div style={{ marginTop: '10px', fontSize: '13px', color: '#b42318' }}>{error}</div>
+          ) : null}
+
+
+        </div>
+
+        {/* Footer save button (bottom) */}
+        <div
+          style={{
+            position: 'sticky',
+            bottom: 0,
+            paddingTop: '14px',
+            paddingBottom: isMobile ? '18px' : '0px',
+            background: '#ffffff',
+          }}
+        >
           <button
             onClick={handleSave}
             disabled={saving || loading}
             style={{
-              marginTop: '12px',
               width: '100%',
               height: '56px',
               borderRadius: '14px',
@@ -330,19 +355,8 @@ export function SettingsPanel(props: { open: boolean; onClose: () => void; lesso
           >
             {labels.save}
           </button>
-
-          <div style={{ marginTop: '10px', fontSize: '13px', color: 'rgba(0,0,0,0.65)' }}>
-            <span style={{ marginRight: '8px' }}>⚠</span>
-            {labels.caution}
-          </div>
-
-          {loading ? (
-            <div style={{ marginTop: '10px', fontSize: '13px', color: 'rgba(0,0,0,0.55)' }}>Loading…</div>
-          ) : null}
-          {error ? (
-            <div style={{ marginTop: '10px', fontSize: '13px', color: '#b42318' }}>{error}</div>
-          ) : null}
         </div>
+
       </div>
     </div>
   );
