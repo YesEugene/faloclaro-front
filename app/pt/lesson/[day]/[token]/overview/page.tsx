@@ -527,7 +527,7 @@ function OverviewPageContent() {
           {/* Logo */}
           <Link href="/pt" className="flex items-center cursor-pointer">
             <Image
-              src="/Img/Logo FaloClaro.svg"
+              src="/Img/Website/logo.svg"
               alt="FaloClaro"
               width={120}
               height={40}
@@ -696,10 +696,34 @@ function OverviewPageContent() {
         </div>
 
         {/* Lessons Navigation - Grouped by Levels - Expandable Cards */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-20" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
-          <div className="max-w-md mx-auto px-4 py-3 md:max-w-full md:w-full">
-            <div className="overflow-x-auto -mx-4 px-4">
-              <div className="flex gap-3" style={{ minWidth: 'max-content' }}>
+        <div
+          className="fixed bottom-0 left-0 right-0 z-20"
+          style={{
+            height: 'calc(120px + env(safe-area-inset-bottom, 0px))',
+            background: 'linear-gradient(to top, rgba(77, 143, 255, 1) 0%, rgba(77, 143, 255, 0) 100%)',
+          }}
+        >
+          <div
+            className="max-w-md mx-auto px-4 md:max-w-full md:w-full"
+            style={{
+              height: 'calc(120px + env(safe-area-inset-bottom, 0px))',
+              paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+              display: 'flex',
+              alignItems: 'flex-end',
+            }}
+          >
+            <div className="w-full" style={{ paddingBottom: '12px' }}>
+              <div className="overflow-x-auto">
+                <div
+                  className="flex gap-3"
+                  style={{
+                    minWidth: 'max-content',
+                    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                    border: '2px solid rgba(255, 255, 255, 1)',
+                    borderRadius: '20px',
+                    padding: '10px 12px',
+                  }}
+                >
                 {/* Render levels with their lessons */}
                 {levels.map((level) => {
                   const levelLessons = allLessons.filter((l: any) => l.level_id === level.id);
@@ -709,9 +733,9 @@ function OverviewPageContent() {
                   const currentLesson = allLessons.find((l: any) => l.day_number === day);
                   const isCurrentLevel = currentLesson?.level_id === level.id;
                   
-                  // Green color for current level, black for others
-                  const levelBackgroundColor = isCurrentLevel ? '#BEF4C2' : '#1F2937'; // Green for current, black for others
-                  const levelTextColor = isCurrentLevel ? '#000000' : '#FFFFFF'; // Black text on green, white text on black
+                  // Level pill styles (as in task pages navigation)
+                  const levelBackgroundColor = 'rgba(255, 255, 255, 0.9)';
+                  const levelTextColor = '#000000';
 
                   return (
                     <div key={level.id} className="flex-shrink-0">
@@ -719,7 +743,8 @@ function OverviewPageContent() {
                       <div
                         style={{
                           backgroundColor: levelBackgroundColor,
-                          borderRadius: '12px',
+                          border: '2px solid rgba(255, 255, 255, 1)',
+                          borderRadius: '20px',
                           padding: isExpanded ? '12px 16px' : '10px 13px',
                           width: isExpanded ? 'auto' : '80px',
                           minWidth: '80px',
@@ -899,16 +924,16 @@ function OverviewPageContent() {
 
                   const isExpanded = expandedLevels.has('no-level');
                   const currentLesson = allLessons.find((l: any) => l.day_number === day);
-                  const isCurrentLevel = !currentLesson?.level_id;
-                  const levelBackgroundColor = isCurrentLevel ? '#BEF4C2' : '#1F2937';
-                  const levelTextColor = isCurrentLevel ? '#000000' : '#FFFFFF';
+                  const levelBackgroundColor = 'rgba(255, 255, 255, 0.9)';
+                  const levelTextColor = '#000000';
 
                   return (
                     <div className="flex-shrink-0">
                       <div
                         style={{
                           backgroundColor: levelBackgroundColor,
-                          borderRadius: '12px',
+                          border: '2px solid rgba(255, 255, 255, 1)',
+                          borderRadius: '20px',
                           padding: isExpanded ? '12px 16px' : '10px 13px',
                           width: isExpanded ? 'auto' : '80px',
                           minWidth: '80px',
@@ -1050,6 +1075,7 @@ function OverviewPageContent() {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }
