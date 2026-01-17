@@ -713,19 +713,20 @@ function OverviewPageContent() {
             }}
           >
             <div className="w-full" style={{ paddingBottom: '12px' }}>
-              <div className="overflow-x-auto">
-                <div
-                  className="flex gap-3"
-                  style={{
-                    minWidth: 'max-content',
-                    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                    border: '2px solid rgba(255, 255, 255, 1)',
-                    borderRadius: '20px',
-                    padding: '10px 12px',
-                  }}
-                >
-                {/* Render levels with their lessons */}
-                {levels.map((level) => {
+              <div
+                style={{
+                  marginLeft: '16px',
+                  marginRight: '16px',
+                  backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                  border: '2px solid rgba(255, 255, 255, 1)',
+                  borderRadius: '20px',
+                  padding: '10px 12px',
+                }}
+              >
+                <div className="overflow-x-auto" style={{ WebkitOverflowScrolling: 'touch' }}>
+                  <div className="flex gap-3" style={{ minWidth: 'max-content' }}>
+                  {/* Render levels with their lessons */}
+                  {levels.map((level) => {
                   const levelLessons = allLessons.filter((l: any) => l.level_id === level.id);
                   const isExpanded = expandedLevels.has(level.id);
                   
@@ -917,8 +918,8 @@ function OverviewPageContent() {
                   );
                 })}
 
-                {/* Lessons without level */}
-                {(() => {
+                  {/* Lessons without level */}
+                  {(() => {
                   const noLevelLessons = allLessons.filter((l: any) => !l.level_id);
                   if (noLevelLessons.length === 0) return null;
 
@@ -1069,13 +1070,14 @@ function OverviewPageContent() {
                       </div>
                     </div>
                   );
-                })()}
+                  })()}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
     </div>
   );
 }
