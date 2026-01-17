@@ -610,12 +610,18 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
                   padding: 0,
                 }}
               >
-                <span style={{ display: 'inline-flex', width: '18px', height: '18px', marginRight: '8px', verticalAlign: 'middle' }}>
-                {appLanguage === 'ru'
-                  ? `Меню урока ${lesson.day_number}`
-                  : appLanguage === 'en'
-                  ? `Lesson ${lesson.day_number} menu`
-                  : `Menu da lição ${lesson.day_number}`}
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M15 19l-7-7 7-7" />
+                  </svg>
+                  <span>
+                    {appLanguage === 'ru'
+                      ? `Меню урока ${lesson.day_number}`
+                      : appLanguage === 'en'
+                      ? `Lesson ${lesson.day_number} menu`
+                      : `Menu da lição ${lesson.day_number}`}
+                  </span>
+                </span>
               </button>
 
               {currentTask?.type === 'vocabulary' && (
@@ -661,7 +667,7 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
                 />
               </div>
 
-              <div style={{ marginTop: '10px', fontSize: '16px', color: 'rgba(0,0,0,0.85)' }}>
+              <div style={{ marginTop: '4px', fontSize: '12px', color: 'rgba(0,0,0,0.85)' }}>
                 {appLanguage === 'ru'
                   ? `Задание ${currentTaskNumber}/${totalTasksCount}`
                   : appLanguage === 'en'
