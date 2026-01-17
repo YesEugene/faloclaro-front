@@ -9,15 +9,123 @@ import { normalizeTasksArray } from '@/lib/lesson-tasks-normalizer';
 
 export const runtime = 'nodejs';
 
-let _openai: OpenAI | null = null;
-function getOpenAI(): OpenAI {
-  if (_openai) return _openai;
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) {
-    throw new Error('OPENAI_API_KEY is not configured');
+type StepMode =
+  | 'full'
+  | 'target'
+  | 'task2'
+  | 'task3'
+  | 'task4'
+  | 'task5'
+  | 'task1';
+
+function isStepMode(input: unknown): input is StepMode {
+  return (
+    input === 'full' ||
+    input === 'target' ||
+    input === 'task2' ||
+    input === 'task3' ||
+    input === 'task4' ||
+    input === 'task5' ||
+    input === 'task1'
+  );
+}
+
+function buildStepSystemPrompt(opts: {
+  courseMethodology: string;
+  lessonMethodology: string;
+  usedWords: string[];
+  dayNumber: number;
+  phase: string;
+  topicRu: string;
+  topicEn: string;
+  referenceExamples: any;
+}): string {
+  const usedWordsList = opts.usedWords.length > 0 ? opts.usedWords.join(', ') : 'None yet';
+  const reference = opts.referenceExamples
+    ? JSON.stringify(opts.referenceExamples, null, 2)
+    : 'No reference lessons available';
+
+  return `You are an AI lesson generator for FaloClaro (Portuguese learning platform).
+
+You MUST follow:
+- Course methodology
+- Lesson methodology
+- Platform schema constraints
+
+IMPORTANT:
+- You are generating ONLY a PART of the lesson (a single step).
+- Return ONLY a valid JSON object (no markdown, no explanations).
+- NEVER output placeholder audio like "PT". Every audio field must contain REAL Portuguese text.
+- Avoid reusing vocabulary from previous lessons unless allowed. DO NOT use these words as core lesson vocabulary: ${usedWordsList}
+
+COURSE METHODOLOGY:
+${opts.courseMethodology}
+
+LESSON METHODOLOGY:
+${opts.lessonMethodology}
+
+REFERENCE LESSONS (quality + schema reference):
+${reference}
+
+Lesson context:
+- Day: ${opts.dayNumber}
+- Phase: ${opts.phase}
+- Topic RU: ${opts.topicRu}
+- Topic EN: ${opts.topicEn}
+`;
+}
+
+async function callOpenAIJsonOrThrow(opts: {
+  openai: OpenAI;
+  systemPrompt: string;
+  userPrompt: string;
+  maxTokens: number;
+}): Promise<any> {
+  const completion = await opts.openai.chat.completions.create({
+    model: 'gpt-4o-mini',
+    messages: [
+      { role: 'system', content: opts.systemPrompt },
+      { role: 'user', content: opts.userPrompt },
+    ],
+    temperature: 0.3,
+    max_tokens: opts.maxTokens,
+    response_format: { type: 'json_object' },
+  });
+
+  let responseText = completion.choices[0]?.message?.content || '';
+  if (!responseText) throw new Error('Empty response from OpenAI');
+  responseText = responseText.replace(/```json\n?/gi, '').replace(/```\n?/g, '').trim();
+  return parseJsonSafely(responseText);
+}
+
+function ensureDraftLessonObject(input: any): any {
+  if (!input || typeof input !== 'object') return {};
+  if (Array.isArray(input)) return {};
+  return input;
+}
+
+function upsertTaskIntoDraft(draft: any, task: any): any {
+  const d = ensureDraftLessonObject(draft);
+  const tasks = Array.isArray(d.tasks) ? [...d.tasks] : [];
+  const next = task;
+  const taskId = next?.task_id;
+  if (typeof taskId === 'number') {
+    const idx = tasks.findIndex((t: any) => t?.task_id === taskId);
+    if (idx >= 0) tasks[idx] = next;
+    else tasks.push(next);
+  } else {
+    tasks.push(next);
   }
-  _openai = new OpenAI({ apiKey });
-  return _openai;
+  d.tasks = normalizeTasksArray(tasks);
+  return d;
+}
+
+function setTargetPhraseOnDraft(draft: any, target: { pt: string; ru: string; en: string }): any {
+  const d = ensureDraftLessonObject(draft);
+  const day = d.day && typeof d.day === 'object' && !Array.isArray(d.day) ? d.day : {};
+  day.target_phrase = { pt: target.pt, ru: target.ru, en: target.en };
+  d.day = day;
+  return d;
 }
 
 async function loadReferenceExampleLessons(): Promise<any | null> {
@@ -209,6 +317,7 @@ const OVERLAP_KEEP_WHITELIST = new Set(
 );
 
 async function replaceOverlapsToMeetFreshnessOrThrow(opts: {
+  openai: OpenAI;
   lesson: any;
   usedWords: string[];
   topicRu: string;
@@ -280,7 +389,7 @@ async function replaceOverlapsToMeetFreshnessOrThrow(opts: {
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
       const candidateCount = Math.min(20, Math.max(replacementsNeeded + 4, replacementsNeeded * 4));
-      const completion = await getOpenAI().chat.completions.create({
+      const completion = await opts.openai.chat.completions.create({
         model: 'gpt-4o-mini',
         messages: [
           {
@@ -440,6 +549,7 @@ function needsTasksRepair(lesson: any): { needsRepair: boolean; reasons: string[
 }
 
 async function repairTasks2345OrThrow(opts: {
+  openai: OpenAI;
   lesson: any;
   dayNumber: number;
   phase: string;
@@ -451,7 +561,7 @@ async function repairTasks2345OrThrow(opts: {
     throw new Error('Cannot repair tasks without valid Task 1 vocabulary cards (need >= 13).');
   }
 
-  const completion = await getOpenAI().chat.completions.create({
+  const completion = await opts.openai.chat.completions.create({
     model: 'gpt-4o-mini',
     messages: [
       {
@@ -527,6 +637,7 @@ async function repairTasks2345OrThrow(opts: {
 }
 
 async function topUpVocabularyToMinimumOrThrow(opts: {
+  openai: OpenAI;
   lesson: any;
   usedWords: string[];
   topicRu: string;
@@ -559,7 +670,7 @@ async function topUpVocabularyToMinimumOrThrow(opts: {
   for (let i = 0; i < 4; i++) {
     try {
       const candidateCount = Math.min(10, Math.max(missing + 2, missing * 3));
-      const completion = await getOpenAI().chat.completions.create({
+      const completion = await opts.openai.chat.completions.create({
         model: 'gpt-4o-mini',
         messages: [
           {
@@ -734,6 +845,9 @@ export async function POST(
     const { id } = await params;
     const body = await request.json();
     const { topic_ru, topic_en } = body;
+    const stepRaw = body?.step;
+    const step: StepMode = isStepMode(stepRaw) ? stepRaw : 'full';
+    const draftLessonFromClient = body?.draft_lesson;
 
     if (!topic_ru || !topic_en) {
       return NextResponse.json(
@@ -742,7 +856,10 @@ export async function POST(
       );
     }
 
-    const openai = getOpenAI();
+    // Lazy init: prevents build-time failures when env is not present at module load.
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
 
     const supabase = getSupabaseAdmin();
 
@@ -856,6 +973,219 @@ export async function POST(
       );
     }
 
+    // ────────────────────────────────────────────────────────────────
+    // Step-by-step generation mode (no DB writes, returns merged draft)
+    // ────────────────────────────────────────────────────────────────
+    if (step !== 'full') {
+      const courseMethodology = methodologies?.find(m => m.type === 'course')?.content || 'Course methodology not set';
+      const lessonMethodology = methodologies?.find(m => m.type === 'lesson')?.content || 'Lesson methodology not set';
+
+      // used words for uniqueness
+      let usedWords: string[] = [];
+      try {
+        const vocabContent = methodologies?.find(m => m.type === 'vocabulary')?.content;
+        if (vocabContent) {
+          const vocab = typeof vocabContent === 'string' ? JSON.parse(vocabContent) : vocabContent;
+          usedWords = vocab.used_words || [];
+        }
+      } catch (e) {
+        console.error('Error parsing vocabulary:', e);
+      }
+
+      const stepSystemPrompt = buildStepSystemPrompt({
+        courseMethodology,
+        lessonMethodology,
+        usedWords,
+        dayNumber,
+        phase,
+        topicRu: topic_ru,
+        topicEn: topic_en,
+        referenceExamples: idealExampleLesson,
+      });
+
+      const baseDraft =
+        ensureDraftLessonObject(
+          draftLessonFromClient !== undefined
+            ? draftLessonFromClient
+            : (typeof lesson.yaml_content === 'string'
+                ? parseJsonSafely(lesson.yaml_content || '{}')
+                : lesson.yaml_content || {})
+        );
+      if (!Array.isArray(baseDraft.tasks)) baseDraft.tasks = [];
+
+      const existingTarget = baseDraft?.day?.target_phrase;
+      const targetPhrase =
+        existingTarget && typeof existingTarget === 'object'
+          ? {
+              pt: (existingTarget.pt || '').toString(),
+              ru: (existingTarget.ru || '').toString(),
+              en: (existingTarget.en || '').toString(),
+            }
+          : null;
+
+      const ensureHasTargetOrThrow = () => {
+        if (!targetPhrase?.pt?.trim()) {
+          throw new Error('Step requires target phrase. Please run step=target first (or provide draft_lesson.day.target_phrase).');
+        }
+      };
+
+      let generatedPiece: any = null;
+      let mergedDraft: any = JSON.parse(JSON.stringify(baseDraft));
+
+      if (step === 'target') {
+        const out = await callOpenAIJsonOrThrow({
+          openai,
+          systemPrompt: stepSystemPrompt,
+          userPrompt:
+            `Generate the TARGET final sentence(s) for this lesson.\n` +
+            `Return JSON ONLY in this exact schema:\n` +
+            `{\n  "target_phrase": { "pt": "...", "ru": "...", "en": "..." }\n}\n\n` +
+            `Rules:\n- Portuguese must be natural for PT-PT.\n- It should be 1–2 connected sentences that the learner can say at the end.\n- Must match the topic and be usable as the end of Task 2 block_6 and Task 5.\n- No placeholders.\n`,
+          maxTokens: 500,
+        });
+        const tp = out?.target_phrase;
+        if (!tp?.pt || !tp?.ru || !tp?.en) {
+          throw new Error('Invalid target_phrase output. Expected { target_phrase: { pt, ru, en } }.');
+        }
+        generatedPiece = { target_phrase: { pt: String(tp.pt), ru: String(tp.ru), en: String(tp.en) } };
+        mergedDraft = setTargetPhraseOnDraft(mergedDraft, generatedPiece.target_phrase);
+      }
+
+      if (step === 'task2') {
+        ensureHasTargetOrThrow();
+        const out = await callOpenAIJsonOrThrow({
+          openai,
+          systemPrompt: stepSystemPrompt,
+          userPrompt:
+            `Generate ONLY Task 2 (rules) for this lesson.\n\n` +
+            `Context:\n- Target phrase (must be used in block_6 speak_out_loud): ${targetPhrase!.pt}\n\n` +
+            `Return JSON ONLY in this schema:\n` +
+            `{\n  "task": { "task_id": 2, "type": "rules", "title": {"ru":"","en":""}, "subtitle": {"ru":"","en":""}, "structure": {"blocks_order": []}, "blocks": [ ... ] }\n}\n\n` +
+            `Hard requirements:\n- Exactly 6 blocks.\n- block_5 must be reinforcement with 2 single_choice tasks with REAL Portuguese audio strings.\n- block_6 speak_out_loud instruction must contain the target phrase (PT).\n- No empty fields (titles, explanations, hints).\n`,
+          maxTokens: 3500,
+        });
+        const task = out?.task;
+        if (!task || task.task_id !== 2) throw new Error('Invalid task2 output: expected { task: { task_id: 2, ... } }');
+        if (!Array.isArray(task.blocks) || task.blocks.length !== 6) {
+          throw new Error(`Task 2 must have exactly 6 blocks. Got ${Array.isArray(task.blocks) ? task.blocks.length : 0}.`);
+        }
+        generatedPiece = task;
+        mergedDraft = upsertTaskIntoDraft(mergedDraft, task);
+      }
+
+      if (step === 'task3') {
+        ensureHasTargetOrThrow();
+        const t2 = (Array.isArray(mergedDraft.tasks) ? mergedDraft.tasks : []).find((t: any) => t?.task_id === 2);
+        if (!t2) throw new Error('Step task3 requires Task 2 already generated in draft.');
+        const out = await callOpenAIJsonOrThrow({
+          openai,
+          systemPrompt: stepSystemPrompt,
+          userPrompt:
+            `Generate ONLY Task 3 (listening_comprehension).\n\n` +
+            `Context:\n- Target phrase: ${targetPhrase!.pt}\n- Use constructions from Task 2, but do NOT copy any full sentence verbatim.\n\n` +
+            `Return JSON ONLY:\n` +
+            `{\n  "task": { "task_id": 3, "type": "listening_comprehension", "title": {"ru":"","en":""}, "subtitle": {"ru":"","en":""}, "items": [ ... ] }\n}\n\n` +
+            `Hard requirements:\n- Exactly 3 items.\n- Each item: audio (PT string), question (ru/en), 3 options, exactly 1 correct.\n- No placeholders.\n`,
+          maxTokens: 2200,
+        });
+        const task = out?.task;
+        if (!task || task.task_id !== 3) throw new Error('Invalid task3 output: expected { task: { task_id: 3, ... } }');
+        if (!Array.isArray(task.items) || task.items.length !== 3) {
+          throw new Error(`Task 3 must have exactly 3 items. Got ${Array.isArray(task.items) ? task.items.length : 0}.`);
+        }
+        generatedPiece = task;
+        mergedDraft = upsertTaskIntoDraft(mergedDraft, task);
+      }
+
+      if (step === 'task4') {
+        ensureHasTargetOrThrow();
+        const t3 = (Array.isArray(mergedDraft.tasks) ? mergedDraft.tasks : []).find((t: any) => t?.task_id === 3);
+        if (!t3) throw new Error('Step task4 requires Task 3 already generated in draft.');
+        const out = await callOpenAIJsonOrThrow({
+          openai,
+          systemPrompt: stepSystemPrompt,
+          userPrompt:
+            `Generate ONLY Task 4 (attention).\n\n` +
+            `Context:\n- Target phrase: ${targetPhrase!.pt}\n- Use only known words from previous tasks; do NOT introduce new meaningful words.\n- Do NOT copy Task 2/3 sentences verbatim.\n\n` +
+            `Return JSON ONLY:\n` +
+            `{\n  "task": { "task_id": 4, "type": "attention", "title": {"ru":"","en":""}, "subtitle": {"ru":"","en":""}, "items": [ ... ] }\n}\n\n` +
+            `Hard requirements:\n- 3–5 items.\n- Each item: audio (PT string), question (ru/en), 3 options, exactly 1 correct, feedback (ru/en).\n- Feedback must explain logic + prompt to say PT out loud.\n`,
+          maxTokens: 2400,
+        });
+        const task = out?.task;
+        if (!task || task.task_id !== 4) throw new Error('Invalid task4 output: expected { task: { task_id: 4, ... } }');
+        if (!Array.isArray(task.items) || task.items.length < 3) {
+          throw new Error(`Task 4 must have at least 3 items. Got ${Array.isArray(task.items) ? task.items.length : 0}.`);
+        }
+        generatedPiece = task;
+        mergedDraft = upsertTaskIntoDraft(mergedDraft, task);
+      }
+
+      if (step === 'task5') {
+        ensureHasTargetOrThrow();
+        const t4 = (Array.isArray(mergedDraft.tasks) ? mergedDraft.tasks : []).find((t: any) => t?.task_id === 4);
+        if (!t4) throw new Error('Step task5 requires Task 4 already generated in draft.');
+        const out = await callOpenAIJsonOrThrow({
+          openai,
+          systemPrompt: stepSystemPrompt,
+          userPrompt:
+            `Generate ONLY Task 5 (writing_optional).\n\n` +
+            `Context:\n- Target phrase: ${targetPhrase!.pt}\n- Task 5 should help learner produce target phrase (or a personalized variant) using lesson vocabulary.\n\n` +
+            `Return JSON ONLY:\n` +
+            `{\n  "task": { "task_id": 5, "type": "writing_optional", "title": {"ru":"","en":""}, "subtitle": {"ru":"","en":""}, "instruction": {"ru":"","en":""}, "main_task": { "format": "template_fill_or_speak", "template": [ ... ] }, "example": { "show_by_button": true, "button_text": {"ru":"Показать пример","en":"Show example"}, "content": [ ... ] }, "alternative": { "title": {"ru":"","en":""}, "instruction": {"ru":"","en":""}, "action_button": { "text": {"ru":"Я сказал(а) вслух","en":"I said it out loud"} } } }\n}\n\n` +
+            `Hard requirements:\n- instruction must be non-empty and include a short “use these words” list (2–4 key + 1–2 supporting).\n- main_task.template must be non-empty (1–3 lines).\n- example.content must be non-empty (no blanks).\n`,
+          maxTokens: 2200,
+        });
+        const task = out?.task;
+        if (!task || task.task_id !== 5) throw new Error('Invalid task5 output: expected { task: { task_id: 5, ... } }');
+        const tmpl = task?.main_task?.template;
+        if (!tmpl || (Array.isArray(tmpl) && tmpl.length === 0)) {
+          throw new Error('Task 5 must have main_task.template (non-empty).');
+        }
+        generatedPiece = task;
+        mergedDraft = upsertTaskIntoDraft(mergedDraft, task);
+      }
+
+      if (step === 'task1') {
+        ensureHasTargetOrThrow();
+        const has2345 = [2, 3, 4, 5].every((id) =>
+          (Array.isArray(mergedDraft.tasks) ? mergedDraft.tasks : []).some((t: any) => t?.task_id === id)
+        );
+        if (!has2345) throw new Error('Step task1 requires Tasks 2–5 already generated in draft.');
+
+        const out = await callOpenAIJsonOrThrow({
+          openai,
+          systemPrompt: stepSystemPrompt,
+          userPrompt:
+            `Generate ONLY Task 1 (vocabulary) based on Tasks 2–5 content.\n\n` +
+            `Context:\n- Target phrase: ${targetPhrase!.pt}\n- All words used in tasks 2–5 must be covered in vocabulary.\n- Must be 13–15 cards.\n- At least 10 core words should be unique for this lesson topic. Supporting 3–5 can overlap.\n\n` +
+            `Return JSON ONLY:\n` +
+            `{\n  "task": { "task_id": 1, "type": "vocabulary", "content": { "cards": [ { "word": "...", "transcription": "[...]", "example_sentence": "...", "sentence_translation_ru": "...", "sentence_translation_en": "...", "word_translation_ru": "...", "word_translation_en": "..." } ] } }\n}\n`,
+          maxTokens: 3500,
+        });
+        const task = out?.task;
+        if (!task || task.task_id !== 1) throw new Error('Invalid task1 output: expected { task: { task_id: 1, ... } }');
+        const cards = task?.content?.cards;
+        if (!Array.isArray(cards) || cards.length < 13) {
+          throw new Error(`Task 1 must have 13–15 cards. Got ${Array.isArray(cards) ? cards.length : 0}.`);
+        }
+        generatedPiece = task;
+        mergedDraft = upsertTaskIntoDraft(mergedDraft, task);
+        // enforce uniqueness + freshness (reuses existing validation)
+        validateVocabularyIsNewOrThrow(mergedDraft, usedWords);
+      }
+
+      // Basic placeholder guard (also catches task2 block5 / task3/4 audio placeholders)
+      throwIfPlaceholderPortugueseAudioOrThrow(mergedDraft);
+
+      return NextResponse.json({
+        success: true,
+        step,
+        generated: generatedPiece,
+        merged_yaml_content: mergedDraft,
+      });
+    }
+
     // Step 6: Generate lesson with OpenAI (with retry logic)
     let generatedLesson: any = null;
     let lastError: Error | null = null;
@@ -867,7 +1197,7 @@ export async function POST(
             ? `\n\nIMPORTANT: Your previous output was INVALID.\nReason: ${lastError.message}\nYou MUST regenerate the ENTIRE lesson JSON.\n\nCRITICAL FAILURE MODE TO AVOID:\n- Do NOT return a "task shell" (tasks with only task_id/type and empty/missing content/blocks/items).\n- Every task MUST include its full data arrays.\n\nHARD REQUIREMENTS (MUST PASS VALIDATION):\n- Task 1 MUST contain 13–15 cards at: tasks[].content.cards (or CRM blocks that transform into it).\n- Task 1 freshness rule: at least 10 cards MUST be NEW (not present in usedWordsList); up to 5 can overlap as supporting words.\n- Task 2 MUST contain exactly 6 blocks at: tasks[].blocks (with block_id/block_type/content).\n- Task 3 MUST contain items/options (not empty).\n- Task 4 MUST contain items/options + feedback (not empty).\n- Task 5 MUST contain main_task.template (not empty) + example.\n- NEVER output placeholder audio like \"PT\". Every audio field must be a REAL Portuguese phrase string.\n\nSCHEMA HINT (USE THIS SHAPE):\n{\n  \"tasks\": [\n    { \"task_id\": 1, \"type\": \"vocabulary\", \"content\": { \"cards\": [ { \"word\": \"...\", \"transcription\": \"[...]\", \"example_sentence\": \"...\", \"sentence_translation_ru\": \"...\", \"sentence_translation_en\": \"...\", \"word_translation_ru\": \"...\", \"word_translation_en\": \"...\" } ] } },\n    { \"task_id\": 2, \"type\": \"rules\", \"blocks\": [ { \"block_id\": \"block_1_build\", \"block_type\": \"explanation\", \"content\": { \"title\": {\"ru\":\"\",\"en\":\"\"}, \"examples\": [ {\"text\":\"...\"} ], \"hints\": [ {\"ru\":\"\",\"en\":\"\"} ] } } ] },\n    { \"task_id\": 3, \"type\": \"listening_comprehension\", \"items\": [ { \"audio\": \"<PORTUGUESE_PHRASE>\", \"question\": {\"ru\":\"\",\"en\":\"\"}, \"options\": [ {\"text\": {\"ru\":\"\",\"en\":\"\"}, \"correct\": false } ] } ] },\n    { \"task_id\": 4, \"type\": \"attention\", \"items\": [ { \"audio\": \"<PORTUGUESE_PHRASE>\", \"question\": {\"ru\":\"\",\"en\":\"\"}, \"options\": [ {\"text\": {\"ru\":\"\",\"en\":\"\"}, \"correct\": false } ], \"feedback\": {\"ru\":\"\",\"en\":\"\"} } ] },\n    { \"task_id\": 5, \"type\": \"writing_optional\", \"instruction\": {\"ru\":\"\",\"en\":\"\"}, \"main_task\": { \"template\": [\"...\"], \"hints\": [\"...\"] }, \"example\": { \"show_by_button\": true, \"button_text\": {\"ru\":\"\",\"en\":\"\"}, \"content\": [\"...\"] } }\n  ]\n}\n`
             : '';
 
-        const completion = await getOpenAI().chat.completions.create({
+        const completion = await openai.chat.completions.create({
           model: 'gpt-4o-mini',
           messages: [
             {
@@ -937,6 +1267,7 @@ export async function POST(
         // If OpenAI generated 10–12 vocabulary cards, auto-top-up to the minimum 13
         // with a tiny follow-up completion. This makes generation much more reliable.
         await topUpVocabularyToMinimumOrThrow({
+          openai,
           lesson: generatedLesson,
           usedWords: usedWordsForValidation,
           topicRu: topic_ru,
@@ -949,6 +1280,7 @@ export async function POST(
         const { removed: removedDuplicates } = dedupeTask1CardsInPlace(generatedLesson);
         if (removedDuplicates > 0) {
           await topUpVocabularyToMinimumOrThrow({
+            openai,
             lesson: generatedLesson,
             usedWords: usedWordsForValidation,
             topicRu: topic_ru,
@@ -963,6 +1295,7 @@ export async function POST(
         const freshness = getTask1FreshnessStats(generatedLesson, usedWordsForValidation);
         if (freshness.newCount < 10 || freshness.overlaps.length > 5) {
           await replaceOverlapsToMeetFreshnessOrThrow({
+            openai,
             lesson: generatedLesson,
             usedWords: usedWordsForValidation,
             topicRu: topic_ru,
@@ -972,6 +1305,7 @@ export async function POST(
           // After replacements, re-dedupe + ensure minimum count
           dedupeTask1CardsInPlace(generatedLesson);
           await topUpVocabularyToMinimumOrThrow({
+            openai,
             lesson: generatedLesson,
             usedWords: usedWordsForValidation,
             topicRu: topic_ru,
@@ -985,6 +1319,7 @@ export async function POST(
         if (repairCheck.needsRepair) {
           console.warn('⚠️ Tasks incomplete, running repair for tasks 2-5:', repairCheck.reasons);
           await repairTasks2345OrThrow({
+            openai,
             lesson: generatedLesson,
             dayNumber,
             phase,
