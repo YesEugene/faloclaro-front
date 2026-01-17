@@ -82,6 +82,14 @@ export async function PUT(
       updated_at: new Date().toISOString(),
     };
 
+    const wantsDayMetaSync =
+      title_ru !== undefined ||
+      title_en !== undefined ||
+      title_pt !== undefined ||
+      subtitle_ru !== undefined ||
+      subtitle_en !== undefined ||
+      subtitle_pt !== undefined;
+
     if (yaml_content !== undefined) {
       updateData.yaml_content = typeof yaml_content === 'string' 
         ? JSON.parse(yaml_content) 
@@ -90,8 +98,10 @@ export async function PUT(
     if (level_id !== undefined) updateData.level_id = level_id;
     if (order_in_level !== undefined) updateData.order_in_level = order_in_level;
     if (is_published !== undefined) updateData.is_published = is_published;
-    if (title_ru !== undefined) updateData.title_ru = title_ru && title_ru.trim() ? title_ru.trim() : null;
-    if (title_en !== undefined) updateData.title_en = title_en && title_en.trim() ? title_en.trim() : null;
+    const titleRuVal = title_ru !== undefined ? (title_ru && title_ru.trim() ? title_ru.trim() : null) : undefined;
+    const titleEnVal = title_en !== undefined ? (title_en && title_en.trim() ? title_en.trim() : null) : undefined;
+    if (titleRuVal !== undefined) updateData.title_ru = titleRuVal;
+    if (titleEnVal !== undefined) updateData.title_en = titleEnVal;
     if (title_pt !== undefined) {
       // title_pt is required (NOT NULL), so use title_en or title_ru as fallback if empty
       const titlePtValue = title_pt && title_pt.trim() 
@@ -99,9 +109,60 @@ export async function PUT(
         : (title_en && title_en.trim() ? title_en.trim() : (title_ru && title_ru.trim() ? title_ru.trim() : ''));
       updateData.title_pt = titlePtValue || null;
     }
-    if (subtitle_ru !== undefined) updateData.subtitle_ru = subtitle_ru && subtitle_ru.trim() ? subtitle_ru.trim() : null;
-    if (subtitle_en !== undefined) updateData.subtitle_en = subtitle_en && subtitle_en.trim() ? subtitle_en.trim() : null;
-    if (subtitle_pt !== undefined) updateData.subtitle_pt = subtitle_pt && subtitle_pt.trim() ? subtitle_pt.trim() : null;
+    const subtitleRuVal = subtitle_ru !== undefined ? (subtitle_ru && subtitle_ru.trim() ? subtitle_ru.trim() : null) : undefined;
+    const subtitleEnVal = subtitle_en !== undefined ? (subtitle_en && subtitle_en.trim() ? subtitle_en.trim() : null) : undefined;
+    const subtitlePtVal = subtitle_pt !== undefined ? (subtitle_pt && subtitle_pt.trim() ? subtitle_pt.trim() : null) : undefined;
+    if (subtitleRuVal !== undefined) updateData.subtitle_ru = subtitleRuVal;
+    if (subtitleEnVal !== undefined) updateData.subtitle_en = subtitleEnVal;
+    if (subtitlePtVal !== undefined) updateData.subtitle_pt = subtitlePtVal;
+
+    // If the caller updated titles/subtitles but didn't pass yaml_content, keep yaml_content.day metadata in sync
+    // because the admin "Lessons" list and some frontend pages render from yaml_content.day.title/subtitle.
+    if (wantsDayMetaSync && updateData.yaml_content === undefined) {
+      const { data: currentLesson, error: currentErr } = await getSupabaseAdmin()
+        .from('lessons')
+        .select('yaml_content')
+        .eq('id', id)
+        .single();
+
+      if (!currentErr && currentLesson) {
+        let yc: any = currentLesson.yaml_content || {};
+        if (typeof yc === 'string') {
+          try {
+            yc = JSON.parse(yc);
+          } catch {
+            yc = {};
+          }
+        }
+        if (!yc || typeof yc !== 'object') yc = {};
+
+        const day = (yc.day && typeof yc.day === 'object' ? yc.day : {}) as any;
+
+        // Normalize title/subtitle to objects {ru,en,pt}
+        const nextTitle: any =
+          day.title && typeof day.title === 'object' && !Array.isArray(day.title) ? { ...day.title } : {};
+        const nextSubtitle: any =
+          day.subtitle && typeof day.subtitle === 'object' && !Array.isArray(day.subtitle) ? { ...day.subtitle } : {};
+
+        const effectiveTitleRu = titleRuVal !== undefined ? titleRuVal : nextTitle.ru;
+        const effectiveTitleEn = titleEnVal !== undefined ? titleEnVal : nextTitle.en;
+        const effectiveTitlePt = updateData.title_pt !== undefined ? updateData.title_pt : nextTitle.pt;
+
+        if (effectiveTitleRu !== undefined) nextTitle.ru = effectiveTitleRu;
+        if (effectiveTitleEn !== undefined) nextTitle.en = effectiveTitleEn;
+        if (effectiveTitlePt !== undefined) nextTitle.pt = effectiveTitlePt;
+
+        if (subtitleRuVal !== undefined) nextSubtitle.ru = subtitleRuVal;
+        if (subtitleEnVal !== undefined) nextSubtitle.en = subtitleEnVal;
+        if (subtitlePtVal !== undefined) nextSubtitle.pt = subtitlePtVal;
+
+        day.title = nextTitle;
+        day.subtitle = nextSubtitle;
+        yc.day = day;
+
+        updateData.yaml_content = yc;
+      }
+    }
 
     // Update lesson (use admin client for write operations)
     const { data, error } = await getSupabaseAdmin()
