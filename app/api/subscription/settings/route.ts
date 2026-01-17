@@ -4,6 +4,12 @@ import { getSupabaseAdmin } from '@/lib/supabase-admin';
 
 type AppLanguage = 'ru' | 'en';
 
+function normalizeEmailNotificationsEnabled(v: any): boolean {
+  // Default: subscribed
+  if (typeof v === 'boolean') return v;
+  return true;
+}
+
 function getAnonSupabase() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -72,9 +78,7 @@ export async function POST(req: NextRequest) {
       settings: {
         email: user.email ?? null,
         language_preference: user.language_preference ?? 'ru',
-        // May not exist in older DBs; keep nullable and default to true on client
-        email_notifications_enabled:
-          typeof user.email_notifications_enabled === 'boolean' ? user.email_notifications_enabled : null,
+        email_notifications_enabled: normalizeEmailNotificationsEnabled((user as any)?.email_notifications_enabled),
       },
     });
   } catch (e: any) {
@@ -100,24 +104,18 @@ export async function PUT(req: NextRequest) {
     const update: Record<string, any> = {};
     if (language && (language === 'ru' || language === 'en')) update.language_preference = language;
     if (typeof email === 'string' && email.length > 3) update.email = email;
+    if (typeof emailNotificationsEnabled === 'boolean') update.email_notifications_enabled = emailNotificationsEnabled;
 
     const supabaseAdmin = getSupabaseAdmin();
 
-    // Always attempt to update language/email (these columns exist).
     if (Object.keys(update).length > 0) {
       const { error } = await supabaseAdmin.from('subscription_users').update(update).eq('id', userId);
-      if (error) throw error;
-    }
-
-    // Try to update optional column (may not exist in older DBs). Ignore if DB doesn't have it.
-    if (typeof emailNotificationsEnabled === 'boolean') {
-      const { error: notifError } = await supabaseAdmin
-        .from('subscription_users')
-        .update({ email_notifications_enabled: emailNotificationsEnabled })
-        .eq('id', userId);
-      if (notifError) {
-        // Do not fail request if this column doesn't exist yet
-        console.warn('email_notifications_enabled update failed (ignored):', notifError.message);
+      if (error) {
+        const msg = String((error as any)?.message || '');
+        if (msg.toLowerCase().includes('email_notifications_enabled') && msg.toLowerCase().includes('does not exist')) {
+          throw new Error('DB missing column email_notifications_enabled. Run database/add-email-settings.sql in Supabase.');
+        }
+        throw error;
       }
     }
 
@@ -137,8 +135,7 @@ export async function PUT(req: NextRequest) {
       settings: {
         email: user.email ?? null,
         language_preference: user.language_preference ?? 'ru',
-        email_notifications_enabled:
-          typeof user.email_notifications_enabled === 'boolean' ? user.email_notifications_enabled : null,
+        email_notifications_enabled: normalizeEmailNotificationsEnabled((user as any)?.email_notifications_enabled),
       },
     });
   } catch (e: any) {

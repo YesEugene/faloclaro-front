@@ -57,7 +57,7 @@ export function SettingsPanel(props: { open: boolean; onClose: () => void; lesso
       emailSettingsDesc: isRu
         ? 'Мы присылаем напоминания об уроках и вашу статистику. Вы можете отключить письма или изменить почту.'
         : 'We send lesson reminders and your stats. You can disable emails or change your email address.',
-      youReceiveEmails: isRu ? 'Вы получаете письма' : 'You receive emails',
+      youReceiveEmails: isRu ? 'Подписка' : 'Subscription',
       emailPlaceholder: isRu ? 'Ваш e-mail' : 'Your e-mail',
       save: isRu ? 'Сохранить настройки' : 'Save settings',
       caution: isRu ? 'Этот email используется для входа. Меняйте осторожно.' : 'This email is used for login. Change carefully.',
