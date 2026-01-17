@@ -1193,6 +1193,7 @@ function GenerateLessonModal({
   const [stepLoading, setStepLoading] = useState(false);
   const [stepError, setStepError] = useState('');
   const [lastGeneratedJson, setLastGeneratedJson] = useState<string>('');
+  const [stepExtraInstructions, setStepExtraInstructions] = useState<string>('');
 
   const steps: Array<{ id: 'target' | 'task2' | 'task3' | 'task4' | 'task5' | 'task1'; label: string }> = [
     { id: 'target', label: 'Шаг 1: Целевая фраза (target phrase)' },
@@ -1212,8 +1213,9 @@ function GenerateLessonModal({
     }
     setStepLoading(true);
     setStepError('');
-    setLastGeneratedJson('');
+    // Keep lastGeneratedJson so we can ask the API to generate a different alternative
     try {
+      const variationToken = `${Date.now()}_${Math.random().toString(16).slice(2)}`;
       const response = await fetch(`/api/admin/lessons/${lessonId}/generate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1222,6 +1224,9 @@ function GenerateLessonModal({
           topic_en: topicEn.trim(),
           step: currentStep.id,
           draft_lesson: draftYaml,
+          extra_instructions: stepExtraInstructions,
+          variation_token: variationToken,
+          previous_output: lastGeneratedJson || '',
         }),
       });
 
@@ -1441,6 +1446,23 @@ function GenerateLessonModal({
                   <strong>Ошибка шага:</strong> {stepError}
                 </div>
               )}
+
+              <div className="mb-3">
+                <div className="text-xs font-medium text-gray-700 mb-2">
+                  Дополнительные инструкции для шага (опционально)
+                </div>
+                <textarea
+                  value={stepExtraInstructions}
+                  onChange={(e) => setStepExtraInstructions(e.target.value)}
+                  disabled={stepLoading}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-black bg-white disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  rows={3}
+                  placeholder={`Например: Сделай целевую фразу более креативной и из ДВУХ предложений. Добавь немного разговорности.`}
+                />
+                <div className="text-xs text-gray-500 mt-1">
+                  Подсказка: можно уточнить стиль, длину (1–2 предложения), тон, пример, ограничения.
+                </div>
+              </div>
 
               {lastGeneratedJson && (
                 <div className="mb-3">

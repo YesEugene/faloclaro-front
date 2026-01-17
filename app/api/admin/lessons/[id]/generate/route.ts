@@ -80,6 +80,7 @@ async function callOpenAIJsonOrThrow(opts: {
   systemPrompt: string;
   userPrompt: string;
   maxTokens: number;
+  temperature?: number;
 }): Promise<any> {
   const completion = await opts.openai.chat.completions.create({
     model: 'gpt-4o-mini',
@@ -87,7 +88,7 @@ async function callOpenAIJsonOrThrow(opts: {
       { role: 'system', content: opts.systemPrompt },
       { role: 'user', content: opts.userPrompt },
     ],
-    temperature: 0.3,
+    temperature: typeof opts.temperature === 'number' ? opts.temperature : 0.3,
     max_tokens: opts.maxTokens,
     response_format: { type: 'json_object' },
   });
@@ -823,6 +824,15 @@ export async function POST(
     const stepRaw = body?.step;
     const step: StepMode = isStepMode(stepRaw) ? stepRaw : 'full';
     const draftLessonFromClient = body?.draft_lesson;
+    const extraInstructionsRaw = body?.extra_instructions;
+    const extraInstructions = typeof extraInstructionsRaw === 'string' ? extraInstructionsRaw.trim() : '';
+    const variationTokenRaw = body?.variation_token;
+    const variationToken =
+      typeof variationTokenRaw === 'string' || typeof variationTokenRaw === 'number'
+        ? String(variationTokenRaw)
+        : '';
+    const previousOutputRaw = body?.previous_output;
+    const previousOutput = typeof previousOutputRaw === 'string' ? previousOutputRaw.trim().slice(0, 2000) : '';
 
     if (!topic_ru || !topic_en) {
       return NextResponse.json(
@@ -978,6 +988,11 @@ export async function POST(
         referenceExamples: idealExampleLesson,
       });
 
+      const extraBlock =
+        (extraInstructions ? `\nAdditional user instructions for THIS step:\n${extraInstructions}\n` : '') +
+        (previousOutput ? `\nDo NOT repeat this previous output; generate a DIFFERENT alternative:\n${previousOutput}\n` : '') +
+        (variationToken ? `\nVariation token (must change output): ${variationToken}\n` : '');
+
       const baseDraft =
         ensureDraftLessonObject(
           draftLessonFromClient !== undefined
@@ -1015,8 +1030,10 @@ export async function POST(
             `Generate the TARGET final sentence(s) for this lesson.\n` +
             `Return JSON ONLY in this exact schema:\n` +
             `{\n  "target_phrase": { "pt": "...", "ru": "...", "en": "..." }\n}\n\n` +
-            `Rules:\n- Portuguese must be natural for PT-PT.\n- It should be 1–2 connected sentences that the learner can say at the end.\n- Must match the topic and be usable as the end of Task 2 block_6 and Task 5.\n- No placeholders.\n`,
+            `Rules:\n- Portuguese must be natural for PT-PT.\n- It should be 1–2 connected sentences that the learner can say at the end.\n- Must match the topic and be usable as the end of Task 2 block_6 and Task 5.\n- No placeholders.\n` +
+            extraBlock,
           maxTokens: 500,
+          temperature: 0.75,
         });
         const tp = out?.target_phrase;
         if (!tp?.pt || !tp?.ru || !tp?.en) {
@@ -1036,8 +1053,10 @@ export async function POST(
             `Context:\n- Target phrase (must be used in block_6 speak_out_loud): ${targetPhrase!.pt}\n\n` +
             `Return JSON ONLY in this schema:\n` +
             `{\n  "task": { "task_id": 2, "type": "rules", "title": {"ru":"","en":""}, "subtitle": {"ru":"","en":""}, "structure": {"blocks_order": []}, "blocks": [ ... ] }\n}\n\n` +
-            `Hard requirements:\n- Exactly 6 blocks.\n- block_5 must be reinforcement with 2 single_choice tasks with REAL Portuguese audio strings.\n- block_6 speak_out_loud instruction must contain the target phrase (PT).\n- No empty fields (titles, explanations, hints).\n`,
+            `Hard requirements:\n- Exactly 6 blocks.\n- block_5 must be reinforcement with 2 single_choice tasks with REAL Portuguese audio strings.\n- block_6 speak_out_loud instruction must contain the target phrase (PT).\n- No empty fields (titles, explanations, hints).\n` +
+            extraBlock,
           maxTokens: 3500,
+          temperature: 0.55,
         });
         const task = out?.task;
         if (!task || task.task_id !== 2) throw new Error('Invalid task2 output: expected { task: { task_id: 2, ... } }');
@@ -1060,8 +1079,10 @@ export async function POST(
             `Context:\n- Target phrase: ${targetPhrase!.pt}\n- Use constructions from Task 2, but do NOT copy any full sentence verbatim.\n\n` +
             `Return JSON ONLY:\n` +
             `{\n  "task": { "task_id": 3, "type": "listening_comprehension", "title": {"ru":"","en":""}, "subtitle": {"ru":"","en":""}, "items": [ ... ] }\n}\n\n` +
-            `Hard requirements:\n- Exactly 3 items.\n- Each item: audio (PT string), question (ru/en), 3 options, exactly 1 correct.\n- No placeholders.\n`,
+            `Hard requirements:\n- Exactly 3 items.\n- Each item: audio (PT string), question (ru/en), 3 options, exactly 1 correct.\n- No placeholders.\n` +
+            extraBlock,
           maxTokens: 2200,
+          temperature: 0.5,
         });
         const task = out?.task;
         if (!task || task.task_id !== 3) throw new Error('Invalid task3 output: expected { task: { task_id: 3, ... } }');
@@ -1084,8 +1105,10 @@ export async function POST(
             `Context:\n- Target phrase: ${targetPhrase!.pt}\n- Use only known words from previous tasks; do NOT introduce new meaningful words.\n- Do NOT copy Task 2/3 sentences verbatim.\n\n` +
             `Return JSON ONLY:\n` +
             `{\n  "task": { "task_id": 4, "type": "attention", "title": {"ru":"","en":""}, "subtitle": {"ru":"","en":""}, "items": [ ... ] }\n}\n\n` +
-            `Hard requirements:\n- 3–5 items.\n- Each item: audio (PT string), question (ru/en), 3 options, exactly 1 correct, feedback (ru/en).\n- Feedback must explain logic + prompt to say PT out loud.\n`,
+            `Hard requirements:\n- 3–5 items.\n- Each item: audio (PT string), question (ru/en), 3 options, exactly 1 correct, feedback (ru/en).\n- Feedback must explain logic + prompt to say PT out loud.\n` +
+            extraBlock,
           maxTokens: 2400,
+          temperature: 0.5,
         });
         const task = out?.task;
         if (!task || task.task_id !== 4) throw new Error('Invalid task4 output: expected { task: { task_id: 4, ... } }');
@@ -1108,8 +1131,10 @@ export async function POST(
             `Context:\n- Target phrase: ${targetPhrase!.pt}\n- Task 5 should help learner produce target phrase (or a personalized variant) using lesson vocabulary.\n\n` +
             `Return JSON ONLY:\n` +
             `{\n  "task": { "task_id": 5, "type": "writing_optional", "title": {"ru":"","en":""}, "subtitle": {"ru":"","en":""}, "instruction": {"ru":"","en":""}, "main_task": { "format": "template_fill_or_speak", "template": [ ... ] }, "example": { "show_by_button": true, "button_text": {"ru":"Показать пример","en":"Show example"}, "content": [ ... ] }, "alternative": { "title": {"ru":"","en":""}, "instruction": {"ru":"","en":""}, "action_button": { "text": {"ru":"Я сказал(а) вслух","en":"I said it out loud"} } } }\n}\n\n` +
-            `Hard requirements:\n- instruction must be non-empty and include a short “use these words” list (2–4 key + 1–2 supporting).\n- main_task.template must be non-empty (1–3 lines).\n- example.content must be non-empty (no blanks).\n`,
+            `Hard requirements:\n- instruction must be non-empty and include a short “use these words” list (2–4 key + 1–2 supporting).\n- main_task.template must be non-empty (1–3 lines).\n- example.content must be non-empty (no blanks).\n` +
+            extraBlock,
           maxTokens: 2200,
+          temperature: 0.5,
         });
         const task = out?.task;
         if (!task || task.task_id !== 5) throw new Error('Invalid task5 output: expected { task: { task_id: 5, ... } }');
@@ -1135,8 +1160,10 @@ export async function POST(
             `Generate ONLY Task 1 (vocabulary) based on Tasks 2–5 content.\n\n` +
             `Context:\n- Target phrase: ${targetPhrase!.pt}\n- All words used in tasks 2–5 must be covered in vocabulary.\n- Must be 13–15 cards.\n- At least 10 core words should be unique for this lesson topic. Supporting 3–5 can overlap.\n\n` +
             `Return JSON ONLY:\n` +
-            `{\n  "task": { "task_id": 1, "type": "vocabulary", "content": { "cards": [ { "word": "...", "transcription": "[...]", "example_sentence": "...", "sentence_translation_ru": "...", "sentence_translation_en": "...", "word_translation_ru": "...", "word_translation_en": "..." } ] } }\n}\n`,
+            `{\n  "task": { "task_id": 1, "type": "vocabulary", "content": { "cards": [ { "word": "...", "transcription": "[...]", "example_sentence": "...", "sentence_translation_ru": "...", "sentence_translation_en": "...", "word_translation_ru": "...", "word_translation_en": "..." } ] } }\n}\n` +
+            extraBlock,
           maxTokens: 3500,
+          temperature: 0.45,
         });
         const task = out?.task;
         if (!task || task.task_id !== 1) throw new Error('Invalid task1 output: expected { task: { task_id: 1, ... } }');
