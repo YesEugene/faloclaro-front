@@ -72,14 +72,14 @@ export function BottomLessonNav(props: {
     <div
       className="fixed bottom-0 left-0 right-0 z-30"
       style={{
-        height: '120px',
+        height: 'calc(120px + env(safe-area-inset-bottom, 0px))',
         background: 'linear-gradient(to top, rgba(77, 143, 255, 1) 0%, rgba(77, 143, 255, 0) 100%)',
       }}
     >
       <div
         className="max-w-md mx-auto"
         style={{
-          height: '120px',
+          height: 'calc(120px + env(safe-area-inset-bottom, 0px))',
           paddingBottom: 'env(safe-area-inset-bottom, 0px)',
           paddingLeft: '16px',
           paddingRight: '16px',
@@ -113,12 +113,16 @@ export function BottomLessonNav(props: {
                 height: '50px',
                 paddingLeft: '16px',
                 paddingRight: '16px',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                gap: '4px',
               }}
             >
-              <div className="font-extrabold" style={{ fontSize: '14px', lineHeight: '1.05', color: 'rgba(0,0,0,1)' }}>
+              <div style={{ fontSize: '14px', lineHeight: '1.25', color: 'rgba(0,0,0,1)' }}>
                 {pickText(labels.level1, props.lang)}
               </div>
-              <div style={{ fontSize: '12px', lineHeight: '1.2', color: '#5A5E65' }}>
+              <div style={{ fontSize: '12px', lineHeight: '1.25', color: '#5A5E65' }}>
                 {pickText(labels.level2, props.lang)}
               </div>
             </div>

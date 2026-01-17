@@ -10,13 +10,13 @@ export function ReplayPill(props: {
     <div
       className="fixed left-0 right-0 z-40 flex justify-center"
       style={{
-        bottom: '86px',
+        bottom: 'calc(env(safe-area-inset-bottom, 0px) + 12px + 50px + 40px)',
         paddingLeft: '16px',
         paddingRight: '16px',
       }}
     >
       <button onClick={props.onClick} className="w-full max-w-md flex justify-center" style={{ background: 'transparent' }}>
-        <img src={src} alt={props.lang === 'ru' ? 'Пройти заново' : 'Replay'} style={{ width: 'min(320px, 70vw)', height: 'auto' }} />
+        <img src={src} alt={props.lang === 'ru' ? 'Пройти заново' : 'Replay'} style={{ height: '50px', width: 'auto' }} />
       </button>
     </div>
   );
