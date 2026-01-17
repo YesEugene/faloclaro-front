@@ -704,7 +704,7 @@ function OverviewPageContent() {
           }}
         >
           <div
-            className="max-w-md mx-auto px-4 md:max-w-full md:w-full"
+            className="w-full"
             style={{
               height: 'calc(120px + env(safe-area-inset-bottom, 0px))',
               paddingBottom: 'env(safe-area-inset-bottom, 0px)',
