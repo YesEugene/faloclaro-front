@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { useAppLanguage } from '@/lib/language-context';
 import { getClusterColor } from '@/lib/cluster-config';
+import { BottomLessonNav } from '@/components/subscription/ui/BottomLessonNav';
+import { ReplayPill } from '@/components/subscription/ui/ReplayPill';
 
 interface VocabularyTaskPlayerProps {
   task: any;
@@ -1057,80 +1059,16 @@ export default function VocabularyTaskPlayer({
       </div>
 
       {/* Navigation Panel - Fixed at bottom (Cross-task navigation) */}
-      <div className="fixed bottom-0 left-0 right-0 bg-black z-30" style={{ borderRadius: '0px', borderTopLeftRadius: '0px', borderTopRightRadius: '0px', borderBottomRightRadius: '0px', borderBottomLeftRadius: '0px', height: '59px', verticalAlign: 'bottom', marginBottom: '0px', opacity: 1, color: 'rgba(255, 255, 255, 1)' }}>
-        <div className="max-w-md mx-auto pt-3 pb-3" style={{ paddingBottom: 'env(safe-area-inset-bottom, 12px)', height: '59px', color: 'rgba(255, 255, 255, 1)', paddingLeft: '16px', paddingRight: '16px' }}>
-          <div className="flex items-center justify-between gap-4">
-            {/* Previous Task Button - Left */}
-            {/* Only show previous task button, no card navigation */}
-            {canGoPrevious && onPreviousTask ? (
-              <button
-                onClick={onPreviousTask}
-                className="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors flex items-center justify-center"
-                aria-label={t.previousTask}
-              >
-                <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
-            ) : (
-              <div className="w-10 h-10"></div>
-            )}
-
-            {/* Task Title - Center */}
-            <div className="flex-1 text-center">
-              <p className="text-sm font-medium" style={{ color: 'rgba(255, 255, 255, 1)' }}>
-                {(() => {
-                  const taskId = task?.task_id || 1;
-                  if (appLanguage === 'ru') {
-                    const titles = {
-                      1: '1/5 Слушай и повторяй',
-                      2: '2/5 Говорим правильно',
-                      3: '3/5 Пойми смысл',
-                      4: '4/5 Выбери ситуацию',
-                      5: '5/5 Попробуй сам'
-                    };
-                    return titles[taskId as keyof typeof titles] || `${taskId}/5 Задание`;
-                  } else if (appLanguage === 'en') {
-                    const titles = {
-                      1: '1/5 Listen and repeat',
-                      2: '2/5 Speak correctly',
-                      3: '3/5 Understand the meaning',
-                      4: '4/5 Choose the situation',
-                      5: '5/5 Try yourself'
-                    };
-                    return titles[taskId as keyof typeof titles] || `${taskId}/5 Task`;
-                  } else {
-                    const titles = {
-                      1: '1/5 Ouve e repete',
-                      2: '2/5 Fala corretamente',
-                      3: '3/5 Compreende o significado',
-                      4: '4/5 Escolhe a situação',
-                      5: '5/5 Tenta tu mesmo'
-                    };
-                    return titles[taskId as keyof typeof titles] || `${taskId}/5 Tarefa`;
-                  }
-                })()}
-              </p>
-            </div>
-
-            {/* Next Task Button - Right */}
-            {/* Only show next task button, no card navigation */}
-            {canGoNext && onNextTask ? (
-              <button
-                onClick={handleNextTask}
-                className="w-10 h-10 rounded-full bg-green-500 hover:bg-green-600 transition-colors flex items-center justify-center"
-                aria-label={t.nextTask}
-              >
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
-            ) : (
-              <div className="w-10 h-10"></div>
-            )}
-          </div>
-        </div>
-      </div>
+      <BottomLessonNav
+            taskId={task?.task_id || 1}
+            lang={appLanguage}
+            canGoPrevious={canGoPrevious && !!onPreviousTask}
+            canGoNext={localIsCompleted && ((isLastTask && !!onNextLesson) || (!isLastTask && !!onNextTask))}
+            onPrevious={onPreviousTask}
+            onNext={onNextTask}
+            isLastTask={isLastTask}
+            onNextLesson={onNextLesson}
+          />
 
       {/* Settings Panel (from existing player) */}
       <div
