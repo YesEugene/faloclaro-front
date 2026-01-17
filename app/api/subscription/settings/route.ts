@@ -10,6 +10,15 @@ function normalizeEmailNotificationsEnabled(v: any): boolean {
   return true;
 }
 
+function isMissingEmailNotificationsColumnErrorMessage(msg: string): boolean {
+  const m = msg.toLowerCase();
+  return (
+    (m.includes('email_notifications_enabled') && m.includes('does not exist')) ||
+    (m.includes('email_notifications_enabled') && m.includes('schema cache')) ||
+    (m.includes('email_notifications_enabled') && m.includes('could not find'))
+  );
+}
+
 function getAnonSupabase() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -112,8 +121,10 @@ export async function PUT(req: NextRequest) {
       const { error } = await supabaseAdmin.from('subscription_users').update(update).eq('id', userId);
       if (error) {
         const msg = String((error as any)?.message || '');
-        if (msg.toLowerCase().includes('email_notifications_enabled') && msg.toLowerCase().includes('does not exist')) {
-          throw new Error('DB missing column email_notifications_enabled. Run database/add-email-settings.sql in Supabase.');
+        if (isMissingEmailNotificationsColumnErrorMessage(msg)) {
+          throw new Error(
+            'DB missing column email_notifications_enabled. Run database/add-email-settings.sql in Supabase, then refresh the Supabase API schema cache.'
+          );
         }
         throw error;
       }
