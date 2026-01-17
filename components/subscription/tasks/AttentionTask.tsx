@@ -6,6 +6,7 @@ import { useAppLanguage } from '@/lib/language-context';
 import { getTranslatedText } from '@/lib/lesson-translations';
 import { BottomLessonNav } from '@/components/subscription/ui/BottomLessonNav';
 import { ReplayPill } from '@/components/subscription/ui/ReplayPill';
+import { AudioPillRow } from '@/components/subscription/ui/AudioPillRow';
 
 interface AttentionTaskProps {
   task: any;
@@ -278,46 +279,12 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
             <h3 className="text-xl font-bold text-black mb-4">
               {appLanguage === 'ru' ? 'Прослушай фразу' : appLanguage === 'en' ? 'Listen to the phrase' : 'Ouça a frase'}
             </h3>
-            <div 
-              className="p-4 mb-4"
-              style={{ 
-                height: '50px',
-                backgroundColor: 'rgba(255, 255, 255, 1)',
-                borderRadius: '6px',
-                border: 'none'
-              }}
-            >
-              <div className="flex items-center justify-between" style={{ height: '10px', marginTop: '3px', marginBottom: '3px' }}>
-                <p className="text-black font-medium text-lg">
-                  {showResult ? item.audio : '•'.repeat(item.audio.length)}
-                </p>
-                <button
-                  onClick={() => playAudio(item.audio)}
-                  disabled={isPlayingAudio[item.audio]}
-                  className="flex-shrink-0 ml-3 transition-colors"
-                  style={{
-                    width: '30px',
-                    height: '30px',
-                    paddingTop: '0px',
-                    paddingBottom: '0px',
-                    paddingLeft: '11px',
-                    paddingRight: '11px',
-                    borderRadius: '0px',
-                    backgroundColor: 'transparent',
-                    color: 'rgba(255, 255, 255, 0.58)'
-                  }}
-                >
-                  {isPlayingAudio[item.audio] ? (
-                    <svg className="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-                    </svg>
-                  ) : (
-                    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" style={{ color: 'rgba(59, 130, 246, 1)' }}>
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
-                    </svg>
-                  )}
-                </button>
-              </div>
+            <div className="mb-4">
+              <AudioPillRow
+                text={showResult ? item.audio : (appLanguage === 'ru' ? 'Прослушай аудио' : appLanguage === 'en' ? 'Listen to the audio' : 'Ouve o áudio')}
+                onPlay={() => playAudio(item.audio)}
+                isPlaying={isPlayingAudio[item.audio]}
+              />
             </div>
           </>
         )}
@@ -354,8 +321,8 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
               >
                 <span
                   style={{
-                    width: '26px',
-                    height: '26px',
+                    width: '20px',
+                    height: '20px',
                     borderRadius: '999px',
                     border: `1.5px solid ${CHECKBOX_BORDER_COLOR}`,
                     display: 'inline-flex',
@@ -367,8 +334,8 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
                   {(showResult && isCorrect) || (wrongAnswers[itemIndex] || []).includes(optionText) ? (
                     <span
                       style={{
-                        width: '10px',
-                        height: '10px',
+                        width: '8px',
+                        height: '8px',
                         borderRadius: '999px',
                         background: showResult && isCorrect ? DOT_GREEN : DOT_RED,
                       }}

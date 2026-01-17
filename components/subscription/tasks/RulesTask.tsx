@@ -586,8 +586,8 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                       >
                         <span
                           style={{
-                            width: '26px',
-                            height: '26px',
+                            width: '20px',
+                            height: '20px',
                             borderRadius: '999px',
                             border: '1.5px solid #1A8CFF',
                             display: 'inline-flex',
@@ -599,8 +599,8 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                           {dotColor ? (
                             <span
                               style={{
-                                width: '10px',
-                                height: '10px',
+                                width: '8px',
+                                height: '8px',
                                 borderRadius: '999px',
                                 background: dotColor,
                               }}
@@ -696,8 +696,8 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                       >
                         <span
                           style={{
-                            width: '26px',
-                            height: '26px',
+                            width: '20px',
+                            height: '20px',
                             borderRadius: '999px',
                             border: '1.5px solid #1A8CFF',
                             display: 'inline-flex',
@@ -709,8 +709,8 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                           {dotColor ? (
                             <span
                               style={{
-                                width: '10px',
-                                height: '10px',
+                                width: '8px',
+                                height: '8px',
                                 borderRadius: '999px',
                                 background: dotColor,
                               }}
@@ -769,8 +769,8 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
             >
               <span
                 style={{
-                  width: '26px',
-                  height: '26px',
+                  width: '20px',
+                  height: '20px',
                   borderRadius: '4px',
                   border: '1.5px solid #1A8CFF',
                   display: 'inline-flex',
