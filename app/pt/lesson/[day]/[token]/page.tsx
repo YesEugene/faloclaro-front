@@ -148,7 +148,31 @@ function LessonPageContent() {
     } finally {
       setLoading(false);
     }
+
   };
+
+  const refreshProgressSilent = async () => {
+    try {
+      // Avoid full-page reload UX: only refetch progress silently.
+      if (!userProgress?.id) return;
+      const { data: progressRows, error: progressError } = await supabase
+        .from('user_progress')
+        .select('*, task_progress(*)')
+        .eq('id', userProgress.id)
+        .limit(1);
+
+      if (progressError) {
+        console.error('Silent progress refresh error:', progressError);
+        return;
+      }
+
+      const progressData = progressRows && progressRows.length > 0 ? progressRows[0] : null;
+      if (progressData) setUserProgress(progressData);
+    } catch (err) {
+      console.error('Silent progress refresh failed:', err);
+    }
+  };
+
 
   if (loading) {
     return (
@@ -179,7 +203,7 @@ function LessonPageContent() {
       lesson={lesson}
       userProgress={userProgress}
       token={token}
-      onProgressUpdate={loadLesson}
+      onProgressUpdate={refreshProgressSilent}
     />
   );
 }
