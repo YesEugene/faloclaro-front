@@ -692,16 +692,11 @@ export default function VocabularyTaskPlayer({
     });
   };
 
-  // Handle next task - complete current task first, then navigate
+  // Handle next task - ONLY navigate if the task is truly completed (timer rule).
   const handleNextTask = () => {
-    // Complete current task if not already completed
-    if (!localIsCompleted && !isCompleted) {
-      handleComplete();
-    }
-    // Navigate to next task
-    if (onNextTask) {
-      onNextTask();
-    }
+    if (!localIsCompleted && !isCompleted) return;
+    if (!onNextTask) return;
+    onNextTask();
   };
 
 
@@ -1063,9 +1058,9 @@ export default function VocabularyTaskPlayer({
             taskId={task?.task_id || 1}
             lang={appLanguage}
             canGoPrevious={false}
-            canGoNext={!!onNextTask}
+            canGoNext={!!onNextTask && (localIsCompleted || isCompleted)}
             onPrevious={undefined}
-            onNext={onNextTask}
+            onNext={handleNextTask}
             isLastTask={false}
             onNextLesson={undefined}
           />
