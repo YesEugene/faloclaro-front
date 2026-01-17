@@ -35,21 +35,16 @@ const LABELS_BY_TASK_ID: Record<number, Labels> = {
 
 function pickText(t: { ru: string; en: string }, lang: Lang): string {
   if (lang === 'ru') return t.ru;
-  // default to EN for pt/unknown
   return t.en;
 }
 
 function ArrowIcon({ direction, color }: { direction: 'left' | 'right'; color: string }) {
   const isLeft = direction === 'left';
-  if (!mounted) return null;
-
-  return createPortal(
-    (
+  return (
     <svg className="w-6 h-6" fill="none" stroke={color} viewBox="0 0 24 24" strokeWidth={3}>
       <path strokeLinecap="round" strokeLinejoin="round" d={isLeft ? 'M15 19l-7-7 7-7' : 'M9 5l7 7-7 7'} />
     </svg>
-    )
-  ), document.body);
+  );
 }
 
 export function BottomLessonNav(props: {
@@ -67,7 +62,6 @@ export function BottomLessonNav(props: {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
-
   const prevVisible = props.taskId !== 1;
   const prevEnabled = !!(props.canGoPrevious && props.onPrevious) && prevVisible;
 
@@ -80,7 +74,6 @@ export function BottomLessonNav(props: {
   if (!mounted) return null;
 
   return createPortal(
-    (
     <div
       className="fixed bottom-0 left-0 right-0 z-30"
       style={{
@@ -103,20 +96,19 @@ export function BottomLessonNav(props: {
           <div className="flex items-center justify-between gap-4">
             {prevVisible ? (
               <button
-              onClick={props.onPrevious}
-              disabled={!prevEnabled}
-              className="w-[50px] h-[50px] rounded-full flex items-center justify-center transition-colors"
-              style={{
-                backgroundColor: prevEnabled ? pillBg : inactivePillBg,
-              }}
-              aria-label={props.lang === 'ru' ? 'Предыдущее задание' : 'Previous task'}
-            >
-              <ArrowIcon direction="left" color={prevEnabled ? '#34BF5D' : '#9CA3AF'} />
-            </button>
+                onClick={props.onPrevious}
+                disabled={!prevEnabled}
+                className="w-[50px] h-[50px] rounded-full flex items-center justify-center transition-colors"
+                style={{
+                  backgroundColor: prevEnabled ? pillBg : inactivePillBg,
+                }}
+                aria-label={props.lang === 'ru' ? 'Предыдущее задание' : 'Previous task'}
+              >
+                <ArrowIcon direction="left" color={prevEnabled ? '#34BF5D' : '#9CA3AF'} />
+              </button>
             ) : (
               <div style={{ width: '50px', height: '50px' }} />
             )}
-
 
             <div
               className="flex-1 rounded-full text-center"
@@ -131,7 +123,7 @@ export function BottomLessonNav(props: {
                 gap: '3px',
               }}
             >
-              <div style={{ fontSize: '14px', lineHeight: '1.25', color: 'rgba(0,0,0,1)' }}>
+              <div style={{ fontSize: '14px', fontWeight: 500, lineHeight: '1.2', color: 'rgba(0,0,0,1)' }}>
                 {pickText(labels.level1, props.lang)}
               </div>
               <div style={{ fontSize: '12px', lineHeight: '1.25', color: '#5A5E65' }}>
@@ -153,7 +145,7 @@ export function BottomLessonNav(props: {
           </div>
         </div>
       </div>
-    </div>
-    )
-  ), document.body);
+    </div>,
+    document.body
+  );
 }
