@@ -14,6 +14,7 @@ interface AttentionTaskProps {
   isCompleted: boolean;
   savedAnswers?: { [key: number]: string };
   savedShowResults?: { [key: number]: boolean };
+  savedWrongAnswers?: { [key: number]: string[] };
   onNextTask?: () => void;
   onPreviousTask?: () => void;
   onNextLesson?: () => void;
@@ -25,10 +26,11 @@ interface AttentionTaskProps {
   dayNumber?: number;
 }
 
-export default function AttentionTask({ task, language, onComplete, isCompleted, savedAnswers, savedShowResults, onNextTask, onPreviousTask, onNextLesson, canGoNext = false, canGoPrevious = false, isLastTask = false, progressCompleted = 0, progressTotal = 5, dayNumber }: AttentionTaskProps) {
+export default function AttentionTask({ task, language, onComplete, isCompleted, savedAnswers, savedShowResults, savedWrongAnswers, onNextTask, onPreviousTask, onNextLesson, canGoNext = false, canGoPrevious = false, isLastTask = false, progressCompleted = 0, progressTotal = 5, dayNumber }: AttentionTaskProps) {
   const { language: appLanguage } = useAppLanguage();
   const [answers, setAnswers] = useState<{ [key: number]: string }>(savedAnswers || {});
   const [showResults, setShowResults] = useState<{ [key: number]: boolean }>(savedShowResults || {});
+  const [wrongAnswers, setWrongAnswers] = useState<{ [key: number]: string[] }>(savedWrongAnswers || {});
   const [audioUrls, setAudioUrls] = useState<{ [key: string]: string }>({});
   const [isPlayingAudio, setIsPlayingAudio] = useState<{ [key: string]: boolean }>({});
   const [isReplaying, setIsReplaying] = useState(false);
@@ -55,9 +57,12 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
       if (savedShowResults && Object.keys(savedShowResults).length > 0) {
         setShowResults(savedShowResults);
       }
+      if (savedWrongAnswers && Object.keys(savedWrongAnswers).length > 0) {
+        setWrongAnswers(savedWrongAnswers);
+      }
       setHasLoadedSavedData(true);
     }
-  }, [savedAnswers, savedShowResults, hasLoadedSavedData, isReplaying]);
+  }, [savedAnswers, savedShowResults, savedWrongAnswers, hasLoadedSavedData, isReplaying]);
 
   // Update local completion state when prop changes
   useEffect(() => {
@@ -179,36 +184,45 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
   }, [audioUrls]);
 
   const handleAnswerSelect = (itemIndex: number, optionText: string, isCorrect: boolean) => {
+    if (showResults[itemIndex] === true) return;
+
     const newAnswers = { ...answers, [itemIndex]: optionText };
-    const newShowResults = { ...showResults, [itemIndex]: isCorrect };
-
     setAnswers(newAnswers);
-    setShowResults(newShowResults);
 
-    // Auto-complete as soon as the last required exercise is done.
-    // No separate "Complete" button needed; this unlocks "Next" immediately.
-    const allAnsweredNow = items.every((_: any, idx: number) => {
-      return newShowResults[idx] === true;
+    if (isCorrect) {
+      const newShowResults = { ...showResults, [itemIndex]: true };
+      setShowResults(newShowResults);
+
+      const allCorrectNow = items.every((_: any, idx: number) => newShowResults[idx] === true);
+      if (allCorrectNow && !localIsCompleted && !isReplaying) {
+        setLocalIsCompleted(true);
+        onComplete({
+          answers: newAnswers,
+          showResults: newShowResults,
+          wrongAnswers,
+          correctCount: items.length,
+          totalItems: items.length,
+          completedAt: new Date().toISOString(),
+        });
+      }
+      return;
+    }
+
+    setWrongAnswers((prev) => {
+      const existing = prev[itemIndex] || [];
+      if (existing.includes(optionText)) return prev;
+      return { ...prev, [itemIndex]: [...existing, optionText] };
     });
-    if (allAnsweredNow && !localIsCompleted && !isReplaying) {
-      const correctCount = items.filter((item: any, index: number) => {
-        const selectedAnswer = newAnswers[index];
-        const correctOption = item.options?.find((opt: any) => opt.correct === true || opt.is_correct === true);
-        if (!correctOption) return false;
-        const correctOptionText = typeof correctOption.text === 'string'
-          ? correctOption.text
-          : getTranslatedText(correctOption.text, appLanguage);
-        const optText = getTranslatedText(correctOption.text, appLanguage);
-        return selectedAnswer === correctOptionText || selectedAnswer === optText || selectedAnswer === correctOption.text;
-      }).length;
 
-      setLocalIsCompleted(true);
+    if (hasLoadedSavedData && !isReplaying && !localIsCompleted) {
       onComplete({
         answers: newAnswers,
-        showResults: newShowResults,
-        correctCount,
-        totalItems: items.length,
-        completedAt: new Date().toISOString(),
+        showResults,
+        wrongAnswers: {
+          ...wrongAnswers,
+          [itemIndex]: Array.from(new Set([...(wrongAnswers[itemIndex] || []), optionText])),
+        },
+        saved: true,
       });
     }
   };
@@ -225,11 +239,13 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
     setIsReplaying(true);
     setAnswers({});
     setShowResults({});
+    setWrongAnswers({});
     setLocalIsCompleted(false);
     
     onComplete({
       answers: {},
       showResults: {},
+      wrongAnswers: {},
       replay: true,
     });
     
@@ -331,7 +347,8 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
                   backgroundColor: 'white',
                   border: `1.5px solid ${OPTION_BORDER_COLOR}`,
                   borderRadius: '18px',
-                  padding: '18px 18px',
+                  height: '50px',
+                  padding: '0 18px',
                   gap: '14px',
                 }}
               >
@@ -347,18 +364,18 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
                     flexShrink: 0,
                   }}
                 >
-                  {isSelected ? (
+                  {(showResult && isCorrect) || (wrongAnswers[itemIndex] || []).includes(optionText) ? (
                     <span
                       style={{
                         width: '10px',
                         height: '10px',
                         borderRadius: '999px',
-                        background: showResult ? DOT_GREEN : DOT_RED,
+                        background: showResult && isCorrect ? DOT_GREEN : DOT_RED,
                       }}
                     />
                   ) : null}
                 </span>
-                <span style={{ fontSize: '24px', fontWeight: 700, color: '#000' }}>{optionText}</span>
+                <span style={{ fontSize: '16px', fontWeight: 500, color: '#000' }}>{optionText}</span>
               </button>
             );
           })}

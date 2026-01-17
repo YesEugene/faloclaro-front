@@ -14,6 +14,7 @@ interface RulesTaskProps {
   isCompleted: boolean;
   savedAnswers?: { [key: string]: string | null };
   savedShowResults?: { [key: string]: boolean };
+  savedWrongAnswers?: { [key: string]: string[] };
   savedSpeakOutLoudCompleted?: boolean;
   onNextTask?: () => void;
   onPreviousTask?: () => void;
@@ -26,13 +27,14 @@ interface RulesTaskProps {
   dayNumber?: number;
 }
 
-export default function RulesTask({ task, language, onComplete, isCompleted, savedAnswers, savedShowResults, savedSpeakOutLoudCompleted, onNextTask, onPreviousTask, onNextLesson, canGoNext = false, canGoPrevious = false, isLastTask = false, progressCompleted = 0, progressTotal = 5, dayNumber }: RulesTaskProps) {
+export default function RulesTask({ task, language, onComplete, isCompleted, savedAnswers, savedShowResults, savedWrongAnswers, savedSpeakOutLoudCompleted, onNextTask, onPreviousTask, onNextLesson, canGoNext = false, canGoPrevious = false, isLastTask = false, progressCompleted = 0, progressTotal = 5, dayNumber }: RulesTaskProps) {
   const { language: appLanguage } = useAppLanguage();
   const [audioUrls, setAudioUrls] = useState<{ [key: string]: string }>({});
   const [isPlayingAudio, setIsPlayingAudio] = useState<{ [key: string]: boolean }>({});
   const [selectedAnswers, setSelectedAnswers] = useState<{ [key: string]: string | null }>(savedAnswers || {});
   const [showTooltip, setShowTooltip] = useState(false);
   const [showResults, setShowResults] = useState<{ [key: string]: boolean }>(savedShowResults || {});
+  const [wrongAnswers, setWrongAnswers] = useState<{ [key: string]: string[] }>(savedWrongAnswers || {});
   const [speakOutLoudCompleted, setSpeakOutLoudCompleted] = useState(savedSpeakOutLoudCompleted || false);
   const [isReplaying, setIsReplaying] = useState(false);
   const [localIsCompleted, setLocalIsCompleted] = useState(isCompleted);
@@ -49,12 +51,15 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
       if (savedShowResults && Object.keys(savedShowResults).length > 0) {
         setShowResults(savedShowResults);
       }
+      if (savedWrongAnswers && Object.keys(savedWrongAnswers).length > 0) {
+        setWrongAnswers(savedWrongAnswers);
+      }
       if (savedSpeakOutLoudCompleted) {
         setSpeakOutLoudCompleted(true);
       }
       setHasLoadedSavedData(true);
     }
-  }, [savedAnswers, savedShowResults, savedSpeakOutLoudCompleted, hasLoadedSavedData]);
+  }, [savedAnswers, savedShowResults, savedWrongAnswers, savedSpeakOutLoudCompleted, hasLoadedSavedData]);
 
   // Update local completion state when prop changes
   useEffect(() => {
@@ -306,11 +311,21 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
   // UX: wrong choice does NOT reveal the correct one; user can retry until correct.
   // Only after correct answer we "lock" the question (showResults=true).
   const handleAnswerSelect = (taskKey: string, answer: string, isCorrect: boolean) => {
-    const updatedAnswers = { ...selectedAnswers, [taskKey]: answer };
-    const updatedShowResults = { ...showResults, [taskKey]: isCorrect };
+    if (showResults[taskKey] === true) return;
 
+    const updatedAnswers = { ...selectedAnswers, [taskKey]: answer };
     setSelectedAnswers(updatedAnswers);
-    setShowResults(updatedShowResults);
+
+    if (isCorrect) {
+      setShowResults({ ...showResults, [taskKey]: true });
+      return;
+    }
+
+    setWrongAnswers((prev) => {
+      const existing = prev[taskKey] || [];
+      if (existing.includes(answer)) return prev;
+      return { ...prev, [taskKey]: [...existing, answer] };
+    });
   };
 
   // Check if all reinforcement tasks in a block are completed
@@ -360,10 +375,11 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
     onComplete({
       selectedAnswers,
       showResults,
+      wrongAnswers,
       speakOutLoudCompleted,
       completedAt: new Date().toISOString(),
     });
-  }, [selectedAnswers, showResults, speakOutLoudCompleted, isReplaying, localIsCompleted]);
+  }, [selectedAnswers, showResults, wrongAnswers, speakOutLoudCompleted, isReplaying, localIsCompleted]);
 
 
   // Handle final completion button
@@ -382,12 +398,14 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
     setSpeakOutLoudCompleted(false);
     setSelectedAnswers({});
     setShowResults({});
+    setWrongAnswers({});
     setIsReplaying(true);
     setLocalIsCompleted(false);
     // Clear saved data
     onComplete({
       selectedAnswers: {},
       showResults: {},
+      wrongAnswers: {},
       speakOutLoudCompleted: false,
       replay: true,
     });
@@ -546,8 +564,8 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                     // Check both correct and is_correct fields
                     const isCorrect = option.correct === true || option.is_correct === true;
                     const isLocked = showResults[taskKey] === true;
-                    const isWrongSelected = isSelected && !isLocked;
-                    const dotColor = isLocked && isSelected ? '#34BF5D' : isWrongSelected ? '#FF3B30' : null;
+                    const wasWrong = (wrongAnswers[taskKey] || []).includes(optionText);
+                    const dotColor = isLocked && isCorrect ? '#34BF5D' : wasWrong ? '#FF3B30' : null;
                     
                     return (                      <button
                         key={index}
@@ -561,7 +579,8 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                           backgroundColor: 'white',
                           border: '1.5px solid #CED2D6',
                           borderRadius: '18px',
-                          padding: '18px 18px',
+                          height: '50px',
+                          padding: '0 18px',
                           gap: '14px',
                         }}
                       >
@@ -588,7 +607,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                             />
                           ) : null}
                         </span>
-                        <span style={{ fontSize: '24px', fontWeight: 700, color: '#000' }}>{optionText}</span>
+                        <span style={{ fontSize: '16px', fontWeight: 500, color: '#000' }}>{optionText}</span>
                       </button>
                     );
                   })}
@@ -655,8 +674,8 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                     // Check both correct and is_correct fields
                     const isCorrect = option.correct === true || option.is_correct === true;
                     const isLocked = showResults[taskKey] === true;
-                    const isWrongSelected = isSelected && !isLocked;
-                    const dotColor = isLocked && isSelected ? '#34BF5D' : isWrongSelected ? '#FF3B30' : null;
+                    const wasWrong = (wrongAnswers[taskKey] || []).includes(optionText);
+                    const dotColor = isLocked && isCorrect ? '#34BF5D' : wasWrong ? '#FF3B30' : null;
                     
                     return (                      <button
                         key={index}
@@ -670,7 +689,8 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                           backgroundColor: 'white',
                           border: '1.5px solid #CED2D6',
                           borderRadius: '18px',
-                          padding: '18px 18px',
+                          height: '50px',
+                          padding: '0 18px',
                           gap: '14px',
                         }}
                       >
@@ -697,7 +717,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                             />
                           ) : null}
                         </span>
-                        <span style={{ fontSize: '24px', fontWeight: 700, color: '#000' }}>{optionText}</span>
+                        <span style={{ fontSize: '16px', fontWeight: 500, color: '#000' }}>{optionText}</span>
                       </button>
                     );
                   })}
@@ -741,7 +761,8 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                 backgroundColor: 'white',
                 border: '1.5px solid #CED2D6',
                 borderRadius: '18px',
-                padding: '18px 18px',
+                height: '50px',
+                          padding: '0 18px',
                 gap: '14px',
                 cursor: speakOutLoudCompleted ? 'default' : 'pointer',
               }}
@@ -765,8 +786,8 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                   </svg>
                 ) : null}
               </span>
-              <span style={{ fontSize: '24px', fontWeight: 700, color: '#000' }}>
-                {getTranslatedText(block.action_button?.text, appLanguage) || (appLanguage === 'ru' ? 'Я сказал(а) вслух' : 'I said it out loud')}
+              <span style={{ fontSize: '16px', fontWeight: 500, color: '#000' }}>
+                {String(getTranslatedText(block.action_button?.text, appLanguage) || (appLanguage === 'ru' ? 'Я сказал(а) вслух' : 'I said it out loud')).replace(/^[✔✓]\s*/u, '')}
               </span>
             </button>
           </div>

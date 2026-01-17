@@ -228,6 +228,7 @@ export default function TaskCard({
             isCompleted={isCompleted}
             savedAnswers={taskProgress?.completion_data?.selectedAnswers}
             savedShowResults={taskProgress?.completion_data?.showResults}
+            savedWrongAnswers={taskProgress?.completion_data?.wrongAnswers}
             savedSpeakOutLoudCompleted={taskProgress?.completion_data?.speakOutLoudCompleted}
             onNextTask={onNext}
             onPreviousTask={onPrevious}
@@ -281,6 +282,7 @@ export default function TaskCard({
             isCompleted={isCompleted}
             savedAnswers={listeningSavedAnswers}
             savedShowResults={listeningSavedShowResults}
+            savedWrongAnswers={taskProgress?.completion_data?.wrongAnswers}
             onNextTask={onNext}
             onPreviousTask={onPrevious}
             onNextLesson={onNextLesson}
@@ -309,6 +311,7 @@ export default function TaskCard({
             isCompleted={isCompleted}
             savedAnswers={attentionSavedAnswers}
             savedShowResults={attentionSavedShowResults}
+            savedWrongAnswers={taskProgress?.completion_data?.wrongAnswers}
             onNextTask={onNext}
             onPreviousTask={onPrevious}
             onNextLesson={onNextLesson}
