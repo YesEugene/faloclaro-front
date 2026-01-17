@@ -564,6 +564,11 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
 
   const allTasksCompleted = userProgress.tasks_completed >= userProgress.total_tasks;
   const currentTask = tasks[currentTaskIndex];
+  const totalTasksCount = tasks.length || userProgress.total_tasks || 5;
+  const currentTaskNumber = Math.min(Math.max(currentTaskIndex + 1, 1), totalTasksCount);
+  const headerProgressPct = Math.min(100, Math.max(0, (currentTaskNumber / totalTasksCount) * 100));
+
+
   const currentTaskProgress = currentTask ? getTaskProgress(currentTask.task_id) : null;
   const isUnlocked = isTaskUnlocked(currentTaskIndex);
 
@@ -575,7 +580,7 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
           {/* Logo */}
           <Link href="/pt" className="flex items-center cursor-pointer">
             <Image
-              src="/Img/Logo FaloClaro.svg"
+              src="/Img/Website/logo.svg"
               alt="FaloClaro"
               width={120}
               height={40}
@@ -590,45 +595,32 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
           </div>
         </div>
 
-        {/* Back button - for all tasks */}
+        {/* Lesson navigation + dictionary + progress */}
         {currentTask && (
-          <>
-            <div className="max-w-md mx-auto px-4 mb-[10px] flex gap-[10px]" style={{ paddingBottom: '10px', position: 'relative', zIndex: 20 }}>
+          <div className="max-w-md mx-auto px-4" style={{ paddingBottom: '10px', position: 'relative', zIndex: 20 }}>
+            <div className="flex items-center justify-between" style={{ gap: '12px' }}>
               <button
                 onClick={() => router.push(`/pt/lesson/${lesson.day_number}/${token}/overview`)}
-                className="relative rounded-[10px] border-2 border-black text-black hover:opacity-90 transition-opacity text-center overflow-hidden"
-                style={{ 
-                  width: currentTask?.type === 'vocabulary' ? 'calc(50% - 5px)' : '100%',
-                  fontSize: '13px',
-                  fontWeight: 700,
-                  padding: '8px 16px',
+                className="text-black"
+                style={{
+                  fontSize: '22px',
+                  fontWeight: 400,
+                  lineHeight: '1.2',
+                  background: 'transparent',
+                  padding: 0,
                 }}
               >
-                {/* Progress background - green part */}
-                <div
-                  className="absolute inset-0 transition-all duration-300"
-                  style={{ 
-                    width: `${((userProgress.tasks_completed || 0) / (userProgress.total_tasks || 5)) * 100}%`,
-                    backgroundColor: '#B2FDB0',
-                    left: 0,
-                    top: 0,
-                    bottom: 0,
-                  }}
-                />
-                {/* Text content */}
-                <span className="relative z-10">
-                  {appLanguage === 'ru' 
-                    ? `← УРОК ${lesson.day_number}` 
-                    : appLanguage === 'en' 
-                    ? `← LESSON ${lesson.day_number}` 
-                    : `← LIÇÃO ${lesson.day_number}`}
-                </span>
+                <span style={{ fontSize: '26px', fontWeight: 600, marginRight: '8px', verticalAlign: 'middle' }}>&lt;</span>
+                {appLanguage === 'ru'
+                  ? `Меню урока ${lesson.day_number}`
+                  : appLanguage === 'en'
+                  ? `Lesson ${lesson.day_number} menu`
+                  : `Menu da lição ${lesson.day_number}`}
               </button>
-              {/* Dictionary button - only for vocabulary task */}
+
               {currentTask?.type === 'vocabulary' && (
                 <button
                   onClick={() => {
-                    // Navigate to phrases page with lesson context
                     const params = new URLSearchParams();
                     params.set('lesson', lesson.day_number.toString());
                     params.set('token', token);
@@ -636,19 +628,48 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
                     params.set('phraseType', 'word');
                     router.push(`/phrases?${params.toString()}`);
                   }}
-                  className="px-4 py-2 rounded-[10px] bg-white border-2 border-gray-300 text-black hover:bg-gray-50 transition-colors text-center"
-                  style={{ 
-                    width: 'calc(50% - 5px)',
-                    transform: 'translateY(1px)',
-                    fontSize: '13px',
-                    fontWeight: 500,
+                  className="text-black"
+                  style={{
+                    fontSize: '22px',
+                    fontWeight: 400,
+                    lineHeight: '1.2',
+                    background: 'transparent',
+                    padding: 0,
+                    textAlign: 'right',
                   }}
                 >
-                  {appLanguage === 'ru' ? 'СЛОВАРЬ' : appLanguage === 'en' ? 'DICTIONARY' : 'DICIONÁRIO'}
+                  {appLanguage === 'ru' ? 'Словарь урока' : appLanguage === 'en' ? 'Lesson dictionary' : 'Dicionário da lição'}
                 </button>
               )}
             </div>
-          </>
+
+            <div style={{ marginTop: '14px' }}>
+              <div
+                style={{
+                  height: '2px',
+                  backgroundColor: '#EDEDED',
+                  borderRadius: '2px',
+                  overflow: 'hidden',
+                }}
+              >
+                <div
+                  style={{
+                    height: '2px',
+                    width: `${headerProgressPct}%`,
+                    backgroundColor: '#34BF5D',
+                  }}
+                />
+              </div>
+
+              <div style={{ marginTop: '10px', fontSize: '22px', color: 'rgba(0,0,0,0.85)' }}>
+                {appLanguage === 'ru'
+                  ? `Задание ${currentTaskNumber}/${totalTasksCount}`
+                  : appLanguage === 'en'
+                  ? `Task ${currentTaskNumber}/${totalTasksCount}`
+                  : `Tarefa ${currentTaskNumber}/${totalTasksCount}`}
+              </div>
+            </div>
+          </div>
         )}
 
         {/* Progress Bar is now in each task component (above navigation panel) */}
