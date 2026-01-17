@@ -115,29 +115,22 @@ function PaymentPageContent() {
     <div className="min-h-screen bg-white">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-4 md:px-8">
-        <Link href="/">
-          <div className="flex items-center gap-2">
-            <div className="relative w-24 h-24 md:w-32 md:h-32">
-              <Image
-                src="/Img/Website/logo.svg"
-                alt="Falo Claro"
-                fill
-                className="object-contain"
-              />
-            </div>
+        <a href="https://faloclaro.com" className="flex items-center gap-2">
+          <div className="relative w-24 h-24 md:w-32 md:h-32">
+            <Image src="/Img/Website/logo.svg" alt="Falo Claro" fill className="object-contain" />
           </div>
-        </Link>
+        </a>
         <button
           onClick={() => setSettingsOpen(true)}
           aria-label="Settings"
-          style={{ width: '36px', height: '36px', padding: 0, background: 'transparent', border: 'none', cursor: 'pointer' }}
+          style={{ width: '29px', height: '29px', padding: 0, background: 'transparent', border: 'none', cursor: 'pointer' }}
         >
           <Image
             src="/Img/Website/Settings.svg"
             alt="Settings"
-            width={36}
-            height={36}
-            style={{ width: '36px', height: '36px' }}
+            width={29}
+            height={29}
+            style={{ width: '29px', height: '29px' }}
           />
         </button>
       </div>

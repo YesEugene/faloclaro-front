@@ -205,7 +205,7 @@ function CoursePageContent() {
       {/* Header */}
       <div className="sticky top-0 bg-white z-10 border-b border-gray-200">
         <div className="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
-          <Link href="/pt/course" className="flex items-center cursor-pointer">
+          <a href="https://faloclaro.com" className="flex items-center cursor-pointer">
             <Image
               src="/Img/Website/logo.svg"
               alt="FaloClaro"
@@ -214,19 +214,19 @@ function CoursePageContent() {
               className="h-10 w-auto"
               style={{ width: 'auto', height: '40px' }}
             />
-          </Link>
+          </a>
           <div className="flex items-center">
             <button
               onClick={() => setSettingsOpen(true)}
               aria-label="Settings"
-              style={{ width: '36px', height: '36px', padding: 0, background: 'transparent', border: 'none', cursor: 'pointer' }}
+              style={{ width: '29px', height: '29px', padding: 0, background: 'transparent', border: 'none', cursor: 'pointer' }}
             >
               <Image
                 src="/Img/Website/Settings.svg"
                 alt="Settings"
-                width={36}
-                height={36}
-                style={{ width: '36px', height: '36px' }}
+                width={29}
+                height={29}
+                style={{ width: '29px', height: '29px' }}
               />
             </button>
           </div>
@@ -237,7 +237,9 @@ function CoursePageContent() {
 
       {/* Main Content */}
       <div className="max-w-md mx-auto px-4 py-6">
-        <h1 className="text-2xl font-bold mb-2 text-black">{t.title}</h1>
+        <h1 className="text-2xl mb-2 text-black" style={{ fontFamily: 'Orelega One', fontWeight: 400 }}>
+          {t.title}
+        </h1>
         <p className="text-gray-600 mb-6">{t.subtitle}</p>
 
         {/* Levels */}
