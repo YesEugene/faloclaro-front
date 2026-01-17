@@ -61,7 +61,7 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
 
   // Save answers to completion_data whenever they change
   useEffect(() => {
-    if (hasLoadedSavedData && !isReplaying && (Object.keys(answers).length > 0 || Object.keys(showResults).length > 0)) {
+    if (hasLoadedSavedData && !isReplaying && !localIsCompleted && (Object.keys(answers).length > 0 || Object.keys(showResults).length > 0)) {
       onComplete({
         answers,
         showResults,
