@@ -289,34 +289,7 @@ function getTask1FreshnessStats(lesson: any, usedWords: string[]) {
   return { newCount, overlaps, total: normalizedWords.length };
 }
 
-const OVERLAP_KEEP_WHITELIST = new Set(
-  [
-    // very common function words / basic verbs that are OK to overlap as "supporting"
-    'eu',
-    'voce',
-    'você',
-    'e',
-    'de',
-    'em',
-    'a',
-    'o',
-    'um',
-    'uma',
-    'nao',
-    'não',
-    'sim',
-    'por',
-    'para',
-    'com',
-    'sou',
-    'estou',
-    'ser',
-    'estar',
-    'muito',
-  ].map(normalizeWordForComparison)
-);
-
-async function replaceOverlapsToMeetFreshnessOrThrow(opts: {
+async function ensureAtLeast10NewVocabularyWordsOrThrow(opts: {
   openai: OpenAI;
   lesson: any;
   usedWords: string[];
@@ -325,84 +298,59 @@ async function replaceOverlapsToMeetFreshnessOrThrow(opts: {
   phase: string;
 }) {
   const cards = ensureTask1CardsArray(opts.lesson);
-  if (!cards.length) return;
+  if (!Array.isArray(cards) || cards.length === 0) return;
 
-  const used = new Set((opts.usedWords || []).map(normalizeWordForComparison).filter(Boolean));
-  const wordNorms = cards.map((c: any) => normalizeWordForComparison(typeof c?.word === 'string' ? c.word : ''));
+  // Always de-dupe before counting.
+  dedupeTask1CardsInPlace(opts.lesson);
 
-  // Gather overlaps (indices) in task 1
-  const overlapIdxs: number[] = [];
-  for (let i = 0; i < wordNorms.length; i++) {
-    const wn = wordNorms[i];
-    if (wn && used.has(wn)) overlapIdxs.push(i);
-  }
-  if (overlapIdxs.length === 0) return;
+  const stats = getTask1FreshnessStats(opts.lesson, opts.usedWords || []);
+  if (stats.newCount >= 10) return;
 
-  // Choose up to 5 overlaps to KEEP (prefer whitelist)
-  const keepIdxs: number[] = [];
-  for (const idx of overlapIdxs) {
-    if (keepIdxs.length >= 5) break;
-    if (OVERLAP_KEEP_WHITELIST.has(wordNorms[idx])) keepIdxs.push(idx);
-  }
-  for (const idx of overlapIdxs) {
-    if (keepIdxs.length >= 5) break;
-    if (!keepIdxs.includes(idx)) keepIdxs.push(idx);
-  }
+  const missingNew = 10 - stats.newCount;
+  if (missingNew <= 0) return;
 
-  const keepSet = new Set(keepIdxs);
-  const overlapsToReplace = overlapIdxs.filter((i) => !keepSet.has(i));
-
-  // Compute how many replacements we need to satisfy BOTH:
-  // - overlaps <= 5
-  // - newCount >= 10
-  const overlapsAfterCap = Math.min(overlapIdxs.length, 5);
-  const newCountNow = cards.length - overlapIdxs.length;
-  const minReplaceForNewCount = Math.max(0, 10 - newCountNow);
-  const minReplaceForOverlapCap = Math.max(0, overlapIdxs.length - overlapsAfterCap);
-  const replacementsNeeded = Math.max(minReplaceForNewCount, minReplaceForOverlapCap);
-
-  if (replacementsNeeded <= 0) return;
-
-  // Ensure we replace enough indices
-  let targets = overlapsToReplace.slice(0, replacementsNeeded);
-  if (targets.length < replacementsNeeded) {
-    // If overlapsToReplace is short (shouldn't happen), include extra from keepIdxs end
-    const extra = keepIdxs.slice(0).reverse().filter((i) => !targets.includes(i)).slice(0, replacementsNeeded - targets.length);
-    targets = targets.concat(extra);
-  }
-
-  // Forbidden includes: all usedWords + all current Task 1 words except those we are replacing
-  const forbidden = new Set<string>((opts.usedWords || []).map(normalizeWordForComparison).filter(Boolean));
-  for (let i = 0; i < cards.length; i++) {
-    if (targets.includes(i)) continue;
-    const wn = normalizeWordForComparison(typeof cards[i]?.word === 'string' ? cards[i].word : '');
-    if (wn) forbidden.add(wn);
-  }
-
-  const allowedWordsForExamples = cards
-    .filter((_: any, i: number) => !targets.includes(i))
+  // Forbidden: anything already in lesson + anything in global usedWords
+  const existingWords = cards
     .map((c: any) => (typeof c?.word === 'string' ? c.word.trim() : ''))
-    .filter(Boolean)
-    .join(', ');
+    .filter(Boolean);
+  const forbiddenNormalized = new Set(
+    [...(opts.usedWords || []), ...existingWords].map(normalizeWordForComparison).filter(Boolean)
+  );
+
+  const allowedWordsForExamples = existingWords.join(', ');
 
   let lastErr: any = null;
-  for (let attempt = 0; attempt < 3; attempt++) {
+  for (let attempt = 0; attempt < 4; attempt++) {
     try {
-      const candidateCount = Math.min(20, Math.max(replacementsNeeded + 4, replacementsNeeded * 4));
+      const candidateCount = Math.min(24, Math.max(missingNew + 4, missingNew * 4));
       const completion = await opts.openai.chat.completions.create({
         model: 'gpt-4o-mini',
         messages: [
           {
             role: 'system',
-            content: 'Return ONLY valid JSON. No markdown, no extra text.',
+            content: 'You are a strict JSON generator. Return ONLY valid JSON. No markdown, no extra text.',
           },
           {
             role: 'user',
             content:
-              `Task 1 vocabulary violates freshness.\nWe need to REPLACE ${replacementsNeeded} overlapping cards with NEW unique words.\n\nGenerate ${candidateCount} CANDIDATE vocabulary cards (we will pick ${replacementsNeeded}).\n- phase: ${opts.phase}\n- topic_ru: "${opts.topicRu}"\n- topic_en: "${opts.topicEn}"\n\nSTRICT RULES:\n- Return ONLY a JSON array of cards.\n- All candidate card.word MUST be UNIQUE.\n- Each card MUST have fields: word, transcription (IPA in square brackets), example_sentence (PT), sentence_translation_ru, sentence_translation_en, word_translation_ru, word_translation_en.\n- card.word MUST NOT match any forbidden word (case/diacritics-insensitive).\n- Forbidden words: ${Array.from(forbidden).join(', ')}\n- For example_sentence, DO NOT introduce new vocabulary if possible: use ONLY words from this allowed list plus the new word: ${allowedWordsForExamples}\n\nReturn ONLY the JSON array.`,
+              `We need MORE NEW vocabulary words for a Portuguese lesson.\n\n` +
+              `Goal: add ${missingNew} NEW thematic words (not in global vocabulary, not in current lesson) so the learner learns new words.\n` +
+              `These extra words do NOT have to be used in Tasks 2–5.\n\n` +
+              `Context:\n- phase: ${opts.phase}\n- topic_ru: "${opts.topicRu}"\n- topic_en: "${opts.topicEn}"\n\n` +
+              `STRICT RULES:\n` +
+              `- Return ONLY a JSON array of vocabulary cards (not an object).\n` +
+              `- Each card MUST have fields: word, transcription (IPA in square brackets), example_sentence (PT), sentence_translation_ru, sentence_translation_en, word_translation_ru, word_translation_en.\n` +
+              `- All returned card.word values MUST be UNIQUE.\n` +
+              `- card.word MUST NOT match any forbidden word (case/diacritics-insensitive).\n` +
+              `- Forbidden words (do not use): ${Array.from(forbiddenNormalized).join(', ')}\n` +
+              `- Prefer useful everyday words related to the topic (nouns/verbs/adjectives).\n` +
+              `- Keep example_sentence SIMPLE and avoid introducing extra unknown words if possible.\n` +
+              `  Use ONLY words from this allowed list plus the new word whenever possible: ${allowedWordsForExamples || 'None'}\n\n` +
+              `Generate ${candidateCount} candidate cards (we will pick ${missingNew}).\n` +
+              `Return ONLY the JSON array.`,
           },
         ],
-        temperature: 0.25,
+        temperature: 0.2,
         max_tokens: 2500,
       });
 
@@ -411,8 +359,8 @@ async function replaceOverlapsToMeetFreshnessOrThrow(opts: {
       const jsonMatch = text.match(/\[[\s\S]*\]/);
       if (jsonMatch) text = jsonMatch[0];
       const arr = parseJsonSafely(text);
-      if (!Array.isArray(arr)) throw new Error('Replacement response is not an array');
-      if (arr.length < replacementsNeeded) throw new Error(`Need at least ${replacementsNeeded} candidate cards, got ${arr.length}`);
+      if (!Array.isArray(arr)) throw new Error('New-words response is not a JSON array');
+      if (arr.length < missingNew) throw new Error(`Need at least ${missingNew} candidate cards, got ${arr.length}`);
 
       const requiredFields = [
         'word',
@@ -425,14 +373,15 @@ async function replaceOverlapsToMeetFreshnessOrThrow(opts: {
       ];
 
       const picked: any[] = [];
-      const seen = new Set<string>();
+      const seenBatch = new Set<string>();
       for (const c of arr) {
-        if (picked.length >= replacementsNeeded) break;
+        if (picked.length >= missingNew) break;
         const w = typeof c?.word === 'string' ? c.word.trim() : '';
         const wn = normalizeWordForComparison(w);
         if (!wn) continue;
-        if (forbidden.has(wn)) continue;
-        if (seen.has(wn)) continue;
+        if (forbiddenNormalized.has(wn)) continue;
+        if (seenBatch.has(wn)) continue;
+
         let ok = true;
         for (const f of requiredFields) {
           if (typeof c?.[f] !== 'string' || !c[f].trim()) {
@@ -441,18 +390,22 @@ async function replaceOverlapsToMeetFreshnessOrThrow(opts: {
           }
         }
         if (!ok) continue;
-        seen.add(wn);
-        forbidden.add(wn);
+
+        seenBatch.add(wn);
+        forbiddenNormalized.add(wn);
         picked.push(c);
       }
 
-      if (picked.length < replacementsNeeded) {
-        throw new Error(`Too many candidates were forbidden/invalid. Needed ${replacementsNeeded}, picked ${picked.length}.`);
+      if (picked.length < missingNew) {
+        throw new Error(`Too many candidates were forbidden/invalid. Needed ${missingNew}, picked ${picked.length}.`);
       }
 
-      // Apply replacements
-      for (let i = 0; i < replacementsNeeded; i++) {
-        cards[targets[i]] = picked[i];
+      cards.push(...picked);
+      dedupeTask1CardsInPlace(opts.lesson);
+
+      const after = getTask1FreshnessStats(opts.lesson, opts.usedWords || []);
+      if (after.newCount < 10) {
+        throw new Error(`Still not enough new words after top-up. new=${after.newCount}, overlaps=${after.overlaps.length}`);
       }
 
       return;
@@ -462,7 +415,7 @@ async function replaceOverlapsToMeetFreshnessOrThrow(opts: {
   }
 
   throw new Error(
-    `Failed to repair vocabulary freshness by replacing overlaps. ${lastErr instanceof Error ? lastErr.message : String(lastErr)}`
+    `Failed to add additional new thematic words to Task 1. ${lastErr instanceof Error ? lastErr.message : String(lastErr)}`
   );
 }
 
@@ -776,8 +729,10 @@ function validateVocabularyIsNewOrThrow(generatedLesson: any, usedWords: string[
     .map(([w]) => w);
 
   // Overlaps with global vocabulary (previous lessons)
-  // Methodology rule: at least 10 words must be NEW for this lesson topic (core),
-  // while 3–5 can be supporting words that may overlap with already learned vocabulary.
+  // Updated rule:
+  // - Task 1 must include ALL lesson words, but if that set does not give enough NEW words,
+  //   we allow adding extra NEW thematic words (they don't have to appear in tasks).
+  // Therefore we enforce only: at least 10 NEW words total in Task 1.
   const overlaps = Array.from(new Set(normalized.filter((w) => used.has(w))));
   const newWordsCount = normalized.length - overlaps.length;
 
@@ -790,10 +745,10 @@ function validateVocabularyIsNewOrThrow(generatedLesson: any, usedWords: string[
     throw new Error(`Vocabulary uniqueness violation. ${details}`);
   }
 
-  // Enforce "10 new + up to 5 overlaps"
-  if (newWordsCount < 10 || overlaps.length > 5) {
+  // Enforce "at least 10 new"
+  if (newWordsCount < 10) {
     throw new Error(
-      `Vocabulary freshness violation. Task 1 must contain at least 10 NEW words (not in global vocabulary) and may include at most 5 supporting overlaps. ` +
+      `Vocabulary freshness violation. Task 1 must contain at least 10 NEW words (not in global vocabulary). ` +
       `Got new=${newWordsCount}, overlaps=${overlaps.length}. Overlaps: ${overlaps.join(', ')}`
     );
   }
@@ -1171,7 +1126,15 @@ export async function POST(
         }
         generatedPiece = task;
         mergedDraft = upsertTaskIntoDraft(mergedDraft, task);
-        // enforce uniqueness + freshness (reuses existing validation)
+        // If not enough NEW words, auto-add extra thematic words (they don't have to appear in tasks)
+        await ensureAtLeast10NewVocabularyWordsOrThrow({
+          openai,
+          lesson: mergedDraft,
+          usedWords,
+          topicRu: topic_ru.trim(),
+          topicEn: topic_en.trim(),
+          phase,
+        });
         validateVocabularyIsNewOrThrow(mergedDraft, usedWords);
       }
 
@@ -1194,7 +1157,7 @@ export async function POST(
       try {
         const retryContext =
           attempt > 0 && lastError
-            ? `\n\nIMPORTANT: Your previous output was INVALID.\nReason: ${lastError.message}\nYou MUST regenerate the ENTIRE lesson JSON.\n\nCRITICAL FAILURE MODE TO AVOID:\n- Do NOT return a "task shell" (tasks with only task_id/type and empty/missing content/blocks/items).\n- Every task MUST include its full data arrays.\n\nHARD REQUIREMENTS (MUST PASS VALIDATION):\n- Task 1 MUST contain 13–15 cards at: tasks[].content.cards (or CRM blocks that transform into it).\n- Task 1 freshness rule: at least 10 cards MUST be NEW (not present in usedWordsList); up to 5 can overlap as supporting words.\n- Task 2 MUST contain exactly 6 blocks at: tasks[].blocks (with block_id/block_type/content).\n- Task 3 MUST contain items/options (not empty).\n- Task 4 MUST contain items/options + feedback (not empty).\n- Task 5 MUST contain main_task.template (not empty) + example.\n- NEVER output placeholder audio like \"PT\". Every audio field must be a REAL Portuguese phrase string.\n\nSCHEMA HINT (USE THIS SHAPE):\n{\n  \"tasks\": [\n    { \"task_id\": 1, \"type\": \"vocabulary\", \"content\": { \"cards\": [ { \"word\": \"...\", \"transcription\": \"[...]\", \"example_sentence\": \"...\", \"sentence_translation_ru\": \"...\", \"sentence_translation_en\": \"...\", \"word_translation_ru\": \"...\", \"word_translation_en\": \"...\" } ] } },\n    { \"task_id\": 2, \"type\": \"rules\", \"blocks\": [ { \"block_id\": \"block_1_build\", \"block_type\": \"explanation\", \"content\": { \"title\": {\"ru\":\"\",\"en\":\"\"}, \"examples\": [ {\"text\":\"...\"} ], \"hints\": [ {\"ru\":\"\",\"en\":\"\"} ] } } ] },\n    { \"task_id\": 3, \"type\": \"listening_comprehension\", \"items\": [ { \"audio\": \"<PORTUGUESE_PHRASE>\", \"question\": {\"ru\":\"\",\"en\":\"\"}, \"options\": [ {\"text\": {\"ru\":\"\",\"en\":\"\"}, \"correct\": false } ] } ] },\n    { \"task_id\": 4, \"type\": \"attention\", \"items\": [ { \"audio\": \"<PORTUGUESE_PHRASE>\", \"question\": {\"ru\":\"\",\"en\":\"\"}, \"options\": [ {\"text\": {\"ru\":\"\",\"en\":\"\"}, \"correct\": false } ], \"feedback\": {\"ru\":\"\",\"en\":\"\"} } ] },\n    { \"task_id\": 5, \"type\": \"writing_optional\", \"instruction\": {\"ru\":\"\",\"en\":\"\"}, \"main_task\": { \"template\": [\"...\"], \"hints\": [\"...\"] }, \"example\": { \"show_by_button\": true, \"button_text\": {\"ru\":\"\",\"en\":\"\"}, \"content\": [\"...\"] } }\n  ]\n}\n`
+            ? `\n\nIMPORTANT: Your previous output was INVALID.\nReason: ${lastError.message}\nYou MUST regenerate the ENTIRE lesson JSON.\n\nCRITICAL FAILURE MODE TO AVOID:\n- Do NOT return a "task shell" (tasks with only task_id/type and empty/missing content/blocks/items).\n- Every task MUST include its full data arrays.\n\nHARD REQUIREMENTS (MUST PASS VALIDATION):\n- Task 1 MUST contain 13–15 cards at: tasks[].content.cards (or CRM blocks that transform into it).\n- Task 1 freshness rule: at least 10 cards MUST be NEW (not present in usedWordsList). If the lesson needs overlaps for Tasks 2–5, keep them — but add extra NEW thematic words to Task 1 (they don't have to appear in tasks).\n- Task 2 MUST contain exactly 6 blocks at: tasks[].blocks (with block_id/block_type/content).\n- Task 3 MUST contain items/options (not empty).\n- Task 4 MUST contain items/options + feedback (not empty).\n- Task 5 MUST contain main_task.template (not empty) + example.\n- NEVER output placeholder audio like \"PT\". Every audio field must be a REAL Portuguese phrase string.\n\nSCHEMA HINT (USE THIS SHAPE):\n{\n  \"tasks\": [\n    { \"task_id\": 1, \"type\": \"vocabulary\", \"content\": { \"cards\": [ { \"word\": \"...\", \"transcription\": \"[...]\", \"example_sentence\": \"...\", \"sentence_translation_ru\": \"...\", \"sentence_translation_en\": \"...\", \"word_translation_ru\": \"...\", \"word_translation_en\": \"...\" } ] } },\n    { \"task_id\": 2, \"type\": \"rules\", \"blocks\": [ { \"block_id\": \"block_1_build\", \"block_type\": \"explanation\", \"content\": { \"title\": {\"ru\":\"\",\"en\":\"\"}, \"examples\": [ {\"text\":\"...\"} ], \"hints\": [ {\"ru\":\"\",\"en\":\"\"} ] } } ] },\n    { \"task_id\": 3, \"type\": \"listening_comprehension\", \"items\": [ { \"audio\": \"<PORTUGUESE_PHRASE>\", \"question\": {\"ru\":\"\",\"en\":\"\"}, \"options\": [ {\"text\": {\"ru\":\"\",\"en\":\"\"}, \"correct\": false } ] } ] },\n    { \"task_id\": 4, \"type\": \"attention\", \"items\": [ { \"audio\": \"<PORTUGUESE_PHRASE>\", \"question\": {\"ru\":\"\",\"en\":\"\"}, \"options\": [ {\"text\": {\"ru\":\"\",\"en\":\"\"}, \"correct\": false } ], \"feedback\": {\"ru\":\"\",\"en\":\"\"} } ] },\n    { \"task_id\": 5, \"type\": \"writing_optional\", \"instruction\": {\"ru\":\"\",\"en\":\"\"}, \"main_task\": { \"template\": [\"...\"], \"hints\": [\"...\"] }, \"example\": { \"show_by_button\": true, \"button_text\": {\"ru\":\"\",\"en\":\"\"}, \"content\": [\"...\"] } }\n  ]\n}\n`
             : '';
 
         const completion = await openai.chat.completions.create({
@@ -1289,30 +1252,20 @@ export async function POST(
           });
         }
 
-        // Auto-fix: if OpenAI reused too many global words, replace overlapping cards until we have:
-        // - at least 10 NEW words
-        // - at most 5 overlaps
-        const freshness = getTask1FreshnessStats(generatedLesson, usedWordsForValidation);
-        if (freshness.newCount < 10 || freshness.overlaps.length > 5) {
-          await replaceOverlapsToMeetFreshnessOrThrow({
-            openai,
-            lesson: generatedLesson,
-            usedWords: usedWordsForValidation,
-            topicRu: topic_ru,
-            topicEn: topic_en,
-            phase,
-          });
-          // After replacements, re-dedupe + ensure minimum count
-          dedupeTask1CardsInPlace(generatedLesson);
-          await topUpVocabularyToMinimumOrThrow({
-            openai,
-            lesson: generatedLesson,
-            usedWords: usedWordsForValidation,
-            topicRu: topic_ru,
-            topicEn: topic_en,
-            phase,
-          });
-        }
+        // If Task 1 doesn't have enough NEW words (because Tasks 2–5 force overlaps),
+        // add extra thematic words (they don't have to be used elsewhere in the lesson).
+        await ensureAtLeast10NewVocabularyWordsOrThrow({
+          openai,
+          lesson: generatedLesson,
+          usedWords: usedWordsForValidation,
+          topicRu: topic_ru,
+          topicEn: topic_en,
+          phase,
+        });
+
+        // Note: We no longer enforce an "overlaps <= 5" cap.
+        // If the lesson needs overlapping words to support Tasks 2–5, it's OK.
+        // We ensure the learner still gets >= 10 NEW words by adding extra thematic cards.
 
         // If tasks 2-4 are empty or task 5 instruction missing, auto-repair those tasks
         const repairCheck = needsTasksRepair(generatedLesson);
@@ -1704,8 +1657,7 @@ export async function POST(
           })
           .sort((a: any, b: any) => (a.task_id || 0) - (b.task_id || 0)); // Sort by task_id
 
-        // CRITICAL: Enforce "no reused vocabulary across lessons" server-side.
-        // This prevents OpenAI from reusing Task 1 words even if it ignores the prompt.
+        // CRITICAL: Enforce "no reused vocabulary across lessons" server-side (at least 10 NEW words).
         throwIfPlaceholderPortugueseAudioOrThrow(generatedLesson);
         validateVocabularyIsNewOrThrow(generatedLesson, usedWordsForValidation);
         
