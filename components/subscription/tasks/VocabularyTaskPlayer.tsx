@@ -692,10 +692,13 @@ export default function VocabularyTaskPlayer({
     });
   };
 
-  // Handle next task - navigation should NOT auto-complete Task 1.
-  // Completion happens only via the 10-min timer rule (handleComplete()).
+  // Handle next task - timer is RECOMMENDED (not required).
+  // If user moves forward, consider Task 1 completed.
   const handleNextTask = () => {
     if (!onNextTask) return;
+    if (!localIsCompleted && !isCompleted) {
+      handleComplete();
+    }
     onNextTask();
   };
 
