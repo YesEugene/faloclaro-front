@@ -573,6 +573,21 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
   const currentTaskProgress = currentTask ? getTaskProgress(currentTask.task_id) : null;
   const isUnlocked = isTaskUnlocked(currentTaskIndex);
 
+  // Ensure each task opens at top (prevents starting Task 5 already scrolled down).
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    // next tick to avoid fighting with layout/portals
+    setTimeout(() => {
+      try {
+        window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
+      } catch {
+        window.scrollTo(0, 0);
+      }
+    }, 0);
+  }, [currentTaskIndex]);
+
   return (
     <div className="min-h-screen bg-white">
       {/* Header with Logo and Language Selector */}

@@ -248,13 +248,13 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
           </div>
           
           {/* Title (editable in admin via task.title) */}
-          <h3 className="text-3xl font-bold text-black" style={{ lineHeight: '1.15' }}>
+          <h3 className="text-xl font-bold text-black mb-4">
             {taskTitle}
           </h3>
 
           {/* Subtitle (editable in admin via task.subtitle) */}
           {taskSubtitle && (
-            <p className="text-black whitespace-pre-line" style={{ fontSize: '22px', lineHeight: '1.35' }}>
+            <p className="text-gray-700 whitespace-pre-line mb-4">
               {taskSubtitle}
             </p>
           )}
@@ -355,40 +355,54 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
             <div className="space-y-4">
               {/* Subtitle before button (editable via task.ui_texts.speak_subtitle or alternative.instruction) */}
               {speakSubtitle && (
-                <p className="text-black whitespace-pre-line" style={{ fontSize: '22px', lineHeight: '1.35' }}>
+                <p className="text-gray-700 whitespace-pre-line mb-4">
                   {speakSubtitle}
                 </p>
               )}
 
-              {!speakOutLoud ? (
-                <button
-                  onClick={() => {
-                    // First click - complete immediately
-                    setSpeakOutLoud(true);
-                    handleComplete(true); // Pass true to force completion with speakOutLoud
-                  }}
-                  className="w-full py-4 rounded-lg font-semibold text-lg transition-colors bg-blue-600 text-white hover:bg-blue-700"
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  if (speakOutLoud) return; // uncheck only via Replay
+                  setSpeakOutLoud(true);
+                  handleComplete(true);
+                }}
+                disabled={speakOutLoud}
+                className="w-full text-left transition-colors flex items-center"
+                style={{
+                  backgroundColor: 'white',
+                  border: '1.5px solid #CED2D6',
+                  borderRadius: '18px',
+                  height: '50px',
+                  padding: '0 18px',
+                  gap: '14px',
+                  cursor: speakOutLoud ? 'default' : 'pointer',
+                }}
+              >
+                <span
                   style={{
-                    height: '55px'
+                    width: '20px',
+                    height: '20px',
+                    borderRadius: '4px',
+                    border: '1.5px solid #1A8CFF',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                    background: '#fff',
                   }}
                 >
-                  {getTranslatedText(alternative.action_button?.text, appLanguage) || (appLanguage === 'ru' ? '✔ Я сказал(а) вслух' : appLanguage === 'en' ? '✔ I said it out loud' : '✔ Disse em voz alta')}
-                </button>
-              ) : (
-                <div 
-                  className="w-full py-4 rounded-lg font-semibold text-lg flex items-center justify-center"
-                  style={{
-                    height: '55px',
-                    backgroundColor: '#F1F2F6',
-                    border: '1px solid #E5E7EB',
-                  }}
-                >
-                  <svg className="w-6 h-6 mr-2" fill="none" stroke="#109929" viewBox="0 0 24 24" strokeWidth={3}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span style={{ color: '#6B7280' }}>{appLanguage === 'ru' ? 'Выполнено' : appLanguage === 'en' ? 'Completed' : 'Concluído'}</span>
-                </div>
-              )}
+                  {speakOutLoud ? (
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#34BF5D" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M20 6L9 17l-5-5" />
+                    </svg>
+                  ) : null}
+                </span>
+                <span style={{ fontSize: '16px', fontWeight: 500, color: '#000' }}>
+                  {String(getTranslatedText(alternative.action_button?.text, appLanguage) || (appLanguage === 'ru' ? 'Я сказал(а) вслух' : 'I said it out loud')).replace(/^[✔✓]\s*/u, '')}
+                </span>
+              </button>
             </div>
           )}
 
