@@ -302,11 +302,13 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
     );
   };
 
-  // Handle answer selection for reinforcement tasks
-  const handleAnswerSelect = (taskKey: string, answer: string, blockIndex: number) => {
+  // Handle answer selection for reinforcement tasks.
+  // UX: wrong choice does NOT reveal the correct one; user can retry until correct.
+  // Only after correct answer we "lock" the question (showResults=true).
+  const handleAnswerSelect = (taskKey: string, answer: string, isCorrect: boolean) => {
     const updatedAnswers = { ...selectedAnswers, [taskKey]: answer };
-    const updatedShowResults = { ...showResults, [taskKey]: true };
-    
+    const updatedShowResults = { ...showResults, [taskKey]: isCorrect };
+
     setSelectedAnswers(updatedAnswers);
     setShowResults(updatedShowResults);
   };
@@ -543,40 +545,50 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                     const isSelected = selectedAnswers[taskKey] === optionText || (option.text && typeof option.text === 'object' && selectedAnswers[taskKey] === getTranslatedText(option.text, appLanguage));
                     // Check both correct and is_correct fields
                     const isCorrect = option.correct === true || option.is_correct === true;
-                    const showResult = showResults[taskKey];
+                    const isLocked = showResults[taskKey] === true;
+                    const isWrongSelected = isSelected && !isLocked;
+                    const dotColor = isLocked && isSelected ? '#34BF5D' : isWrongSelected ? '#FF3B30' : null;
                     
-                    return (
-                      <button
+                    return (                      <button
                         key={index}
-                        onClick={() => handleAnswerSelect(taskKey, optionText, blockIndex)}
-                        disabled={showResult}
-                        className={`w-full text-left p-4 rounded-lg transition-colors ${
-                          showResult
-                            ? isCorrect
-                              ? 'bg-green-100 border-2 border-green-500'
-                              : isSelected && !isCorrect
-                              ? 'bg-red-100 border-2 border-red-500'
-                              : 'bg-white border-0'
-                            : 'bg-white border-0'
-                        }`}
+                        onClick={() => {
+                          if (isLocked) return;
+                          handleAnswerSelect(taskKey, optionText, isCorrect);
+                        }}
+                        disabled={isLocked}
+                        className="w-full text-left transition-colors flex items-center"
                         style={{
-                          backgroundColor: showResult
-                            ? (isCorrect 
-                                ? 'rgb(220 252 231)' 
-                                : (isSelected && !isCorrect 
-                                    ? 'rgb(254 226 226)' 
-                                    : 'white'))
-                            : 'white',
-                          border: showResult
-                            ? (isCorrect 
-                                ? '2px solid rgb(34 197 94)' 
-                                : (isSelected && !isCorrect 
-                                    ? '2px solid rgb(239 68 68)' 
-                                    : 'none'))
-                            : 'none'
+                          backgroundColor: 'white',
+                          border: '1.5px solid #CED2D6',
+                          borderRadius: '18px',
+                          padding: '18px 18px',
+                          gap: '14px',
                         }}
                       >
-                        {optionText}
+                        <span
+                          style={{
+                            width: '26px',
+                            height: '26px',
+                            borderRadius: '999px',
+                            border: '1.5px solid #1A8CFF',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexShrink: 0,
+                          }}
+                        >
+                          {dotColor ? (
+                            <span
+                              style={{
+                                width: '10px',
+                                height: '10px',
+                                borderRadius: '999px',
+                                background: dotColor,
+                              }}
+                            />
+                          ) : null}
+                        </span>
+                        <span style={{ fontSize: '24px', fontWeight: 700, color: '#000' }}>{optionText}</span>
                       </button>
                     );
                   })}
@@ -642,40 +654,50 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
                     const isSelected = selectedAnswers[taskKey] === optionText || (option.text && typeof option.text === 'object' && selectedAnswers[taskKey] === getTranslatedText(option.text, appLanguage));
                     // Check both correct and is_correct fields
                     const isCorrect = option.correct === true || option.is_correct === true;
-                    const showResult = showResults[taskKey];
+                    const isLocked = showResults[taskKey] === true;
+                    const isWrongSelected = isSelected && !isLocked;
+                    const dotColor = isLocked && isSelected ? '#34BF5D' : isWrongSelected ? '#FF3B30' : null;
                     
-                    return (
-                      <button
+                    return (                      <button
                         key={index}
-                        onClick={() => handleAnswerSelect(taskKey, optionText, blockIndex)}
-                        disabled={showResult}
-                        className={`w-full text-left p-4 rounded-lg transition-colors ${
-                          showResult
-                            ? isCorrect
-                              ? 'bg-green-100 border-2 border-green-500'
-                              : isSelected && !isCorrect
-                              ? 'bg-red-100 border-2 border-red-500'
-                              : 'bg-white border-0'
-                            : 'bg-white border-0'
-                        }`}
+                        onClick={() => {
+                          if (isLocked) return;
+                          handleAnswerSelect(taskKey, optionText, isCorrect);
+                        }}
+                        disabled={isLocked}
+                        className="w-full text-left transition-colors flex items-center"
                         style={{
-                          backgroundColor: showResult
-                            ? (isCorrect 
-                                ? 'rgb(220 252 231)' 
-                                : (isSelected && !isCorrect 
-                                    ? 'rgb(254 226 226)' 
-                                    : 'white'))
-                            : 'white',
-                          border: showResult
-                            ? (isCorrect 
-                                ? '2px solid rgb(34 197 94)' 
-                                : (isSelected && !isCorrect 
-                                    ? '2px solid rgb(239 68 68)' 
-                                    : 'none'))
-                            : 'none'
+                          backgroundColor: 'white',
+                          border: '1.5px solid #CED2D6',
+                          borderRadius: '18px',
+                          padding: '18px 18px',
+                          gap: '14px',
                         }}
                       >
-                        {optionText}
+                        <span
+                          style={{
+                            width: '26px',
+                            height: '26px',
+                            borderRadius: '999px',
+                            border: '1.5px solid #1A8CFF',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexShrink: 0,
+                          }}
+                        >
+                          {dotColor ? (
+                            <span
+                              style={{
+                                width: '10px',
+                                height: '10px',
+                                borderRadius: '999px',
+                                background: dotColor,
+                              }}
+                            />
+                          ) : null}
+                        </span>
+                        <span style={{ fontSize: '24px', fontWeight: 700, color: '#000' }}>{optionText}</span>
                       </button>
                     );
                   })}
@@ -706,31 +728,47 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
               dangerouslySetInnerHTML={{ __html: processInstructionText(getInstructionText(block, appLanguage)) }}
             />
             
-            {!speakOutLoudCompleted ? (
-              <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  handleSpeakOutLoudComplete();
-                }}
-                className="w-full py-4 rounded-lg font-semibold text-lg transition-colors bg-blue-600 text-white hover:bg-blue-700"
-              >
-                {getTranslatedText(block.action_button?.text, appLanguage) || (appLanguage === 'ru' ? '✔ Я сказал(а) вслух' : '✔ I said it out loud')}
-              </button>
-            ) : (
-              <div 
-                className="w-full py-4 rounded-lg font-semibold text-lg flex items-center justify-center"
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (speakOutLoudCompleted) return; // uncheck only via Replay
+                handleSpeakOutLoudComplete();
+              }}
+              disabled={speakOutLoudCompleted}
+              className="w-full text-left transition-colors flex items-center"
+              style={{
+                backgroundColor: 'white',
+                border: '1.5px solid #CED2D6',
+                borderRadius: '18px',
+                padding: '18px 18px',
+                gap: '14px',
+                cursor: speakOutLoudCompleted ? 'default' : 'pointer',
+              }}
+            >
+              <span
                 style={{
-                  backgroundColor: '#F1F2F6',
-                  border: '1px solid #E5E7EB',
+                  width: '26px',
+                  height: '26px',
+                  borderRadius: '4px',
+                  border: '1.5px solid #1A8CFF',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                  background: '#fff',
                 }}
               >
-                <svg className="w-6 h-6 mr-2" fill="none" stroke="#109929" viewBox="0 0 24 24" strokeWidth={3}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                </svg>
-                <span style={{ color: '#6B7280' }}>{appLanguage === 'ru' ? 'Выполнено' : 'Completed'}</span>
-              </div>
-            )}
+                {speakOutLoudCompleted ? (
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#34BF5D" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 6L9 17l-5-5" />
+                  </svg>
+                ) : null}
+              </span>
+              <span style={{ fontSize: '24px', fontWeight: 700, color: '#000' }}>
+                {getTranslatedText(block.action_button?.text, appLanguage) || (appLanguage === 'ru' ? 'Я сказал(а) вслух' : 'I said it out loud')}
+              </span>
+            </button>
           </div>
         );
 

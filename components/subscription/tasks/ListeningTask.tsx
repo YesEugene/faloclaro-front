@@ -37,6 +37,11 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
   
   const audioRefs = useRef<{ [key: string]: HTMLAudioElement }>({});
 
+  const OPTION_BORDER_COLOR = '#CED2D6';
+  const CHECKBOX_BORDER_COLOR = '#1A8CFF';
+  const DOT_GREEN = '#34BF5D';
+  const DOT_RED = '#FF3B30';
+
   // Normalize option text - ensure it's always a string, not an object
   const normalizeOptionText = (option: any): string => {
     if (!option || typeof option !== 'object') return String(option || '');
@@ -207,17 +212,16 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
     }
   }, [audioUrls]);
 
-  const handleAnswerSelect = (itemIndex: number, optionText: string) => {
+  const handleAnswerSelect = (itemIndex: number, optionText: string, isCorrect: boolean) => {
     const newAnswers = { ...answers, [itemIndex]: optionText };
-    const newShowResults = { ...showResults, [itemIndex]: true };
+    const newShowResults = { ...showResults, [itemIndex]: isCorrect };
     setAnswers(newAnswers);
     setShowResults(newShowResults);
 
     // Auto-complete as soon as the last required exercise is done.
     // No separate "Complete" button needed; this unlocks "Next" immediately.
     const allAnsweredNow = items.every((_: any, idx: number) => {
-      const v = newAnswers[idx];
-      return v !== undefined && v !== null && v !== '';
+      return newShowResults[idx] === true;
     });
     if (allAnsweredNow && !localIsCompleted && !isReplaying) {
       const correctCount = items.filter((item: any, index: number) => {
@@ -351,22 +355,46 @@ export default function ListeningTask({ task, language, onComplete, isCompleted,
             const showResultForOption = showResult;
 
             return (
-              <button
+                            <button
                 key={index}
-                onClick={() => handleAnswerSelect(itemIndex, optionText)}
-                disabled={showResultForOption}
-                className="w-full text-left px-4 rounded-lg transition-colors flex items-center"
+                onClick={() => {
+                  if (showResult) return;
+                  handleAnswerSelect(itemIndex, optionText, isCorrect);
+                }}
+                disabled={showResult}
+                className="w-full text-left transition-colors flex items-center"
                 style={{
-                  height: '55px',
-                  backgroundColor: showResultForOption 
-                    ? (isCorrect ? 'rgb(220 252 231)' : (isSelected && !isCorrect ? 'rgb(254 226 226)' : 'white'))
-                    : 'white',
-                  border: showResultForOption 
-                    ? (isCorrect ? '2px solid rgb(34 197 94)' : (isSelected && !isCorrect ? '2px solid rgb(239 68 68)' : 'none'))
-                    : 'none'
+                  backgroundColor: 'white',
+                  border: `1.5px solid ${OPTION_BORDER_COLOR}`,
+                  borderRadius: '18px',
+                  padding: '18px 18px',
+                  gap: '14px',
                 }}
               >
-                {optionText}
+                <span
+                  style={{
+                    width: '26px',
+                    height: '26px',
+                    borderRadius: '999px',
+                    border: `1.5px solid ${CHECKBOX_BORDER_COLOR}`,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                  }}
+                >
+                  {isSelected ? (
+                    <span
+                      style={{
+                        width: '10px',
+                        height: '10px',
+                        borderRadius: '999px',
+                        background: showResult ? DOT_GREEN : DOT_RED,
+                      }}
+                    />
+                  ) : null}
+                </span>
+                <span style={{ fontSize: '24px', fontWeight: 700, color: '#000' }}>{optionText}</span>
               </button>
             );
           })}
