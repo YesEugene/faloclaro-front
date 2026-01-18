@@ -1189,9 +1189,18 @@ function GenerateLessonModal({
   const [stepError, setStepError] = useState('');
   const [lastGeneratedJson, setLastGeneratedJson] = useState<string>('');
   const [stepExtraInstructions, setStepExtraInstructions] = useState<string>('');
-  const [selectedStepId, setSelectedStepId] = useState<'target' | 'task2' | 'task3' | 'task4' | 'task5' | 'task1'>(
-    'target'
-  );
+  const [selectedStepId, setSelectedStepId] = useState<'target' | 'task2' | 'task3' | 'task4' | 'task5' | 'task1'>(() => {
+    if (typeof window === 'undefined') return 'target';
+    try {
+      const saved = window.sessionStorage.getItem(`gen_selected_step:${lessonId}`);
+      if (saved === 'target' || saved === 'task2' || saved === 'task3' || saved === 'task4' || saved === 'task5' || saved === 'task1') {
+        return saved;
+      }
+    } catch {
+      // ignore
+    }
+    return 'target';
+  });
   const [generatedByStep, setGeneratedByStep] = useState<
     Partial<Record<'target' | 'task2' | 'task3' | 'task4' | 'task5' | 'task1', string>>
   >({});
@@ -1207,6 +1216,15 @@ function GenerateLessonModal({
   ];
 
   const currentStep = steps.find((s) => s.id === selectedStepId) || steps[0];
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      window.sessionStorage.setItem(`gen_selected_step:${lessonId}`, selectedStepId);
+    } catch {
+      // ignore
+    }
+  }, [lessonId, selectedStepId]);
 
   const extractStepPayloadFromDraft = (
     yaml: any,
@@ -1272,8 +1290,11 @@ function GenerateLessonModal({
   const saveDraftToDb = async () => {
     setStepLoading(true);
     setStepError('');
+    const keepStep = selectedStepId;
     try {
       await onApplyYamlContent(draftYaml);
+      // Stay on the same step after save
+      setSelectedStepId(keepStep);
     } catch (e: any) {
       setStepError(e?.message || 'Ошибка сохранения шага');
     } finally {
