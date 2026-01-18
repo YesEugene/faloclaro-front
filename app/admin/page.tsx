@@ -40,7 +40,7 @@ export default function AdminLoginPage() {
       <div className="max-w-md w-full bg-white rounded-lg shadow-md p-8">
         <div className="mb-6 text-center">
           <Image
-            src="/Img/Logo FaloClaro.svg"
+            src="/Img/Website/logo.svg"
             alt="FaloClaro"
             width={120}
             height={40}

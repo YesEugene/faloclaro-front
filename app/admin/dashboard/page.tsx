@@ -31,7 +31,7 @@ export default function AdminDashboard() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Image
-                src="/Img/Logo FaloClaro.svg"
+                src="/Img/Website/logo.svg"
                 alt="FaloClaro"
                 width={120}
                 height={40}

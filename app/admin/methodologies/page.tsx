@@ -161,7 +161,7 @@ export default function MethodologiesPage() {
                 ← Назад
               </button>
               <Image
-                src="/Img/Logo FaloClaro.svg"
+                src="/Img/Website/logo.svg"
                 alt="FaloClaro"
                 width={120}
                 height={40}
