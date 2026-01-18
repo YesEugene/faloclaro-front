@@ -213,13 +213,17 @@ function parseDesiredCountsFromExtraInstructions(extraInstructions: string): {
   // Task 3 items count (listening)
   // e.g. "в 3 задании 5 тасков" / "задание 3: 5" / "task 3: 5 items"
   const t3 =
-    numFrom(/(?:задани[ея]\s*3|task\s*3)[^\d]{0,20}(\d+)/i) ??
-    numFrom(/(?:task3|t3)[^\d]{0,20}(\d+)/i);
+    // "задание 3 ... 5" OR "3 задание ... 5"
+    numFrom(/(?:задани[ея]\s*3|\b3\s*задани[ея])[\s\S]{0,60}(\d+)\s*(?:таск|тасков|упражнен|items?)?/i) ??
+    // "task 3 ... 5"
+    numFrom(/(?:task\s*3|task3|t3)[\s\S]{0,60}(\d+)/i);
 
   // Task 4 items count (attention)
   const t4 =
-    numFrom(/(?:задани[ея]\s*4|task\s*4)[^\d]{0,20}(\d+)/i) ??
-    numFrom(/(?:task4|t4)[^\d]{0,20}(\d+)/i);
+    // "в 4 задании сделать 5 тасков" (this is the common phrasing)
+    numFrom(/(?:задани[ея]\s*4|\b4\s*задани[ея])[\s\S]{0,60}(\d+)\s*(?:таск|тасков|упражнен|items?)?/i) ??
+    // "task 4 ... 5"
+    numFrom(/(?:task\s*4|task4|t4)[\s\S]{0,60}(\d+)/i);
 
   const clamp = (n: number | undefined, min: number, max: number) => {
     if (typeof n !== 'number' || !Number.isFinite(n)) return undefined;
