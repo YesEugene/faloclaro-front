@@ -695,8 +695,8 @@ function LessonEditorContent() {
       {/* Header */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-20">
         <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-wrap items-center gap-3">
               <button
                 onClick={() => router.push('/admin/dashboard?tab=lessons')}
                 className="text-gray-600 hover:text-gray-900"
@@ -713,7 +713,7 @@ function LessonEditorContent() {
               <div className="flex items-center gap-2">
                 {!editingLesson ? (
                   <>
-                    <h1 className="text-xl font-bold text-gray-900">
+                    <h1 className="text-xl font-bold text-gray-900 whitespace-normal">
                       Урок {lesson.day_number}: {lesson.title_ru || lesson.title_en || lesson.title_pt || 'Без названия'}
                     </h1>
                     <button
@@ -725,7 +725,7 @@ function LessonEditorContent() {
                     </button>
                   </>
                 ) : (
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <input
                       type="text"
                       value={lessonTitle.ru}
@@ -789,7 +789,7 @@ function LessonEditorContent() {
                 )}
               </div>
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2 justify-start sm:justify-end">
               {!editingLesson && (
                 <>
                   <button
@@ -979,10 +979,95 @@ function LessonEditorContent() {
         </div>
       )}
 
-      {/* Two-Panel Layout */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Left Panel - Tasks List */}
-        <div className="w-80 bg-white border-r border-gray-200 overflow-y-auto">
+      {/* Two-Panel Layout (desktop) + mobile-first task navigation */}
+      <div className="flex-1 flex flex-col md:flex-row">
+        {/* Mobile: Task navigation + import/export */}
+        <div className="md:hidden px-4 sm:px-6 py-4">
+          <div className="bg-gray-100 rounded-[20px] p-4">
+            <div className="flex items-center justify-between gap-3 mb-4">
+              <h2 className="text-lg font-semibold text-gray-900">Задания урока</h2>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleDownloadLessonJson}
+                  className="px-4 py-2 bg-white text-gray-900 rounded-xl border border-gray-200 shadow-sm hover:bg-gray-50 transition-colors text-sm flex items-center gap-2"
+                  title="Скачать урок (JSON)"
+                >
+                  ⬇️ Экспорт
+                </button>
+                <label className="px-4 py-2 bg-white text-gray-900 rounded-xl border border-gray-200 shadow-sm hover:bg-gray-50 transition-colors cursor-pointer text-sm flex items-center gap-2">
+                  📥 Импорт
+                  <input
+                    type="file"
+                    accept=".json,.yaml,.yml"
+                    className="hidden"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+
+                      if (!confirm('Импорт из файла заменит все текущие данные урока. Продолжить?')) {
+                        return;
+                      }
+
+                      try {
+                        const formData = new FormData();
+                        formData.append('file', file);
+                        formData.append('lessonId', lessonId);
+
+                        const response = await fetch('/api/admin/lessons/import', {
+                          method: 'POST',
+                          body: formData,
+                        });
+
+                        const data = await response.json();
+
+                        if (data.success) {
+                          alert('Урок успешно импортирован!');
+                          loadLesson(); // Reload lesson data
+                        } else {
+                          alert('Ошибка при импорте: ' + (data.error || 'Unknown error'));
+                        }
+                      } catch (err) {
+                        console.error('Error importing lesson:', err);
+                        alert('Ошибка при импорте урока');
+                      }
+                    }}
+                  />
+                </label>
+              </div>
+            </div>
+
+            {tasks.length === 0 ? (
+              <p className="text-gray-500 text-sm text-center py-4">Заданий пока нет</p>
+            ) : (
+              <div className="overflow-x-auto" style={{ WebkitOverflowScrolling: 'touch' as any }}>
+                <div className="flex gap-3" style={{ minWidth: 'max-content' }}>
+                  {[...tasks]
+                    .sort((a: any, b: any) => (a?.task_id || 0) - (b?.task_id || 0))
+                    .map((task: any) => {
+                      const isSelected = editingTask?.task_id === task.task_id;
+                      return (
+                        <button
+                          key={task.task_id}
+                          type="button"
+                          onClick={() => setEditingTask(task)}
+                          className={`w-[92px] h-[72px] rounded-2xl bg-white border-2 shadow-sm flex flex-col items-center justify-center leading-tight ${
+                            isSelected ? 'border-blue-600' : 'border-gray-200'
+                          }`}
+                        >
+                          <div className="text-base font-semibold text-gray-900">{task.task_id}</div>
+                          <div className="text-xs text-gray-700">задание</div>
+                        </button>
+                      );
+                    })}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Left Panel - Tasks List (desktop) */}
+        <div className="hidden md:block w-80 bg-white border-r border-gray-200 overflow-y-auto">
           <div className="p-4">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-semibold text-gray-900">Задания урока</h2>
@@ -1081,7 +1166,7 @@ function LessonEditorContent() {
         </div>
 
         {/* Right Panel - Task Editor */}
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 md:overflow-y-auto overflow-visible">
           {editingTask ? (
             <TaskEditor
               task={editingTask}
@@ -1094,7 +1179,7 @@ function LessonEditorContent() {
               onCancel={() => setEditingTask(null)}
             />
           ) : (
-            <div className="flex items-center justify-center h-full text-gray-500">
+            <div className="flex items-center justify-center min-h-[240px] md:h-full text-gray-500 px-4 pb-8">
               <div className="text-center">
                 <p className="text-lg mb-2">Выберите задание для редактирования</p>
                 <p className="text-sm">или создайте новое задание</p>
