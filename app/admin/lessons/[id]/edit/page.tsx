@@ -1270,6 +1270,9 @@ function GenerateLessonModal({
       return {};
     }
   });
+  const [generatorMode, setGeneratorMode] = useState<'ai' | 'assemble'>('ai');
+  const [assembleInput, setAssembleInput] = useState<string>('');
+  const [assembleError, setAssembleError] = useState<string>('');
   const [stepLoading, setStepLoading] = useState(false);
   const [stepError, setStepError] = useState('');
   const [lastGeneratedJson, setLastGeneratedJson] = useState<string>('');
@@ -1327,6 +1330,198 @@ function GenerateLessonModal({
     const tid = taskIdMap[stepId];
     const tasks = Array.isArray(d?.tasks) ? d.tasks : [];
     return tasks.find((t: any) => t?.task_id === tid) || null;
+  };
+
+  const normalizeOptionCorrectnessInPlace = (obj: any) => {
+    if (!obj || typeof obj !== 'object') return;
+    const options = obj.options;
+    if (!Array.isArray(options)) return;
+    for (const opt of options) {
+      if (!opt || typeof opt !== 'object') continue;
+      if (opt.is_correct !== undefined && opt.correct === undefined) {
+        opt.correct = !!opt.is_correct;
+      }
+      if (opt.correct !== undefined && opt.is_correct === undefined) {
+        opt.is_correct = !!opt.correct;
+      }
+    }
+  };
+
+  const normalizeTasksForDraft = (tasks: any[]) => {
+    const out = Array.isArray(tasks) ? tasks.map((t) => ({ ...(t || {}) })) : [];
+    for (const t of out) {
+      // Fix attention task - ensure it has audio field if it has text
+      if (t?.type === 'attention' && Array.isArray(t.items)) {
+        t.items = t.items.map((item: any) => {
+          if (item?.text && !item?.audio) {
+            return { ...item, audio: item.text };
+          }
+          return item;
+        });
+        for (const item of t.items) normalizeOptionCorrectnessInPlace(item);
+      }
+
+      // Fix correctness flag naming for listening task items
+      if ((t?.type === 'listening_comprehension' || t?.type === 'listening') && Array.isArray(t.items)) {
+        for (const item of t.items) normalizeOptionCorrectnessInPlace(item);
+      }
+
+      // Fix correctness flag naming for rules reinforcement block
+      if (t?.type === 'rules' && Array.isArray(t.blocks)) {
+        for (const block of t.blocks) {
+          if (!block || typeof block !== 'object') continue;
+          if (block.block_type !== 'reinforcement') continue;
+          const c = block.content || {};
+          if (c.task_1) normalizeOptionCorrectnessInPlace(c.task_1);
+          if (c.task_2) normalizeOptionCorrectnessInPlace(c.task_2);
+        }
+      }
+    }
+    return out;
+  };
+
+  const extractJsonObjectsFromText = (raw: string): any[] => {
+    const text = String(raw || '');
+    const out: any[] = [];
+    let start = -1;
+    let depth = 0;
+    let inString = false;
+    let escape = false;
+
+    for (let i = 0; i < text.length; i++) {
+      const ch = text[i];
+
+      if (inString) {
+        if (escape) {
+          escape = false;
+          continue;
+        }
+        if (ch === '\\') {
+          escape = true;
+          continue;
+        }
+        if (ch === '"') {
+          inString = false;
+        }
+        continue;
+      }
+
+      if (ch === '"') {
+        inString = true;
+        continue;
+      }
+
+      if (ch === '{') {
+        if (depth === 0) start = i;
+        depth++;
+        continue;
+      }
+
+      if (ch === '}') {
+        depth = Math.max(0, depth - 1);
+        if (depth === 0 && start !== -1) {
+          const chunk = text.slice(start, i + 1);
+          try {
+            out.push(JSON.parse(chunk));
+          } catch {
+            // ignore chunk
+          }
+          start = -1;
+        }
+      }
+    }
+
+    return out;
+  };
+
+  const tryParseLessonOrTasks = (raw: string): { day?: any; tasks: any[] } => {
+    const input = String(raw || '').trim();
+    if (!input) return { tasks: [] };
+
+    const candidates: string[] = [input];
+
+    // If user pasted a JSON string literal that wraps the object, unwrap it.
+    if (input.startsWith('"') && input.endsWith('"')) {
+      try {
+        const unwrapped = JSON.parse(input);
+        if (typeof unwrapped === 'string' && unwrapped.trim()) candidates.unshift(unwrapped.trim());
+      } catch {
+        // ignore
+      }
+    }
+
+    // If user pasted ""double-quoted"" JSON (common when copied from a string), best-effort fix.
+    if (input.includes('""task_id""') || input.includes('""type""')) {
+      candidates.unshift(input.replace(/""/g, '"'));
+    }
+
+    for (const cand of candidates) {
+      try {
+        const parsed = JSON.parse(cand);
+        if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+          if (Array.isArray((parsed as any).tasks)) return { day: (parsed as any).day, tasks: (parsed as any).tasks };
+          // Single task object pasted
+          if ((parsed as any).type || (parsed as any).task_id) return { tasks: [parsed] };
+        }
+        if (Array.isArray(parsed)) return { tasks: parsed };
+      } catch {
+        // continue
+      }
+    }
+
+    // Fall back to extracting multiple { ... } objects from the text.
+    const objs = extractJsonObjectsFromText(input);
+    return { tasks: objs };
+  };
+
+  const assembleLessonFromInput = () => {
+    setAssembleError('');
+    setStepError('');
+    try {
+      const parsed = tryParseLessonOrTasks(assembleInput);
+      const normalizedTasks = normalizeTasksForDraft(normalizeTasksArray(parsed.tasks || []));
+      if (!normalizedTasks.length) {
+        throw new Error('Не удалось распознать задачи. Вставь 5 JSON объектов (task 1..5) или { day, tasks }.');
+      }
+
+      const prevDay = draftYaml?.day && typeof draftYaml.day === 'object' ? draftYaml.day : {};
+      const nextDay = {
+        ...prevDay,
+        ...(parsed.day && typeof parsed.day === 'object' ? parsed.day : {}),
+        day_number: prevDay?.day_number || lessonDay,
+        title: {
+          ...(prevDay?.title && typeof prevDay.title === 'object' ? prevDay.title : {}),
+          ru: topicRu?.trim() || prevDay?.title?.ru || '',
+          en: topicEn?.trim() || prevDay?.title?.en || '',
+          pt: (prevDay?.title?.pt || '').trim()
+            ? prevDay.title.pt
+            : (topicEn?.trim() || topicRu?.trim() || prevDay?.title?.en || prevDay?.title?.ru || ''),
+        },
+      };
+
+      const nextDraft = {
+        ...(draftYaml && typeof draftYaml === 'object' ? draftYaml : {}),
+        day: nextDay,
+        tasks: normalizedTasks,
+      };
+
+      setDraftYaml(nextDraft);
+    } catch (e: any) {
+      setAssembleError(e?.message || 'Ошибка сборки');
+    }
+  };
+
+  const applyAssembledLessonToDb = async () => {
+    setStepLoading(true);
+    setAssembleError('');
+    setStepError('');
+    try {
+      await onApplyYamlContent(draftYaml);
+    } catch (e: any) {
+      setAssembleError(e?.message || 'Ошибка применения');
+    } finally {
+      setStepLoading(false);
+    }
   };
 
   const isStepReady = (stepId: 'target' | 'task2' | 'task3' | 'task4' | 'task5' | 'task1') => {
@@ -1530,107 +1725,186 @@ function GenerateLessonModal({
               </div>
             </div>
 
-              {stepError && (
-                <div className="mb-3 p-3 bg-red-100 border border-red-300 text-red-700 rounded-lg text-sm">
-                  <strong>Ошибка шага:</strong> {stepError}
-                </div>
-              )}
+            <div className="mb-4 flex gap-2">
+              <button
+                type="button"
+                onClick={() => setGeneratorMode('ai')}
+                disabled={stepLoading || isGenerating}
+                className={`flex-1 px-3 py-2 rounded-lg border text-sm font-semibold ${
+                  generatorMode === 'ai' ? 'bg-white border-blue-600 text-blue-700' : 'bg-white border-gray-200 text-gray-700'
+                }`}
+              >
+                По шагам (AI)
+              </button>
+              <button
+                type="button"
+                onClick={() => setGeneratorMode('assemble')}
+                disabled={stepLoading || isGenerating}
+                className={`flex-1 px-3 py-2 rounded-lg border text-sm font-semibold ${
+                  generatorMode === 'assemble'
+                    ? 'bg-white border-blue-600 text-blue-700'
+                    : 'bg-white border-gray-200 text-gray-700'
+                }`}
+              >
+                Сборка урока
+              </button>
+            </div>
 
-              <div className="mb-3">
-                <div className="text-xs font-medium text-gray-700 mb-2">
-                  Дополнительные инструкции (для одного шага и для «Все шаги»)
-                </div>
-                <textarea
-                  value={stepExtraInstructions}
-                  onChange={(e) => setStepExtraInstructions(e.target.value)}
-                  disabled={stepLoading}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-black bg-white disabled:bg-gray-100 disabled:cursor-not-allowed"
-                  rows={3}
-                  placeholder={`Например: Сделай целевую фразу более креативной и из ДВУХ предложений. Добавь немного разговорности.`}
-                />
-                <div className="text-xs text-gray-500 mt-1">
-                  Подсказка: можно уточнить стиль, длину (1–2 предложения), тон, пример, ограничения.
-                </div>
-              </div>
+            {generatorMode === 'ai' ? (
+              <>
+                {stepError && (
+                  <div className="mb-3 p-3 bg-red-100 border border-red-300 text-red-700 rounded-lg text-sm">
+                    <strong>Ошибка шага:</strong> {stepError}
+                  </div>
+                )}
 
-              {/* Step readiness + selector (mobile-friendly) */}
-              <div className="mb-3">
-                <div className="text-xs font-medium text-gray-700 mb-2">Готовность шагов</div>
-                <div className="overflow-x-auto" style={{ WebkitOverflowScrolling: 'touch' as any }}>
-                  <div className="flex gap-2" style={{ minWidth: 'max-content' }}>
-                    {steps.map((s) => {
-                      const ready = isStepReady(s.id);
-                      const active = selectedStepId === s.id;
-                      return (
-                        <button
-                          key={s.id}
-                          type="button"
-                          onClick={() => setSelectedStepId(s.id)}
-                          className={`px-3 py-2 rounded-xl border text-sm flex items-center gap-2 ${
-                            active ? 'border-blue-600 bg-white' : 'border-gray-200 bg-white'
-                          }`}
-                          style={{ minHeight: '44px' }}
-                        >
-                          <span
-                            className="inline-flex items-center justify-center"
-                            style={{
-                              width: '18px',
-                              height: '18px',
-                              borderRadius: '999px',
-                              border: `2px solid ${ready ? '#34BF5D' : '#CED2D6'}`,
-                              color: ready ? '#34BF5D' : '#CED2D6',
-                              fontSize: '12px',
-                              lineHeight: '18px',
-                            }}
-                          >
-                            {ready ? '✓' : ''}
-                          </span>
-                          <span style={{ fontWeight: 600 }}>{s.id === 'target' ? 'target' : s.id.replace('task', '')}</span>
-                        </button>
-                      );
-                    })}
+                <div className="mb-3">
+                  <div className="text-xs font-medium text-gray-700 mb-2">
+                    Дополнительные инструкции (для одного шага и для «Все шаги»)
+                  </div>
+                  <textarea
+                    value={stepExtraInstructions}
+                    onChange={(e) => setStepExtraInstructions(e.target.value)}
+                    disabled={stepLoading}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-black bg-white disabled:bg-gray-100 disabled:cursor-not-allowed"
+                    rows={3}
+                    placeholder={`Например: Сделай целевую фразу более креативной и из ДВУХ предложений. Добавь немного разговорности.`}
+                  />
+                  <div className="text-xs text-gray-500 mt-1">
+                    Подсказка: можно уточнить стиль, длину (1–2 предложения), тон, пример, ограничения.
                   </div>
                 </div>
-              </div>
 
-              {/* Actions (mobile layout like design) */}
-              <div className="grid grid-cols-2 gap-3 mb-3">
-                <button
-                  type="button"
-                  onClick={runStep}
-                  disabled={stepLoading || !topicRu.trim() || !topicEn.trim()}
-                  className="px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-semibold"
-                >
-                  Один шаг
-                </button>
-                <button
-                  type="button"
-                  onClick={runAllSteps}
-                  disabled={isGenerating || stepLoading || !topicRu.trim() || !topicEn.trim()}
-                  className="px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-semibold"
-                  title="Сгенерировать все шаги подряд и сохранить"
-                >
-                  Все шаги
-                </button>
-              </div>
+                {/* Step readiness + selector (mobile-friendly) */}
+                <div className="mb-3">
+                  <div className="text-xs font-medium text-gray-700 mb-2">Готовность шагов</div>
+                  <div className="overflow-x-auto" style={{ WebkitOverflowScrolling: 'touch' as any }}>
+                    <div className="flex gap-2" style={{ minWidth: 'max-content' }}>
+                      {steps.map((s) => {
+                        const ready = isStepReady(s.id);
+                        const active = selectedStepId === s.id;
+                        return (
+                          <button
+                            key={s.id}
+                            type="button"
+                            onClick={() => setSelectedStepId(s.id)}
+                            className={`px-3 py-2 rounded-xl border text-sm flex items-center gap-2 ${
+                              active ? 'border-blue-600 bg-white' : 'border-gray-200 bg-white'
+                            }`}
+                            style={{ minHeight: '44px' }}
+                          >
+                            <span
+                              className="inline-flex items-center justify-center"
+                              style={{
+                                width: '18px',
+                                height: '18px',
+                                borderRadius: '999px',
+                                border: `2px solid ${ready ? '#34BF5D' : '#CED2D6'}`,
+                                color: ready ? '#34BF5D' : '#CED2D6',
+                                fontSize: '12px',
+                                lineHeight: '18px',
+                              }}
+                            >
+                              {ready ? '✓' : ''}
+                            </span>
+                            <span style={{ fontWeight: 600 }}>
+                              {s.id === 'target' ? 'target' : s.id.replace('task', '')}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
 
-              {/* Result preview (tap pill to preview saved/merged draft) */}
-              <div className="mt-2">
-                <div className="text-sm font-semibold text-gray-900 mb-2">Результат генерации</div>
-                <div className="text-sm text-gray-600 mb-2">{currentStep.label}</div>
-                <pre className="text-xs bg-white border border-gray-200 rounded-lg p-3 overflow-auto max-h-56">
-                  {JSON.stringify(extractStepPayloadFromDraft(draftYaml, selectedStepId) || {}, null, 2)}
-                </pre>
-                <button
-                  type="button"
-                  onClick={saveDraftToDb}
+                {/* Actions (mobile layout like design) */}
+                <div className="grid grid-cols-2 gap-3 mb-3">
+                  <button
+                    type="button"
+                    onClick={runStep}
+                    disabled={stepLoading || !topicRu.trim() || !topicEn.trim()}
+                    className="px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-semibold"
+                  >
+                    Один шаг
+                  </button>
+                  <button
+                    type="button"
+                    onClick={runAllSteps}
+                    disabled={isGenerating || stepLoading || !topicRu.trim() || !topicEn.trim()}
+                    className="px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-semibold"
+                    title="Сгенерировать все шаги подряд и сохранить"
+                  >
+                    Все шаги
+                  </button>
+                </div>
+
+                {/* Result preview (tap pill to preview saved/merged draft) */}
+                <div className="mt-2">
+                  <div className="text-sm font-semibold text-gray-900 mb-2">Результат генерации</div>
+                  <div className="text-sm text-gray-600 mb-2">{currentStep.label}</div>
+                  <pre className="text-xs bg-white border border-gray-200 rounded-lg p-3 overflow-auto max-h-56">
+                    {JSON.stringify(extractStepPayloadFromDraft(draftYaml, selectedStepId) || {}, null, 2)}
+                  </pre>
+                  <button
+                    type="button"
+                    onClick={saveDraftToDb}
+                    disabled={stepLoading}
+                    className="mt-3 w-full px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-semibold"
+                    title="Сохранить текущий draft в урок"
+                  >
+                    Сохранить
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                {assembleError && (
+                  <div className="mb-3 p-3 bg-red-100 border border-red-300 text-red-700 rounded-lg text-sm">
+                    <strong>Ошибка сборки:</strong> {assembleError}
+                  </div>
+                )}
+
+                <div className="text-xs text-gray-600 mb-2">
+                  Вставь 5 JSON объектов (task 1..5) или целиком <code>{'{ day, tasks }'}</code>. Можно просто подряд — мы распознаем.
+                </div>
+                <textarea
+                  value={assembleInput}
+                  onChange={(e) => setAssembleInput(e.target.value)}
                   disabled={stepLoading}
-                  className="mt-3 w-full px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-semibold"
-                  title="Сохранить текущий draft в урок"
-                >
-                  Сохранить
-                </button>
-              </div>
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-black bg-white disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  rows={6}
+                  placeholder={`Вставь сюда задачи 1..5 (JSON).\n\nНапример:\n{ "task_id": 1, "type": "vocabulary", ... }\n{ "task_id": 2, "type": "rules", ... }\n...`}
+                />
+
+                <div className="grid grid-cols-2 gap-3 mt-3">
+                  <button
+                    type="button"
+                    onClick={assembleLessonFromInput}
+                    disabled={stepLoading}
+                    className="px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-semibold"
+                    title="Собрать draftYaml из вставленных задач"
+                  >
+                    Собрать урок
+                  </button>
+                  <button
+                    type="button"
+                    onClick={applyAssembledLessonToDb}
+                    disabled={stepLoading}
+                    className="px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-semibold"
+                    title="Применить собранный урок (сохранить yaml_content)"
+                  >
+                    Применить урок
+                  </button>
+                </div>
+
+                <div className="mt-3">
+                  <div className="text-sm font-semibold text-gray-900 mb-2">Превью собранного урока (draft)</div>
+                  <pre className="text-xs bg-white border border-gray-200 rounded-lg p-3 overflow-auto max-h-56">
+                    {JSON.stringify({ day: draftYaml?.day, tasks: draftYaml?.tasks }, null, 2)}
+                  </pre>
+                </div>
+              </>
+            )}
             </div>
 
           {/* Error Message */}
