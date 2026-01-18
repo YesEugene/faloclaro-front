@@ -1317,6 +1317,8 @@ function GenerateLessonModal({
   ) => {
     const d = yaml && typeof yaml === 'object' ? yaml : {};
     if (stepId === 'target') {
+      const tt = d?.day?.target_task;
+      if (tt && typeof tt === 'object') return { target_task: tt };
       const tp = d?.day?.target_phrase;
       if (tp && typeof tp === 'object') return { target_phrase: tp };
       return null;

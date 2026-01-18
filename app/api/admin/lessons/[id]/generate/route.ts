@@ -129,6 +129,70 @@ function setTargetPhraseOnDraft(draft: any, target: { pt: string; ru: string; en
   return d;
 }
 
+function setTargetTaskOnDraft(
+  draft: any,
+  targetTask: {
+    title?: { ru?: string; en?: string };
+    scenarios: Array<{
+      title?: { ru?: string; en?: string };
+      dialogue?: string[]; // PT lines like: "- Você pode ajudar?"
+      learn?: { ru?: string; en?: string };
+    }>;
+  }
+): any {
+  const d = ensureDraftLessonObject(draft);
+  const day = d.day && typeof d.day === 'object' && !Array.isArray(d.day) ? d.day : {};
+  day.target_task = targetTask;
+  d.day = day;
+  return d;
+}
+
+function normalizeTargetTask(input: any): any | null {
+  if (!input || typeof input !== 'object' || Array.isArray(input)) return null;
+  const scenariosRaw = (input as any).scenarios;
+  const scenarios = Array.isArray(scenariosRaw) ? scenariosRaw : [];
+  const cleaned = scenarios
+    .map((s: any) => {
+      const obj = s && typeof s === 'object' && !Array.isArray(s) ? s : {};
+      const dialogueRaw = obj.dialogue;
+      const dialogue = Array.isArray(dialogueRaw)
+        ? dialogueRaw.map((l: any) => (typeof l === 'string' ? l.trim() : '')).filter(Boolean)
+        : [];
+      const titleObj = obj.title && typeof obj.title === 'object' ? obj.title : {};
+      const learnObj = obj.learn && typeof obj.learn === 'object' ? obj.learn : {};
+      return {
+        title: {
+          ru: typeof titleObj.ru === 'string' ? titleObj.ru.trim() : undefined,
+          en: typeof titleObj.en === 'string' ? titleObj.en.trim() : undefined,
+        },
+        dialogue,
+        learn: {
+          ru: typeof learnObj.ru === 'string' ? learnObj.ru.trim() : undefined,
+          en: typeof learnObj.en === 'string' ? learnObj.en.trim() : undefined,
+        },
+      };
+    })
+    .filter((s: any) => Array.isArray(s.dialogue) && s.dialogue.length > 0);
+
+  if (cleaned.length === 0) return null;
+  const titleObj = (input as any).title && typeof (input as any).title === 'object' ? (input as any).title : {};
+  return {
+    title: {
+      ru: typeof titleObj.ru === 'string' ? titleObj.ru.trim() : undefined,
+      en: typeof titleObj.en === 'string' ? titleObj.en.trim() : undefined,
+    },
+    scenarios: cleaned,
+  };
+}
+
+function targetTaskToPtSummary(targetTask: any): string {
+  const tt = normalizeTargetTask(targetTask);
+  if (!tt) return '';
+  // Use the first scenario dialogue as the “goal” reference for downstream tasks.
+  const first = tt.scenarios[0];
+  return Array.isArray(first?.dialogue) ? first.dialogue.join('\n') : '';
+}
+
 async function loadReferenceExampleLessons(): Promise<any | null> {
   try {
     // Preferred: use lessons 1–5 as multi-example guidance (best canonical references).
@@ -1003,19 +1067,25 @@ export async function POST(
         );
       if (!Array.isArray(baseDraft.tasks)) baseDraft.tasks = [];
 
-      const existingTarget = baseDraft?.day?.target_phrase;
+      const existingTargetPhrase = baseDraft?.day?.target_phrase;
       const targetPhrase =
-        existingTarget && typeof existingTarget === 'object'
+        existingTargetPhrase && typeof existingTargetPhrase === 'object'
           ? {
-              pt: (existingTarget.pt || '').toString(),
-              ru: (existingTarget.ru || '').toString(),
-              en: (existingTarget.en || '').toString(),
+              pt: (existingTargetPhrase.pt || '').toString(),
+              ru: (existingTargetPhrase.ru || '').toString(),
+              en: (existingTargetPhrase.en || '').toString(),
             }
           : null;
 
+      const existingTargetTask = normalizeTargetTask(baseDraft?.day?.target_task);
+
       const ensureHasTargetOrThrow = () => {
-        if (!targetPhrase?.pt?.trim()) {
-          throw new Error('Step requires target phrase. Please run step=target first (or provide draft_lesson.day.target_phrase).');
+        const hasPhrase = !!targetPhrase?.pt?.trim();
+        const hasTask = !!existingTargetTask;
+        if (!hasPhrase && !hasTask) {
+          throw new Error(
+            'Step requires a target. Please run step=target first (or provide draft_lesson.day.target_phrase or draft_lesson.day.target_task).'
+          );
         }
       };
 
@@ -1027,30 +1097,65 @@ export async function POST(
           openai,
           systemPrompt: stepSystemPrompt,
           userPrompt:
-            `Generate the TARGET final sentence(s) for this lesson.\n` +
-            `Return JSON ONLY in this exact schema:\n` +
+            `Generate the TARGET for this lesson.\n\n` +
+            `You may return EITHER of these formats (depending on the user's extra instructions):\n` +
+            `A) Simple target phrase:\n` +
             `{\n  "target_phrase": { "pt": "...", "ru": "...", "en": "..." }\n}\n\n` +
-            `Rules:\n- Portuguese must be natural for PT-PT.\n- It should be 1–2 connected sentences that the learner can say at the end.\n- Must match the topic and be usable as the end of Task 2 block_6 and Task 5.\n- No placeholders.\n` +
+            `B) Target task with 2–3 situations (dialogues) that represent the final goal:\n` +
+            `{\n  "target_task": {\n    "title": { "ru": "…", "en": "…" },\n    "scenarios": [\n      {\n        "title": { "ru": "…", "en": "…" },\n        "dialogue": [ "- ...", "- ..." ],\n        "learn": { "ru": "…", "en": "…" }\n      }\n    ]\n  }\n}\n\n` +
+            `Rules:\n- Portuguese must be natural for PT-PT.\n- Must match the topic.\n- No placeholders.\n- This target MUST be what Tasks 2–5 build towards.\n` +
             extraBlock,
           maxTokens: 500,
           temperature: 0.75,
         });
+        const tt = normalizeTargetTask(out?.target_task);
         const tp = out?.target_phrase;
-        if (!tp?.pt || !tp?.ru || !tp?.en) {
-          throw new Error('Invalid target_phrase output. Expected { target_phrase: { pt, ru, en } }.');
+        const hasPhrase =
+          tp && typeof tp === 'object' && typeof tp.pt === 'string' && typeof tp.ru === 'string' && typeof tp.en === 'string';
+        const hasTask = !!tt;
+
+        if (!hasPhrase && !hasTask) {
+          throw new Error('Invalid target output. Expected { target_phrase } OR { target_task }.');
         }
-        generatedPiece = { target_phrase: { pt: String(tp.pt), ru: String(tp.ru), en: String(tp.en) } };
-        mergedDraft = setTargetPhraseOnDraft(mergedDraft, generatedPiece.target_phrase);
+
+        // Save whichever was produced. If only target_task is provided, we derive a PT summary for downstream prompts.
+        if (hasTask) {
+          generatedPiece = { target_task: tt };
+          mergedDraft = setTargetTaskOnDraft(mergedDraft, tt);
+          // optional derived phrase for compatibility
+          const derivedPt = targetTaskToPtSummary(tt);
+          if (derivedPt) {
+            mergedDraft = setTargetPhraseOnDraft(mergedDraft, {
+              pt: derivedPt,
+              ru: '',
+              en: '',
+            });
+          }
+        }
+        if (hasPhrase) {
+          generatedPiece = generatedPiece ? { ...generatedPiece, target_phrase: tp } : { target_phrase: tp };
+          mergedDraft = setTargetPhraseOnDraft(mergedDraft, {
+            pt: String(tp.pt),
+            ru: String(tp.ru),
+            en: String(tp.en),
+          });
+        }
       }
 
       if (step === 'task2') {
         ensureHasTargetOrThrow();
+        const draftTargetTask = normalizeTargetTask(mergedDraft?.day?.target_task) || existingTargetTask;
+        const targetPt =
+          (typeof mergedDraft?.day?.target_phrase?.pt === 'string' && mergedDraft.day.target_phrase.pt.trim())
+            ? mergedDraft.day.target_phrase.pt.trim()
+            : (draftTargetTask ? targetTaskToPtSummary(draftTargetTask) : '');
         const out = await callOpenAIJsonOrThrow({
           openai,
           systemPrompt: stepSystemPrompt,
           userPrompt:
             `Generate ONLY Task 2 (rules) for this lesson.\n\n` +
-            `Context:\n- Target phrase (must be used in block_6 speak_out_loud): ${targetPhrase!.pt}\n\n` +
+            `Context:\n- Target (final goal for this lesson):\n${targetPt || '[No PT target provided]'}\n\n` +
+            (draftTargetTask ? `Target task (JSON):\n${JSON.stringify(draftTargetTask, null, 2)}\n\n` : '') +
             `Return JSON ONLY in this schema:\n` +
             `{\n  "task": { "task_id": 2, "type": "rules", "title": {"ru":"","en":""}, "subtitle": {"ru":"","en":""}, "structure": {"blocks_order": []}, "blocks": [ ... ] }\n}\n\n` +
             `Hard requirements:\n- Exactly 6 blocks.\n- block_5 must be reinforcement with 2 single_choice tasks with REAL Portuguese audio strings.\n- block_6 speak_out_loud instruction must contain the target phrase (PT).\n- No empty fields (titles, explanations, hints).\n` +
@@ -1071,12 +1176,17 @@ export async function POST(
         ensureHasTargetOrThrow();
         const t2 = (Array.isArray(mergedDraft.tasks) ? mergedDraft.tasks : []).find((t: any) => t?.task_id === 2);
         if (!t2) throw new Error('Step task3 requires Task 2 already generated in draft.');
+        const draftTargetTask = normalizeTargetTask(mergedDraft?.day?.target_task) || existingTargetTask;
+        const targetPt =
+          (typeof mergedDraft?.day?.target_phrase?.pt === 'string' && mergedDraft.day.target_phrase.pt.trim())
+            ? mergedDraft.day.target_phrase.pt.trim()
+            : (draftTargetTask ? targetTaskToPtSummary(draftTargetTask) : '');
         const out = await callOpenAIJsonOrThrow({
           openai,
           systemPrompt: stepSystemPrompt,
           userPrompt:
             `Generate ONLY Task 3 (listening_comprehension).\n\n` +
-            `Context:\n- Target phrase: ${targetPhrase!.pt}\n- Use constructions from Task 2, but do NOT copy any full sentence verbatim.\n\n` +
+            `Context:\n- Target: ${targetPt || '[No PT target provided]'}\n- Use constructions from Task 2, but do NOT copy any full sentence verbatim.\n\n` +
             `Return JSON ONLY:\n` +
             `{\n  "task": { "task_id": 3, "type": "listening_comprehension", "title": {"ru":"","en":""}, "subtitle": {"ru":"","en":""}, "items": [ ... ] }\n}\n\n` +
             `Hard requirements:\n- Exactly 3 items.\n- Each item: audio (PT string), question (ru/en), 3 options, exactly 1 correct.\n- No placeholders.\n` +
@@ -1097,12 +1207,17 @@ export async function POST(
         ensureHasTargetOrThrow();
         const t3 = (Array.isArray(mergedDraft.tasks) ? mergedDraft.tasks : []).find((t: any) => t?.task_id === 3);
         if (!t3) throw new Error('Step task4 requires Task 3 already generated in draft.');
+        const draftTargetTask = normalizeTargetTask(mergedDraft?.day?.target_task) || existingTargetTask;
+        const targetPt =
+          (typeof mergedDraft?.day?.target_phrase?.pt === 'string' && mergedDraft.day.target_phrase.pt.trim())
+            ? mergedDraft.day.target_phrase.pt.trim()
+            : (draftTargetTask ? targetTaskToPtSummary(draftTargetTask) : '');
         const out = await callOpenAIJsonOrThrow({
           openai,
           systemPrompt: stepSystemPrompt,
           userPrompt:
             `Generate ONLY Task 4 (attention).\n\n` +
-            `Context:\n- Target phrase: ${targetPhrase!.pt}\n- Use only known words from previous tasks; do NOT introduce new meaningful words.\n- Do NOT copy Task 2/3 sentences verbatim.\n\n` +
+            `Context:\n- Target: ${targetPt || '[No PT target provided]'}\n- Use only known words from previous tasks; do NOT introduce new meaningful words.\n- Do NOT copy Task 2/3 sentences verbatim.\n\n` +
             `Return JSON ONLY:\n` +
             `{\n  "task": { "task_id": 4, "type": "attention", "title": {"ru":"","en":""}, "subtitle": {"ru":"","en":""}, "items": [ ... ] }\n}\n\n` +
             `Hard requirements:\n- 3–5 items.\n- Each item: audio (PT string), question (ru/en), 3 options, exactly 1 correct, feedback (ru/en).\n- Feedback must explain logic + prompt to say PT out loud.\n` +
@@ -1123,12 +1238,17 @@ export async function POST(
         ensureHasTargetOrThrow();
         const t4 = (Array.isArray(mergedDraft.tasks) ? mergedDraft.tasks : []).find((t: any) => t?.task_id === 4);
         if (!t4) throw new Error('Step task5 requires Task 4 already generated in draft.');
+        const draftTargetTask = normalizeTargetTask(mergedDraft?.day?.target_task) || existingTargetTask;
+        const targetPt =
+          (typeof mergedDraft?.day?.target_phrase?.pt === 'string' && mergedDraft.day.target_phrase.pt.trim())
+            ? mergedDraft.day.target_phrase.pt.trim()
+            : (draftTargetTask ? targetTaskToPtSummary(draftTargetTask) : '');
         const out = await callOpenAIJsonOrThrow({
           openai,
           systemPrompt: stepSystemPrompt,
           userPrompt:
             `Generate ONLY Task 5 (writing_optional).\n\n` +
-            `Context:\n- Target phrase: ${targetPhrase!.pt}\n- Task 5 should help learner produce target phrase (or a personalized variant) using lesson vocabulary.\n\n` +
+            `Context:\n- Target: ${targetPt || '[No PT target provided]'}\n- Task 5 should help learner produce the target (or a personalized variant) using lesson vocabulary.\n\n` +
             `Return JSON ONLY:\n` +
             `{\n  "task": { "task_id": 5, "type": "writing_optional", "title": {"ru":"","en":""}, "subtitle": {"ru":"","en":""}, "instruction": {"ru":"","en":""}, "main_task": { "format": "template_fill_or_speak", "template": [ ... ] }, "example": { "show_by_button": true, "button_text": {"ru":"Показать пример","en":"Show example"}, "content": [ ... ] }, "alternative": { "title": {"ru":"","en":""}, "instruction": {"ru":"","en":""}, "action_button": { "text": {"ru":"Я сказал(а) вслух","en":"I said it out loud"} } } }\n}\n\n` +
             `Hard requirements:\n- instruction must be non-empty and include a short “use these words” list (2–4 key + 1–2 supporting).\n- main_task.template must be non-empty (1–3 lines).\n- example.content must be non-empty (no blanks).\n` +
