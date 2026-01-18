@@ -1123,7 +1123,6 @@ function LessonEditorContent() {
           topicEn={generateTopicEn}
           onTopicRuChange={setGenerateTopicRu}
           onTopicEnChange={setGenerateTopicEn}
-          onGenerate={handleGenerateLesson}
           onClose={() => {
             setShowGenerateModal(false);
             // Don't clear topic fields - keep them for next time
@@ -1149,7 +1148,6 @@ function GenerateLessonModal({
   topicEn,
   onTopicRuChange,
   onTopicEnChange,
-  onGenerate,
   onClose,
   isGenerating,
   progress,
@@ -1163,7 +1161,6 @@ function GenerateLessonModal({
   topicEn: string;
   onTopicRuChange: (value: string) => void;
   onTopicEnChange: (value: string) => void;
-  onGenerate: () => void;
   onClose: () => void;
   isGenerating: boolean;
   progress: { step: string; progress: number };
@@ -1179,7 +1176,6 @@ function GenerateLessonModal({
 
   const phase = getPhase(lessonDay);
 
-  const [mode, setMode] = useState<'stepwise' | 'full'>('stepwise');
   const [draftYaml, setDraftYaml] = useState<any>(() => {
     try {
       return typeof initialYamlContent === 'string'
@@ -1189,22 +1185,48 @@ function GenerateLessonModal({
       return {};
     }
   });
-  const [stepIndex, setStepIndex] = useState(0);
   const [stepLoading, setStepLoading] = useState(false);
   const [stepError, setStepError] = useState('');
   const [lastGeneratedJson, setLastGeneratedJson] = useState<string>('');
   const [stepExtraInstructions, setStepExtraInstructions] = useState<string>('');
+  const [selectedStepId, setSelectedStepId] = useState<'target' | 'task2' | 'task3' | 'task4' | 'task5' | 'task1'>(
+    'target'
+  );
+  const [generatedByStep, setGeneratedByStep] = useState<
+    Partial<Record<'target' | 'task2' | 'task3' | 'task4' | 'task5' | 'task1', string>>
+  >({});
 
   const steps: Array<{ id: 'target' | 'task2' | 'task3' | 'task4' | 'task5' | 'task1'; label: string }> = [
     { id: 'target', label: 'Шаг 1: Целевая фраза (target phrase)' },
-    { id: 'task2', label: 'Шаг 2: Задание 2 (Rules)' },
-    { id: 'task3', label: 'Шаг 3: Задание 3 (Listening)' },
-    { id: 'task4', label: 'Шаг 4: Задание 4 (Attention)' },
-    { id: 'task5', label: 'Шаг 5: Задание 5 (Writing/Speak)' },
-    { id: 'task1', label: 'Шаг 6: Задание 1 (Vocabulary) на базе 2–5' },
+    // Note: follow methodology order (2 → 3 → 4 → 5 → 1)
+    { id: 'task2', label: 'Урок 2: Задание 2 (Rules)' },
+    { id: 'task3', label: 'Урок 3: Задание 3 (Listening)' },
+    { id: 'task4', label: 'Урок 4: Задание 4 (Attention)' },
+    { id: 'task5', label: 'Урок 5: Задание 5 (Writing/Speak)' },
+    { id: 'task1', label: 'Урок 1: Задание 1 (Vocabulary) на базе 2–5' },
   ];
 
-  const currentStep = steps[stepIndex] || steps[0];
+  const currentStep = steps.find((s) => s.id === selectedStepId) || steps[0];
+
+  const extractStepPayloadFromDraft = (
+    yaml: any,
+    stepId: 'target' | 'task2' | 'task3' | 'task4' | 'task5' | 'task1'
+  ) => {
+    const d = yaml && typeof yaml === 'object' ? yaml : {};
+    if (stepId === 'target') {
+      const tp = d?.day?.target_phrase;
+      if (tp && typeof tp === 'object') return { target_phrase: tp };
+      return null;
+    }
+    const taskIdMap: Record<string, number> = { task1: 1, task2: 2, task3: 3, task4: 4, task5: 5 };
+    const tid = taskIdMap[stepId];
+    const tasks = Array.isArray(d?.tasks) ? d.tasks : [];
+    return tasks.find((t: any) => t?.task_id === tid) || null;
+  };
+
+  const isStepReady = (stepId: 'target' | 'task2' | 'task3' | 'task4' | 'task5' | 'task1') => {
+    return !!extractStepPayloadFromDraft(draftYaml, stepId);
+  };
 
   const runStep = async () => {
     if (!topicRu.trim() || !topicEn.trim()) {
@@ -1236,7 +1258,10 @@ function GenerateLessonModal({
       }
 
       setDraftYaml(data.merged_yaml_content);
-      setLastGeneratedJson(JSON.stringify(data.generated, null, 2));
+      const generatedStr = JSON.stringify(data.generated, null, 2);
+      setLastGeneratedJson(generatedStr);
+      setGeneratedByStep((prev) => ({ ...prev, [currentStep.id]: generatedStr }));
+      setSelectedStepId(currentStep.id);
     } catch (e: any) {
       setStepError(e?.message || 'Ошибка генерации шага');
     } finally {
@@ -1249,9 +1274,6 @@ function GenerateLessonModal({
     setStepError('');
     try {
       await onApplyYamlContent(draftYaml);
-      if (stepIndex < steps.length - 1) {
-        setStepIndex(stepIndex + 1);
-      }
     } catch (e: any) {
       setStepError(e?.message || 'Ошибка сохранения шага');
     } finally {
@@ -1269,8 +1291,10 @@ function GenerateLessonModal({
     setLastGeneratedJson('');
     try {
       let localDraft = draftYaml;
-      for (let i = stepIndex; i < steps.length; i++) {
+      for (let i = 0; i < steps.length; i++) {
         const s = steps[i];
+        const variationToken = `${Date.now()}_${s.id}_${Math.random().toString(16).slice(2)}`;
+        const prevForStep = generatedByStep[s.id] || '';
         const response = await fetch(`/api/admin/lessons/${lessonId}/generate`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -1279,6 +1303,9 @@ function GenerateLessonModal({
             topic_en: topicEn.trim(),
             step: s.id,
             draft_lesson: localDraft,
+            extra_instructions: stepExtraInstructions,
+            variation_token: variationToken,
+            previous_output: prevForStep,
           }),
         });
         const data = await response.json().catch(() => ({}));
@@ -1287,11 +1314,12 @@ function GenerateLessonModal({
         }
         localDraft = data.merged_yaml_content;
         setDraftYaml(localDraft);
-        setLastGeneratedJson(JSON.stringify(data.generated, null, 2));
-        setStepIndex(i);
+        const generatedStr = JSON.stringify(data.generated, null, 2);
+        setLastGeneratedJson(generatedStr);
+        setGeneratedByStep((prev) => ({ ...prev, [s.id]: generatedStr }));
+        setSelectedStepId(s.id);
       }
       await onApplyYamlContent(localDraft);
-      setStepIndex(steps.length - 1);
     } catch (e: any) {
       setStepError(e?.message || 'Ошибка генерации');
     } finally {
@@ -1301,7 +1329,7 @@ function GenerateLessonModal({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-3 sm:mx-4 max-h-[90vh] overflow-y-auto">
         <div className="p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-gray-900">🤖 Сгенерировать урок</h2>
@@ -1383,63 +1411,16 @@ function GenerateLessonModal({
             </div>
           )}
 
-          {/* Mode Toggle */}
-          <div className="mb-6 p-4 border border-gray-200 rounded-lg">
-            <div className="flex items-center justify-between gap-4">
+          {/* Step-only mode (mobile-first) */}
+          <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+            <div className="flex items-center justify-between gap-3 mb-3">
               <div>
                 <div className="text-sm font-medium text-gray-900">Режим генерации</div>
                 <div className="text-xs text-gray-500">
-                  Рекомендуется «по шагам»: меньше ошибок, можно проверять каждый шаг.
+                  Цепочка: target → 2 → 3 → 4 → 5 → 1. Можно генерировать по одному шагу или сразу все.
                 </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => setMode('stepwise')}
-                  disabled={isGenerating || stepLoading}
-                  className={`px-3 py-1.5 rounded-lg text-sm border ${
-                    mode === 'stepwise'
-                      ? 'bg-blue-600 text-white border-blue-600'
-                      : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
-                  }`}
-                >
-                  По шагам
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setMode('full')}
-                  disabled={isGenerating || stepLoading}
-                  className={`px-3 py-1.5 rounded-lg text-sm border ${
-                    mode === 'full'
-                      ? 'bg-blue-600 text-white border-blue-600'
-                      : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
-                  }`}
-                >
-                  Один запрос
-                </button>
               </div>
             </div>
-          </div>
-
-          {mode === 'stepwise' && (
-            <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-              <div className="flex items-center justify-between gap-3 mb-3">
-                <div>
-                  <div className="text-sm font-semibold text-gray-900">{currentStep.label}</div>
-                  <div className="text-xs text-gray-500">
-                    Цепочка: target → 2 → 3 → 4 → 5 → 1. После каждого шага можно сохранить и перейти дальше.
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  onClick={runAllSteps}
-                  disabled={isGenerating || stepLoading || !topicRu.trim() || !topicEn.trim()}
-                  className="px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
-                  title="Сгенерировать все шаги подряд и сохранить"
-                >
-                  Запустить все шаги
-                </button>
-              </div>
 
               {stepError && (
                 <div className="mb-3 p-3 bg-red-100 border border-red-300 text-red-700 rounded-lg text-sm">
@@ -1449,7 +1430,7 @@ function GenerateLessonModal({
 
               <div className="mb-3">
                 <div className="text-xs font-medium text-gray-700 mb-2">
-                  Дополнительные инструкции для шага (опционально)
+                  Дополнительные инструкции (для одного шага и для «Все шаги»)
                 </div>
                 <textarea
                   value={stepExtraInstructions}
@@ -1464,52 +1445,85 @@ function GenerateLessonModal({
                 </div>
               </div>
 
-              {lastGeneratedJson && (
-                <div className="mb-3">
-                  <div className="text-xs font-medium text-gray-700 mb-2">Результат шага (JSON)</div>
-                  <pre className="text-xs bg-white border border-gray-200 rounded-lg p-3 overflow-auto max-h-56">
-                    {lastGeneratedJson}
-                  </pre>
+              {/* Step readiness + selector (mobile-friendly) */}
+              <div className="mb-3">
+                <div className="text-xs font-medium text-gray-700 mb-2">Готовность шагов</div>
+                <div className="overflow-x-auto" style={{ WebkitOverflowScrolling: 'touch' as any }}>
+                  <div className="flex gap-2" style={{ minWidth: 'max-content' }}>
+                    {steps.map((s) => {
+                      const ready = isStepReady(s.id);
+                      const active = selectedStepId === s.id;
+                      return (
+                        <button
+                          key={s.id}
+                          type="button"
+                          onClick={() => setSelectedStepId(s.id)}
+                          className={`px-3 py-2 rounded-xl border text-sm flex items-center gap-2 ${
+                            active ? 'border-blue-600 bg-white' : 'border-gray-200 bg-white'
+                          }`}
+                          style={{ minHeight: '44px' }}
+                        >
+                          <span
+                            className="inline-flex items-center justify-center"
+                            style={{
+                              width: '18px',
+                              height: '18px',
+                              borderRadius: '999px',
+                              border: `2px solid ${ready ? '#34BF5D' : '#CED2D6'}`,
+                              color: ready ? '#34BF5D' : '#CED2D6',
+                              fontSize: '12px',
+                              lineHeight: '18px',
+                            }}
+                          >
+                            {ready ? '✓' : ''}
+                          </span>
+                          <span style={{ fontWeight: 600 }}>{s.id === 'target' ? 'target' : s.id.replace('task', '')}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-              )}
+              </div>
 
-              <div className="flex gap-2 justify-end">
-                <button
-                  type="button"
-                  onClick={() => setStepIndex(Math.max(0, stepIndex - 1))}
-                  disabled={stepLoading || stepIndex === 0}
-                  className="px-3 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 disabled:opacity-50 text-sm"
-                >
-                  ← Предыдущий
-                </button>
+              {/* Actions (mobile layout like design) */}
+              <div className="grid grid-cols-2 gap-3 mb-3">
                 <button
                   type="button"
                   onClick={runStep}
                   disabled={stepLoading || !topicRu.trim() || !topicEn.trim()}
-                  className="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                  className="px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-semibold"
                 >
-                  {stepLoading ? '⏳ Генерация...' : 'Сгенерировать шаг'}
+                  Один шаг
                 </button>
+                <button
+                  type="button"
+                  onClick={runAllSteps}
+                  disabled={isGenerating || stepLoading || !topicRu.trim() || !topicEn.trim()}
+                  className="px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-semibold"
+                  title="Сгенерировать все шаги подряд и сохранить"
+                >
+                  Все шаги
+                </button>
+              </div>
+
+              {/* Result preview (tap pill to preview saved/merged draft) */}
+              <div className="mt-2">
+                <div className="text-sm font-semibold text-gray-900 mb-2">Результат генерации</div>
+                <div className="text-sm text-gray-600 mb-2">{currentStep.label}</div>
+                <pre className="text-xs bg-white border border-gray-200 rounded-lg p-3 overflow-auto max-h-56">
+                  {JSON.stringify(extractStepPayloadFromDraft(draftYaml, selectedStepId) || {}, null, 2)}
+                </pre>
                 <button
                   type="button"
                   onClick={saveDraftToDb}
                   disabled={stepLoading}
-                  className="px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                  className="mt-3 w-full px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-semibold"
                   title="Сохранить текущий draft в урок"
                 >
-                  Сохранить шаг
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setStepIndex(Math.min(steps.length - 1, stepIndex + 1))}
-                  disabled={stepLoading || stepIndex === steps.length - 1}
-                  className="px-3 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 disabled:opacity-50 text-sm"
-                >
-                  Следующий →
+                  Сохранить
                 </button>
               </div>
             </div>
-          )}
 
           {/* Error Message */}
           {error && (
@@ -1526,22 +1540,6 @@ function GenerateLessonModal({
               className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Отмена
-            </button>
-            <button
-              onClick={onGenerate}
-              disabled={mode !== 'full' || isGenerating || stepLoading || !topicRu.trim() || !topicEn.trim()}
-              className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-            >
-              {isGenerating ? (
-                <>
-                  <span className="animate-spin">⏳</span>
-                  Генерация...
-                </>
-              ) : (
-                <>
-                  🔄 Генерировать урок
-                </>
-              )}
             </button>
           </div>
         </div>
