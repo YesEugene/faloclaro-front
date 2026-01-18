@@ -193,6 +193,46 @@ function targetTaskToPtSummary(targetTask: any): string {
   return Array.isArray(first?.dialogue) ? first.dialogue.join('\n') : '';
 }
 
+function parseDesiredCountsFromExtraInstructions(extraInstructions: string): {
+  task2ExamplesPerExplanationBlock?: number;
+  task3Items?: number;
+  task4Items?: number;
+} {
+  const text = (extraInstructions || '').toLowerCase();
+  const numFrom = (re: RegExp) => {
+    const m = text.match(re);
+    if (!m) return undefined;
+    const n = parseInt(m[1] || '', 10);
+    return Number.isFinite(n) ? n : undefined;
+  };
+
+  // Examples per explanation block in Task 2
+  // e.g. "в таске 1 было 3 примера" / "3 примера" / "examples 4"
+  const examples = numFrom(/(\d+)\s*(пример|примера|примеров|examples?)/i);
+
+  // Task 3 items count (listening)
+  // e.g. "в 3 задании 5 тасков" / "задание 3: 5" / "task 3: 5 items"
+  const t3 =
+    numFrom(/(?:задани[ея]\s*3|task\s*3)[^\d]{0,20}(\d+)/i) ??
+    numFrom(/(?:task3|t3)[^\d]{0,20}(\d+)/i);
+
+  // Task 4 items count (attention)
+  const t4 =
+    numFrom(/(?:задани[ея]\s*4|task\s*4)[^\d]{0,20}(\d+)/i) ??
+    numFrom(/(?:task4|t4)[^\d]{0,20}(\d+)/i);
+
+  const clamp = (n: number | undefined, min: number, max: number) => {
+    if (typeof n !== 'number' || !Number.isFinite(n)) return undefined;
+    return Math.max(min, Math.min(max, n));
+  };
+
+  return {
+    task2ExamplesPerExplanationBlock: clamp(examples, 2, 5),
+    task3Items: clamp(t3, 3, 5),
+    task4Items: clamp(t4, 3, 5),
+  };
+}
+
 async function loadReferenceExampleLessons(): Promise<any | null> {
   try {
     // Preferred: use lessons 1–5 as multi-example guidance (best canonical references).
@@ -1057,6 +1097,8 @@ export async function POST(
         (previousOutput ? `\nDo NOT repeat this previous output; generate a DIFFERENT alternative:\n${previousOutput}\n` : '') +
         (variationToken ? `\nVariation token (must change output): ${variationToken}\n` : '');
 
+      const desired = parseDesiredCountsFromExtraInstructions(extraInstructions);
+
       const baseDraft =
         ensureDraftLessonObject(
           draftLessonFromClient !== undefined
@@ -1159,6 +1201,7 @@ export async function POST(
             `Return JSON ONLY in this schema:\n` +
             `{\n  "task": { "task_id": 2, "type": "rules", "title": {"ru":"","en":""}, "subtitle": {"ru":"","en":""}, "structure": {"blocks_order": []}, "blocks": [ ... ] }\n}\n\n` +
             `Hard requirements:\n- Exactly 6 blocks.\n- block_5 must be reinforcement with 2 single_choice tasks with REAL Portuguese audio strings.\n- block_6 speak_out_loud instruction must contain the target phrase (PT).\n- No empty fields (titles, explanations, hints).\n` +
+            `- For explanation/how_to_say blocks (block_1..block_3): include ${desired.task2ExamplesPerExplanationBlock || 2} examples each (each example is one PT sentence).\n` +
             extraBlock,
           maxTokens: 3500,
           temperature: 0.55,
@@ -1189,15 +1232,16 @@ export async function POST(
             `Context:\n- Target: ${targetPt || '[No PT target provided]'}\n- Use constructions from Task 2, but do NOT copy any full sentence verbatim.\n\n` +
             `Return JSON ONLY:\n` +
             `{\n  "task": { "task_id": 3, "type": "listening_comprehension", "title": {"ru":"","en":""}, "subtitle": {"ru":"","en":""}, "items": [ ... ] }\n}\n\n` +
-            `Hard requirements:\n- Exactly 3 items.\n- Each item: audio (PT string), question (ru/en), 3 options, exactly 1 correct.\n- No placeholders.\n` +
+            `Hard requirements:\n- Generate ${desired.task3Items || 3} items.\n- Each item: audio (PT string), question (ru/en), 3 options, exactly 1 correct.\n- No placeholders.\n` +
             extraBlock,
           maxTokens: 2200,
           temperature: 0.5,
         });
         const task = out?.task;
         if (!task || task.task_id !== 3) throw new Error('Invalid task3 output: expected { task: { task_id: 3, ... } }');
-        if (!Array.isArray(task.items) || task.items.length !== 3) {
-          throw new Error(`Task 3 must have exactly 3 items. Got ${Array.isArray(task.items) ? task.items.length : 0}.`);
+        const desiredCount = desired.task3Items || 3;
+        if (!Array.isArray(task.items) || task.items.length !== desiredCount) {
+          throw new Error(`Task 3 must have ${desiredCount} items. Got ${Array.isArray(task.items) ? task.items.length : 0}.`);
         }
         generatedPiece = task;
         mergedDraft = upsertTaskIntoDraft(mergedDraft, task);
@@ -1220,15 +1264,16 @@ export async function POST(
             `Context:\n- Target: ${targetPt || '[No PT target provided]'}\n- Use only known words from previous tasks; do NOT introduce new meaningful words.\n- Do NOT copy Task 2/3 sentences verbatim.\n\n` +
             `Return JSON ONLY:\n` +
             `{\n  "task": { "task_id": 4, "type": "attention", "title": {"ru":"","en":""}, "subtitle": {"ru":"","en":""}, "items": [ ... ] }\n}\n\n` +
-            `Hard requirements:\n- 3–5 items.\n- Each item: audio (PT string), question (ru/en), 3 options, exactly 1 correct, feedback (ru/en).\n- Feedback must explain logic + prompt to say PT out loud.\n` +
+            `Hard requirements:\n- Generate ${desired.task4Items || 3} items.\n- Each item: audio (PT string), question (ru/en), 3 options, exactly 1 correct, feedback (ru/en).\n- Feedback must explain logic + prompt to say PT out loud.\n` +
             extraBlock,
           maxTokens: 2400,
           temperature: 0.5,
         });
         const task = out?.task;
         if (!task || task.task_id !== 4) throw new Error('Invalid task4 output: expected { task: { task_id: 4, ... } }');
-        if (!Array.isArray(task.items) || task.items.length < 3) {
-          throw new Error(`Task 4 must have at least 3 items. Got ${Array.isArray(task.items) ? task.items.length : 0}.`);
+        const desiredCount = desired.task4Items || 3;
+        if (!Array.isArray(task.items) || task.items.length !== desiredCount) {
+          throw new Error(`Task 4 must have ${desiredCount} items. Got ${Array.isArray(task.items) ? task.items.length : 0}.`);
         }
         generatedPiece = task;
         mergedDraft = upsertTaskIntoDraft(mergedDraft, task);
@@ -1475,20 +1520,22 @@ export async function POST(
           }
         }
 
-        // Validate Task 3 has exactly 3 items (if it exists)
+        // Validate Task 3 has 3–5 items (if it exists)
         const task3 = validTasks.find((t: any) => t.task_id === 3 && (t.type === 'listening' || t.type === 'listening_comprehension'));
         if (task3) {
-          if (!task3.items || !Array.isArray(task3.items) || task3.items.length !== 3) {
-            console.warn(`⚠️ Task 3 has ${task3.items?.length || 0} items, expected 3`);
+          const len = Array.isArray(task3.items) ? task3.items.length : 0;
+          if (len < 3 || len > 5) {
+            console.warn(`⚠️ Task 3 has ${len} items, expected 3–5`);
             // Don't throw error, continue with what we have
           }
         }
 
-        // Validate Task 4 has exactly 3 items (if it exists)
+        // Validate Task 4 has 3–5 items (if it exists)
         const task4 = validTasks.find((t: any) => t.task_id === 4 && t.type === 'attention');
         if (task4) {
-          if (!task4.items || !Array.isArray(task4.items) || task4.items.length !== 3) {
-            console.warn(`⚠️ Task 4 has ${task4.items?.length || 0} items, expected 3`);
+          const len = Array.isArray(task4.items) ? task4.items.length : 0;
+          if (len < 3 || len > 5) {
+            console.warn(`⚠️ Task 4 has ${len} items, expected 3–5`);
             // Don't throw error, continue with what we have
           }
         }
