@@ -1434,9 +1434,74 @@ function GenerateLessonModal({
     return out;
   };
 
+  // Extract JSON objects that are wrapped as string literals like:
+  // "{ ""task_id"": 1, ... }" "{ ... }"
+  // This happens when a user copy-pastes tasks from a quoted source (e.g. chat).
+  const extractJsonObjectsWrappedInQuotes = (raw: string): any[] => {
+    const text = String(raw || '');
+    const out: any[] = [];
+
+    let i = 0;
+    while (i < text.length) {
+      // Find a starting quote that directly wraps an object: "{"
+      if (text[i] !== '"' || text[i + 1] !== '{') {
+        i++;
+        continue;
+      }
+
+      const start = i;
+      i += 1; // move past the opening quote
+      let depth = 0;
+
+      // We are inside a "quoted object". Inside, quotes are often doubled as "" (so no real string parsing needed).
+      while (i < text.length) {
+        const ch = text[i];
+
+        // Handle doubled quotes inside ("" -> literal ")
+        if (ch === '"' && text[i + 1] === '"') {
+          i += 2;
+          continue;
+        }
+
+        if (ch === '{') {
+          depth++;
+          i++;
+          continue;
+        }
+        if (ch === '}') {
+          depth = Math.max(0, depth - 1);
+          // End condition: object closes and next char is closing quote
+          if (depth === 0 && text[i + 1] === '"') {
+            const end = i + 2; // include closing quote
+            const chunkWithQuotes = text.slice(start, end);
+            const inner = chunkWithQuotes.slice(1, -1); // strip outer quotes
+            const normalized = inner.replace(/""/g, '"');
+            try {
+              out.push(JSON.parse(normalized));
+            } catch {
+              // ignore chunk
+            }
+            i = end;
+            break;
+          }
+          i++;
+          continue;
+        }
+
+        i++;
+      }
+    }
+
+    return out;
+  };
+
   const tryParseLessonOrTasks = (raw: string): { day?: any; tasks: any[] } => {
     const input = String(raw || '').trim();
     if (!input) return { tasks: [] };
+
+    // 1) Common case: multiple objects wrapped in quotes (chat-style)
+    const wrapped = extractJsonObjectsWrappedInQuotes(input);
+    if (wrapped.length > 0) return { tasks: wrapped };
 
     const candidates: string[] = [input];
 
