@@ -56,6 +56,7 @@ export function BottomLessonNav(props: {
   onNext?: () => void;
   isLastTask?: boolean;
   onNextLesson?: () => void;
+  onOpenMenu?: () => void;
 }) {
   const labels = useMemo(() => LABELS_BY_TASK_ID[props.taskId] || LABELS_BY_TASK_ID[1], [props.taskId]);
 
@@ -110,7 +111,11 @@ export function BottomLessonNav(props: {
               <div style={{ width: '50px', height: '50px' }} />
             )}
 
-            <div
+            <button
+              type="button"
+              onClick={props.onOpenMenu}
+              disabled={!props.onOpenMenu}
+              aria-label={props.lang === 'ru' ? 'Открыть меню урока' : 'Open lesson menu'}
               className="flex-1 rounded-full text-center"
               style={{
                 backgroundColor: pillBg,
@@ -121,6 +126,8 @@ export function BottomLessonNav(props: {
                 flexDirection: 'column',
                 justifyContent: 'center',
                 gap: '3px',
+                border: 'none',
+                cursor: props.onOpenMenu ? 'pointer' : 'default',
               }}
             >
               <div style={{ fontSize: '14px', fontWeight: 500, lineHeight: '1.2', color: 'rgba(0,0,0,1)' }}>
@@ -129,7 +136,7 @@ export function BottomLessonNav(props: {
               <div style={{ fontSize: '12px', lineHeight: '1.25', color: '#5A5E65' }}>
                 {pickText(labels.level2, props.lang)}
               </div>
-            </div>
+            </button>
 
             <button
               onClick={nextHandler}

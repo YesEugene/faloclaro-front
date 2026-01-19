@@ -25,9 +25,10 @@ interface AttentionTaskProps {
   progressCompleted?: number;
   progressTotal?: number;
   dayNumber?: number;
+  onOpenLessonMenu?: () => void;
 }
 
-export default function AttentionTask({ task, language, onComplete, isCompleted, savedAnswers, savedShowResults, savedWrongAnswers, onNextTask, onPreviousTask, onNextLesson, canGoNext = false, canGoPrevious = false, isLastTask = false, progressCompleted = 0, progressTotal = 5, dayNumber }: AttentionTaskProps) {
+export default function AttentionTask({ task, language, onComplete, isCompleted, savedAnswers, savedShowResults, savedWrongAnswers, onNextTask, onPreviousTask, onNextLesson, canGoNext = false, canGoPrevious = false, isLastTask = false, progressCompleted = 0, progressTotal = 5, dayNumber, onOpenLessonMenu }: AttentionTaskProps) {
   const { language: appLanguage } = useAppLanguage();
   const [answers, setAnswers] = useState<{ [key: number]: string }>(savedAnswers || {});
   const [showResults, setShowResults] = useState<{ [key: number]: boolean }>(savedShowResults || {});
@@ -408,6 +409,7 @@ export default function AttentionTask({ task, language, onComplete, isCompleted,
             onNext={onNextTask}
             isLastTask={isLastTask}
             onNextLesson={onNextLesson}
+            onOpenMenu={onOpenLessonMenu}
           />
     </div>
   );

@@ -25,9 +25,10 @@ interface RulesTaskProps {
   progressCompleted?: number;
   progressTotal?: number;
   dayNumber?: number;
+  onOpenLessonMenu?: () => void;
 }
 
-export default function RulesTask({ task, language, onComplete, isCompleted, savedAnswers, savedShowResults, savedWrongAnswers, savedSpeakOutLoudCompleted, onNextTask, onPreviousTask, onNextLesson, canGoNext = false, canGoPrevious = false, isLastTask = false, progressCompleted = 0, progressTotal = 5, dayNumber }: RulesTaskProps) {
+export default function RulesTask({ task, language, onComplete, isCompleted, savedAnswers, savedShowResults, savedWrongAnswers, savedSpeakOutLoudCompleted, onNextTask, onPreviousTask, onNextLesson, canGoNext = false, canGoPrevious = false, isLastTask = false, progressCompleted = 0, progressTotal = 5, dayNumber, onOpenLessonMenu }: RulesTaskProps) {
   const { language: appLanguage } = useAppLanguage();
   const [audioUrls, setAudioUrls] = useState<{ [key: string]: string }>({});
   const [isPlayingAudio, setIsPlayingAudio] = useState<{ [key: string]: boolean }>({});
@@ -847,6 +848,7 @@ export default function RulesTask({ task, language, onComplete, isCompleted, sav
             onNext={onNextTask}
             isLastTask={isLastTask}
             onNextLesson={onNextLesson}
+            onOpenMenu={onOpenLessonMenu}
           />
     </div>
   );

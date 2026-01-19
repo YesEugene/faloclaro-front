@@ -22,9 +22,10 @@ interface WritingTaskProps {
   progressCompleted?: number;
   progressTotal?: number;
   dayNumber?: number;
+  onOpenLessonMenu?: () => void;
 }
 
-export default function WritingTask({ task, language, onComplete, isCompleted, savedWrittenText, savedSpeakOutLoud, onNextTask, onPreviousTask, onNextLesson, canGoNext = false, canGoPrevious = false, isLastTask = false, progressCompleted = 0, progressTotal = 5, dayNumber }: WritingTaskProps) {
+export default function WritingTask({ task, language, onComplete, isCompleted, savedWrittenText, savedSpeakOutLoud, onNextTask, onPreviousTask, onNextLesson, canGoNext = false, canGoPrevious = false, isLastTask = false, progressCompleted = 0, progressTotal = 5, dayNumber, onOpenLessonMenu }: WritingTaskProps) {
   const { language: appLanguage } = useAppLanguage();
   const [writtenText, setWrittenText] = useState(savedWrittenText || '');
   const [speakOutLoud, setSpeakOutLoud] = useState(savedSpeakOutLoud || false);
@@ -442,6 +443,7 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
             onNext={onNextTask}
             isLastTask={isLastTask}
             onNextLesson={onNextLesson}
+            onOpenMenu={onOpenLessonMenu}
           />
     </div>
   );

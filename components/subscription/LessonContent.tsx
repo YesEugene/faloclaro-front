@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { useAppLanguage } from '@/lib/language-context';
 import Link from 'next/link';
 import Image from 'next/image';
 import { SettingsPanel } from '@/components/subscription/ui/SettingsPanel';
+import { LessonMenuSheet } from '@/components/subscription/ui/LessonMenuSheet';
 import TaskCard from './TaskCard';
 
 interface LessonContentProps {
@@ -25,6 +26,7 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
   const [userProgress, setUserProgress] = useState(initialUserProgress);
   const [totalLessons, setTotalLessons] = useState<number>(0);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [lessonMenuOpen, setLessonMenuOpen] = useState(false);
   
   // Update userProgress when initialUserProgress changes
   useEffect(() => {
@@ -517,6 +519,32 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
     setTimerData(time);
   };
 
+  const completedTaskIds = useMemo(() => {
+    const set = new Set<number>();
+    const tps = userProgress?.task_progress || [];
+    for (const tp of tps) {
+      if (tp?.status === 'completed' && Number.isFinite(Number(tp?.task_id))) {
+        set.add(Number(tp.task_id));
+      }
+    }
+    return set;
+  }, [userProgress]);
+
+  const selectTaskById = (taskId: number) => {
+    const idx = tasks.findIndex((t) => Number(t?.task_id) === Number(taskId));
+    if (idx === -1) return;
+    setCurrentTaskIndex(idx);
+    currentTaskIdRef.current = Number(taskId);
+    initializedRef.current = true;
+
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set('task', String(taskId));
+    const newUrl = `${window.location.pathname}?${urlParams.toString()}`;
+    window.history.pushState({}, '', newUrl);
+
+    setLessonMenuOpen(false);
+  };
+
   // Parse yaml_content - handle both string and object
   let yamlContent: any = {};
   if (lesson?.yaml_content) {
@@ -746,6 +774,7 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
               // For now, just navigate to phrases page with task info
               router.push(`/pt/lesson/${lesson.day_number}/${token}?task=${currentTask.task_id}&dictionary=true`);
             }}
+            onOpenLessonMenu={() => setLessonMenuOpen(true)}
             dayNumber={lesson.day_number}
             token={token}
             onTimerUpdate={currentTask?.type === 'vocabulary' ? handleTimerUpdate : undefined}
@@ -754,6 +783,16 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
           />
         </div>
       )}
+
+      <LessonMenuSheet
+        open={lessonMenuOpen}
+        lang={appLanguage}
+        tasks={tasks}
+        currentTaskId={currentTask?.task_id || 1}
+        completedTaskIds={completedTaskIds}
+        onSelectTaskId={selectTaskById}
+        onClose={() => setLessonMenuOpen(false)}
+      />
     </div>
   );
 }
