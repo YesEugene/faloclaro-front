@@ -122,6 +122,35 @@ export default function SubscriptionLandingPage() {
       startFreeButton: 'Try 3 lessons for free.',
       startFreeNote: 'No spam. No worries. You can cancel anytime.',
       startFreeEndText: 'If you like our approach,\nyou can unlock all 60 lessons for €20.',
+
+      faqTitle: 'Everything you need to know about the course',
+      faqItems: [
+        {
+          q: 'How does the FaloClaro methodology work and who is this course for?',
+          a:
+            'The FaloClaro methodology is built around two main goals.\n\nOn one side, the course follows the logic of international language levels (A1 → A2 → B1) used in official Portuguese exams. Step by step, we develop the same core skills: understanding spoken language, navigating information, working with time, causes, and messages.\n\nOn the other side, our main goal is to help you start speaking. That is why learning is not built around grammar rules, but around practice: real phrases, connected speech, and everyday situations.\n\nThe entire course is divided into 4 phases (modules) and is designed to take about 60 days:\n• Phase 1 (A1) — speech recognition and basic reactions\n• Phase 2 (A2) — information search and situational orientation\n• Phase 3 (A2+) — working with stories, time, and causes\n• Phase 4 (B1) — confident messaging, decision-making, and discussing events\n\nThis approach works well both for complete beginners and for learners who already studied Portuguese but want to move from “I recognize some words” to real-life language use.',
+        },
+        {
+          q: 'How does learning in FaloClaro work?',
+          a:
+            'Learning in FaloClaro is built around short, clear lessons and constant practice. Each lesson consists of 5 tasks: from learning new words to actively using them in speech. You gradually move from listening to speaking, without overload or sudden jumps in difficulty.\n\nOn average, one lesson takes 15 to 25 minutes, depending on your pace and number of repetitions. We recommend studying regularly, but without rushing. It is better to fully absorb one lesson than to quickly complete several.\n\nEach module contains 14–15 lessons. The full course is designed for about 60 days of consistent learning. This is enough time to build stable language skills and move from isolated phrases to connected speech.\n\nIt is best to complete lesson tasks in order, since they are logically structured: first vocabulary, then structure, comprehension, and practice. This helps your brain absorb the material faster.\n\nAt the same time, you can always return to any completed lesson or task. Repetition is part of the methodology and is considered a natural part of learning, not a mistake or a step backward.',
+        },
+        {
+          q: 'How does free access and payment work in FaloClaro?',
+          a:
+            'After registration, you get free access to the first 3 lessons of the course. This is enough to explore the format, understand the methodology, and decide if this learning style works for you.\n\nAfter the free lessons, you can unlock full access to the entire course with a one-time payment of 20 euros. This is a single purchase, not a subscription.\n\nAfter payment, you receive permanent access to all modules, lessons, and course updates. There are no monthly charges or recurring payments.\n\nFaloClaro has no hidden fees. The price you see is the final cost of the full course. We do not sell separate lessons or extra “packages”.\n\nYou try the course for free first, and only then decide whether to unlock full access.',
+        },
+        {
+          q: 'What do I need to study with FaloClaro?',
+          a:
+            'FaloClaro works directly in your browser. You can study on your phone, tablet, or computer. No installation is required, just open the link you receive by email.\n\nYou learn at your own pace. You can complete one lesson per day or several in one session. You choose the rhythm that fits your schedule and lifestyle.\n\nIf you miss a few days, nothing bad happens. The course is not tied to a strict schedule. You can always return to any lesson and continue from where you stopped.\n\nYour progress is saved automatically, so you never lose your results and can return to practice at any time.',
+        },
+        {
+          q: 'What results can I expect from FaloClaro?',
+          a:
+            'This is not a magic shortcut. You still need to spend about 15–20 minutes per day and stay focused. However, we designed the course to be easy to follow and comfortable to use.\n\nConfidence in understanding spoken Portuguese builds gradually. The course is structured so that you slowly adapt to the sound of the language, speaking speed, and sentence structure. There is a strong chance you will notice your first clear improvements in listening comprehension by the end of the first module, and the skill will continue to grow afterward.\n\nFaloClaro is well suited for relocation and everyday life in Portugal. The course focuses on real situations: shopping, transport, cafés, services, and daily communication. You are not learning abstract language, but what people actually use every day.',
+        },
+      ],
       
       aboutTitle: 'I built FaloClaro for myself.',
       aboutSubtitle: 'After two years of living in Portugal, we realized we wanted to stay, which meant we finally had to learn the language. As always, time was limited because of work, so we needed an online format. But not a "school". We wanted practice, something that helps you speak and actually feel the language.',
@@ -204,6 +233,35 @@ export default function SubscriptionLandingPage() {
       startFreeButton: 'Попробуй 3 урока бесплатно.',
       startFreeNote: 'Без спама. Без переживаний. Можно отменить в любой момент.',
       startFreeEndText: 'Если тебе понравится наш подход,\nты сможешь купить весь курс из 60 уроков за 20€.',
+
+      faqTitle: 'Все, что нужно знать о курсе',
+      faqItems: [
+        {
+          q: 'Как устроена методология FaloClaro и для кого подходит этот курс?',
+          a:
+            'Методология FaloClaro построена на пересечении двух целей.\nС одной стороны, курс опирается на логику международных языковых уровней (A1 → A2 → B1), которые используются в официальных экзаменах по португальскому. Мы постепенно развиваем те же навыки: понимание речи, ориентацию в информации, работу с временем, причинами и сообщениями.\n\nС другой стороны, наша главная цель — чтобы ты начал говорить. Поэтому обучение построено не вокруг правил, а вокруг практики: живых фраз, связной речи и реальных ситуаций.\n\nВесь курс разбит на 4 фазы (модуля) и рассчитан примерно на 60 дней:\n• Phase 1 (A1) — распознавание речи и базовые реакции\n• Phase 2 (A2) — поиск информации и ориентация в среде\n• Phase 3 (A2+) — работа с историями, временем и причинами\n• Phase 4 (B1) — уверенные сообщения, решения и обсуждение событий\n\nТакой подход подходит для начинающих с нуля и для тех, кто уже учил язык, но хочет перейти от «понимаю отдельные слова» к реальному использованию языка в жизни.',
+        },
+        {
+          q: 'Как проходит обучение в FaloClaro?',
+          a:
+            'Обучение в FaloClaro построено вокруг коротких, понятных уроков и постоянной практики. Один урок состоит из 5 заданий: от знакомства с новыми словами до активного использования их в речи. Ты постепенно переходишь от восприятия к говорению, без перегрузки и резких скачков сложности.\n\nВ среднем один урок занимает от 15 до 25 минут, в зависимости от темпа и количества повторений. Мы рекомендуем заниматься регулярно, но без спешки. Лучше хорошо проработать один урок, чем быстро пройти несколько.\n\nВ каждом модуле 14–15 уроков. Весь курс рассчитан примерно на 60 дней последовательного обучения. Этого достаточно, чтобы сформировать устойчивые языковые навыки и перейти от отдельных фраз к связной речи.\n\nЗадания внутри урока лучше проходить по порядку, так как они выстроены логически: сначала словарь, затем структура, понимание и практика. Это помогает мозгу быстрее усваивать материал.\n\nПри этом ты всегда можешь возвращаться к любым пройденным урокам и заданиям. Повторение встроено в методологию и является частью процесса обучения, а не ошибкой или шагом назад.',
+        },
+        {
+          q: 'Как работает бесплатный доступ и оплата в FaloClaro?',
+          a:
+            'После регистрации ты получаешь бесплатный доступ к первым 3 урокам курса. Этого достаточно, чтобы познакомиться с форматом, методологией и понять, подходит ли тебе такой способ обучения.\n\nПосле бесплатных уроков ты можешь один раз оплатить полный доступ ко всему курсу за 20 евро. Это разовая покупка, а не подписка.\n\nПосле оплаты ты получаешь постоянный доступ ко всем модулям, урокам и обновлениям курса. Никаких ежемесячных списаний и повторных платежей нет.\n\nВ FaloClaro нет скрытых платежей. Цена, которую ты видишь, это финальная стоимость полного курса. Мы не продаем отдельные уроки или дополнительные «пакеты».\n\nТы сначала пробуешь бесплатно, а затем сам решаешь, готов ли открыть полный доступ.',
+        },
+        {
+          q: 'Что мне нужно для обучения в FaloClaro?',
+          a:
+            'FaloClaro работает прямо в браузере. Ты можешь учиться с телефона, планшета или компьютера. Ничего устанавливать не нужно, достаточно открыть ссылку, которую ты получаешь по Е-мейл..\n\nТы учишься в своем темпе. Можно проходить по одному уроку в день или делать несколько за раз. Ты сам выбираешь ритм, который подходит под твой график и образ жизни.\n\nЕсли ты пропустил несколько дней, ничего страшного не происходит. Курс не привязан к жесткому расписанию. Ты всегда можешь вернуться к любому уроку и продолжить с того места, где остановился.\n\nВсе твои прогрессы сохраняются автоматически, поэтому ты не теряешь результат и можешь спокойно возвращаться к практике в любое время.',
+        },
+        {
+          q: 'Какой результат я получу от обучения в FaloClaro?',
+          a:
+            'Это не волшебная таблетка. Придется все же выделить 15-20 минут в день и сфокусироваться. Хотя мы постарались сделать курс легким для восприятия.\n\nУверенность в понимании речи появляется постепенно. Курс выстроен так, чтобы ты шаг за шагом привыкал к звучанию языка, темпу и структуре предложений. Есть большой шанс, что твое первые ощутимые изменения в восприятии речи появятся уже к концу первого модуля обучения, а дальше навык только усиливается.\n\nFaloClaro хорошо подходит для переезда и жизни в Португалии. Курс фокусируется на реальных ситуациях: покупки, транспорт, кафе, сервисы, повседневое общение. Ты учишь не абстрактный язык, а то, что реально используется каждый день.',
+        },
+      ],
       
       aboutTitle: 'Я сделал FaloClaro для себя.',
       aboutSubtitle: 'После двух лет жизни в Португалии мы поняли, что хотим остаться, а значит, язык все-таки придется выучить. Как всегда, времени мало из-за работы, поэтому нужен был онлайн-формат. Но не «школа», а практика, чтобы говорить и действительно прочувствовать язык.',
@@ -252,6 +310,8 @@ export default function SubscriptionLandingPage() {
     setShowSuccessPopup(false);
     setSubmitted(false);
   };
+
+  const [faqOpenIndex, setFaqOpenIndex] = useState<number>(0);
 
   return (
     <div className="min-h-screen bg-white" style={{ fontFamily: 'var(--font-tiktok)' }}>
@@ -1821,6 +1881,140 @@ export default function SubscriptionLandingPage() {
           }}>
             {t.startFreeEndText}
           </p>
+        </div>
+      </section>
+
+      {/* FAQ - Between Start for Free and About */}
+      <section style={{ 
+        backgroundColor: '#fff', 
+        padding: isMobile ? '10px 20px' : '10px 20px', 
+        display: 'flex', 
+        justifyContent: 'center',
+        marginTop: isMobile ? '10px' : '0px',
+        marginBottom: isMobile ? '10px' : '0px'
+      }}>
+        <div style={{ 
+          width: isMobile ? '100%' : '868px',
+          maxWidth: isMobile ? '389px' : '868px',
+          backgroundColor: '#F2F2F2',
+          borderRadius: isMobile ? '16px' : '20px',
+          padding: isMobile ? '10px' : '40px 20px 30px 20px',
+          marginBottom: isMobile ? '10px' : '0'
+        }}>
+          {/* Two columns layout - same spirit as About/Contact */}
+          <div style={{
+            display: 'flex',
+            flexDirection: isMobile ? 'column' : 'row',
+            gap: isMobile ? '20px' : '40px',
+            alignItems: 'flex-start'
+          }}>
+            {/* Left column - Title */}
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              flex: isMobile ? '1' : '0 0 calc(50% + 10px)',
+              width: isMobile ? '100%' : 'calc(50% + 10px)',
+              paddingRight: isMobile ? '0px' : '20px'
+            }}>
+              <h2 style={{ 
+                fontFamily: 'var(--font-orelega)', 
+                fontSize: isMobile ? '38px' : '48px', 
+                fontWeight: 400, 
+                color: '#3A2E1F', 
+                marginBottom: '0px',
+                marginTop: isMobile ? '30px' : '0px',
+                textAlign: isMobile ? 'center' : 'left',
+                paddingLeft: isMobile ? '0px' : '30px',
+                paddingRight: isMobile ? '0px' : '30px',
+                lineHeight: '1.1'
+              }}>
+                {t.faqTitle}
+              </h2>
+            </div>
+
+            {/* Right column - Accordion */}
+            <div style={{
+              flex: isMobile ? '1' : '0 0 50%',
+              width: isMobile ? '100%' : '50%',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'flex-start',
+              paddingTop: isMobile ? '0px' : '0px',
+              paddingLeft: isMobile ? '0px' : '0px',
+              paddingRight: isMobile ? '0px' : '30px',
+              paddingBottom: isMobile ? '0px' : '0px',
+              marginLeft: isMobile ? '0px' : '-30px',
+              marginBottom: '30px'
+            }}>
+              <div style={{ width: '100%', paddingLeft: isMobile ? '0px' : '30px' }}>
+                {(t.faqItems || []).map((item: any, idx: number) => {
+                  const open = faqOpenIndex === idx;
+                  return (
+                    <div
+                      key={idx}
+                      style={{
+                        background: '#fff',
+                        borderRadius: '12px',
+                        border: '1px solid #D1D5DB',
+                        padding: '16px 16px',
+                        marginBottom: '12px',
+                      }}
+                    >
+                      <button
+                        type="button"
+                        onClick={() => setFaqOpenIndex(open ? -1 : idx)}
+                        style={{
+                          width: '100%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          gap: '12px',
+                          background: 'transparent',
+                          border: 'none',
+                          cursor: 'pointer',
+                          padding: 0,
+                          textAlign: 'left',
+                        }}
+                      >
+                        <div
+                          style={{
+                            fontFamily: 'var(--font-tiktok)',
+                            fontSize: '16px',
+                            fontWeight: 600,
+                            color: '#111',
+                            lineHeight: '1.3',
+                          }}
+                        >
+                          {item.q}
+                        </div>
+                        <div style={{ flex: '0 0 auto', transform: open ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.15s ease' }}>
+                          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M6 9l6 6 6-6" />
+                          </svg>
+                        </div>
+                      </button>
+
+                      {open && (
+                        <div
+                          style={{
+                            marginTop: '12px',
+                            fontFamily: 'var(--font-tiktok)',
+                            fontSize: '14px',
+                            fontWeight: 400,
+                            color: '#111',
+                            lineHeight: '1.55',
+                            whiteSpace: 'pre-line',
+                          }}
+                        >
+                          {item.a}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
