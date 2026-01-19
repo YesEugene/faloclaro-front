@@ -114,6 +114,15 @@ export default function IntroClient() {
         return (
           <>
             <div style={{ fontSize: '18px', color: '#111', lineHeight: '1.6' }}>Курс состоит из 4 модулей.</div>
+            <div style={{ marginTop: '12px' }}>
+              <Image
+                src="/Img/Website/Onboarding 2 RU.png"
+                alt="Как устроен модуль"
+                width={1200}
+                height={900}
+                style={{ width: '100%', height: 'auto', borderRadius: '16px', border: '1px solid #E5E7EB' }}
+              />
+            </div>
             <div style={{ marginTop: '10px', fontSize: '18px', color: '#111', lineHeight: '1.6' }}>
               Каждый модуль — это отдельный этап обучения:
             </div>
@@ -137,6 +146,15 @@ export default function IntroClient() {
             <div style={{ fontSize: '18px', color: '#111', lineHeight: '1.6' }}>
               Чтобы увидеть все уроки, нажми кнопку «Меню курса».
             </div>
+            <div style={{ marginTop: '12px' }}>
+              <Image
+                src="/Img/Website/Onboarding 1 RU.png"
+                alt="Как найти урок"
+                width={1200}
+                height={900}
+                style={{ width: '100%', height: 'auto', borderRadius: '16px', border: '1px solid #E5E7EB' }}
+              />
+            </div>
             <div style={{ marginTop: '10px', fontSize: '18px', color: '#111', lineHeight: '1.6' }}>
               Откроется боковое меню, где ты увидишь:
             </div>
@@ -157,6 +175,15 @@ export default function IntroClient() {
           <>
             <div style={{ fontSize: '18px', color: '#111', lineHeight: '1.6' }}>
               В правом верхнем углу есть иконка шестеренки. Это настройки.
+            </div>
+            <div style={{ marginTop: '12px' }}>
+              <Image
+                src="/Img/Website/Onboarding 3 RU.png"
+                alt="Настройки и профиль"
+                width={1200}
+                height={900}
+                style={{ width: '100%', height: 'auto', borderRadius: '16px', border: '1px solid #E5E7EB' }}
+              />
             </div>
             <div style={{ marginTop: '10px', fontSize: '18px', color: '#111', lineHeight: '1.6' }}>
               Здесь ты можешь:
@@ -217,13 +244,17 @@ export default function IntroClient() {
                 'эти же слова используются в следующих заданиях',
               ]}
             />
+            <div style={{ marginTop: '12px' }}>
+              <Image
+                src="/Img/Website/Onboarding 5 RU.png"
+                alt="Задание «Учим слова»"
+                width={1200}
+                height={900}
+                style={{ width: '100%', height: 'auto', borderRadius: '16px', border: '1px solid #E5E7EB' }}
+              />
+            </div>
             <div style={{ marginTop: '12px', fontSize: '18px', color: '#111', lineHeight: '1.6' }}>
               Если ты уверенно понимаешь все слова, переходи дальше.
-            </div>
-
-            <div style={{ marginTop: '14px' }}>
-              <PlaceholderGraphic height={170} />
-              <div style={{ marginTop: '8px', fontSize: '14px', color: '#6B7280' }}>Изображение будет здесь</div>
             </div>
 
             <div style={{ marginTop: '14px', fontSize: '18px', color: '#111', lineHeight: '1.6' }}>
@@ -243,6 +274,15 @@ export default function IntroClient() {
             <div style={{ marginTop: '12px', fontSize: '18px', color: '#111', lineHeight: '1.6' }}>
               Настрой под себя. Так учиться проще и комфортнее.
             </div>
+            <div style={{ marginTop: '12px' }}>
+              <Image
+                src="/Img/Website/Onboarding 6 RU.png"
+                alt="Настройки воспроизведения"
+                width={1200}
+                height={900}
+                style={{ width: '100%', height: 'auto', borderRadius: '16px', border: '1px solid #E5E7EB' }}
+              />
+            </div>
           </>
         );
       case 'taskmenu':
@@ -250,6 +290,15 @@ export default function IntroClient() {
           <>
             <div style={{ fontSize: '18px', color: '#111', lineHeight: '1.6' }}>
               Если нажать на нижнюю панель с названием задания, откроется меню урока.
+            </div>
+            <div style={{ marginTop: '12px' }}>
+              <Image
+                src="/Img/Website/Onboarding 4 RU.png"
+                alt="Меню заданий"
+                width={1200}
+                height={900}
+                style={{ width: '100%', height: 'auto', borderRadius: '16px', border: '1px solid #E5E7EB' }}
+              />
             </div>
             <div style={{ marginTop: '10px', fontSize: '18px', color: '#111', lineHeight: '1.6' }}>
               Там ты увидишь:
@@ -379,13 +428,9 @@ export default function IntroClient() {
       <div className="max-w-md mx-auto px-4 pb-12">
         <div style={{ marginTop: '18px' }}>
           <div style={{ fontSize: '16px', color: '#6B7280', fontWeight: 600 }}>{s.introLabel}</div>
-          <h1 style={{ fontSize: '40px', fontWeight: 900, color: '#111', marginTop: '10px', lineHeight: '1.05' }}>{s.hero}</h1>
+          <h1 style={{ fontSize: '40px', fontFamily: 'Orelega One', fontWeight: 400, color: '#111', marginTop: '10px', lineHeight: '1.05' }}>{s.hero}</h1>
           <div style={{ marginTop: '14px', fontSize: '18px', color: '#111', lineHeight: '1.55', whiteSpace: 'pre-line' }}>{s.lead}</div>
           <div style={{ marginTop: '14px', fontSize: '18px', color: '#111', lineHeight: '1.55', whiteSpace: 'pre-line' }}>{s.note}</div>
-        </div>
-
-        <div style={{ marginTop: '18px' }}>
-          <PlaceholderGraphic height={160} />
         </div>
 
         {/* Accordion sections */}
@@ -420,7 +465,7 @@ export default function IntroClient() {
                     cursor: 'pointer',
                   }}
                 >
-                  <div style={{ fontSize: '22px', fontWeight: 800, color: '#111' }}>{item.title}</div>
+                  <div style={{ fontSize: '16px', fontWeight: 600, color: '#111' }}>{item.title}</div>
                   <SectionChevron open={isOpen} />
                 </button>
 
