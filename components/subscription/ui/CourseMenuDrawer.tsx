@@ -16,10 +16,17 @@ function pickLangText(obj: { ru?: string; en?: string; pt?: string } | string | 
 }
 
 const DEFAULT_MODULE_SUBTITLE_RU_BY_LEVEL: Record<number, string> = {
-  1: 'Распознавание и базовые реакции',
-  2: 'Поиск информации и ориентация',
-  3: 'Истории, время, причины',
-  4: 'Сообщения, решения, события',
+  1: 'Распознавание речи и базовые реакции',
+  2: 'Поиск информации и ориентация в среде',
+  3: 'Работа с историями, временем и причинами',
+  4: 'Уверенные сообщения, решения и обсуждение событий',
+};
+
+const DEFAULT_MODULE_LABEL_RU_BY_LEVEL: Record<number, string> = {
+  1: 'Модуль 1 (A1)',
+  2: 'Модуль 2 (A2)',
+  3: 'Модуль 3 (A2+)',
+  4: 'Модуль 4 (B1)',
 };
 
 function normalizeModuleSubtitle(raw: any): string {
@@ -352,12 +359,14 @@ export function CourseMenuDrawer(props: {
                       width: '100%',
                     }}
                   >
-                    {props.lang === 'ru' ? `Модуль ${lvl.level_number}` : `Module ${lvl.level_number}`}
+                    {props.lang === 'ru'
+                      ? (DEFAULT_MODULE_LABEL_RU_BY_LEVEL[Number(lvl.level_number)] || `Модуль ${lvl.level_number}`)
+                      : `Module ${lvl.level_number}`}
                   </div>
                   <div
                     style={{
                       marginTop: '4px',
-                      fontSize: '18px',
+                      fontSize: '16px',
                       color: '#6B7280',
                       textAlign: 'left',
                       width: '100%',
