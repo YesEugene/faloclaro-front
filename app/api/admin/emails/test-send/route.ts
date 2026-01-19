@@ -1,0 +1,89 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { getSupabaseAdmin } from '@/lib/supabase-admin';
+import { renderPlaceholders } from '@/lib/email-engine';
+
+function escapeHtml(s: string): string {
+  return s
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const to = String(body?.to || '').trim();
+    const templateKey = String(body?.templateKey || '').trim();
+    const lang = (String(body?.lang || 'ru').trim() === 'en' ? 'en' : 'ru') as 'ru' | 'en';
+    if (!to || !to.includes('@') || !templateKey) {
+      return NextResponse.json({ success: false, error: 'to and templateKey are required' }, { status: 400 });
+    }
+
+    const supabase = getSupabaseAdmin();
+    const { data: tpl, error: tplErr } = await supabase.from('email_templates').select('*').eq('key', templateKey).limit(1).maybeSingle();
+    if (tplErr) throw tplErr;
+    if (!tpl) return NextResponse.json({ success: false, error: 'Template not found' }, { status: 404 });
+
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.faloclaro.com';
+    const vars = {
+      intro_url: `${baseUrl}/pt/intro`,
+      payment_url: `${baseUrl}/pt/payment`,
+      weekly_lessons_completed: 2,
+      weekly_topics: 'Урок 1: Пример; Урок 2: Пример',
+      total_words_learned: 120,
+      module_label_ru: 'Модуль 1 (A1)',
+      module_label_en: 'Module 1 (A1)',
+    };
+
+    const subjectRaw = lang === 'en' ? tpl.subject_en : tpl.subject_ru;
+    const bodyRaw = lang === 'en' ? tpl.body_en : tpl.body_ru;
+    const ctaTextRaw = lang === 'en' ? tpl.cta_text_en : tpl.cta_text_ru;
+
+    const subject = renderPlaceholders(subjectRaw, vars);
+    const bodyText = renderPlaceholders(bodyRaw, vars);
+    const ctaEnabled = !!tpl.cta_enabled && !!tpl.cta_url_template;
+    const ctaUrl = ctaEnabled ? renderPlaceholders(tpl.cta_url_template, vars) : null;
+    const ctaText = ctaEnabled ? renderPlaceholders(ctaTextRaw || '', vars) : null;
+
+    if (!process.env.RESEND_API_KEY) {
+      return NextResponse.json({ success: false, error: 'RESEND_API_KEY not configured' }, { status: 500 });
+    }
+
+    const fromEmail = process.env.RESEND_FROM_EMAIL || 'FaloClaro <noreply@faloclaro.com>';
+    const { Resend } = require('resend');
+    const resend = new Resend(process.env.RESEND_API_KEY);
+
+    const html = `
+      <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #111; max-width: 640px; margin: 0 auto; padding: 20px;">
+        <div style="white-space: pre-line;">${escapeHtml(bodyText)}</div>
+        ${
+          ctaEnabled && ctaUrl
+            ? `<div style="margin-top: 24px;">
+                 <a href="${escapeHtml(ctaUrl)}" style="display:inline-block;background:#111;color:#fff;text-decoration:none;padding:12px 18px;border-radius:10px;font-weight:700;">
+                   ${escapeHtml(ctaText || '')}
+                 </a>
+               </div>`
+            : ''
+        }
+      </div>
+    `;
+
+    const { error } = await resend.emails.send({
+      from: fromEmail,
+      to,
+      subject: `[TEST] ${subject}`,
+      html,
+      text: bodyText + (ctaEnabled && ctaUrl ? `\n\n${ctaText || ''}: ${ctaUrl}` : ''),
+    });
+    if (error) {
+      return NextResponse.json({ success: false, error: error.message || 'Failed' }, { status: 500 });
+    }
+    return NextResponse.json({ success: true });
+  } catch (e: any) {
+    return NextResponse.json({ success: false, error: e?.message || 'Failed' }, { status: 500 });
+  }
+}
+
+

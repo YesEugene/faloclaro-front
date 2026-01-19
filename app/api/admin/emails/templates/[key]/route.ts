@@ -1,0 +1,49 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { getSupabaseAdmin } from '@/lib/supabase-admin';
+
+export async function GET(_: NextRequest, ctx: { params: Promise<{ key: string }> }) {
+  try {
+    const { key } = await ctx.params;
+    const supabase = getSupabaseAdmin();
+    const { data, error } = await supabase.from('email_templates').select('*').eq('key', key).limit(1).maybeSingle();
+    if (error) throw error;
+    if (!data) return NextResponse.json({ success: false, error: 'Not found' }, { status: 404 });
+    return NextResponse.json({ success: true, template: data });
+  } catch (e: any) {
+    return NextResponse.json({ success: false, error: e?.message || 'Failed' }, { status: 500 });
+  }
+}
+
+export async function PUT(req: NextRequest, ctx: { params: Promise<{ key: string }> }) {
+  try {
+    const { key } = await ctx.params;
+    const body = await req.json();
+    const update: Record<string, any> = {};
+    const allowed = [
+      'name',
+      'category',
+      'is_active',
+      'subject_ru',
+      'subject_en',
+      'body_ru',
+      'body_en',
+      'cta_enabled',
+      'cta_text_ru',
+      'cta_text_en',
+      'cta_url_template',
+    ];
+    for (const k of allowed) {
+      if (k in body) update[k] = body[k];
+    }
+    update.updated_at = new Date().toISOString();
+
+    const supabase = getSupabaseAdmin();
+    const { error } = await supabase.from('email_templates').update(update).eq('key', key);
+    if (error) throw error;
+    return NextResponse.json({ success: true });
+  } catch (e: any) {
+    return NextResponse.json({ success: false, error: e?.message || 'Failed' }, { status: 500 });
+  }
+}
+
+
