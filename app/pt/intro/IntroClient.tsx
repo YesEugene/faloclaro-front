@@ -93,9 +93,10 @@ export default function IntroClient() {
         menuCourse: 'Course menu',
         introLabel: 'Intro',
         hero: 'Welcome to FaloClaro',
-        lead: 'You’re in — great! Here’s a quick tour so you can navigate easily and learn without friction.',
+        lead:
+          'You’re in. Great!\nNow we’ll quickly show how the course and interface work, so it’s easy to navigate and learn without extra stress.',
         note:
-          'FaloClaro is a practical course. You don’t just watch lessons — you gradually learn to understand and speak fluently. Below is how it works.',
+          'FaloClaro is a practical course.\nHere you gradually learn to understand speech and speak fluently — not just memorize individual words.',
         sections: {
           course: 'How the course is structured',
           find: 'How to find lessons',
@@ -387,6 +388,220 @@ export default function IntroClient() {
     }
   };
 
+  const renderEnSectionBody = (key: string) => {
+    switch (key) {
+      case 'course':
+        return (
+          <>
+            <div style={{ fontSize: '18px', color: '#111', lineHeight: '1.6' }}>The course has 4 modules.</div>
+            <div style={{ marginTop: '10px', fontSize: '18px', color: '#111', lineHeight: '1.6' }}>
+              Each module is a separate learning stage:
+            </div>
+            <BulletList
+              items={[
+                'getting used to how the language sounds',
+                'understanding meaning',
+                'building fluent connected speech',
+              ]}
+            />
+            <div style={{ marginTop: '12px', fontSize: '18px', color: '#111', lineHeight: '1.6' }}>
+              Each module includes 14–15 lessons.
+              <br />
+              Each block gives you a new level of confidence in the language.
+            </div>
+          </>
+        );
+      case 'find':
+        return (
+          <>
+            <div style={{ fontSize: '18px', color: '#111', lineHeight: '1.6' }}>
+              To see all lessons, tap “Course menu”.
+            </div>
+            <div style={{ marginTop: '10px', fontSize: '18px', color: '#111', lineHeight: '1.6' }}>
+              A side menu will open where you’ll see:
+            </div>
+            <BulletList
+              items={[
+                'your current lesson',
+                'which lessons you’ve already completed',
+                'where you can return',
+              ]}
+            />
+            <div style={{ marginTop: '12px', fontSize: '18px', color: '#111', lineHeight: '1.6' }}>
+              This is the main navigation for the course.
+            </div>
+          </>
+        );
+      case 'settings':
+        return (
+          <>
+            <div style={{ fontSize: '18px', color: '#111', lineHeight: '1.6' }}>
+              In the top-right corner there’s a gear icon — that’s Settings.
+            </div>
+            <div style={{ marginTop: '10px', fontSize: '18px', color: '#111', lineHeight: '1.6' }}>
+              Here you can:
+            </div>
+            <BulletList
+              items={[
+                'choose the interface language',
+                'change your email',
+                'manage your subscription and notifications',
+              ]}
+            />
+            <div style={{ marginTop: '12px', fontSize: '18px', color: '#111', lineHeight: '1.6' }}>
+              All key settings are in one place.
+            </div>
+          </>
+        );
+      case 'how':
+        return (
+          <>
+            <div style={{ fontSize: '18px', color: '#111', lineHeight: '1.6' }}>
+              Each lesson has 5 tasks.
+            </div>
+            <div style={{ marginTop: '10px', fontSize: '18px', color: '#111', lineHeight: '1.6' }}>
+              You can open any task, but we recommend going in order from the first to the fifth.
+            </div>
+            <div style={{ marginTop: '10px', fontSize: '18px', color: '#111', lineHeight: '1.6' }}>
+              This works better because:
+            </div>
+            <BulletList
+              items={[
+                'first you build your vocabulary',
+                'then you learn to connect words',
+                'at the end you start speaking fluently',
+              ]}
+            />
+            <div style={{ marginTop: '12px', fontSize: '18px', color: '#111', lineHeight: '1.6' }}>
+              Don’t rush through many lessons in a row.
+              <br />
+              It’s better to fully master one lesson than quickly scroll through several.
+            </div>
+          </>
+        );
+      case 't1':
+        return (
+          <>
+            <div style={{ fontSize: '18px', color: '#111', lineHeight: '1.6' }}>
+              This is the foundation of every lesson.
+            </div>
+            <div style={{ marginTop: '10px', fontSize: '18px', color: '#111', lineHeight: '1.6' }}>
+              We recommend spending at least 10 minutes here — there’s a timer for that.
+            </div>
+            <div style={{ marginTop: '10px', fontSize: '18px', color: '#111', lineHeight: '1.6' }}>
+              Usually you learn about 10 new words, but:
+            </div>
+            <BulletList
+              items={[
+                'words may repeat — that’s normal and helpful',
+                'the same words will be used in the next tasks',
+              ]}
+            />
+            <div style={{ marginTop: '12px', fontSize: '18px', color: '#111', lineHeight: '1.6' }}>
+              If you confidently understand all words, move on.
+            </div>
+            <div style={{ marginTop: '14px', fontSize: '18px', color: '#111', lineHeight: '1.6' }}>
+              Also, under the ▶ Play button there’s a sliders button — playback settings.
+            </div>
+            <div style={{ marginTop: '10px', fontSize: '18px', color: '#111', lineHeight: '1.6' }}>
+              You can:
+            </div>
+            <BulletList
+              items={[
+                'change speech speed',
+                'adjust pauses',
+                'choose how many repeats',
+                'enable random word order',
+              ]}
+            />
+            <div style={{ marginTop: '12px', fontSize: '18px', color: '#111', lineHeight: '1.6' }}>
+              Tune it for yourself — learning becomes easier and more comfortable.
+            </div>
+          </>
+        );
+      case 'taskmenu':
+        return (
+          <>
+            <div style={{ fontSize: '18px', color: '#111', lineHeight: '1.6' }}>
+              If you tap the bottom panel with the task name, the lesson menu opens.
+            </div>
+            <div style={{ marginTop: '10px', fontSize: '18px', color: '#111', lineHeight: '1.6' }}>
+              There you’ll see:
+            </div>
+            <BulletList
+              items={[
+                'all 5 tasks',
+                'what’s already completed',
+                'what’s still ahead',
+              ]}
+            />
+            <div style={{ marginTop: '12px', fontSize: '18px', color: '#111', lineHeight: '1.6' }}>
+              You can also use the “next” and “back” buttons.
+            </div>
+          </>
+        );
+      case 't234':
+        return (
+          <>
+            <div style={{ fontSize: '18px', color: '#111', lineHeight: '1.6' }}>
+              In Tasks 2, 3, and 4, just follow the steps on the screen.
+            </div>
+            <div style={{ marginTop: '10px', fontSize: '18px', color: '#111', lineHeight: '1.6' }}>
+              After finishing, a “Replay” button appears.
+              <br />
+              If you want to repeat the material — use it freely.
+            </div>
+            <div style={{ marginTop: '12px', fontSize: '18px', color: '#111', lineHeight: '1.6' }}>
+              Repetition is part of learning.
+            </div>
+          </>
+        );
+      case 't5':
+        return (
+          <>
+            <div style={{ fontSize: '18px', color: '#111', lineHeight: '1.6' }}>
+              This is the most important part of the lesson.
+            </div>
+            <div style={{ marginTop: '10px', fontSize: '18px', color: '#111', lineHeight: '1.6' }}>
+              Here you:
+            </div>
+            <BulletList
+              items={[
+                'build phrases',
+                'say them out loud',
+                'use everything you learned in the lesson',
+              ]}
+            />
+            <div style={{ marginTop: '12px', fontSize: '18px', color: '#111', lineHeight: '1.6' }}>
+              If you forget something — there are hints.
+              <br />
+              The main goal is live, confident speech — not perfect rules.
+            </div>
+          </>
+        );
+      case 'start':
+        return (
+          <>
+            <div style={{ fontSize: '18px', color: '#111', lineHeight: '1.6' }}>
+              Now you know how everything works.
+            </div>
+            <div style={{ marginTop: '10px', fontSize: '18px', color: '#111', lineHeight: '1.6' }}>
+              Move step by step, don’t rush, and come back to practice regularly.
+            </div>
+            <div style={{ marginTop: '10px', fontSize: '18px', color: '#111', lineHeight: '1.6' }}>
+              Welcome to FaloClaro. Let’s speak Portuguese! 🇵🇹
+            </div>
+          </>
+        );
+      default:
+        return (
+          <div style={{ fontSize: '18px', color: '#111', lineHeight: '1.6' }}>
+            This section will be filled in soon.
+          </div>
+        );
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white">
       {/* Header (same style as lessons) */}
@@ -481,13 +696,7 @@ export default function IntroClient() {
 
                 {isOpen && (
                   <div style={{ paddingBottom: '18px' }}>
-                    {langKey === 'ru' ? (
-                      renderRuSectionBody(item.key)
-                    ) : (
-                      <div style={{ fontSize: '18px', color: '#111', lineHeight: '1.6' }}>
-                        This section will be filled in soon.
-                      </div>
-                    )}
+                    {langKey === 'ru' ? renderRuSectionBody(item.key) : renderEnSectionBody(item.key)}
                   </div>
                 )}
               </div>
