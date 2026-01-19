@@ -1166,7 +1166,7 @@ function LessonEditorContent() {
         </div>
 
         {/* Right Panel - Task Editor */}
-        <div className="flex-1 md:overflow-y-auto overflow-visible">
+        <div className="flex-1 overflow-visible">
           {editingTask ? (
             <TaskEditor
               task={editingTask}
