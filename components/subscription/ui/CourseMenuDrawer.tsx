@@ -28,6 +28,7 @@ function normalizeModuleSubtitle(raw: any): string {
   const low = s.toLowerCase();
   // Old UI placeholder values that should never be shown as real subtitles
   if (low === 'уровень' || low === 'level') return '';
+  if (low === 'модуль' || low === 'module') return '';
   return s;
 }
 
@@ -343,7 +344,14 @@ export function CourseMenuDrawer(props: {
                 }}
               >
                 <div>
-                  <div className="text-[16px] md:text-[18px] font-bold" style={{ color: '#111' }}>
+                  <div
+                    className="text-[16px] md:text-[18px] font-bold"
+                    style={{
+                      color: '#111',
+                      textAlign: 'left',
+                      width: '100%',
+                    }}
+                  >
                     {props.lang === 'ru' ? `Модуль ${lvl.level_number}` : `Module ${lvl.level_number}`}
                   </div>
                   <div
