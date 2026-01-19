@@ -102,7 +102,13 @@ export function LessonMenuSheet(props: {
 
   if (!mounted || !props.open) return null;
 
-  const navBottomHeight = 'calc(120px + env(safe-area-inset-bottom, 0px))';
+  // BottomLessonNav layout:
+  // - fixed container adds safe-area padding at the bottom
+  // - inner content has paddingBottom: 12px
+  // - pill/buttons have height: 50px
+  // So the TOP of the clickable nav controls sits at: safeInset + 12 + 50 = safeInset + 62px
+  // We anchor the sheet above that so the nav stays visible/clickable and the user can tap it again to close.
+  const navControlsTopFromBottom = 'calc(env(safe-area-inset-bottom, 0px) + 62px)';
   const gapAboveNav = '20px';
 
   return createPortal(
@@ -122,14 +128,14 @@ export function LessonMenuSheet(props: {
           aria-modal="true"
           aria-label={props.lang === 'ru' ? 'Меню урока' : 'Lesson menu'}
           onClick={props.onClose}
-          style={{ bottom: navBottomHeight, background: 'transparent' }}
+          style={{ bottom: navControlsTopFromBottom, background: 'transparent' }}
         />
 
         {/* Sheet sits ABOVE bottom navigation */}
         <div
           className="fixed left-0 right-0 z-40"
           style={{
-            bottom: `calc(${navBottomHeight} + ${gapAboveNav})`,
+            bottom: `calc(${navControlsTopFromBottom} + ${gapAboveNav})`,
             paddingBottom: '16px',
             paddingLeft: '16px',
             paddingRight: '16px',
