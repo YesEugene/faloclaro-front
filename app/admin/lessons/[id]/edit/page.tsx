@@ -1067,7 +1067,7 @@ function LessonEditorContent() {
         </div>
 
         {/* Left Panel - Tasks List (desktop) */}
-        <div className="hidden md:block w-80 bg-white border-r border-gray-200 overflow-y-auto">
+        <div className="hidden md:block w-80 bg-white border-r border-gray-200 overflow-y-auto md:sticky md:top-[88px] md:h-[calc(100vh-88px)]">
           <div className="p-4">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-semibold text-gray-900">Задания урока</h2>
