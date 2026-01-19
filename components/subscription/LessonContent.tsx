@@ -775,6 +775,7 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
               router.push(`/pt/lesson/${lesson.day_number}/${token}?task=${currentTask.task_id}&dictionary=true`);
             }}
             onOpenLessonMenu={() => setLessonMenuOpen(true)}
+            lessonMenuOpen={lessonMenuOpen}
             dayNumber={lesson.day_number}
             token={token}
             onTimerUpdate={currentTask?.type === 'vocabulary' ? handleTimerUpdate : undefined}

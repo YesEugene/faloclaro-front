@@ -25,6 +25,7 @@ interface TaskCardProps {
   onBackToTasks?: () => void;
   onDictionaryList?: () => void;
   onOpenLessonMenu?: () => void;
+  lessonMenuOpen?: boolean;
   dayNumber?: number;
   token?: string;
   onTimerUpdate?: (time: { elapsed: number; required: number }) => void;
@@ -47,6 +48,7 @@ export default function TaskCard({
   onBackToTasks,
   onDictionaryList,
   onOpenLessonMenu,
+  lessonMenuOpen,
   dayNumber,
   token,
   onTimerUpdate,
@@ -214,6 +216,7 @@ export default function TaskCard({
             onBackToTasks={onBackToTasks}
             onDictionaryList={onDictionaryList}
             onOpenLessonMenu={onOpenLessonMenu}
+            lessonMenuOpen={lessonMenuOpen}
             dayNumber={dayNumber}
             token={token}
             initialCardIndex={initialCardIndex}
@@ -240,6 +243,7 @@ export default function TaskCard({
             canGoPrevious={canGoPrevious}
             isLastTask={isLastTask}
             onOpenLessonMenu={onOpenLessonMenu}
+            lessonMenuOpen={lessonMenuOpen}
             dayNumber={dayNumber}
             progressCompleted={progressCompleted}
             progressTotal={progressTotal}
@@ -294,6 +298,7 @@ export default function TaskCard({
             canGoPrevious={canGoPrevious}
             isLastTask={isLastTask}
             onOpenLessonMenu={onOpenLessonMenu}
+            lessonMenuOpen={lessonMenuOpen}
             dayNumber={dayNumber}
             progressCompleted={progressCompleted}
             progressTotal={progressTotal}
@@ -324,6 +329,7 @@ export default function TaskCard({
             canGoPrevious={canGoPrevious}
             isLastTask={isLastTask}
             onOpenLessonMenu={onOpenLessonMenu}
+            lessonMenuOpen={lessonMenuOpen}
             dayNumber={dayNumber}
             progressCompleted={progressCompleted}
             progressTotal={progressTotal}
@@ -346,6 +352,7 @@ export default function TaskCard({
             canGoPrevious={canGoPrevious}
             isLastTask={isLastTask}
             onOpenLessonMenu={onOpenLessonMenu}
+            lessonMenuOpen={lessonMenuOpen}
             dayNumber={dayNumber}
             progressCompleted={progressCompleted}
             progressTotal={progressTotal}

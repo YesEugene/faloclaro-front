@@ -21,6 +21,7 @@ interface VocabularyTaskPlayerProps {
   onBackToTasks?: () => void;
   onDictionaryList?: () => void;
   onOpenLessonMenu?: () => void;
+  lessonMenuOpen?: boolean;
   dayNumber?: number;
   token?: string;
   initialCardIndex?: number; // For navigation from dictionary
@@ -42,6 +43,7 @@ export default function VocabularyTaskPlayer({
   onBackToTasks,
   onDictionaryList,
   onOpenLessonMenu,
+  lessonMenuOpen,
   dayNumber,
   token,
   initialCardIndex,
@@ -1069,6 +1071,7 @@ export default function VocabularyTaskPlayer({
             isLastTask={false}
             onNextLesson={undefined}
             onOpenMenu={onOpenLessonMenu}
+            menuOpen={!!lessonMenuOpen}
           />
 
       {/* Settings Panel (from existing player) */}

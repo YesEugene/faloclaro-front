@@ -47,6 +47,15 @@ function ArrowIcon({ direction, color }: { direction: 'left' | 'right'; color: s
   );
 }
 
+function ChevronIcon({ direction, color }: { direction: 'up' | 'down'; color: string }) {
+  const d = direction === 'up' ? 'M6 15l6-6 6 6' : 'M6 9l6 6 6-6';
+  return (
+    <svg className="w-5 h-5" fill="none" stroke={color} viewBox="0 0 24 24" strokeWidth={3}>
+      <path strokeLinecap="round" strokeLinejoin="round" d={d} />
+    </svg>
+  );
+}
+
 export function BottomLessonNav(props: {
   taskId: number;
   lang: Lang;
@@ -57,6 +66,7 @@ export function BottomLessonNav(props: {
   isLastTask?: boolean;
   onNextLesson?: () => void;
   onOpenMenu?: () => void;
+  menuOpen?: boolean;
 }) {
   const labels = useMemo(() => LABELS_BY_TASK_ID[props.taskId] || LABELS_BY_TASK_ID[1], [props.taskId]);
 
@@ -130,11 +140,25 @@ export function BottomLessonNav(props: {
                 cursor: props.onOpenMenu ? 'pointer' : 'default',
               }}
             >
-              <div style={{ fontSize: '14px', fontWeight: 500, lineHeight: '1.2', color: 'rgba(0,0,0,1)' }}>
-                {pickText(labels.level1, props.lang)}
-              </div>
-              <div style={{ fontSize: '12px', lineHeight: '1.25', color: '#5A5E65' }}>
-                {pickText(labels.level2, props.lang)}
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '10px',
+                }}
+              >
+                <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: '3px', minWidth: 0, flex: 1 }}>
+                  <div style={{ fontSize: '14px', fontWeight: 500, lineHeight: '1.2', color: 'rgba(0,0,0,1)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {pickText(labels.level1, props.lang)}
+                  </div>
+                  <div style={{ fontSize: '12px', lineHeight: '1.25', color: '#5A5E65', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {pickText(labels.level2, props.lang)}
+                  </div>
+                </div>
+                <div style={{ width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <ChevronIcon direction={props.menuOpen ? 'down' : 'up'} color="#111827" />
+                </div>
               </div>
             </button>
 

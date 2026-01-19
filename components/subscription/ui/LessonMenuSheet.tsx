@@ -66,6 +66,14 @@ function ArrowDownIcon({ color }: { color: string }) {
   );
 }
 
+function ArrowRightIcon({ color }: { color: string }) {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9 5l7 7-7 7" />
+    </svg>
+  );
+}
+
 export function LessonMenuSheet(props: {
   open: boolean;
   lang: Lang;
@@ -132,19 +140,16 @@ export function LessonMenuSheet(props: {
               animation: 'faloclaroSheetIn 280ms cubic-bezier(0.22, 1, 0.36, 1)',
             }}
           >
-            <div className="flex items-center justify-between" style={{ marginBottom: '10px' }}>
-              <div style={{ fontSize: '16px', fontWeight: 700, color: '#111' }}>
-                {props.lang === 'ru' ? 'Меню урока' : props.lang === 'en' ? 'Lesson menu' : 'Menu da lição'}
-              </div>
-              <button
-                type="button"
-                onClick={props.onClose}
-                aria-label={props.lang === 'ru' ? 'Закрыть' : 'Close'}
-                className="px-3 py-2 rounded-xl"
-                style={{ background: '#F3F4F6', color: '#111', fontWeight: 600 }}
-              >
-                {props.lang === 'ru' ? 'Закрыть' : 'Close'}
-              </button>
+            {/* Handle */}
+            <div className="flex items-center justify-center" style={{ marginBottom: '12px' }}>
+              <div
+                style={{
+                  width: '44px',
+                  height: '5px',
+                  borderRadius: '999px',
+                  background: '#E5E7EB',
+                }}
+              />
             </div>
 
             <div className="space-y-3">
@@ -170,7 +175,7 @@ export function LessonMenuSheet(props: {
                     }}
                   >
                     <span className="inline-flex items-center justify-center" style={{ width: '20px', height: '20px' }}>
-                      {isCurrent ? <ArrowDownIcon color="#34BF5D" /> : null}
+                      {isCurrent ? <ArrowRightIcon color="#34BF5D" /> : null}
                     </span>
 
                     <div style={{ flex: 1, minWidth: 0 }}>
