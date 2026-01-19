@@ -203,7 +203,7 @@ export async function POST(request: NextRequest) {
     // IMPORTANT: In Vercel Serverless Functions, we need to await the email
     // Otherwise the function may terminate before email is sent
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.faloclaro.com';
-    const emailUrl = `${baseUrl}/pt/lesson/1/${firstToken}/overview`;
+    const emailUrl = `${baseUrl}/pt/intro?day=1&token=${firstToken}`;
     
     console.log('📧 About to send email:', {
       userId: user.id,

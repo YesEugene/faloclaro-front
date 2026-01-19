@@ -301,7 +301,7 @@ export function CourseMenuDrawer(props: {
           }}
           className="text-[16px] md:text-[18px] font-bold"
         >
-          {props.lang === 'ru' ? 'Вступление' : props.lang === 'en' ? 'Introduction' : 'Introdução'}
+          {props.lang === 'ru' ? 'Введение' : props.lang === 'en' ? 'Introduction' : 'Introdução'}
         </button>
 
         {loading && (

@@ -23,6 +23,15 @@ function OverviewPageContent() {
   const day = parseInt(params.day as string);
   const token = params.token as string;
 
+  // Legacy overview/menu page is deprecated. Keep route for backward compatibility (old emails/links),
+  // but immediately redirect into the lesson itself.
+  useEffect(() => {
+    if (!day || !token) return;
+    const sp = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
+    if (!sp.get('task')) sp.set('task', '1');
+    router.replace(`/pt/lesson/${day}/${token}?${sp.toString()}`);
+  }, [day, token, router]);
+
   const [lesson, setLesson] = useState<any>(null);
   const [userProgress, setUserProgress] = useState<any>(null);
   const [allLessonsProgress, setAllLessonsProgress] = useState<Map<number, string>>(new Map()); // day_number -> status

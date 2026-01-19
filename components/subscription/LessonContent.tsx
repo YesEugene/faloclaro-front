@@ -490,11 +490,11 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
           return;
         }
 
-        // Navigate to next lesson
-        router.push(`/pt/lesson/${nextDayNumber}/${newTokenData.token}/overview`);
+        // Navigate to next lesson (start from task 1; /overview is deprecated)
+        router.push(`/pt/lesson/${nextDayNumber}/${newTokenData.token}?task=1`);
       } else if (nextTokenData) {
         // Token exists, navigate to next lesson
-        router.push(`/pt/lesson/${nextDayNumber}/${nextTokenData.token}/overview`);
+        router.push(`/pt/lesson/${nextDayNumber}/${nextTokenData.token}?task=1`);
       }
     } catch (error) {
       console.error('Error navigating to next lesson:', error);
@@ -770,7 +770,7 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
             canGoNext={currentTaskIndex < tasks.length - 1}
             canGoPrevious={currentTaskIndex > 0}
             isLastTask={currentTaskIndex === tasks.length - 1}
-            onBackToTasks={() => router.push(`/pt/lesson/${lesson.day_number}/${token}/overview`)}
+            onBackToTasks={() => router.push(`/pt/lesson/${lesson.day_number}/${token}?task=1`)}
             onDictionaryList={() => {
               // Navigate to dictionary list - we need to construct URL with cluster info
               // For now, just navigate to phrases page with task info

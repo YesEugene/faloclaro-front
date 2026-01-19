@@ -264,7 +264,7 @@ function PaymentPageContent() {
         {/* Back Link */}
         <div className="text-center">
           <Link
-            href={day && token ? `/pt/lesson/${day}/${token}/overview` : '/pt'}
+            href={day && token ? `/pt/lesson/${day}/${token}?task=1` : '/pt'}
             className="text-green-600 hover:text-green-700 font-medium"
           >
             {appLanguage === 'ru'

@@ -296,7 +296,7 @@ function CoursePageContent() {
                       return (
                         <Link
                           key={lesson.id}
-                          href={token ? `/pt/lesson/${lesson.day_number}/${token}/overview` : '#'}
+                          href={token ? `/pt/lesson/${lesson.day_number}/${token}?task=1` : '#'}
                           className={`block rounded-lg p-4 border-2 transition-all ${
                             status === 'completed'
                               ? 'border-green-500 bg-green-50 hover:bg-green-100'
@@ -398,7 +398,7 @@ function CoursePageContent() {
                       return (
                         <Link
                           key={lesson.id}
-                          href={token ? `/pt/lesson/${lesson.day_number}/${token}/overview` : '#'}
+                          href={token ? `/pt/lesson/${lesson.day_number}/${token}?task=1` : '#'}
                           className={`block rounded-lg p-4 border-2 transition-all ${
                             status === 'completed'
                               ? 'border-green-500 bg-green-50 hover:bg-green-100'

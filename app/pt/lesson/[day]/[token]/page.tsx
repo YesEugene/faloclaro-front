@@ -29,9 +29,13 @@ function LessonPageContent() {
       return;
     }
 
-    // If no task specified, redirect to overview
+    // If no task specified, start from Task 1 (old /overview page is deprecated)
     if (!taskId) {
-      router.replace(`/pt/lesson/${day}/${token}/overview`);
+      const sp = new URLSearchParams();
+      sp.set('task', '1');
+      if (phraseId) sp.set('phraseId', phraseId);
+      if (indexParam) sp.set('index', indexParam);
+      router.replace(`/pt/lesson/${day}/${token}?${sp.toString()}`);
       return;
     }
 

@@ -91,19 +91,14 @@ export async function sendLessonEmail(userId: string, lessonId: string, dayNumbe
       accessToken = tokenData.token;
     }
 
-    // For registration email (first lesson with dayNumber === 1), link directly to lesson 1 overview
-    // This page shows the overview of lesson 1 with navigation to all lessons (first 3 unlocked)
     // IMPORTANT: Use lesson.day_number from database, not dayNumber parameter (which might be incorrect)
-    const isRegistrationEmail = dayNumber === 1; // Registration email is always for day 1
+    // We always land users on the Intro (onboarding) page first.
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.faloclaro.com';
     // Use lesson.day_number from database to ensure correct URL
     const lessonDayNumber = lesson.day_number || dayNumber;
-    const lessonsUrl = isRegistrationEmail
-      ? `${baseUrl}/pt/lesson/${lessonDayNumber}/${accessToken}/overview`
-      : `${baseUrl}/pt/lesson/${lessonDayNumber}/${accessToken}/overview`;
+    const lessonsUrl = `${baseUrl}/pt/intro?day=${lessonDayNumber}&token=${accessToken}`;
 
     console.log('📧 Email link generation:', {
-      isRegistrationEmail,
       dayNumber,
       lessonDayNumber: lesson.day_number,
       accessToken: accessToken ? `${accessToken.substring(0, 8)}...` : 'MISSING',
@@ -485,7 +480,7 @@ export async function sendFullAccessEmail(userId: string, token: string) {
     }
 
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.faloclaro.com';
-    const lessonsUrl = `${baseUrl}/pt/lesson/1/${token}/overview`;
+    const lessonsUrl = `${baseUrl}/pt/intro?day=1&token=${token}`;
 
     // Validate token exists
     if (!token || token.length < 10) {
