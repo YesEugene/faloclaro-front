@@ -73,6 +73,7 @@ export function CourseMenuDrawer(props: {
   lang: Lang;
   currentDay: number;
   currentToken: string;
+  activeEntry?: 'intro' | 'lesson';
   onClose: () => void;
 }) {
   const router = useRouter();
@@ -205,8 +206,9 @@ export function CourseMenuDrawer(props: {
       return;
     }
 
-    // Same lesson => just close
-    if (day === props.currentDay) {
+    // Same lesson => just close (but ONLY if we are currently inside the lesson view).
+    // On Intro page we still want to allow navigating into lesson 1 even when currentDay=1.
+    if ((props.activeEntry ?? 'lesson') === 'lesson' && day === props.currentDay) {
       props.onClose();
       return;
     }
@@ -302,7 +304,7 @@ export function CourseMenuDrawer(props: {
             background: 'white',
             borderRadius: '18px',
             padding: '18px 16px',
-            border: '0px',
+            border: (props.activeEntry ?? 'lesson') === 'intro' ? '2px solid #1A8CFF' : '0px',
             marginBottom: '14px',
             color: '#111',
           }}
@@ -383,7 +385,7 @@ export function CourseMenuDrawer(props: {
                   {lvlLessons.map((lessonRow: any) => {
                     const day = Number(lessonRow?.day_number);
                     const completed = progressMap.get(day) === 'completed';
-                    const isCurrent = day === props.currentDay;
+                    const isCurrent = (props.activeEntry ?? 'lesson') !== 'intro' && day === props.currentDay;
                     const unlocked = isLessonUnlocked(day);
                     const title = pickLangText(
                       {

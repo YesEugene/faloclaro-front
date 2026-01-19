@@ -802,6 +802,7 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
         lang={appLanguage}
         currentDay={lesson.day_number}
         currentToken={token}
+        activeEntry="lesson"
         onClose={() => setCourseMenuOpen(false)}
       />
     </div>

@@ -647,7 +647,14 @@ export default function IntroClient() {
       </div>
 
       <SettingsPanel open={settingsOpen} onClose={() => setSettingsOpen(false)} lessonToken={token} />
-      <CourseMenuDrawer open={courseMenuOpen} lang={language} currentDay={day} currentToken={token} onClose={() => setCourseMenuOpen(false)} />
+      <CourseMenuDrawer
+        open={courseMenuOpen}
+        lang={language}
+        currentDay={day}
+        currentToken={token}
+        activeEntry="intro"
+        onClose={() => setCourseMenuOpen(false)}
+      />
 
       {/* Content */}
       <div className="max-w-md mx-auto px-4 pb-12">
