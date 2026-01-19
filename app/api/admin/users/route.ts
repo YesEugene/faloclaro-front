@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import crypto from 'crypto';
-import { sendLessonEmail } from '@/lib/send-lesson-email';
+import { getSupabaseAdmin } from '@/lib/supabase-admin';
+import { buildDefaultVarsForUser, enrollCampaign, sendTemplateEmail } from '@/lib/email-engine';
 
 // Check admin authentication
 function checkAdminAuth(request: NextRequest): boolean {
@@ -206,7 +207,18 @@ export async function POST(request: NextRequest) {
     const firstToken = tokens[0];
     if (firstToken && lessons[0]) {
       try {
-        await sendLessonEmail(newUser.id, lessons[0].id, 1, firstToken);
+        // Ensure registered_at for proper weekly schedule
+        try {
+          const admin = getSupabaseAdmin();
+          await admin.from('subscription_users').update({ registered_at: new Date().toISOString() }).eq('id', newUser.id);
+        } catch (e) {
+          // non-blocking
+        }
+
+        const vars = await buildDefaultVarsForUser(newUser.id);
+        await sendTemplateEmail({ userId: newUser.id, templateKey: 'core_welcome', vars, dayNumber: 1 });
+        await enrollCampaign({ userId: newUser.id, campaignKey: 'campaign_neg_inactivity', context: {} });
+        await enrollCampaign({ userId: newUser.id, campaignKey: 'campaign_core_weekly_stats', context: {} });
       } catch (emailError) {
         console.error('Error sending email:', emailError);
         // Continue even if email fails

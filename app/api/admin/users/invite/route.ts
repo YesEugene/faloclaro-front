@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
-import { sendLessonEmail } from '@/lib/send-lesson-email';
 import crypto from 'crypto';
+import { buildDefaultVarsForUser, sendTemplateEmail } from '@/lib/email-engine';
 
 export async function POST(request: NextRequest) {
   try {
@@ -74,22 +74,12 @@ export async function POST(request: NextRequest) {
 
     // Send email with link
     if (firstToken) {
-      const { data: firstLesson } = await supabase
-        .from('lessons')
-        .select('id')
-        .eq('day_number', 1)
-        .single();
-
-      if (firstLesson) {
-        try {
-          await sendLessonEmail(user.id, firstLesson.id, 1, firstToken);
-        } catch (emailError) {
-          console.error('Error sending email:', emailError);
-          return NextResponse.json(
-            { error: 'Failed to send email' },
-            { status: 500 }
-          );
-        }
+      try {
+        const vars = await buildDefaultVarsForUser(user.id);
+        await sendTemplateEmail({ userId: user.id, templateKey: 'core_welcome', vars, dayNumber: 1 });
+      } catch (emailError) {
+        console.error('Error sending email:', emailError);
+        return NextResponse.json({ error: 'Failed to send email' }, { status: 500 });
       }
     }
 
