@@ -102,6 +102,8 @@ export function LessonMenuSheet(props: {
 
   if (!mounted || !props.open) return null;
 
+  const navBottomHeight = 'calc(120px + env(safe-area-inset-bottom, 0px))';
+
   return createPortal(
     <>
       <style>{`
@@ -111,19 +113,23 @@ export function LessonMenuSheet(props: {
           100% { transform: translateY(0); }
         }
       `}</style>
-      <div
-        className="fixed inset-0 z-40"
-        role="dialog"
-        aria-modal="true"
-        aria-label={props.lang === 'ru' ? 'Меню урока' : 'Lesson menu'}
-        onClick={props.onClose}
-        style={{ background: 'rgba(0,0,0,0.35)' }}
-      >
+      <>
+        {/* Backdrop covers only the area ABOVE the bottom navigation bar, so nav stays visible/clickable */}
         <div
-          className="fixed left-0 right-0"
+          className="fixed left-0 right-0 top-0 z-40"
+          role="dialog"
+          aria-modal="true"
+          aria-label={props.lang === 'ru' ? 'Меню урока' : 'Lesson menu'}
+          onClick={props.onClose}
+          style={{ bottom: navBottomHeight, background: 'rgba(0,0,0,0.35)' }}
+        />
+
+        {/* Sheet sits ABOVE bottom navigation */}
+        <div
+          className="fixed left-0 right-0 z-40"
           style={{
-            bottom: 0,
-            paddingBottom: 'calc(16px + env(safe-area-inset-bottom, 0px))',
+            bottom: navBottomHeight,
+            paddingBottom: '16px',
             paddingLeft: '16px',
             paddingRight: '16px',
           }}
@@ -132,11 +138,11 @@ export function LessonMenuSheet(props: {
           <div
             className="mx-auto max-w-md bg-white shadow-2xl"
             style={{
-              borderTopLeftRadius: '28px',
-              borderTopRightRadius: '28px',
-              borderBottomLeftRadius: '28px',
-              borderBottomRightRadius: '28px',
-              padding: '16px',
+              borderTopLeftRadius: '36px',
+              borderTopRightRadius: '36px',
+              borderBottomLeftRadius: '36px',
+              borderBottomRightRadius: '36px',
+              padding: '18px',
               animation: 'faloclaroSheetIn 280ms cubic-bezier(0.22, 1, 0.36, 1)',
             }}
           >
@@ -196,7 +202,7 @@ export function LessonMenuSheet(props: {
             </div>
           </div>
         </div>
-      </div>
+      </>
     </>,
     document.body
   );

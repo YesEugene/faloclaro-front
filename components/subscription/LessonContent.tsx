@@ -774,7 +774,7 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
               // For now, just navigate to phrases page with task info
               router.push(`/pt/lesson/${lesson.day_number}/${token}?task=${currentTask.task_id}&dictionary=true`);
             }}
-            onOpenLessonMenu={() => setLessonMenuOpen(true)}
+            onOpenLessonMenu={() => setLessonMenuOpen((v) => !v)}
             lessonMenuOpen={lessonMenuOpen}
             dayNumber={lesson.day_number}
             token={token}
