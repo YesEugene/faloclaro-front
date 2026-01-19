@@ -103,6 +103,7 @@ export function LessonMenuSheet(props: {
   if (!mounted || !props.open) return null;
 
   const navBottomHeight = 'calc(120px + env(safe-area-inset-bottom, 0px))';
+  const gapAboveNav = '20px';
 
   return createPortal(
     <>
@@ -121,14 +122,14 @@ export function LessonMenuSheet(props: {
           aria-modal="true"
           aria-label={props.lang === 'ru' ? 'Меню урока' : 'Lesson menu'}
           onClick={props.onClose}
-          style={{ bottom: navBottomHeight, background: 'rgba(0,0,0,0.35)' }}
+          style={{ bottom: navBottomHeight, background: 'transparent' }}
         />
 
         {/* Sheet sits ABOVE bottom navigation */}
         <div
           className="fixed left-0 right-0 z-40"
           style={{
-            bottom: navBottomHeight,
+            bottom: `calc(${navBottomHeight} + ${gapAboveNav})`,
             paddingBottom: '16px',
             paddingLeft: '16px',
             paddingRight: '16px',
