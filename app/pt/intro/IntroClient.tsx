@@ -32,7 +32,17 @@ function PlaceholderGraphic({ height = 140 }: { height?: number }) {
 
 function BulletList({ items }: { items: string[] }) {
   return (
-    <ul style={{ marginTop: '10px', paddingLeft: '18px', color: '#111', fontSize: '18px', lineHeight: '1.6' }}>
+    <ul
+      style={{
+        marginTop: '10px',
+        paddingLeft: '22px',
+        color: '#111',
+        fontSize: '18px',
+        lineHeight: '1.6',
+        listStyleType: 'disc',
+        listStylePosition: 'outside',
+      }}
+    >
       {items.map((it, idx) => (
         <li key={idx} style={{ marginTop: idx === 0 ? '0px' : '6px' }}>
           {it}
@@ -364,7 +374,7 @@ export default function IntroClient() {
               Двигайся шаг за шагом, не спеши и регулярно возвращайся к практике.
             </div>
             <div style={{ marginTop: '10px', fontSize: '18px', color: '#111', lineHeight: '1.6' }}>
-              Добро пожаловать в FaloClaro. Давай говорить! 🇵🇹
+              Добро пожаловать в FaloClaro. Давай говорить по-португальски! 🇵🇹
             </div>
           </>
         );
