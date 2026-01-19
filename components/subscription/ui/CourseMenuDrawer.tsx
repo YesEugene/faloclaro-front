@@ -15,6 +15,13 @@ function pickLangText(obj: { ru?: string; en?: string; pt?: string } | string | 
   return obj.en || obj.ru || obj.pt || '';
 }
 
+const DEFAULT_MODULE_SUBTITLE_RU_BY_LEVEL: Record<number, string> = {
+  1: 'Распознавание и базовые реакции',
+  2: 'Поиск информации и ориентация',
+  3: 'Истории, время, причины',
+  4: 'Сообщения, решения, события',
+};
+
 function Chevron({ open }: { open: boolean }) {
   const d = open ? 'M6 15l6-6 6 6' : 'M6 9l6 6 6-6';
   return (
@@ -251,14 +258,14 @@ export function CourseMenuDrawer(props: {
           width: '80vw',
           maxWidth: '420px',
           background: '#F4F5F8',
-          borderTopRightRadius: '28px',
-          borderBottomRightRadius: '28px',
+          borderTopRightRadius: '0px',
+          borderBottomRightRadius: '0px',
           padding: '20px 16px',
           overflowY: 'auto',
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div style={{ fontSize: '28px', fontWeight: 800, color: '#111', marginBottom: '18px' }}>
+        <div className="text-[20px] md:text-[25px] font-semibold" style={{ color: '#111', marginBottom: '18px' }}>
           {props.lang === 'ru' ? 'Содержание курса' : props.lang === 'en' ? 'Course contents' : 'Conteúdo do curso'}
         </div>
 
@@ -280,10 +287,9 @@ export function CourseMenuDrawer(props: {
             padding: '18px 16px',
             border: '0px',
             marginBottom: '14px',
-            fontSize: '22px',
-            fontWeight: 700,
             color: '#111',
           }}
+          className="text-[16px] md:text-[18px] font-bold"
         >
           {props.lang === 'ru' ? 'Вступление' : props.lang === 'en' ? 'Introduction' : 'Introdução'}
         </button>
@@ -297,7 +303,10 @@ export function CourseMenuDrawer(props: {
         {levels.map((lvl: any) => {
           const id = String(lvl.id);
           const expanded = expandedLevelIds.has(id);
-          const subtitle = props.lang === 'ru' ? lvl.name_ru : lvl.name_en;
+          const subtitle =
+            props.lang === 'ru'
+              ? (lvl.name_ru || DEFAULT_MODULE_SUBTITLE_RU_BY_LEVEL[Number(lvl.level_number)] || '')
+              : (lvl.name_en || '');
           const lvlLessons = lessonsByLevel.get(id) || [];
 
           return (
@@ -325,10 +334,20 @@ export function CourseMenuDrawer(props: {
                 }}
               >
                 <div>
-                  <div style={{ fontSize: '26px', fontWeight: 800, color: '#111' }}>
+                  <div className="text-[16px] md:text-[18px] font-bold" style={{ color: '#111' }}>
                     {props.lang === 'ru' ? `Модуль ${lvl.level_number}` : `Module ${lvl.level_number}`}
                   </div>
-                  <div style={{ marginTop: '4px', fontSize: '18px', color: '#6B7280' }}>{subtitle}</div>
+                  <div
+                    style={{
+                      marginTop: '4px',
+                      fontSize: '18px',
+                      color: '#6B7280',
+                      textAlign: 'left',
+                      width: '100%',
+                    }}
+                  >
+                    {subtitle}
+                  </div>
                 </div>
                 <Chevron open={expanded} />
               </button>
