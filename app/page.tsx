@@ -311,7 +311,7 @@ export default function SubscriptionLandingPage() {
     setSubmitted(false);
   };
 
-  const [faqOpenIndex, setFaqOpenIndex] = useState<number>(0);
+  const [faqOpenIndex, setFaqOpenIndex] = useState<number>(-1);
 
   return (
     <div className="min-h-screen bg-white" style={{ fontFamily: 'var(--font-tiktok)' }}>
