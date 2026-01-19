@@ -22,6 +22,15 @@ const DEFAULT_MODULE_SUBTITLE_RU_BY_LEVEL: Record<number, string> = {
   4: 'Сообщения, решения, события',
 };
 
+function normalizeModuleSubtitle(raw: any): string {
+  const s = String(raw || '').trim();
+  if (!s) return '';
+  const low = s.toLowerCase();
+  // Old UI placeholder values that should never be shown as real subtitles
+  if (low === 'уровень' || low === 'level') return '';
+  return s;
+}
+
 function Chevron({ open }: { open: boolean }) {
   const d = open ? 'M6 15l6-6 6 6' : 'M6 9l6 6 6-6';
   return (
@@ -305,8 +314,8 @@ export function CourseMenuDrawer(props: {
           const expanded = expandedLevelIds.has(id);
           const subtitle =
             props.lang === 'ru'
-              ? (lvl.name_ru || DEFAULT_MODULE_SUBTITLE_RU_BY_LEVEL[Number(lvl.level_number)] || '')
-              : (lvl.name_en || '');
+              ? (normalizeModuleSubtitle(lvl.name_ru) || DEFAULT_MODULE_SUBTITLE_RU_BY_LEVEL[Number(lvl.level_number)] || '')
+              : (normalizeModuleSubtitle(lvl.name_en) || '');
           const lvlLessons = lessonsByLevel.get(id) || [];
 
           return (
