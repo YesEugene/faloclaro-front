@@ -152,6 +152,14 @@ async function getOrCreateDay1Token(userId: string): Promise<string | null> {
   return token;
 }
 
+export async function buildDefaultVarsForUser(userId: string): Promise<{ intro_url: string; payment_url: string }> {
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.faloclaro.com';
+  const day1Token = await getOrCreateDay1Token(userId);
+  const intro_url = day1Token ? `${baseUrl}/pt/intro?day=1&token=${day1Token}` : `${baseUrl}`;
+  const payment_url = day1Token ? `${baseUrl}/pt/payment?day=4&token=${day1Token}` : `${baseUrl}/pt/payment`;
+  return { intro_url, payment_url };
+}
+
 export function computeModuleInfo(dayNumber: number): { moduleNumber: number; moduleLabelRu: string; moduleLabelEn: string } | null {
   if (dayNumber >= 1 && dayNumber <= 14) return { moduleNumber: 1, moduleLabelRu: 'Модуль 1 (A1)', moduleLabelEn: 'Module 1 (A1)' };
   if (dayNumber >= 15 && dayNumber <= 30) return { moduleNumber: 2, moduleLabelRu: 'Модуль 2 (A2)', moduleLabelEn: 'Module 2 (A2)' };
@@ -406,16 +414,24 @@ export async function runDispatcherOnce(limit = 50): Promise<{ processed: number
     }
 
     // Build standard vars
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.faloclaro.com';
-    const day1Token = await getOrCreateDay1Token(enr.user_id);
-    const introUrl = day1Token ? `${baseUrl}/pt/intro?day=1&token=${day1Token}` : `${baseUrl}`;
-    const paymentUrl = day1Token ? `${baseUrl}/pt/payment?day=4&token=${day1Token}` : `${baseUrl}/pt/payment`;
+    const { intro_url: introUrl, payment_url: paymentUrl } = await buildDefaultVarsForUser(enr.user_id);
 
     const vars: Record<string, any> = {
       intro_url: introUrl,
       payment_url: paymentUrl,
       ...(enr.context || {}),
     };
+
+    // Weekly stats enrichment
+    if (step.template_key === 'core_weekly_stats') {
+      const stats = await computeWeeklyStats(enr.user_id);
+      vars.weekly_lessons_completed = stats.weeklyLessonsCompleted;
+      vars.weekly_topics = stats.weeklyTopics || (await (async () => {
+        const lang = await getUserLang(enr.user_id);
+        return lang === 'en' ? 'No completed lessons this week' : 'Нет завершённых уроков за неделю';
+      })());
+      vars.total_words_learned = stats.totalWordsLearned;
+    }
 
     const res = await sendTemplateEmail({
       userId: enr.user_id,
@@ -434,7 +450,17 @@ export async function runDispatcherOnce(limit = 50): Promise<{ processed: number
     const nextIndex = enr.current_step_index + 1;
     const nextStep = steps.find((s) => s.step_index === nextIndex);
     if (!nextStep) {
-      await supabase.from('email_enrollments').update({ status: 'completed', updated_at: nowIso() }).eq('id', enr.id);
+      const repeat = !!(step.stop_conditions || {})?.repeat;
+      const repeatDelayHours = Number((step.stop_conditions || {})?.repeat_delay_hours || 168);
+      if (repeat) {
+        const nextAt = addHours(new Date(), Number.isFinite(repeatDelayHours) ? repeatDelayHours : 168).toISOString();
+        await supabase
+          .from('email_enrollments')
+          .update({ current_step_index: 1, next_send_at: nextAt, updated_at: nowIso() })
+          .eq('id', enr.id);
+      } else {
+        await supabase.from('email_enrollments').update({ status: 'completed', updated_at: nowIso() }).eq('id', enr.id);
+      }
     } else {
       const nextAt = addHours(new Date(), nextStep.delay_hours).toISOString();
       await supabase

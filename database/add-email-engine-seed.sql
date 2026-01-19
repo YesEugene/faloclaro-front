@@ -5,7 +5,8 @@
 INSERT INTO email_campaigns (key, name)
 VALUES
   ('campaign_neg_inactivity', 'Negative: inactivity (trial + paid)'),
-  ('campaign_neg_no_payment_after_day3', 'Negative: no payment after day 3')
+  ('campaign_neg_no_payment_after_day3', 'Negative: no payment after day 3'),
+  ('campaign_core_weekly_stats', 'Core: weekly stats (every 7 days from registration)')
 ON CONFLICT (key) DO UPDATE SET name = EXCLUDED.name;
 
 -- Templates (subjects + bodies). You can fully edit later in Admin -> Emails.
@@ -234,7 +235,10 @@ VALUES
   -- No payment after day3: 24h -> 72h -> 168h
   ('campaign_neg_no_payment_after_day3', 1, 'neg_pay_2_1', 24, '{"stop_on_paid": true, "stop_on_email_off": true}'::jsonb),
   ('campaign_neg_no_payment_after_day3', 2, 'neg_pay_2_2', 72, '{"stop_on_paid": true, "stop_on_email_off": true}'::jsonb),
-  ('campaign_neg_no_payment_after_day3', 3, 'neg_pay_2_3', 168, '{"stop_on_paid": true, "stop_on_email_off": true}'::jsonb)
+  ('campaign_neg_no_payment_after_day3', 3, 'neg_pay_2_3', 168, '{"stop_on_paid": true, "stop_on_email_off": true}'::jsonb),
+
+  -- Weekly stats: repeat every 168h
+  ('campaign_core_weekly_stats', 1, 'core_weekly_stats', 168, '{"repeat": true, "repeat_delay_hours": 168, "stop_on_email_off": true}'::jsonb)
 ON CONFLICT (campaign_key, step_index) DO NOTHING;
 
 

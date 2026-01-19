@@ -293,34 +293,27 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
         })
         .eq('id', userProgress.id);
 
-      // If lesson 3 is completed and user is on trial, send payment email
-      if (allCompleted && lesson.day_number === 3 && tokenData?.user_id) {
-        // Check if user has paid subscription
-        const { data: subscriptionData } = await supabase
-          .from('subscriptions')
-          .select('status, paid_at')
-          .eq('user_id', tokenData.user_id)
-          .order('created_at', { ascending: false })
-          .limit(1)
-          .maybeSingle();
+      // Mark learning activity (stops inactivity campaign)
+      try {
+        await fetch('/api/subscription/activity', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ lessonToken: token }),
+        });
+      } catch (err) {
+        console.error('Error marking activity:', err);
+      }
 
-        const hasPaidAccess = subscriptionData?.status === 'active' || subscriptionData?.status === 'paid' || subscriptionData?.paid_at;
-        
-        if (!hasPaidAccess) {
-          // Send payment email after lesson 3 completion
-          try {
-            await fetch('/api/send-payment-email', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                userId: tokenData.user_id,
-                lessonDay: 3,
-                token: token,
-              }),
-            });
-          } catch (err) {
-            console.error('Error sending payment email:', err);
-          }
+      // Lesson completed event (day3 congrats/payment campaign, module/course completion)
+      if (allCompleted) {
+        try {
+          await fetch('/api/subscription/events/lesson-completed', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ lessonToken: token, dayNumber: lesson.day_number }),
+          });
+        } catch (err) {
+          console.error('Error sending lesson-completed event:', err);
         }
       }
 

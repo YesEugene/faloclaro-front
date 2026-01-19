@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
-import { supabase } from '@/lib/supabase';
+import { getSupabaseAdmin } from '@/lib/supabase-admin';
 import crypto from 'crypto';
+import { buildDefaultVarsForUser, sendTemplateEmail, stopCampaign } from '@/lib/email-engine';
 
 /**
  * Stripe webhook handler for course payment
@@ -62,6 +63,7 @@ export async function POST(request: NextRequest) {
         const userId = session.metadata?.user_id;
 
         if (userId) {
+          const supabase = getSupabaseAdmin();
           // Update subscription to active/paid
           const expiresAt = new Date();
           expiresAt.setDate(expiresAt.getDate() + 365); // 1 year from payment
@@ -115,6 +117,15 @@ export async function POST(request: NextRequest) {
                 console.log(`Created ${tokensToCreate.length} lesson access tokens for user ${userId}`);
               }
             }
+          }
+
+          // Stop no-payment campaign and send payment thanks email
+          try {
+            await stopCampaign({ userId, campaignKey: 'campaign_neg_no_payment_after_day3' });
+            const vars = await buildDefaultVarsForUser(userId);
+            await sendTemplateEmail({ userId, templateKey: 'core_payment_thanks', vars, dayNumber: 0 });
+          } catch (e) {
+            console.warn('Payment email engine failed (non-blocking):', e);
           }
         }
         break;

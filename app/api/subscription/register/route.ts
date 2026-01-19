@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
 import crypto from 'crypto';
-import { sendLessonEmail } from '@/lib/send-lesson-email';
+import { supabase } from '@/lib/supabase';
+import { getSupabaseAdmin } from '@/lib/supabase-admin';
+import { buildDefaultVarsForUser, enrollCampaign, sendTemplateEmail } from '@/lib/email-engine';
 
 export async function POST(request: NextRequest) {
   try {
@@ -72,6 +73,18 @@ export async function POST(request: NextRequest) {
         { error: 'User not found' },
         { status: 500 }
       );
+    }
+
+    // Ensure registered_at is set (requires service role because subscription_users has no public update policy)
+    try {
+      const admin = getSupabaseAdmin();
+      await admin
+        .from('subscription_users')
+        .update({ registered_at: new Date().toISOString() })
+        .eq('id', user.id);
+    } catch (e) {
+      // don't block registration if this fails
+      console.warn('Failed to set registered_at (non-blocking)');
     }
 
     // Check or create subscription
@@ -199,52 +212,22 @@ export async function POST(request: NextRequest) {
       userId: verifyToken.user_id,
     });
 
-    // Send email with link to lessons page
-    // IMPORTANT: In Vercel Serverless Functions, we need to await the email
-    // Otherwise the function may terminate before email is sent
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.faloclaro.com';
-    const emailUrl = `${baseUrl}/pt/intro?day=1&token=${firstToken}`;
-    
-    console.log('📧 About to send email:', {
-      userId: user.id,
-      userEmail: normalizedEmail, // Use normalizedEmail from request
-      lessonIds: lessons.map(l => l.id),
-      dayNumbers: lessons.map(l => l.day_number),
-      firstToken: firstToken?.substring(0, 8) + '...',
-      tokenCount: tokens.length,
-      emailUrl,
-      baseUrl,
-    });
-    
+    // Welcome email from DB template + enroll campaigns
     try {
-      // Send email with link to lessons page
-      // Use dayNumber = 1 for registration email (always registration email)
-      const emailResult = await sendLessonEmail(user.id, lessons[0].id, 1, firstToken);
-      
-      console.log('Email send completed:', {
-        success: emailResult.success,
-        emailId: emailResult.emailId,
-        error: emailResult.error,
+      const vars = await buildDefaultVarsForUser(user.id);
+      await sendTemplateEmail({
+        userId: user.id,
+        templateKey: 'core_welcome',
+        vars,
+        dayNumber: 1,
+        lessonId: lessons[0]?.id || null,
       });
-      
-      if (!emailResult.success) {
-        console.error('Email sending failed:', emailResult.error);
-        // Don't fail registration if email fails, but log it
-      }
-    } catch (emailError) {
-      console.error('Exception during email send:', emailError);
-      // Don't fail registration if email fails
+      // enroll inactivity reminders + weekly stats
+      await enrollCampaign({ userId: user.id, campaignKey: 'campaign_neg_inactivity', context: {} });
+      await enrollCampaign({ userId: user.id, campaignKey: 'campaign_core_weekly_stats', context: {} });
+    } catch (e) {
+      console.warn('Email engine failed (non-blocking):', e);
     }
-
-    // Log email attempt (even if it failed)
-    await supabase
-      .from('email_logs')
-      .insert({
-        user_id: user.id,
-        lesson_id: lessons[0].id,
-        day_number: 1,
-        email_type: 'lesson',
-      });
 
     return NextResponse.json({
       success: true,

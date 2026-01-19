@@ -249,6 +249,30 @@ function UsersSection() {
     }
   };
 
+  const handleRevokeCourse = async (userId: string, userEmail: string) => {
+    if (!confirm(`Отозвать курс у пользователя "${userEmail}"? После этого уроки > 3 будут заблокированы и вести на оплату.`)) {
+      return;
+    }
+    try {
+      setError('');
+      setSuccess('');
+      const response = await fetch('/api/admin/users/revoke', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        setSuccess(`Доступ отозван у ${userEmail}`);
+        loadUsers();
+      } else {
+        setError(data.error || 'Ошибка при отзыве доступа');
+      }
+    } catch (err) {
+      setError('Ошибка при отзыве доступа');
+    }
+  };
+
   const handleDeleteUser = async (userId: string, userEmail: string) => {
     if (!confirm(`Вы уверены, что хотите удалить пользователя "${userEmail}"? Это действие нельзя отменить.`)) {
       return;
@@ -416,6 +440,13 @@ function UsersSection() {
                       </button>
                     </>
                   )}
+                  <span className="text-gray-300">|</span>
+                  <button
+                    onClick={() => handleRevokeCourse(user.id, user.email)}
+                    className="text-orange-600 hover:text-orange-800 font-medium"
+                  >
+                    Отозвать курс
+                  </button>
                   <span className="text-gray-300">|</span>
                   <button
                     onClick={() => handleDeleteUser(user.id, user.email)}

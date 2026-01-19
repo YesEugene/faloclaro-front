@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
-import { sendFullAccessEmail } from '@/lib/send-lesson-email';
+import { buildDefaultVarsForUser, sendTemplateEmail, stopCampaign } from '@/lib/email-engine';
 import crypto from 'crypto';
 
 export async function POST(request: NextRequest) {
@@ -134,7 +134,9 @@ export async function POST(request: NextRequest) {
 
       if (firstLessonToken?.token) {
         try {
-          await sendFullAccessEmail(userId, firstLessonToken.token);
+          await stopCampaign({ userId, campaignKey: 'campaign_neg_no_payment_after_day3' });
+          const vars = await buildDefaultVarsForUser(userId);
+          await sendTemplateEmail({ userId, templateKey: 'admin_full_access_granted', vars, dayNumber: 0 });
         } catch (emailError) {
           console.error('Error sending full access email:', emailError);
           // Don't fail if email fails
