@@ -8,6 +8,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { SettingsPanel } from '@/components/subscription/ui/SettingsPanel';
 import { LessonMenuSheet } from '@/components/subscription/ui/LessonMenuSheet';
+import { CourseMenuDrawer } from '@/components/subscription/ui/CourseMenuDrawer';
 import TaskCard from './TaskCard';
 
 interface LessonContentProps {
@@ -27,6 +28,7 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
   const [totalLessons, setTotalLessons] = useState<number>(0);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [lessonMenuOpen, setLessonMenuOpen] = useState(false);
+  const [courseMenuOpen, setCourseMenuOpen] = useState(false);
   
   // Update userProgress when initialUserProgress changes
   useEffect(() => {
@@ -656,7 +658,7 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
           <div className="max-w-md mx-auto px-4" style={{ paddingBottom: '10px', position: 'relative', zIndex: 20 }}>
             <div className="flex items-center justify-between" style={{ gap: '12px' }}>
               <button
-                onClick={() => router.push(`/pt/lesson/${lesson.day_number}/${token}/overview`)}
+                onClick={() => setCourseMenuOpen(true)}
                 className="text-black"
                 style={{
                   fontSize: '16px',
@@ -672,10 +674,10 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
                   </svg>
                   <span>
                     {appLanguage === 'ru'
-                      ? `Меню урока ${lesson.day_number}`
+                      ? 'Меню курса'
                       : appLanguage === 'en'
-                      ? `Lesson ${lesson.day_number} menu`
-                      : `Menu da lição ${lesson.day_number}`}
+                      ? 'Course menu'
+                      : 'Menu do curso'}
                   </span>
                 </span>
               </button>
@@ -793,6 +795,14 @@ export default function LessonContent({ lesson, userProgress: initialUserProgres
         completedTaskIds={completedTaskIds}
         onSelectTaskId={selectTaskById}
         onClose={() => setLessonMenuOpen(false)}
+      />
+
+      <CourseMenuDrawer
+        open={courseMenuOpen}
+        lang={appLanguage}
+        currentDay={lesson.day_number}
+        currentToken={token}
+        onClose={() => setCourseMenuOpen(false)}
       />
     </div>
   );
