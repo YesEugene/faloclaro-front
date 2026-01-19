@@ -392,7 +392,7 @@ export function CourseMenuDrawer(props: {
                       >
                         <div
                           style={{
-                            fontSize: '18px',
+                            fontSize: '12px',
                             color: '#111',
                             textAlign: 'left',
                             flex: 1,

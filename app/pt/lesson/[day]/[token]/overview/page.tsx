@@ -9,6 +9,13 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { SettingsPanel } from '@/components/subscription/ui/SettingsPanel';
 
+const DEFAULT_MODULE_SUBTITLE_RU_BY_LEVEL: Record<number, string> = {
+  1: 'Распознавание и базовые реакции',
+  2: 'Поиск информации и ориентация',
+  3: 'Истории, время, причины',
+  4: 'Сообщения, решения, события',
+};
+
 function OverviewPageContent() {
   const params = useParams();
   const router = useRouter();
@@ -783,9 +790,11 @@ function OverviewPageContent() {
                           </span>
                           <span 
                             className="text-[10px] md:text-xs font-medium"
-                            style={{ color: levelTextColor, marginTop: '4px' }}
+                            style={{ color: levelTextColor, marginTop: '4px', textAlign: 'center', lineHeight: '1.1', maxWidth: '92px' }}
                           >
-                            {appLanguage === 'ru' ? 'УРОВЕНЬ' : 'LEVEL'}
+                            {appLanguage === 'ru'
+                              ? (level.name_ru || DEFAULT_MODULE_SUBTITLE_RU_BY_LEVEL[Number(level.level_number)] || '')
+                              : (level.name_en || 'LEVEL')}
                           </span>
                         </div>
 
