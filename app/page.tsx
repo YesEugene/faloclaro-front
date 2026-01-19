@@ -17,6 +17,11 @@ export default function SubscriptionLandingPage() {
   const [isMobile, setIsMobile] = useState(false);
   const [courseCardHover, setCourseCardHover] = useState(false);
   const [trainerCardHover, setTrainerCardHover] = useState(false);
+  const [contactMessage, setContactMessage] = useState('');
+  const [contactEmail, setContactEmail] = useState('');
+  const [contactSubmitting, setContactSubmitting] = useState(false);
+  const [contactSuccess, setContactSuccess] = useState(false);
+  const [contactError, setContactError] = useState('');
 
   useEffect(() => {
     const checkMobile = () => {
@@ -158,6 +163,9 @@ export default function SubscriptionLandingPage() {
       
       contactTitle: 'Write a message to FaloClaro',
       contactButton: 'Send',
+      contactMessagePlaceholder: 'Your message...',
+      contactEmailPlaceholder: 'Your E-mail',
+      contactSuccess: 'Thanks! Your message has been sent.',
       
       successMessage: 'We\'ve sent you the first lesson by email.',
       successSubtext: 'Check your email and click the link in the message.',
@@ -269,6 +277,9 @@ export default function SubscriptionLandingPage() {
       
       contactTitle: 'Напиши сообщение FaloClaro',
       contactButton: 'Отправить',
+      contactMessagePlaceholder: 'Твое сообщение...',
+      contactEmailPlaceholder: 'Твой Email',
+      contactSuccess: 'Спасибо! Сообщение отправлено.',
       
       successMessage: 'Мы отправили тебе первый урок на почту.',
       successSubtext: 'Проверь почту и перейди по ссылке в письме.',
@@ -312,6 +323,33 @@ export default function SubscriptionLandingPage() {
   };
 
   const [faqOpenIndex, setFaqOpenIndex] = useState<number>(-1);
+
+  const handleContactSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setContactError('');
+    setContactSuccess(false);
+    setContactSubmitting(true);
+    try {
+      const resp = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: contactEmail,
+          message: contactMessage,
+          lang: appLanguage,
+        }),
+      });
+      const data = await resp.json().catch(() => ({}));
+      if (!resp.ok) throw new Error(data?.error || 'Failed to send message');
+      setContactSuccess(true);
+      setContactMessage('');
+      setContactEmail('');
+    } catch (err) {
+      setContactError(err instanceof Error ? err.message : 'Failed to send message');
+    } finally {
+      setContactSubmitting(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-white" style={{ fontFamily: 'var(--font-tiktok)' }}>
@@ -2206,17 +2244,22 @@ export default function SubscriptionLandingPage() {
               marginBottom: '30px'
             }}>
               {/* Form container - aligned with title in desktop */}
-              <form style={{
+              <form
+                onSubmit={handleContactSubmit}
+                style={{
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '12px',
                 width: '100%',
                 paddingLeft: isMobile ? '0px' : '30px'
-              }}>
+              }}
+              >
               <textarea
-                placeholder="Your message..."
+                placeholder={t.contactMessagePlaceholder}
                 required
                 rows={isMobile ? 6 : 8}
+                value={contactMessage}
+                onChange={(e) => setContactMessage(e.target.value)}
                 style={{
                   width: '100%',
                   padding: '12px 16px',
@@ -2233,8 +2276,10 @@ export default function SubscriptionLandingPage() {
               />
               <input
                 type="email"
-                placeholder={t.emailPlaceholder}
+                placeholder={t.contactEmailPlaceholder || t.emailPlaceholder}
                 required
+                value={contactEmail}
+                onChange={(e) => setContactEmail(e.target.value)}
                 style={{
                   width: '100%',
                   padding: '12px 16px',
@@ -2248,8 +2293,15 @@ export default function SubscriptionLandingPage() {
                   backgroundColor: '#fff'
                 }}
               />
+              {contactError && (
+                <div style={{ color: '#b91c1c', fontSize: '14px', fontFamily: 'var(--font-tiktok)' }}>{contactError}</div>
+              )}
+              {contactSuccess && (
+                <div style={{ color: '#065f46', fontSize: '14px', fontFamily: 'var(--font-tiktok)' }}>{t.contactSuccess}</div>
+              )}
               <button
                 type="submit"
+                disabled={contactSubmitting}
                 style={{
                   width: '100%',
                   padding: '14px',
@@ -2260,11 +2312,12 @@ export default function SubscriptionLandingPage() {
                   fontFamily: 'var(--font-tiktok)',
                   fontSize: '16px',
                   fontWeight: 700,
-                  cursor: 'pointer',
+                  cursor: contactSubmitting ? 'not-allowed' : 'pointer',
+                  opacity: contactSubmitting ? 0.7 : 1,
                   marginBottom: '0px'
                 }}
               >
-                {t.contactButton}
+                {contactSubmitting ? '...' : t.contactButton}
               </button>
               </form>
             </div>
