@@ -5,6 +5,7 @@ export type EmailLang = 'ru' | 'en';
 
 type EmailVisualBlock = {
   id: string;
+  type?: 'text' | 'button';
   bg?: string; // hex or named
   border?: boolean;
   borderColor?: string;
@@ -12,6 +13,12 @@ type EmailVisualBlock = {
   padding?: number;
   title?: string;
   text?: string;
+  // button fields
+  button_text?: string;
+  button_url?: string; // can include {{placeholders}}
+  button_bg?: string;
+  button_text_color?: string;
+  button_full_width?: boolean;
 };
 
 type EmailVisualLayout = {
@@ -96,9 +103,7 @@ function renderVisualLayoutHtml(input: {
   subject: string;
   lang: 'ru' | 'en';
   layout: EmailVisualLayout;
-  ctaEnabled: boolean;
-  ctaText: string | null;
-  ctaUrl: string | null;
+  vars: Record<string, any>;
   baseUrl: string;
 }): string {
   const maxWidth = Number.isFinite(input.layout.maxWidth as any) ? Number(input.layout.maxWidth) : 580;
@@ -107,6 +112,32 @@ function renderVisualLayoutHtml(input: {
 
   const blocksHtml = (input.layout.blocks || [])
     .map((b) => {
+      const type = (b.type || 'text') as 'text' | 'button';
+
+      if (type === 'button') {
+        const btnText = String(b.button_text || '').trim() || (input.lang === 'en' ? 'Open' : 'Открыть');
+        const btnUrlRaw = String(b.button_url || '').trim();
+        const btnUrl = btnUrlRaw ? renderPlaceholders(btnUrlRaw, input.vars as any) : '';
+        const bg = b.button_bg || '#111111';
+        const tc = b.button_text_color || '#FFFFFF';
+        const radius = Number.isFinite(b.radius as any) ? Number(b.radius) : 18;
+        const fullWidth = b.button_full_width !== false; // default true
+        const display = fullWidth ? 'block' : 'inline-block';
+        const alignWrap = fullWidth ? '' : 'text-align:left;';
+
+        return `
+          <div style="${alignWrap}">
+            <a href="${escapeHtml(btnUrl)}" style="display:${display}; text-align:center; background:${escapeHtml(
+              bg
+            )}; color:${escapeHtml(
+              tc
+            )}; text-decoration:none; padding:16px 20px; border-radius:${radius}px; font-weight:900; font-size:16px;">
+              ${escapeHtml(btnText)}
+            </a>
+          </div>
+        `;
+      }
+
       const bg = b.bg || '#FFFFFF';
       const radius = Number.isFinite(b.radius as any) ? Number(b.radius) : 24;
       const padding = Number.isFinite(b.padding as any) ? Number(b.padding) : 40;
@@ -133,14 +164,6 @@ function renderVisualLayoutHtml(input: {
     .join('<div style="height:16px;"></div>');
 
   // IMPORTANT: subject should NOT be repeated in the email body by default.
-  // If needed later, we can add a layout flag like layout.showSubjectHeading.
-
-  const cta = input.ctaEnabled && input.ctaUrl
-    ? `<div style="height:18px;"></div>
-       <a href="${escapeHtml(input.ctaUrl)}" style="display:block; text-align:center; background:#111; color:#fff; text-decoration:none; padding:16px 20px; border-radius: 22px; font-weight: 900; font-size:16px;">
-         ${escapeHtml(input.ctaText || '')}
-       </a>`
-    : '';
 
   return `
     <div style="font-family: Inter, Arial, sans-serif; color:#111; max-width: ${maxWidth}px; margin: 0 auto; padding: 22px;">
@@ -153,7 +176,6 @@ function renderVisualLayoutHtml(input: {
       </table>
       <div style="height:1px;background:#E6E8EB;margin: 12px 0 18px;"></div>
       ${blocksHtml}
-      ${cta}
     </div>
   `;
 }
@@ -492,9 +514,7 @@ export function renderEmailHtml(input: {
         subject: input.subject,
         lang: input.lang,
         layout: visualLayout,
-        ctaEnabled: input.ctaEnabled,
-        ctaText: input.ctaText,
-        ctaUrl: input.ctaUrl,
+        vars: input.vars,
         baseUrl,
       }),
       text: input.bodyText + (input.ctaEnabled && input.ctaUrl ? `\n\n${input.ctaText || ''}: ${input.ctaUrl}` : ''),

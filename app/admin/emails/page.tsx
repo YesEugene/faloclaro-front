@@ -199,6 +199,7 @@ export default function AdminEmailsPage() {
         ...(layout?.blocks || []),
         {
           id: crypto.randomUUID(),
+          type: 'text',
           bg: '#FFFFFF',
           border: false,
           borderColor: '#111111',
@@ -206,6 +207,27 @@ export default function AdminEmailsPage() {
           padding: 18,
           title: '',
           text: '',
+        },
+      ],
+    }));
+  };
+
+  const addButtonBlock = (lang: 'ru' | 'en') => {
+    ensureVisualLayout(lang);
+    updateVisual(lang, (layout) => ({
+      ...layout,
+      blocks: [
+        ...(layout?.blocks || []),
+        {
+          id: crypto.randomUUID(),
+          type: 'button',
+          button_text: lang === 'en' ? 'Open the course' : 'Открыть курс',
+          button_url: '{{intro_url}}',
+          button_bg: '#111111',
+          button_text_color: '#FFFFFF',
+          radius: 18,
+          padding: 0,
+          button_full_width: true,
         },
       ],
     }));
@@ -263,6 +285,12 @@ export default function AdminEmailsPage() {
             >
               + Add block
             </button>
+            <button
+              onClick={() => addButtonBlock(lang)}
+              className="px-3 py-2 bg-black text-white rounded-lg hover:bg-gray-900 text-sm"
+            >
+              + Button
+            </button>
           </div>
         </div>
 
@@ -298,6 +326,7 @@ export default function AdminEmailsPage() {
                       blocks: (l.blocks || []).map((x: any) => (x.id === b.id ? { ...x, bg: e.target.value } : x)),
                     }))
                   }
+                  disabled={(b.type || 'text') === 'button'}
                 >
                   {colorOptions.map((c) => (
                     <option key={c.value} value={c.value}>
@@ -363,37 +392,123 @@ export default function AdminEmailsPage() {
                         ),
                       }))
                     }
+                    disabled={(b.type || 'text') === 'button'}
                   />
                 </label>
               </div>
             </div>
 
             <div className="mt-3">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Title (Orelega One)</label>
-              <input
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
-                value={b.title || ''}
-                onChange={(e) =>
-                  updateVisual(lang, (l) => ({
-                    ...l,
-                    blocks: (l.blocks || []).map((x: any) => (x.id === b.id ? { ...x, title: e.target.value } : x)),
-                  }))
-                }
-              />
+              {(b.type || 'text') === 'button' ? (
+                <>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Button text</label>
+                  <input
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                    value={b.button_text || ''}
+                    onChange={(e) =>
+                      updateVisual(lang, (l) => ({
+                        ...l,
+                        blocks: (l.blocks || []).map((x: any) => (x.id === b.id ? { ...x, button_text: e.target.value } : x)),
+                      }))
+                    }
+                  />
+                </>
+              ) : (
+                <>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                  <input
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                    value={b.title || ''}
+                    onChange={(e) =>
+                      updateVisual(lang, (l) => ({
+                        ...l,
+                        blocks: (l.blocks || []).map((x: any) => (x.id === b.id ? { ...x, title: e.target.value } : x)),
+                      }))
+                    }
+                  />
+                </>
+              )}
             </div>
 
             <div className="mt-3">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Text</label>
-              <textarea
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm h-28"
-                value={b.text || ''}
-                onChange={(e) =>
-                  updateVisual(lang, (l) => ({
-                    ...l,
-                    blocks: (l.blocks || []).map((x: any) => (x.id === b.id ? { ...x, text: e.target.value } : x)),
-                  }))
-                }
-              />
+              {(b.type || 'text') === 'button' ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Button URL (supports placeholders)</label>
+                    <input
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                      value={b.button_url || ''}
+                      onChange={(e) =>
+                        updateVisual(lang, (l) => ({
+                          ...l,
+                          blocks: (l.blocks || []).map((x: any) => (x.id === b.id ? { ...x, button_url: e.target.value } : x)),
+                        }))
+                      }
+                      placeholder="{{intro_url}}"
+                    />
+                    <div className="text-xs text-gray-500 mt-1">Example: {'{{intro_url}}'} or {'{{payment_url}}'}</div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">BG</label>
+                      <input
+                        className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                        value={b.button_bg || '#111111'}
+                        onChange={(e) =>
+                          updateVisual(lang, (l) => ({
+                            ...l,
+                            blocks: (l.blocks || []).map((x: any) => (x.id === b.id ? { ...x, button_bg: e.target.value } : x)),
+                          }))
+                        }
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Text color</label>
+                      <input
+                        className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                        value={b.button_text_color || '#FFFFFF'}
+                        onChange={(e) =>
+                          updateVisual(lang, (l) => ({
+                            ...l,
+                            blocks: (l.blocks || []).map((x: any) =>
+                              x.id === b.id ? { ...x, button_text_color: e.target.value } : x
+                            ),
+                          }))
+                        }
+                      />
+                    </div>
+                  </div>
+                  <label className="flex items-center gap-2 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={b.button_full_width !== false}
+                      onChange={(e) =>
+                        updateVisual(lang, (l) => ({
+                          ...l,
+                          blocks: (l.blocks || []).map((x: any) =>
+                            x.id === b.id ? { ...x, button_full_width: e.target.checked } : x
+                          ),
+                        }))
+                      }
+                    />
+                    Full width
+                  </label>
+                </div>
+              ) : (
+                <>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Text</label>
+                  <textarea
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm h-28"
+                    value={b.text || ''}
+                    onChange={(e) =>
+                      updateVisual(lang, (l) => ({
+                        ...l,
+                        blocks: (l.blocks || []).map((x: any) => (x.id === b.id ? { ...x, text: e.target.value } : x)),
+                      }))
+                    }
+                  />
+                </>
+              )}
             </div>
           </div>
         ))}
