@@ -113,7 +113,7 @@ function renderVisualLayoutHtml(input: {
       const border = b.border ? `2px solid ${b.borderColor || '#111'}` : 'none';
 
       const titleHtml = b.title
-        ? `<div style="font-family:'Orelega One', Georgia, 'Times New Roman', serif; font-size: 36px; font-weight: 400; line-height: 1.05; margin:0 0 10px 0;">${escapeHtml(
+        ? `<div style="font-family: Inter, Arial, sans-serif; font-size: 31px; font-weight: 800; line-height: 1.1; margin:0 0 10px 0;">${escapeHtml(
             b.title
           )}</div>`
         : '';
