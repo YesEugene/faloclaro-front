@@ -103,7 +103,7 @@ function renderVisualLayoutHtml(input: {
 }): string {
   const maxWidth = Number.isFinite(input.layout.maxWidth as any) ? Number(input.layout.maxWidth) : 580;
   // Gmail often does NOT render SVG <img> reliably; use PNG logo.
-  const logoUrl = `${input.baseUrl}/Img/Website/Mask group.png`;
+  const logoUrl = `${input.baseUrl}/Img/E-mail/FaloClaroLogo.png`;
 
   const blocksHtml = (input.layout.blocks || [])
     .map((b) => {
@@ -132,12 +132,8 @@ function renderVisualLayoutHtml(input: {
     })
     .join('<div style="height:16px;"></div>');
 
-  const heading = `<div style="font-size: 40px; font-weight: 400; margin: 6px 0 14px; font-family: 'Orelega One', Georgia, 'Times New Roman', serif;">${escapeHtml(
-    input.subject
-  )}</div>`;
-  const headingTight = `<div style="font-size: 40px; font-weight: 400; margin: 6px 0 14px; line-height: 0.95; font-family: 'Orelega One', Georgia, 'Times New Roman', serif;">${escapeHtml(
-    input.subject
-  )}</div>`;
+  // IMPORTANT: subject should NOT be repeated in the email body by default.
+  // If needed later, we can add a layout flag like layout.showSubjectHeading.
 
   const cta = input.ctaEnabled && input.ctaUrl
     ? `<div style="height:18px;"></div>
@@ -155,7 +151,6 @@ function renderVisualLayoutHtml(input: {
           </td>
         </tr>
       </table>
-      ${headingTight}
       <div style="height:1px;background:#E6E8EB;margin: 12px 0 18px;"></div>
       ${blocksHtml}
       ${cta}
@@ -351,7 +346,7 @@ function buildWelcomeHtml(input: {
   const yellow = blocks.slice(7, 9);
   const green = blocks.slice(9);
 
-  const logoUrl = `${input.baseUrl}/Img/Website/Mask group.png`;
+  const logoUrl = `${input.baseUrl}/Img/E-mail/FaloClaroLogo.png`;
   const maxWidth = 580;
 
   return `
@@ -364,9 +359,6 @@ function buildWelcomeHtml(input: {
       </tr>
     </table>
 
-    <div style="font-size: 40px; font-weight: 400; margin: 6px 0 14px; line-height: 0.95; font-family: 'Orelega One', Georgia, 'Times New Roman', serif;">
-      ${escapeHtml(input.subject)}
-    </div>
     <div style="height:1px;background:#E6E8EB;margin: 12px 0 18px;"></div>
 
     <div style="border:2px solid #111; border-radius: 24px; padding: 40px; background:#fff;">
@@ -417,7 +409,7 @@ function buildDay3CongratsHtml(input: {
   const pink = blocks.slice(2, 4);
   const yellow = blocks.slice(4);
 
-  const logoUrl = `${input.baseUrl}/Img/Website/Mask group.png`;
+  const logoUrl = `${input.baseUrl}/Img/E-mail/FaloClaroLogo.png`;
   const maxWidth = 580;
 
   return `
@@ -430,9 +422,6 @@ function buildDay3CongratsHtml(input: {
       </tr>
     </table>
 
-    <div style="font-size: 40px; font-weight: 400; margin: 6px 0 14px; line-height: 0.95; font-family: 'Orelega One', Georgia, 'Times New Roman', serif;">
-      ${escapeHtml(input.subject)}
-    </div>
     <div style="height:1px;background:#E6E8EB;margin: 12px 0 18px;"></div>
 
     <div style="border-radius: 24px; padding: 40px; background:#BDF6BB;">
