@@ -33,6 +33,7 @@ export default function AdminEmailsPage() {
   const [logTemplateFilter, setLogTemplateFilter] = useState('');
 
   const [testTo, setTestTo] = useState('');
+  const [statsUserEmail, setStatsUserEmail] = useState('');
   const [testLang, setTestLang] = useState<'ru' | 'en'>('ru');
   const [testSending, setTestSending] = useState(false);
 
@@ -160,7 +161,7 @@ export default function AdminEmailsPage() {
       const res = await fetch('/api/admin/emails/test-send', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ to: testTo, templateKey: tpl.key, lang: testLang }),
+        body: JSON.stringify({ to: testTo, templateKey: tpl.key, lang: testLang, statsUserEmail: statsUserEmail.trim() || null }),
       });
       const data = await res.json();
       if (!data.success) throw new Error(data.error || 'Failed to send');
@@ -394,6 +395,15 @@ export default function AdminEmailsPage() {
                           placeholder="you@example.com"
                         />
                       </div>
+                      <div className="w-full md:w-1/2">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Use real stats from user email (optional)</label>
+                        <input
+                          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                          value={statsUserEmail}
+                          onChange={(e) => setStatsUserEmail(e.target.value)}
+                          placeholder="user@example.com"
+                        />
+                      </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Lang</label>
                         <select
@@ -414,7 +424,7 @@ export default function AdminEmailsPage() {
                       </button>
                     </div>
                     <div className="text-xs text-gray-500 mt-2">
-                      Placeholders are filled with mock values (intro/payment URLs and sample stats).
+                      If “Use real stats…” is set, placeholders like {'{{weekly_topics}}'} will be computed from that user.
                     </div>
                   </div>
                 </div>

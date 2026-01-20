@@ -55,8 +55,18 @@ function escapeHtml(s: string): string {
     .replaceAll("'", '&#39;');
 }
 
+function normalizeTemplateText(s: string): string {
+  // Support templates stored with escaped newlines (e.g. "\n\n") as well as real newlines.
+  // Postgres seed often stores literal backslash sequences, so convert them.
+  return s
+    .replaceAll('\r\n', '\n')
+    .replaceAll('\\r\\n', '\n')
+    .replaceAll('\\n', '\n')
+    .replaceAll('\\t', '\t');
+}
+
 export function renderPlaceholders(template: string, vars: Record<string, string | number | null | undefined>): string {
-  let out = template;
+  let out = normalizeTemplateText(template);
   for (const [k, v] of Object.entries(vars)) {
     out = out.replaceAll(`{{${k}}}`, v == null ? '' : String(v));
   }

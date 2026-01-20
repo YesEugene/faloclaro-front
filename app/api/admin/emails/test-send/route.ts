@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseAdmin } from '@/lib/supabase-admin';
-import { renderPlaceholders } from '@/lib/email-engine';
+import { buildDefaultVarsForUser, computeWeeklyStats, renderPlaceholders } from '@/lib/email-engine';
 
 function escapeHtml(s: string): string {
   return s
@@ -17,6 +17,7 @@ export async function POST(req: NextRequest) {
     const to = String(body?.to || '').trim();
     const templateKey = String(body?.templateKey || '').trim();
     const lang = (String(body?.lang || 'ru').trim() === 'en' ? 'en' : 'ru') as 'ru' | 'en';
+    const statsUserEmail = String(body?.statsUserEmail || '').trim();
     if (!to || !to.includes('@') || !templateKey) {
       return NextResponse.json({ success: false, error: 'to and templateKey are required' }, { status: 400 });
     }
@@ -26,16 +27,34 @@ export async function POST(req: NextRequest) {
     if (tplErr) throw tplErr;
     if (!tpl) return NextResponse.json({ success: false, error: 'Template not found' }, { status: 404 });
 
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.faloclaro.com';
-    const vars = {
-      intro_url: `${baseUrl}/pt/intro`,
-      payment_url: `${baseUrl}/pt/payment`,
+    // Default: mock vars for preview.
+    let vars: any = {
+      intro_url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://www.faloclaro.com'}/pt/intro`,
+      payment_url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://www.faloclaro.com'}/pt/payment`,
       weekly_lessons_completed: 2,
       weekly_topics: 'Урок 1: Пример; Урок 2: Пример',
       total_words_learned: 120,
       module_label_ru: 'Модуль 1 (A1)',
       module_label_en: 'Module 1 (A1)',
     };
+
+    // If statsUserEmail provided: compute real vars from that user, but still send to `to`.
+    if (statsUserEmail && statsUserEmail.includes('@')) {
+      const { data: u } = await supabase
+        .from('subscription_users')
+        .select('id')
+        .ilike('email', statsUserEmail)
+        .limit(1)
+        .maybeSingle();
+      if (u?.id) {
+        const base = await buildDefaultVarsForUser(u.id);
+        vars = { ...vars, ...base };
+        const stats = await computeWeeklyStats(u.id);
+        vars.weekly_lessons_completed = stats.weeklyLessonsCompleted;
+        vars.weekly_topics = stats.weeklyTopics || (lang === 'en' ? 'No completed lessons this week' : 'Нет завершённых уроков за неделю');
+        vars.total_words_learned = stats.totalWordsLearned;
+      }
+    }
 
     const subjectRaw = lang === 'en' ? tpl.subject_en : tpl.subject_ru;
     const bodyRaw = lang === 'en' ? tpl.body_en : tpl.body_ru;
