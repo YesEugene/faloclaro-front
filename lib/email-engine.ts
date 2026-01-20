@@ -259,9 +259,10 @@ function buildWelcomeHtml(input: {
   const green = blocks.slice(9);
 
   const logoUrl = `${input.baseUrl}/Img/Website/logo.svg`;
+  const maxWidth = 580;
 
   return `
-  <div style="font-family: Inter, Arial, sans-serif; color:#111; max-width: 720px; margin: 0 auto; padding: 22px;">
+  <div style="font-family: Inter, Arial, sans-serif; color:#111; max-width: ${maxWidth}px; margin: 0 auto; padding: 22px;">
     <table role="presentation" cellpadding="0" cellspacing="0" style="width:100%; border-collapse:collapse;">
       <tr>
         <td style="padding-bottom: 12px;">
@@ -270,7 +271,9 @@ function buildWelcomeHtml(input: {
       </tr>
     </table>
 
-    <div style="font-size: 28px; font-weight: 900; margin: 6px 0 14px;">${escapeHtml(input.subject)}</div>
+    <div style="font-size: 40px; font-weight: 400; margin: 6px 0 14px; font-family: 'Orelega One', Georgia, 'Times New Roman', serif;">
+      ${escapeHtml(input.subject)}
+    </div>
     <div style="height:1px;background:#E6E8EB;margin: 12px 0 18px;"></div>
 
     <div style="border:2px solid #111; border-radius: 24px; padding: 18px; background:#fff;">
@@ -322,9 +325,10 @@ function buildDay3CongratsHtml(input: {
   const yellow = blocks.slice(4);
 
   const logoUrl = `${input.baseUrl}/Img/Website/logo.svg`;
+  const maxWidth = 580;
 
   return `
-  <div style="font-family: Inter, Arial, sans-serif; color:#111; max-width: 720px; margin: 0 auto; padding: 22px;">
+  <div style="font-family: Inter, Arial, sans-serif; color:#111; max-width: ${maxWidth}px; margin: 0 auto; padding: 22px;">
     <table role="presentation" cellpadding="0" cellspacing="0" style="width:100%; border-collapse:collapse;">
       <tr>
         <td style="padding-bottom: 12px;">
@@ -333,7 +337,9 @@ function buildDay3CongratsHtml(input: {
       </tr>
     </table>
 
-    <div style="font-size: 28px; font-weight: 900; margin: 6px 0 14px;">${escapeHtml(input.subject)}</div>
+    <div style="font-size: 40px; font-weight: 400; margin: 6px 0 14px; font-family: 'Orelega One', Georgia, 'Times New Roman', serif;">
+      ${escapeHtml(input.subject)}
+    </div>
     <div style="height:1px;background:#E6E8EB;margin: 12px 0 18px;"></div>
 
     <div style="border-radius: 24px; padding: 18px; background:#BDF6BB;">
