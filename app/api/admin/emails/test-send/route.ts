@@ -11,6 +11,55 @@ function escapeHtml(s: string): string {
     .replaceAll("'", '&#39;');
 }
 
+function buildWeeklyStatsHtml(input: {
+  title: string;
+  lessonsCompleted: number;
+  totalWordsLearned: number;
+  topics: string[];
+  footerText: string;
+  ctaUrl?: string | null;
+  ctaText?: string | null;
+}): string {
+  const topicsHtml = input.topics.length
+    ? `<ul style="margin: 10px 0 0 18px; padding: 0;">${input.topics
+        .map((t) => `<li style="margin: 6px 0;">${escapeHtml(t)}</li>`)
+        .join('')}</ul>`
+    : `<div style="color:#666;margin-top:10px;">—</div>`;
+
+  return `
+    <div style="font-family: Inter, Arial, sans-serif; color:#111; max-width: 720px; margin: 0 auto; padding: 22px;">
+      <div style="font-size: 22px; font-weight: 800; margin-bottom: 14px;">${escapeHtml(input.title)}</div>
+      <div style="height:1px;background:#E6E8EB;margin: 12px 0 18px;"></div>
+
+      <div style="display:flex; gap: 14px; flex-wrap: wrap;">
+        <div style="flex: 1 1 220px; background:#7CF0A0; border-radius: 22px; padding: 18px 18px;">
+          <div style="font-size: 52px; font-weight: 900; line-height: 1;">${escapeHtml(String(input.lessonsCompleted))}</div>
+          <div style="font-size: 22px; font-weight: 700; margin-top: 8px;">Уроков пройдено</div>
+        </div>
+        <div style="flex: 2 1 320px; background:#B277FF; border-radius: 22px; padding: 18px 18px; color:#fff;">
+          <div style="font-size: 52px; font-weight: 900; line-height: 1;">${escapeHtml(String(input.totalWordsLearned))}</div>
+          <div style="font-size: 22px; font-weight: 700; margin-top: 8px;">Новых слов</div>
+        </div>
+      </div>
+
+      <div style="margin-top: 16px; background:#fff; border: 1px solid #111; border-radius: 22px; padding: 18px;">
+        <div style="font-size: 26px; font-weight: 900; margin-bottom: 10px;">Пройденные темы уроков</div>
+        ${topicsHtml}
+      </div>
+
+      <div style="height:1px;background:#E6E8EB;margin: 18px 0 18px;"></div>
+      <div style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">${escapeHtml(input.footerText)}</div>
+      ${
+        input.ctaUrl
+          ? `<a href="${escapeHtml(input.ctaUrl)}" style="display:inline-block;background:#111;color:#fff;text-decoration:none;padding:14px 22px;border-radius:14px;font-weight:800;">
+              ${escapeHtml(input.ctaText || '')}
+            </a>`
+          : ''
+      }
+    </div>
+  `;
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -89,11 +138,27 @@ export async function POST(req: NextRequest) {
       </div>
     `;
 
+    const finalHtml =
+      templateKey === 'core_weekly_stats'
+        ? buildWeeklyStatsHtml({
+            title: subject,
+            lessonsCompleted: Number(vars.weekly_lessons_completed || 0),
+            totalWordsLearned: Number(vars.total_words_learned || 0),
+            topics: String(vars.weekly_topics || '')
+              .split(';')
+              .map((x) => x.trim())
+              .filter(Boolean),
+            footerText: bodyText.split('\n').slice(-1)[0] || bodyText,
+            ctaUrl: ctaEnabled ? ctaUrl : null,
+            ctaText: ctaEnabled ? ctaText : null,
+          })
+        : html;
+
     const { error } = await resend.emails.send({
       from: fromEmail,
       to,
       subject: `[TEST] ${subject}`,
-      html,
+      html: finalHtml,
       text: bodyText + (ctaEnabled && ctaUrl ? `\n\n${ctaText || ''}: ${ctaUrl}` : ''),
     });
     if (error) {

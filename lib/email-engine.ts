@@ -1,4 +1,5 @@
 import { getSupabaseAdmin } from '@/lib/supabase-admin';
+import { load as yamlLoad } from 'js-yaml';
 
 export type EmailLang = 'ru' | 'en';
 
@@ -63,6 +64,102 @@ function normalizeTemplateText(s: string): string {
     .replaceAll('\\r\\n', '\n')
     .replaceAll('\\n', '\n')
     .replaceAll('\\t', '\t');
+}
+
+function extractTask1Cards(task: any): any[] {
+  if (!task) return [];
+
+  // Most common (frontend canonical)
+  if (Array.isArray(task?.content?.cards)) return task.content.cards;
+
+  // Some imports/variants
+  if (Array.isArray(task?.cards)) return task.cards;
+
+  // CRM-like blocks
+  const cards: any[] = [];
+  if (Array.isArray(task?.blocks)) {
+    for (const b of task.blocks) {
+      if (Array.isArray(b?.content?.cards)) cards.push(...b.content.cards);
+      else if (Array.isArray(b?.cards)) cards.push(...b.cards);
+    }
+  }
+  if (cards.length) return cards;
+
+  // Legacy split lists
+  const mw = task?.main_words ?? task?.content?.main_words;
+  const aw = task?.additional_words ?? task?.content?.additional_words;
+  if (Array.isArray(mw) || Array.isArray(aw)) return [...(mw || []), ...(aw || [])];
+
+  return [];
+}
+
+function parseLessonYamlContent(raw: any): any | null {
+  if (!raw) return null;
+  if (typeof raw === 'object') return raw;
+  if (typeof raw !== 'string') return null;
+  const s = raw.trim();
+  if (!s) return null;
+
+  // Try JSON first
+  try {
+    return JSON.parse(s);
+  } catch {}
+
+  // Try YAML
+  try {
+    return yamlLoad(s) as any;
+  } catch {
+    return null;
+  }
+}
+
+function buildWeeklyStatsHtml(input: {
+  title: string;
+  lessonsCompleted: number;
+  totalWordsLearned: number;
+  topics: string[];
+  footerText: string;
+  ctaUrl?: string | null;
+  ctaText?: string | null;
+}): string {
+  const topicsHtml = input.topics.length
+    ? `<ul style="margin: 10px 0 0 18px; padding: 0;">${input.topics
+        .map((t) => `<li style="margin: 6px 0;">${escapeHtml(t)}</li>`)
+        .join('')}</ul>`
+    : `<div style="color:#666;margin-top:10px;">${escapeHtml('—')}</div>`;
+
+  return `
+    <div style="font-family: Inter, Arial, sans-serif; color:#111; max-width: 720px; margin: 0 auto; padding: 22px;">
+      <div style="font-size: 22px; font-weight: 800; margin-bottom: 14px;">${escapeHtml(input.title)}</div>
+      <div style="height:1px;background:#E6E8EB;margin: 12px 0 18px;"></div>
+
+      <div style="display:flex; gap: 14px; flex-wrap: wrap;">
+        <div style="flex: 1 1 220px; background:#7CF0A0; border-radius: 22px; padding: 18px 18px;">
+          <div style="font-size: 52px; font-weight: 900; line-height: 1;">${escapeHtml(String(input.lessonsCompleted))}</div>
+          <div style="font-size: 22px; font-weight: 700; margin-top: 8px;">Уроков пройдено</div>
+        </div>
+        <div style="flex: 2 1 320px; background:#B277FF; border-radius: 22px; padding: 18px 18px; color:#fff;">
+          <div style="font-size: 52px; font-weight: 900; line-height: 1;">${escapeHtml(String(input.totalWordsLearned))}</div>
+          <div style="font-size: 22px; font-weight: 700; margin-top: 8px;">Новых слов</div>
+        </div>
+      </div>
+
+      <div style="margin-top: 16px; background:#fff; border: 1px solid #111; border-radius: 22px; padding: 18px;">
+        <div style="font-size: 26px; font-weight: 900; margin-bottom: 10px;">Пройденные темы уроков</div>
+        ${topicsHtml}
+      </div>
+
+      <div style="height:1px;background:#E6E8EB;margin: 18px 0 18px;"></div>
+      <div style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">${escapeHtml(input.footerText)}</div>
+      ${
+        input.ctaUrl
+          ? `<a href="${escapeHtml(input.ctaUrl)}" style="display:inline-block;background:#111;color:#fff;text-decoration:none;padding:14px 22px;border-radius:14px;font-weight:800;">
+              ${escapeHtml(input.ctaText || '')}
+            </a>`
+          : ''
+      }
+    </div>
+  `;
 }
 
 export function renderPlaceholders(template: string, vars: Record<string, string | number | null | undefined>): string {
@@ -231,7 +328,7 @@ export async function sendTemplateEmail(input: {
     const { Resend } = require('resend');
     const resend = new Resend(process.env.RESEND_API_KEY);
 
-    const html = `
+    let html = `
       <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #111; max-width: 640px; margin: 0 auto; padding: 20px;">
         <div style="white-space: pre-line;">${escapeHtml(bodyText)}</div>
         ${
@@ -245,6 +342,23 @@ export async function sendTemplateEmail(input: {
         }
       </div>
     `;
+
+    // Weekly stats: nicer layout
+    if (input.templateKey === 'core_weekly_stats') {
+      const topics = String(vars.weekly_topics || '')
+        .split(';')
+        .map((x) => x.trim())
+        .filter(Boolean);
+      html = buildWeeklyStatsHtml({
+        title: subject,
+        lessonsCompleted: Number(vars.weekly_lessons_completed || 0),
+        totalWordsLearned: Number(vars.total_words_learned || 0),
+        topics,
+        footerText: bodyText.split('\n').slice(-1)[0] || bodyText,
+        ctaUrl: ctaEnabled ? ctaUrl : null,
+        ctaText: ctaEnabled ? ctaText : null,
+      });
+    }
 
     const { error } = await resend.emails.send({
       from: fromEmail,
@@ -521,7 +635,7 @@ export async function computeWeeklyStats(userId: string): Promise<{ weeklyLesson
       .join('; ');
   }
 
-  // Total words learned (v1): sum task1 card count for completed lessons
+  // Total words learned: sum Task 1 vocabulary card count for completed lessons
   const { data: allCompleted } = await supabase
     .from('user_progress')
     .select('lesson_id')
@@ -532,18 +646,11 @@ export async function computeWeeklyStats(userId: string): Promise<{ weeklyLesson
   if (allLessonIds.length) {
     const { data: lessons } = await supabase.from('lessons').select('id, yaml_content').in('id', allLessonIds);
     for (const l of (lessons as any[]) || []) {
-      let yaml: any = l.yaml_content;
-      if (typeof yaml === 'string') {
-        try {
-          yaml = JSON.parse(yaml);
-        } catch {
-          yaml = null;
-        }
-      }
-      const tasks = yaml?.tasks || [];
-      const vocab = tasks.find((t: any) => t?.type === 'vocabulary' || t?.task_id === 1);
-      const count = (vocab?.main_words?.length || 0) + (vocab?.additional_words?.length || 0);
-      totalWordsLearned += count;
+      const parsed = parseLessonYamlContent(l.yaml_content);
+      const tasks = parsed?.tasks || parsed?.day?.tasks || [];
+      const vocab = (Array.isArray(tasks) ? tasks : []).find((t: any) => t?.type === 'vocabulary' || t?.task_id === 1);
+      const cards = extractTask1Cards(vocab);
+      totalWordsLearned += Array.isArray(cards) ? cards.length : 0;
     }
   }
 
