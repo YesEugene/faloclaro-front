@@ -387,6 +387,11 @@ export function CourseMenuDrawer(props: {
                     const completed = progressMap.get(day) === 'completed';
                     const isCurrent = (props.activeEntry ?? 'lesson') !== 'intro' && day === props.currentDay;
                     const unlocked = isLessonUnlocked(day);
+                    const lockedUntilPayment =
+                      !unlocked &&
+                      !completed &&
+                      day > 3 &&
+                      (!subscription?.paid_at && subscription?.status !== 'active' && subscription?.status !== 'paid');
                     const title = pickLangText(
                       {
                         ru: lessonRow?.title_ru,
@@ -429,7 +434,17 @@ export function CourseMenuDrawer(props: {
                           {props.lang === 'ru' ? `Урок ${day}: ${title}` : `Lesson ${day}: ${title}`}
                         </div>
                         <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          {completed ? <Check /> : null}
+                          {completed ? (
+                            <Check />
+                          ) : lockedUntilPayment ? (
+                            <img
+                              src="/Img/eye.svg"
+                              alt="Locked"
+                              width={20}
+                              height={20}
+                              style={{ width: '20px', height: '20px', display: 'block' }}
+                            />
+                          ) : null}
                         </div>
                       </button>
                     );
