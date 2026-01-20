@@ -184,27 +184,29 @@ function buildWeeklyStatsHtml(input: {
 
       <table role="presentation" cellpadding="0" cellspacing="0" style="width:100%; border-collapse:collapse;">
         <tr>
-          <td valign="top" style="width: 220px;">
-            <div style="background:#7CF0A0; border-radius: 22px; padding: 18px 18px;">
-              <div style="font-size: 52px; font-weight: 900; line-height: 1;">${escapeHtml(String(input.lessonsCompleted))}</div>
-              <div style="font-size: 22px; font-weight: 800; margin-top: 8px; line-height: 1.05;">${labelLessons}</div>
-            </div>
+          <td valign="top" style="width:220px; background:#7CF0A0; border-radius:22px; padding:18px 18px; overflow:hidden;">
+            <div style="font-size: 52px; font-weight: 900; line-height: 1;">${escapeHtml(String(input.lessonsCompleted))}</div>
+            <div style="font-size: 22px; font-weight: 800; margin-top: 8px; line-height: 1.05;">${labelLessons}</div>
           </td>
           <td style="width:20px; font-size:0; line-height:0;">&nbsp;</td>
           <td valign="top">
-            <div style="background:#B277FF; border-radius: 22px; padding: 18px 18px; color:#fff;">
-              <table role="presentation" cellpadding="0" cellspacing="0" style="width:100%; border-collapse:collapse;">
-                <tr>
-                  <td valign="top" style="width: 150px;">
-                    <div style="font-size: 52px; font-weight: 900; line-height: 1;">${escapeHtml(String(input.totalWordsLearned))}</div>
-                    <div style="font-size: 22px; font-weight: 800; margin-top: 8px; line-height: 1.05;">${labelWords}</div>
-                  </td>
-                  <td valign="top" style="text-align:right;">
-                    ${tagsHtml}
-                  </td>
-                </tr>
-              </table>
-            </div>
+            <table role="presentation" cellpadding="0" cellspacing="0" style="width:100%; border-collapse:collapse;">
+              <tr>
+                <td valign="top" style="background:#B277FF; border-radius:22px; padding:18px 18px; color:#fff; overflow:hidden;">
+                  <table role="presentation" cellpadding="0" cellspacing="0" style="width:100%; border-collapse:collapse;">
+                    <tr>
+                      <td valign="top" style="width:150px;">
+                        <div style="font-size: 52px; font-weight: 900; line-height: 1;">${escapeHtml(String(input.totalWordsLearned))}</div>
+                        <div style="font-size: 22px; font-weight: 800; margin-top: 8px; line-height: 1.05;">${labelWords}</div>
+                      </td>
+                      <td valign="top" style="text-align:right;">
+                        ${tagsHtml}
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
           </td>
         </tr>
       </table>
