@@ -38,6 +38,11 @@ export default function AdminEmailsPage() {
   const [testLang, setTestLang] = useState<'ru' | 'en'>('ru');
   const [testSending, setTestSending] = useState(false);
 
+  const isLayoutColumnsMissing = (msg: string) => {
+    const m = (msg || '').toLowerCase();
+    return (m.includes('layout_json_en') || m.includes('layout_json_ru')) && (m.includes('schema cache') || m.includes('does not exist') || m.includes('missing'));
+  };
+
   const loadTemplates = async () => {
     setError('');
     const res = await fetch('/api/admin/emails/templates');
@@ -480,6 +485,21 @@ export default function AdminEmailsPage() {
       </div>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {isLayoutColumnsMissing(error) && (
+          <div className="bg-yellow-50 border border-yellow-200 text-yellow-900 px-4 py-3 rounded-lg mb-6 text-sm">
+            <div className="font-semibold mb-1">Нужно добавить колонки для визуального редактора</div>
+            <div className="mb-2">
+              Supabase пишет, что в таблице <span className="font-mono">email_templates</span> нет колонок{' '}
+              <span className="font-mono">layout_json_ru</span>/<span className="font-mono">layout_json_en</span> (schema cache).
+            </div>
+            <div className="mb-1">Запусти это в Supabase SQL Editor:</div>
+            <pre className="bg-white border border-yellow-200 rounded p-3 overflow-x-auto text-xs">
+{`ALTER TABLE email_templates
+  ADD COLUMN IF NOT EXISTS layout_json_ru JSONB,
+  ADD COLUMN IF NOT EXISTS layout_json_en JSONB;`}
+            </pre>
+          </div>
+        )}
         {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">{error}</div>}
         {success && <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-6">{success}</div>}
 
