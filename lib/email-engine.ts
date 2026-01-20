@@ -56,6 +56,20 @@ function escapeHtml(s: string): string {
     .replaceAll("'", '&#39;');
 }
 
+function splitBlocks(text: string): string[] {
+  return String(text || '')
+    .replaceAll('\r\n', '\n')
+    .split(/\n\s*\n/g)
+    .map((b) => b.trim())
+    .filter(Boolean);
+}
+
+function renderParagraphs(blocks: string[]): string {
+  return blocks
+    .map((b) => `<div style="margin:0 0 12px 0; white-space:pre-line;">${escapeHtml(b)}</div>`)
+    .join('');
+}
+
 function normalizeTemplateText(s: string): string {
   // Support templates stored with escaped newlines (e.g. "\n\n") as well as real newlines.
   // Postgres seed often stores literal backslash sequences, so convert them.
@@ -229,12 +243,234 @@ function buildWeeklyStatsHtml(input: {
   `;
 }
 
+function buildWelcomeHtml(input: {
+  subject: string;
+  bodyText: string;
+  ctaUrl?: string | null;
+  ctaText?: string | null;
+  baseUrl: string;
+}): string {
+  const blocks = splitBlocks(input.bodyText);
+
+  // Heuristic distribution (editable text stays in DB; we just place it into cards)
+  const card1 = blocks.slice(0, 3);
+  const card2 = blocks.slice(3, 7);
+  const yellow = blocks.slice(7, 9);
+  const green = blocks.slice(9);
+
+  const logoUrl = `${input.baseUrl}/Img/Website/logo.svg`;
+
+  return `
+  <div style="font-family: Inter, Arial, sans-serif; color:#111; max-width: 720px; margin: 0 auto; padding: 22px;">
+    <table role="presentation" cellpadding="0" cellspacing="0" style="width:100%; border-collapse:collapse;">
+      <tr>
+        <td style="padding-bottom: 12px;">
+          <img src="${escapeHtml(logoUrl)}" alt="FaloClaro" width="120" style="display:block; height:auto; border:0;"/>
+        </td>
+      </tr>
+    </table>
+
+    <div style="font-size: 28px; font-weight: 900; margin: 6px 0 14px;">${escapeHtml(input.subject)}</div>
+    <div style="height:1px;background:#E6E8EB;margin: 12px 0 18px;"></div>
+
+    <div style="border:2px solid #111; border-radius: 24px; padding: 18px; background:#fff;">
+      ${renderParagraphs(card1)}
+    </div>
+
+    <div style="height:16px;"></div>
+
+    <div style="border:2px solid #111; border-radius: 24px; padding: 18px; background:#fff;">
+      ${renderParagraphs(card2)}
+    </div>
+
+    <div style="height:16px;"></div>
+
+    <div style="border-radius: 24px; padding: 18px; background:#FAF7BF;">
+      ${renderParagraphs(yellow)}
+    </div>
+
+    <div style="height:16px;"></div>
+
+    <div style="border-radius: 24px; padding: 18px; background:#BDF6BB;">
+      ${renderParagraphs(green)}
+    </div>
+
+    ${
+      input.ctaUrl
+        ? `<div style="height:18px;"></div>
+           <a href="${escapeHtml(input.ctaUrl)}" style="display:block; text-align:center; background:#111; color:#fff; text-decoration:none; padding:16px 20px; border-radius: 22px; font-weight: 900; font-size:16px;">
+             ${escapeHtml(input.ctaText || '')}
+           </a>`
+        : ''
+    }
+  </div>
+  `;
+}
+
+function buildDay3CongratsHtml(input: {
+  subject: string;
+  bodyText: string;
+  ctaUrl?: string | null;
+  ctaText?: string | null;
+  secondaryUrl?: string | null;
+  secondaryText?: string | null;
+  baseUrl: string;
+}): string {
+  const blocks = splitBlocks(input.bodyText);
+  const green = blocks.slice(0, 2);
+  const pink = blocks.slice(2, 4);
+  const yellow = blocks.slice(4);
+
+  const logoUrl = `${input.baseUrl}/Img/Website/logo.svg`;
+
+  return `
+  <div style="font-family: Inter, Arial, sans-serif; color:#111; max-width: 720px; margin: 0 auto; padding: 22px;">
+    <table role="presentation" cellpadding="0" cellspacing="0" style="width:100%; border-collapse:collapse;">
+      <tr>
+        <td style="padding-bottom: 12px;">
+          <img src="${escapeHtml(logoUrl)}" alt="FaloClaro" width="120" style="display:block; height:auto; border:0;"/>
+        </td>
+      </tr>
+    </table>
+
+    <div style="font-size: 28px; font-weight: 900; margin: 6px 0 14px;">${escapeHtml(input.subject)}</div>
+    <div style="height:1px;background:#E6E8EB;margin: 12px 0 18px;"></div>
+
+    <div style="border-radius: 24px; padding: 18px; background:#BDF6BB;">
+      ${renderParagraphs(green)}
+    </div>
+    <div style="height:14px;"></div>
+    <div style="border-radius: 24px; padding: 18px; background:#FFE3E3;">
+      ${renderParagraphs(pink)}
+    </div>
+    <div style="height:14px;"></div>
+    <div style="border-radius: 24px; padding: 18px; background:#FAF7BF;">
+      ${renderParagraphs(yellow)}
+    </div>
+
+    ${
+      input.ctaUrl
+        ? `<div style="height:18px;"></div>
+           <table role="presentation" cellpadding="0" cellspacing="0" style="width:100%; border-collapse:collapse;">
+             <tr>
+               <td>
+                 <a href="${escapeHtml(input.ctaUrl)}" style="display:block; text-align:center; background:#1A7DFF; color:#fff; text-decoration:none; padding:16px 18px; border-radius: 18px; font-weight: 900; font-size:16px;">
+                   ${escapeHtml(input.ctaText || '')}
+                 </a>
+               </td>
+               <td style="width:12px;"></td>
+               ${
+                 input.secondaryUrl
+                   ? `<td style="width: 160px;">
+                        <a href="${escapeHtml(input.secondaryUrl)}" style="display:block; text-align:center; background:#111; color:#fff; text-decoration:none; padding:16px 12px; border-radius: 18px; font-weight: 900; font-size:14px;">
+                          ${escapeHtml(input.secondaryText || '')}
+                        </a>
+                      </td>`
+                   : ''
+               }
+             </tr>
+           </table>`
+        : ''
+    }
+  </div>
+  `;
+}
+
 export function renderPlaceholders(template: string, vars: Record<string, string | number | null | undefined>): string {
   let out = normalizeTemplateText(template);
   for (const [k, v] of Object.entries(vars)) {
     out = out.replaceAll(`{{${k}}}`, v == null ? '' : String(v));
   }
   return out;
+}
+
+export function renderEmailHtml(input: {
+  templateKey: string;
+  lang: 'ru' | 'en';
+  subject: string;
+  bodyText: string;
+  ctaEnabled: boolean;
+  ctaText: string | null;
+  ctaUrl: string | null;
+  vars: Record<string, any>;
+}): { html: string; text: string } {
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.faloclaro.com';
+
+  // default fallback
+  const fallbackHtml = `
+    <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #111; max-width: 640px; margin: 0 auto; padding: 20px;">
+      <div style="white-space: pre-line;">${escapeHtml(input.bodyText)}</div>
+      ${
+        input.ctaEnabled && input.ctaUrl
+          ? `<div style="margin-top: 24px;">
+               <a href="${escapeHtml(input.ctaUrl)}" style="display:inline-block;background:#111;color:#fff;text-decoration:none;padding:12px 18px;border-radius:10px;font-weight:700;">
+                 ${escapeHtml(input.ctaText || '')}
+               </a>
+             </div>`
+          : ''
+      }
+    </div>
+  `;
+
+  // template-specific layouts
+  if (input.templateKey === 'core_weekly_stats') {
+    const topics = String(input.vars.weekly_topics || '')
+      .split(';')
+      .map((x) => x.trim())
+      .filter(Boolean);
+    const tags = String(input.vars.words_preview || '')
+      .split('|')
+      .map((x) => x.trim())
+      .filter(Boolean);
+    return {
+      html: buildWeeklyStatsHtml({
+        title: input.subject,
+        lang: input.lang,
+        lessonsCompleted: Number(input.vars.weekly_lessons_completed || 0),
+        totalWordsLearned: Number(input.vars.total_words_learned || 0),
+        tags,
+        topics,
+        footerText: input.bodyText.split('\n').slice(-1)[0] || input.bodyText,
+        ctaUrl: input.ctaEnabled ? input.ctaUrl : null,
+        ctaText: input.ctaEnabled ? input.ctaText : null,
+      }),
+      text: input.bodyText + (input.ctaEnabled && input.ctaUrl ? `\n\n${input.ctaText || ''}: ${input.ctaUrl}` : ''),
+    };
+  }
+
+  if (input.templateKey === 'core_welcome') {
+    return {
+      html: buildWelcomeHtml({
+        subject: input.subject,
+        bodyText: input.bodyText,
+        ctaUrl: input.ctaEnabled ? input.ctaUrl : null,
+        ctaText: input.ctaEnabled ? input.ctaText : null,
+        baseUrl,
+      }),
+      text: input.bodyText + (input.ctaEnabled && input.ctaUrl ? `\n\n${input.ctaText || ''}: ${input.ctaUrl}` : ''),
+    };
+  }
+
+  if (input.templateKey === 'core_day3_congrats') {
+    return {
+      html: buildDay3CongratsHtml({
+        subject: input.subject,
+        bodyText: input.bodyText,
+        ctaUrl: input.ctaEnabled ? input.ctaUrl : null,
+        ctaText: input.ctaEnabled ? input.ctaText : null,
+        // optional second CTA (e.g. intro)
+        secondaryUrl: String(input.vars?.intro_url || '') || null,
+        secondaryText: input.lang === 'en' ? 'Open course' : 'Открыть курс',
+        baseUrl,
+      }),
+      text: input.bodyText + (input.ctaEnabled && input.ctaUrl ? `\n\n${input.ctaText || ''}: ${input.ctaUrl}` : ''),
+    };
+  }
+
+  return {
+    html: fallbackHtml,
+    text: input.bodyText + (input.ctaEnabled && input.ctaUrl ? `\n\n${input.ctaText || ''}: ${input.ctaUrl}` : ''),
+  };
 }
 
 async function getUserLang(userId: string): Promise<EmailLang> {
@@ -395,50 +631,23 @@ export async function sendTemplateEmail(input: {
     const { Resend } = require('resend');
     const resend = new Resend(process.env.RESEND_API_KEY);
 
-    let html = `
-      <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #111; max-width: 640px; margin: 0 auto; padding: 20px;">
-        <div style="white-space: pre-line;">${escapeHtml(bodyText)}</div>
-        ${
-          ctaEnabled && ctaUrl
-            ? `<div style="margin-top: 24px;">
-                 <a href="${escapeHtml(ctaUrl)}" style="display:inline-block;background:#111;color:#fff;text-decoration:none;padding:12px 18px;border-radius:10px;font-weight:700;">
-                   ${escapeHtml(ctaText || '')}
-                 </a>
-               </div>`
-            : ''
-        }
-      </div>
-    `;
-
-    // Weekly stats: nicer layout
-    if (input.templateKey === 'core_weekly_stats') {
-      const topics = String(vars.weekly_topics || '')
-        .split(';')
-        .map((x) => x.trim())
-        .filter(Boolean);
-      const tags = String(vars.words_preview || '')
-        .split('|')
-        .map((x) => x.trim())
-        .filter(Boolean);
-      html = buildWeeklyStatsHtml({
-        title: subject,
-        lang,
-        lessonsCompleted: Number(vars.weekly_lessons_completed || 0),
-        totalWordsLearned: Number(vars.total_words_learned || 0),
-        tags,
-        topics,
-        footerText: bodyText.split('\n').slice(-1)[0] || bodyText,
-        ctaUrl: ctaEnabled ? ctaUrl : null,
-        ctaText: ctaEnabled ? ctaText : null,
-      });
-    }
+    const rendered = renderEmailHtml({
+      templateKey: input.templateKey,
+      lang,
+      subject,
+      bodyText,
+      ctaEnabled,
+      ctaText,
+      ctaUrl,
+      vars,
+    });
 
     const { error } = await resend.emails.send({
       from: fromEmail,
       to: toEmail,
       subject,
-      html,
-      text: bodyText + (ctaEnabled && ctaUrl ? `\n\n${ctaText || ''}: ${ctaUrl}` : ''),
+      html: rendered.html,
+      text: rendered.text,
     });
 
     if (error) {
