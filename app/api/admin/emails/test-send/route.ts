@@ -13,8 +13,10 @@ function escapeHtml(s: string): string {
 
 function buildWeeklyStatsHtml(input: {
   title: string;
+  lang: 'ru' | 'en';
   lessonsCompleted: number;
   totalWordsLearned: number;
+  tags: string[];
   topics: string[];
   footerText: string;
   ctaUrl?: string | null;
@@ -26,24 +28,47 @@ function buildWeeklyStatsHtml(input: {
         .join('')}</ul>`
     : `<div style="color:#666;margin-top:10px;">—</div>`;
 
+  const tagsHtml = input.tags.length
+    ? `<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start;justify-content:flex-end;max-width: 260px;">
+        ${input.tags
+          .slice(0, 20)
+          .map(
+            (w) =>
+              `<span style="display:inline-block;background:#fff;color:#111;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:700;line-height:1;">${escapeHtml(
+                w
+              )}</span>`
+          )
+          .join('')}
+       </div>`
+    : '';
+
+  const labelLessons = input.lang === 'en' ? 'Lessons<br/>completed' : 'Уроков<br/>пройдено';
+  const labelWords = input.lang === 'en' ? 'New<br/>words' : 'Новых<br/>слов';
+  const topicsTitle = input.lang === 'en' ? 'Completed lesson topics' : 'Пройденные темы уроков';
+
   return `
     <div style="font-family: Inter, Arial, sans-serif; color:#111; max-width: 720px; margin: 0 auto; padding: 22px;">
       <div style="font-size: 22px; font-weight: 800; margin-bottom: 14px;">${escapeHtml(input.title)}</div>
       <div style="height:1px;background:#E6E8EB;margin: 12px 0 18px;"></div>
 
-      <div style="display:flex; gap: 14px; flex-wrap: wrap;">
+      <div style="display:flex; gap: 20px; flex-wrap: wrap;">
         <div style="flex: 1 1 220px; background:#7CF0A0; border-radius: 22px; padding: 18px 18px;">
           <div style="font-size: 52px; font-weight: 900; line-height: 1;">${escapeHtml(String(input.lessonsCompleted))}</div>
-          <div style="font-size: 22px; font-weight: 700; margin-top: 8px;">Уроков пройдено</div>
+          <div style="font-size: 22px; font-weight: 800; margin-top: 8px; line-height: 1.05;">${labelLessons}</div>
         </div>
         <div style="flex: 2 1 320px; background:#B277FF; border-radius: 22px; padding: 18px 18px; color:#fff;">
-          <div style="font-size: 52px; font-weight: 900; line-height: 1;">${escapeHtml(String(input.totalWordsLearned))}</div>
-          <div style="font-size: 22px; font-weight: 700; margin-top: 8px;">Новых слов</div>
+          <div style="display:flex; gap: 14px; align-items:flex-start; justify-content:space-between;">
+            <div>
+              <div style="font-size: 52px; font-weight: 900; line-height: 1;">${escapeHtml(String(input.totalWordsLearned))}</div>
+              <div style="font-size: 22px; font-weight: 800; margin-top: 8px; line-height: 1.05;">${labelWords}</div>
+            </div>
+            ${tagsHtml}
+          </div>
         </div>
       </div>
 
       <div style="margin-top: 16px; background:#fff; border: 1px solid #111; border-radius: 22px; padding: 18px;">
-        <div style="font-size: 26px; font-weight: 900; margin-bottom: 10px;">Пройденные темы уроков</div>
+        <div style="font-size: 26px; font-weight: 900; margin-bottom: 10px;">${escapeHtml(topicsTitle)}</div>
         ${topicsHtml}
       </div>
 
@@ -102,6 +127,7 @@ export async function POST(req: NextRequest) {
         vars.weekly_lessons_completed = stats.weeklyLessonsCompleted;
         vars.weekly_topics = stats.weeklyTopics || (lang === 'en' ? 'No completed lessons this week' : 'Нет завершённых уроков за неделю');
         vars.total_words_learned = stats.totalWordsLearned;
+        vars.words_preview = (stats.wordsPreview || []).join('|');
       }
     }
 
@@ -142,8 +168,13 @@ export async function POST(req: NextRequest) {
       templateKey === 'core_weekly_stats'
         ? buildWeeklyStatsHtml({
             title: subject,
+            lang,
             lessonsCompleted: Number(vars.weekly_lessons_completed || 0),
             totalWordsLearned: Number(vars.total_words_learned || 0),
+            tags: String(vars.words_preview || '')
+              .split('|')
+              .map((x) => x.trim())
+              .filter(Boolean),
             topics: String(vars.weekly_topics || '')
               .split(';')
               .map((x) => x.trim())
