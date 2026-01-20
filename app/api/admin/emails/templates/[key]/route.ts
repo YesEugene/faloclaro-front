@@ -27,6 +27,8 @@ export async function PUT(req: NextRequest, ctx: { params: Promise<{ key: string
       'subject_en',
       'body_ru',
       'body_en',
+      'layout_json_ru',
+      'layout_json_en',
       'cta_enabled',
       'cta_text_ru',
       'cta_text_en',

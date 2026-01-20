@@ -24,6 +24,7 @@ export default function AdminEmailsPage() {
   const [selectedKey, setSelectedKey] = useState<string>('');
   const [tpl, setTpl] = useState<any | null>(null);
   const [saving, setSaving] = useState(false);
+  const [editorMode, setEditorMode] = useState<'text' | 'visual'>('text');
 
   const [campaigns, setCampaigns] = useState<any[]>([]);
   const [steps, setSteps] = useState<any[]>([]);
@@ -135,6 +136,8 @@ export default function AdminEmailsPage() {
           subject_en: tpl.subject_en,
           body_ru: tpl.body_ru,
           body_en: tpl.body_en,
+          layout_json_ru: tpl.layout_json_ru ?? null,
+          layout_json_en: tpl.layout_json_en ?? null,
           cta_enabled: tpl.cta_enabled,
           cta_text_ru: tpl.cta_text_ru,
           cta_text_en: tpl.cta_text_en,
@@ -150,6 +153,253 @@ export default function AdminEmailsPage() {
     } finally {
       setSaving(false);
     }
+  };
+
+  const ensureVisualLayout = (lang: 'ru' | 'en') => {
+    const key = lang === 'ru' ? 'layout_json_ru' : 'layout_json_en';
+    const existing = tpl?.[key];
+    if (existing && typeof existing === 'object' && Array.isArray(existing.blocks)) return;
+    setTpl({
+      ...tpl,
+      [key]: {
+        maxWidth: 580,
+        blocks: [
+          {
+            id: crypto.randomUUID(),
+            bg: '#FFFFFF',
+            border: true,
+            borderColor: '#111111',
+            radius: 24,
+            padding: 18,
+            title: '',
+            text: '',
+          },
+        ],
+      },
+    });
+  };
+
+  const updateVisual = (lang: 'ru' | 'en', updater: (layout: any) => any) => {
+    const key = lang === 'ru' ? 'layout_json_ru' : 'layout_json_en';
+    const layout = tpl?.[key];
+    const next = updater(layout);
+    setTpl({ ...tpl, [key]: next });
+  };
+
+  const addBlock = (lang: 'ru' | 'en') => {
+    ensureVisualLayout(lang);
+    updateVisual(lang, (layout) => ({
+      ...layout,
+      blocks: [
+        ...(layout?.blocks || []),
+        {
+          id: crypto.randomUUID(),
+          bg: '#FFFFFF',
+          border: false,
+          borderColor: '#111111',
+          radius: 24,
+          padding: 18,
+          title: '',
+          text: '',
+        },
+      ],
+    }));
+  };
+
+  const removeBlock = (lang: 'ru' | 'en', blockId: string) => {
+    updateVisual(lang, (layout) => ({ ...layout, blocks: (layout?.blocks || []).filter((b: any) => b.id !== blockId) }));
+  };
+
+  const moveBlock = (lang: 'ru' | 'en', blockId: string, dir: -1 | 1) => {
+    updateVisual(lang, (layout) => {
+      const blocks = [...(layout?.blocks || [])];
+      const idx = blocks.findIndex((b: any) => b.id === blockId);
+      const j = idx + dir;
+      if (idx < 0 || j < 0 || j >= blocks.length) return layout;
+      const tmp = blocks[idx];
+      blocks[idx] = blocks[j];
+      blocks[j] = tmp;
+      return { ...layout, blocks };
+    });
+  };
+
+  const renderVisualEditor = (lang: 'ru' | 'en') => {
+    const key = lang === 'ru' ? 'layout_json_ru' : 'layout_json_en';
+    const layout = tpl?.[key];
+    const blocks = Array.isArray(layout?.blocks) ? layout.blocks : [];
+
+    const colorOptions: Array<{ label: string; value: string }> = [
+      { label: 'White', value: '#FFFFFF' },
+      { label: 'Yellow', value: '#FAF7BF' },
+      { label: 'Green', value: '#BDF6BB' },
+      { label: 'Pink', value: '#FFE3E3' },
+      { label: 'Purple', value: '#B277FF' },
+      { label: 'Black', value: '#111111' },
+    ];
+
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="font-semibold text-gray-900">Visual blocks ({lang.toUpperCase()})</div>
+          <div className="flex items-center gap-3">
+            <label className="text-sm text-gray-700">
+              Max width
+              <input
+                className="ml-2 w-24 border border-gray-300 rounded-lg px-2 py-1 text-sm"
+                value={layout?.maxWidth ?? 580}
+                onChange={(e) =>
+                  updateVisual(lang, (l) => ({ ...(l || { blocks: [] }), maxWidth: Number(e.target.value || 580) }))
+                }
+              />
+            </label>
+            <button
+              onClick={() => addBlock(lang)}
+              className="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm"
+            >
+              + Add block
+            </button>
+          </div>
+        </div>
+
+        {blocks.map((b: any, idx: number) => (
+          <div key={b.id} className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+            <div className="flex items-center justify-between gap-3">
+              <div className="text-sm font-semibold text-gray-800">Block {idx + 1}</div>
+              <div className="flex items-center gap-2">
+                <button onClick={() => moveBlock(lang, b.id, -1)} className="px-2 py-1 text-sm bg-white border rounded">
+                  ↑
+                </button>
+                <button onClick={() => moveBlock(lang, b.id, 1)} className="px-2 py-1 text-sm bg-white border rounded">
+                  ↓
+                </button>
+                <button
+                  onClick={() => removeBlock(lang, b.id)}
+                  className="px-2 py-1 text-sm bg-white border border-red-200 text-red-700 rounded"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Background</label>
+                <select
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                  value={b.bg || '#FFFFFF'}
+                  onChange={(e) =>
+                    updateVisual(lang, (l) => ({
+                      ...l,
+                      blocks: (l.blocks || []).map((x: any) => (x.id === b.id ? { ...x, bg: e.target.value } : x)),
+                    }))
+                  }
+                >
+                  {colorOptions.map((c) => (
+                    <option key={c.value} value={c.value}>
+                      {c.label} ({c.value})
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex items-end gap-3">
+                <label className="flex items-center gap-2 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={!!b.border}
+                    onChange={(e) =>
+                      updateVisual(lang, (l) => ({
+                        ...l,
+                        blocks: (l.blocks || []).map((x: any) => (x.id === b.id ? { ...x, border: e.target.checked } : x)),
+                      }))
+                    }
+                  />
+                  Border
+                </label>
+                <input
+                  className="border border-gray-300 rounded-lg px-3 py-2 text-sm w-36"
+                  value={b.borderColor || '#111111'}
+                  onChange={(e) =>
+                    updateVisual(lang, (l) => ({
+                      ...l,
+                      blocks: (l.blocks || []).map((x: any) =>
+                        x.id === b.id ? { ...x, borderColor: e.target.value } : x
+                      ),
+                    }))
+                  }
+                  placeholder="#111111"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <label className="text-sm text-gray-700">
+                  Radius
+                  <input
+                    className="w-full border border-gray-300 rounded-lg px-2 py-1 text-sm mt-1"
+                    value={b.radius ?? 24}
+                    onChange={(e) =>
+                      updateVisual(lang, (l) => ({
+                        ...l,
+                        blocks: (l.blocks || []).map((x: any) =>
+                          x.id === b.id ? { ...x, radius: Number(e.target.value || 24) } : x
+                        ),
+                      }))
+                    }
+                  />
+                </label>
+                <label className="text-sm text-gray-700">
+                  Padding
+                  <input
+                    className="w-full border border-gray-300 rounded-lg px-2 py-1 text-sm mt-1"
+                    value={b.padding ?? 18}
+                    onChange={(e) =>
+                      updateVisual(lang, (l) => ({
+                        ...l,
+                        blocks: (l.blocks || []).map((x: any) =>
+                          x.id === b.id ? { ...x, padding: Number(e.target.value || 18) } : x
+                        ),
+                      }))
+                    }
+                  />
+                </label>
+              </div>
+            </div>
+
+            <div className="mt-3">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Title (Orelega One)</label>
+              <input
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                value={b.title || ''}
+                onChange={(e) =>
+                  updateVisual(lang, (l) => ({
+                    ...l,
+                    blocks: (l.blocks || []).map((x: any) => (x.id === b.id ? { ...x, title: e.target.value } : x)),
+                  }))
+                }
+              />
+            </div>
+
+            <div className="mt-3">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Text</label>
+              <textarea
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm h-28"
+                value={b.text || ''}
+                onChange={(e) =>
+                  updateVisual(lang, (l) => ({
+                    ...l,
+                    blocks: (l.blocks || []).map((x: any) => (x.id === b.id ? { ...x, text: e.target.value } : x)),
+                  }))
+                }
+              />
+            </div>
+          </div>
+        ))}
+
+        {blocks.length === 0 && (
+          <div className="text-sm text-gray-500">
+            No blocks yet. Click “Add block”.
+          </div>
+        )}
+      </div>
+    );
   };
 
   const handleTestSend = async () => {
@@ -282,6 +532,31 @@ export default function AdminEmailsPage() {
                 <div className="p-6 text-gray-500">Select a template on the left.</div>
               ) : (
                 <div className="p-6 space-y-4">
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setEditorMode('text')}
+                      className={`px-3 py-2 rounded-lg text-sm border ${
+                        editorMode === 'text' ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-white border-gray-200 text-gray-700'
+                      }`}
+                    >
+                      Text mode
+                    </button>
+                    <button
+                      onClick={() => {
+                        setEditorMode('visual');
+                        ensureVisualLayout('ru');
+                        ensureVisualLayout('en');
+                      }}
+                      className={`px-3 py-2 rounded-lg text-sm border ${
+                        editorMode === 'visual' ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-white border-gray-200 text-gray-700'
+                      }`}
+                    >
+                      Visual blocks
+                    </button>
+                    <div className="text-xs text-gray-500">
+                      Visual blocks are Gmail-safe, but custom fonts may fallback in some email clients.
+                    </div>
+                  </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Key</label>
@@ -335,24 +610,31 @@ export default function AdminEmailsPage() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Body (RU)</label>
-                      <textarea
-                        className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm h-48"
-                        value={tpl.body_ru || ''}
-                        onChange={(e) => setTpl({ ...tpl, body_ru: e.target.value })}
-                      />
+                  {editorMode === 'text' ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Body (RU)</label>
+                        <textarea
+                          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm h-48"
+                          value={tpl.body_ru || ''}
+                          onChange={(e) => setTpl({ ...tpl, body_ru: e.target.value })}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Body (EN)</label>
+                        <textarea
+                          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm h-48"
+                          value={tpl.body_en || ''}
+                          onChange={(e) => setTpl({ ...tpl, body_en: e.target.value })}
+                        />
+                      </div>
                     </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Body (EN)</label>
-                      <textarea
-                        className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm h-48"
-                        value={tpl.body_en || ''}
-                        onChange={(e) => setTpl({ ...tpl, body_en: e.target.value })}
-                      />
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>{renderVisualEditor('ru')}</div>
+                      <div>{renderVisualEditor('en')}</div>
                     </div>
-                  </div>
+                  )}
 
                   {tpl.cta_enabled && (
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

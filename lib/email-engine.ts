@@ -3,6 +3,22 @@ import { load as yamlLoad } from 'js-yaml';
 
 export type EmailLang = 'ru' | 'en';
 
+type EmailVisualBlock = {
+  id: string;
+  bg?: string; // hex or named
+  border?: boolean;
+  borderColor?: string;
+  radius?: number;
+  padding?: number;
+  title?: string;
+  text?: string;
+};
+
+type EmailVisualLayout = {
+  maxWidth?: number;
+  blocks: EmailVisualBlock[];
+};
+
 type TemplateRow = {
   key: string;
   name: string;
@@ -12,6 +28,8 @@ type TemplateRow = {
   subject_en: string;
   body_ru: string;
   body_en: string;
+  layout_json_ru?: any;
+  layout_json_en?: any;
   cta_enabled: boolean;
   cta_text_ru: string | null;
   cta_text_en: string | null;
@@ -68,6 +86,77 @@ function renderParagraphs(blocks: string[]): string {
   return blocks
     .map((b) => `<div style="margin:0 0 12px 0; white-space:pre-line;">${escapeHtml(b)}</div>`)
     .join('');
+}
+
+function isLikelyEmailVisualLayout(v: any): v is EmailVisualLayout {
+  return !!v && typeof v === 'object' && Array.isArray(v.blocks);
+}
+
+function renderVisualLayoutHtml(input: {
+  subject: string;
+  lang: 'ru' | 'en';
+  layout: EmailVisualLayout;
+  ctaEnabled: boolean;
+  ctaText: string | null;
+  ctaUrl: string | null;
+  baseUrl: string;
+}): string {
+  const maxWidth = Number.isFinite(input.layout.maxWidth as any) ? Number(input.layout.maxWidth) : 580;
+  const logoUrl = `${input.baseUrl}/Img/Website/logo.svg`;
+
+  const blocksHtml = (input.layout.blocks || [])
+    .map((b) => {
+      const bg = b.bg || '#FFFFFF';
+      const radius = Number.isFinite(b.radius as any) ? Number(b.radius) : 24;
+      const padding = Number.isFinite(b.padding as any) ? Number(b.padding) : 18;
+      const border = b.border ? `2px solid ${b.borderColor || '#111'}` : 'none';
+
+      const titleHtml = b.title
+        ? `<div style="font-family:'Orelega One', Georgia, 'Times New Roman', serif; font-size: 36px; font-weight: 400; line-height: 1.05; margin:0 0 10px 0;">${escapeHtml(
+            b.title
+          )}</div>`
+        : '';
+
+      const text = String(b.text || '').trim();
+      const textHtml = text
+        ? `<div style="font-size: 18px; font-weight: 500; line-height: 1.5; white-space: pre-line; margin:0;">${escapeHtml(text)}</div>`
+        : '';
+
+      return `
+        <div style="background:${escapeHtml(bg)}; border-radius:${radius}px; padding:${padding}px; border:${escapeHtml(border)};">
+          ${titleHtml}
+          ${textHtml}
+        </div>
+      `;
+    })
+    .join('<div style="height:16px;"></div>');
+
+  const heading = `<div style="font-size: 40px; font-weight: 400; margin: 6px 0 14px; font-family: 'Orelega One', Georgia, 'Times New Roman', serif;">${escapeHtml(
+    input.subject
+  )}</div>`;
+
+  const cta = input.ctaEnabled && input.ctaUrl
+    ? `<div style="height:18px;"></div>
+       <a href="${escapeHtml(input.ctaUrl)}" style="display:block; text-align:center; background:#111; color:#fff; text-decoration:none; padding:16px 20px; border-radius: 22px; font-weight: 900; font-size:16px;">
+         ${escapeHtml(input.ctaText || '')}
+       </a>`
+    : '';
+
+  return `
+    <div style="font-family: Inter, Arial, sans-serif; color:#111; max-width: ${maxWidth}px; margin: 0 auto; padding: 22px;">
+      <table role="presentation" cellpadding="0" cellspacing="0" style="width:100%; border-collapse:collapse;">
+        <tr>
+          <td style="padding-bottom: 12px;">
+            <img src="${escapeHtml(logoUrl)}" alt="FaloClaro" width="120" style="display:block; height:auto; border:0;"/>
+          </td>
+        </tr>
+      </table>
+      ${heading}
+      <div style="height:1px;background:#E6E8EB;margin: 12px 0 18px;"></div>
+      ${blocksHtml}
+      ${cta}
+    </div>
+  `;
 }
 
 function normalizeTemplateText(s: string): string {
@@ -402,6 +491,23 @@ export function renderEmailHtml(input: {
 }): { html: string; text: string } {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.faloclaro.com';
 
+  // Visual layout (preferred if provided)
+  const visualLayout = input.lang === 'en' ? (input.vars?.layout_json_en ?? null) : (input.vars?.layout_json_ru ?? null);
+  if (isLikelyEmailVisualLayout(visualLayout)) {
+    return {
+      html: renderVisualLayoutHtml({
+        subject: input.subject,
+        lang: input.lang,
+        layout: visualLayout,
+        ctaEnabled: input.ctaEnabled,
+        ctaText: input.ctaText,
+        ctaUrl: input.ctaUrl,
+        baseUrl,
+      }),
+      text: input.bodyText + (input.ctaEnabled && input.ctaUrl ? `\n\n${input.ctaText || ''}: ${input.ctaUrl}` : ''),
+    };
+  }
+
   // default fallback
   const fallbackHtml = `
     <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #111; max-width: 640px; margin: 0 auto; padding: 20px;">
@@ -623,6 +729,9 @@ export async function sendTemplateEmail(input: {
   const ctaTextRaw = lang === 'en' ? template.cta_text_en : template.cta_text_ru;
 
   const vars = input.vars || {};
+  // Pass visual layouts into renderer (if present). They are not used as placeholders.
+  (vars as any).layout_json_ru = (template as any).layout_json_ru ?? null;
+  (vars as any).layout_json_en = (template as any).layout_json_en ?? null;
   const subject = renderPlaceholders(subjectRaw, vars);
   const bodyText = renderPlaceholders(bodyRaw, vars);
 

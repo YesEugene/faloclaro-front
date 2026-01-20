@@ -38,6 +38,10 @@ export async function POST(req: NextRequest) {
       module_label_en: 'Module 1 (A1)',
     };
 
+    // Attach visual layouts for preview (if any)
+    vars.layout_json_ru = tpl.layout_json_ru ?? null;
+    vars.layout_json_en = tpl.layout_json_en ?? null;
+
     // If statsUserEmail provided: compute real vars from that user, but still send to `to`.
     if (statsUserEmail && statsUserEmail.includes('@')) {
       const { data: u } = await supabase
