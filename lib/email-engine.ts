@@ -115,15 +115,30 @@ function renderVisualLayoutHtml(input: {
       const type = (b.type || 'text') as 'text' | 'button';
 
       if (type === 'button') {
-        const btnText = String(b.button_text || '').trim() || (input.lang === 'en' ? 'Open' : 'Открыть');
-        const btnUrlRaw = String(b.button_url || '').trim();
-        const btnUrl = btnUrlRaw ? renderPlaceholders(btnUrlRaw, input.vars as any) : '';
-        const bg = b.button_bg || '#111111';
-        const tc = b.button_text_color || '#FFFFFF';
+        // Backward-compatible: support both button_* fields and shared block fields.
+        const btnText =
+          String(b.button_text || '').trim() ||
+          String(b.title || '').trim() ||
+          (input.lang === 'en' ? 'Open the course' : 'Открыть курс');
+
+        const btnUrlRaw = String(b.button_url || '').trim() || String(b.text || '').trim();
+        const btnUrl = btnUrlRaw ? renderPlaceholders(btnUrlRaw, input.vars as any) : '#';
+
+        const bg = String(b.button_bg || b.bg || '#111111').trim();
+        const tc = String(b.button_text_color || '#FFFFFF').trim();
+        const borderOn = !!b.border;
+        const borderColor = String(b.borderColor || '#111111').trim();
         const radius = Number.isFinite(b.radius as any) ? Number(b.radius) : 18;
         const fullWidth = b.button_full_width !== false; // default true
         const display = fullWidth ? 'block' : 'inline-block';
         const alignWrap = fullWidth ? '' : 'text-align:left;';
+
+        // "Padding" in editor should affect button padding too
+        const pad = Number.isFinite(b.padding as any) ? Number(b.padding) : 18;
+        const vPad = Math.max(12, Math.round(pad * 0.6));
+        const hPad = Math.max(16, Math.round(pad));
+
+        const borderCss = borderOn ? `2px solid ${borderColor}` : 'none';
 
         return `
           <div style="${alignWrap}">
@@ -131,7 +146,9 @@ function renderVisualLayoutHtml(input: {
               bg
             )}; color:${escapeHtml(
               tc
-            )}; text-decoration:none; padding:16px 20px; border-radius:${radius}px; font-weight:900; font-size:16px;">
+            )}; text-decoration:none; padding:${vPad}px ${hPad}px; border-radius:${radius}px; border:${escapeHtml(
+              borderCss
+            )}; font-weight:900; font-size:16px;">
               ${escapeHtml(btnText)}
             </a>
           </div>

@@ -223,10 +223,13 @@ export default function AdminEmailsPage() {
           type: 'button',
           button_text: lang === 'en' ? 'Open the course' : 'Открыть курс',
           button_url: '{{intro_url}}',
-          button_bg: '#111111',
-          button_text_color: '#FFFFFF',
+          bg: '#FFFFFF',
+          border: true,
+          borderColor: '#1A8CFF',
+          button_bg: '#FFFFFF',
+          button_text_color: '#1A8CFF',
           radius: 18,
-          padding: 0,
+          padding: 30,
           button_full_width: true,
         },
       ],
@@ -323,10 +326,18 @@ export default function AdminEmailsPage() {
                   onChange={(e) =>
                     updateVisual(lang, (l) => ({
                       ...l,
-                      blocks: (l.blocks || []).map((x: any) => (x.id === b.id ? { ...x, bg: e.target.value } : x)),
+                      blocks: (l.blocks || []).map((x: any) =>
+                        x.id === b.id
+                          ? {
+                              ...x,
+                              bg: e.target.value,
+                              // keep button_bg in sync for button blocks
+                              ...(x.type === 'button' ? { button_bg: e.target.value } : {}),
+                            }
+                          : x
+                      ),
                     }))
                   }
-                  disabled={(b.type || 'text') === 'button'}
                 >
                   {colorOptions.map((c) => (
                     <option key={c.value} value={c.value}>
@@ -392,7 +403,6 @@ export default function AdminEmailsPage() {
                         ),
                       }))
                     }
-                    disabled={(b.type || 'text') === 'button'}
                   />
                 </label>
               </div>
@@ -450,28 +460,30 @@ export default function AdminEmailsPage() {
                   </div>
                   <div className="grid grid-cols-2 gap-2">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">BG</label>
-                      <input
-                        className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
-                        value={b.button_bg || '#111111'}
-                        onChange={(e) =>
-                          updateVisual(lang, (l) => ({
-                            ...l,
-                            blocks: (l.blocks || []).map((x: any) => (x.id === b.id ? { ...x, button_bg: e.target.value } : x)),
-                          }))
-                        }
-                      />
-                    </div>
-                    <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Text color</label>
                       <input
                         className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
-                        value={b.button_text_color || '#FFFFFF'}
+                        value={b.button_text_color || '#1A8CFF'}
                         onChange={(e) =>
                           updateVisual(lang, (l) => ({
                             ...l,
                             blocks: (l.blocks || []).map((x: any) =>
                               x.id === b.id ? { ...x, button_text_color: e.target.value } : x
+                            ),
+                          }))
+                        }
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">BG (hex)</label>
+                      <input
+                        className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                        value={b.button_bg || b.bg || '#FFFFFF'}
+                        onChange={(e) =>
+                          updateVisual(lang, (l) => ({
+                            ...l,
+                            blocks: (l.blocks || []).map((x: any) =>
+                              x.id === b.id ? { ...x, button_bg: e.target.value, bg: e.target.value } : x
                             ),
                           }))
                         }
