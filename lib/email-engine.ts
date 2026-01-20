@@ -102,13 +102,14 @@ function renderVisualLayoutHtml(input: {
   baseUrl: string;
 }): string {
   const maxWidth = Number.isFinite(input.layout.maxWidth as any) ? Number(input.layout.maxWidth) : 580;
-  const logoUrl = `${input.baseUrl}/Img/Website/logo.svg`;
+  // Gmail often does NOT render SVG <img> reliably; use PNG logo.
+  const logoUrl = `${input.baseUrl}/Img/Website/Mask group.png`;
 
   const blocksHtml = (input.layout.blocks || [])
     .map((b) => {
       const bg = b.bg || '#FFFFFF';
       const radius = Number.isFinite(b.radius as any) ? Number(b.radius) : 24;
-      const padding = Number.isFinite(b.padding as any) ? Number(b.padding) : 18;
+      const padding = Number.isFinite(b.padding as any) ? Number(b.padding) : 40;
       const border = b.border ? `2px solid ${b.borderColor || '#111'}` : 'none';
 
       const titleHtml = b.title
@@ -134,6 +135,9 @@ function renderVisualLayoutHtml(input: {
   const heading = `<div style="font-size: 40px; font-weight: 400; margin: 6px 0 14px; font-family: 'Orelega One', Georgia, 'Times New Roman', serif;">${escapeHtml(
     input.subject
   )}</div>`;
+  const headingTight = `<div style="font-size: 40px; font-weight: 400; margin: 6px 0 14px; line-height: 0.95; font-family: 'Orelega One', Georgia, 'Times New Roman', serif;">${escapeHtml(
+    input.subject
+  )}</div>`;
 
   const cta = input.ctaEnabled && input.ctaUrl
     ? `<div style="height:18px;"></div>
@@ -151,7 +155,7 @@ function renderVisualLayoutHtml(input: {
           </td>
         </tr>
       </table>
-      ${heading}
+      ${headingTight}
       <div style="height:1px;background:#E6E8EB;margin: 12px 0 18px;"></div>
       ${blocksHtml}
       ${cta}
@@ -347,7 +351,7 @@ function buildWelcomeHtml(input: {
   const yellow = blocks.slice(7, 9);
   const green = blocks.slice(9);
 
-  const logoUrl = `${input.baseUrl}/Img/Website/logo.svg`;
+  const logoUrl = `${input.baseUrl}/Img/Website/Mask group.png`;
   const maxWidth = 580;
 
   return `
@@ -360,30 +364,30 @@ function buildWelcomeHtml(input: {
       </tr>
     </table>
 
-    <div style="font-size: 40px; font-weight: 400; margin: 6px 0 14px; font-family: 'Orelega One', Georgia, 'Times New Roman', serif;">
+    <div style="font-size: 40px; font-weight: 400; margin: 6px 0 14px; line-height: 0.95; font-family: 'Orelega One', Georgia, 'Times New Roman', serif;">
       ${escapeHtml(input.subject)}
     </div>
     <div style="height:1px;background:#E6E8EB;margin: 12px 0 18px;"></div>
 
-    <div style="border:2px solid #111; border-radius: 24px; padding: 18px; background:#fff;">
+    <div style="border:2px solid #111; border-radius: 24px; padding: 40px; background:#fff;">
       ${renderParagraphs(card1)}
     </div>
 
     <div style="height:16px;"></div>
 
-    <div style="border:2px solid #111; border-radius: 24px; padding: 18px; background:#fff;">
+    <div style="border:2px solid #111; border-radius: 24px; padding: 40px; background:#fff;">
       ${renderParagraphs(card2)}
     </div>
 
     <div style="height:16px;"></div>
 
-    <div style="border-radius: 24px; padding: 18px; background:#FAF7BF;">
+    <div style="border-radius: 24px; padding: 40px; background:#FAF7BF;">
       ${renderParagraphs(yellow)}
     </div>
 
     <div style="height:16px;"></div>
 
-    <div style="border-radius: 24px; padding: 18px; background:#BDF6BB;">
+    <div style="border-radius: 24px; padding: 40px; background:#BDF6BB;">
       ${renderParagraphs(green)}
     </div>
 
@@ -413,7 +417,7 @@ function buildDay3CongratsHtml(input: {
   const pink = blocks.slice(2, 4);
   const yellow = blocks.slice(4);
 
-  const logoUrl = `${input.baseUrl}/Img/Website/logo.svg`;
+  const logoUrl = `${input.baseUrl}/Img/Website/Mask group.png`;
   const maxWidth = 580;
 
   return `
@@ -426,20 +430,20 @@ function buildDay3CongratsHtml(input: {
       </tr>
     </table>
 
-    <div style="font-size: 40px; font-weight: 400; margin: 6px 0 14px; font-family: 'Orelega One', Georgia, 'Times New Roman', serif;">
+    <div style="font-size: 40px; font-weight: 400; margin: 6px 0 14px; line-height: 0.95; font-family: 'Orelega One', Georgia, 'Times New Roman', serif;">
       ${escapeHtml(input.subject)}
     </div>
     <div style="height:1px;background:#E6E8EB;margin: 12px 0 18px;"></div>
 
-    <div style="border-radius: 24px; padding: 18px; background:#BDF6BB;">
+    <div style="border-radius: 24px; padding: 40px; background:#BDF6BB;">
       ${renderParagraphs(green)}
     </div>
     <div style="height:14px;"></div>
-    <div style="border-radius: 24px; padding: 18px; background:#FFE3E3;">
+    <div style="border-radius: 24px; padding: 40px; background:#FFE3E3;">
       ${renderParagraphs(pink)}
     </div>
     <div style="height:14px;"></div>
-    <div style="border-radius: 24px; padding: 18px; background:#FAF7BF;">
+    <div style="border-radius: 24px; padding: 40px; background:#FAF7BF;">
       ${renderParagraphs(yellow)}
     </div>
 
