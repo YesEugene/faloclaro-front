@@ -276,7 +276,7 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
                     key={index}
                     className="text-black font-bold"
                     style={{
-                      fontSize: '26px',
+                      fontSize: '18px',
                       lineHeight: '1.35',
                       letterSpacing: '-0.01em',
                       marginTop: index === 0 ? 0 : '10px',
