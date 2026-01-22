@@ -256,7 +256,7 @@ export default function WritingTask({ task, language, onComplete, isCompleted, s
 
           {/* Subtitle (editable in admin via task.subtitle) */}
           {taskSubtitle && (
-            <p className="text-gray-700 whitespace-pre-line mb-4">
+            <p className="text-gray-700 whitespace-pre-line mb-4" style={{ fontSize: '18px', lineHeight: '1.35' }}>
               {taskSubtitle}
             </p>
           )}
