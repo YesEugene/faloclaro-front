@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
-import { supabase } from '@/lib/supabase';
 import { getSupabaseAdmin } from '@/lib/supabase-admin';
 import { buildDefaultVarsForUser, enrollCampaign, sendTemplateEmail } from '@/lib/email-engine';
 
@@ -18,8 +17,10 @@ export async function POST(request: NextRequest) {
     // Normalize email
     const normalizedEmail = email.toLowerCase().trim();
 
+    const admin = getSupabaseAdmin();
+
     // Get or create user
-    let { data: user, error: userError } = await supabase
+    let { data: user, error: userError } = await admin
       .from('subscription_users')
       .select('id, email, language_preference')
       .eq('email', normalizedEmail)
@@ -27,7 +28,7 @@ export async function POST(request: NextRequest) {
 
     if (userError && userError.code === 'PGRST116') {
       // User doesn't exist, create new
-      const { data: newUser, error: createError } = await supabase
+      const { data: newUser, error: createError } = await admin
         .from('subscription_users')
         .insert({
           email: normalizedEmail,
@@ -53,7 +54,7 @@ export async function POST(request: NextRequest) {
       );
     } else if (user && language) {
       // User exists, update language preference if provided
-      const { error: updateError } = await supabase
+      const { error: updateError } = await admin
         .from('subscription_users')
         .update({ language_preference: language })
         .eq('id', user.id);
@@ -77,7 +78,6 @@ export async function POST(request: NextRequest) {
 
     // Ensure registered_at is set (requires service role because subscription_users has no public update policy)
     try {
-      const admin = getSupabaseAdmin();
       await admin
         .from('subscription_users')
         .update({ registered_at: new Date().toISOString() })
@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check or create subscription
-    let { data: subscription, error: subError } = await supabase
+    let { data: subscription, error: subError } = await admin
       .from('subscriptions')
       .select('*')
       .eq('user_id', user.id)
@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
       const trialEndsAt = new Date();
       trialEndsAt.setDate(trialEndsAt.getDate() + 3);
 
-      const { data: newSub, error: createSubError } = await supabase
+      const { data: newSub, error: createSubError } = await admin
         .from('subscriptions')
         .insert({
           user_id: user.id,
@@ -130,7 +130,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get first 3 lessons (days 1, 2, 3) - free access
-    const { data: lessons, error: lessonsError } = await supabase
+    const { data: lessons, error: lessonsError } = await admin
       .from('lessons')
       .select('*')
       .in('day_number', [1, 2, 3])
@@ -150,9 +150,23 @@ export async function POST(request: NextRequest) {
     expiresAt.setDate(expiresAt.getDate() + 365); // Token valid for 1 year
 
     for (const lesson of lessons) {
+      // Reuse existing token if already created (avoid duplicates)
+      const { data: existing, error: existingError } = await admin
+        .from('lesson_access_tokens')
+        .select('id, token')
+        .eq('user_id', user.id)
+        .eq('lesson_id', lesson.id)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (!existingError && existing?.token) {
+        tokens.push(existing.token);
+        continue;
+      }
+
       const token = crypto.randomBytes(32).toString('hex');
-      
-      const { data: insertedToken, error: tokenError } = await supabase
+      const { data: inserted, error: tokenError } = await admin
         .from('lesson_access_tokens')
         .insert({
           user_id: user.id,
@@ -160,23 +174,16 @@ export async function POST(request: NextRequest) {
           token,
           expires_at: expiresAt.toISOString(),
         })
-        .select()
-        .single();
+        .select('id, token')
+        .limit(1)
+        .maybeSingle();
 
-      if (tokenError) {
+      if (tokenError || !inserted?.token) {
         console.error(`❌ Error creating token for lesson ${lesson.day_number}:`, tokenError);
-        // Continue with other lessons even if one fails
-      } else {
-        // Use the token from database (may differ from generated one if duplicate)
-        const savedToken = insertedToken?.token || token;
-        tokens.push(savedToken);
-        console.log(`✅ Token created for lesson ${lesson.day_number}:`, {
-          tokenId: insertedToken?.id,
-          token: savedToken?.substring(0, 8) + '...',
-          lessonId: lesson.id,
-          dayNumber: lesson.day_number,
-        });
+        continue;
       }
+
+      tokens.push(inserted.token);
     }
 
     // Validate that at least first token was created and saved
@@ -190,7 +197,7 @@ export async function POST(request: NextRequest) {
 
     // Verify first token exists in database before sending email
     const firstToken = tokens[0];
-    const { data: verifyToken, error: verifyError } = await supabase
+    const { data: verifyToken, error: verifyError } = await admin
       .from('lesson_access_tokens')
       .select('id, token, lesson_id, user_id')
       .eq('token', firstToken)

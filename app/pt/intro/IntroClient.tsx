@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import { useAppLanguage } from '@/lib/language-context';
@@ -61,6 +61,10 @@ export default function IntroClient() {
 
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [courseMenuOpen, setCourseMenuOpen] = useState(false);
+  const [tokenOk, setTokenOk] = useState<boolean | null>(null);
+  const [resendEmail, setResendEmail] = useState('');
+  const [resendStatus, setResendStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+  const [resendError, setResendError] = useState<string | null>(null);
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     course: true,
   });
@@ -73,6 +77,12 @@ export default function IntroClient() {
         menuCourse: 'Меню курса',
         introLabel: 'Введение',
         hero: 'Добро пожаловать в FaloClaro',
+        tokenProblemTitle: 'Ссылка недействительна',
+        tokenProblemText:
+          'Похоже, ссылка на урок устарела или была создана с ошибкой. Введите свой email — мы пришлём новую ссылку на первый урок.',
+        tokenProblemEmailPlaceholder: 'Твой Email',
+        tokenProblemSend: 'Прислать новую ссылку',
+        tokenProblemSent: 'Готово! Проверь почту — мы отправили новую ссылку.',
         lead:
           'Ты уже внутри. Отлично!\nСейчас мы коротко покажем, как устроен курс и интерфейс, чтобы тебе было легко ориентироваться и учиться без лишнего напряжения.',
         note:
@@ -93,6 +103,12 @@ export default function IntroClient() {
         menuCourse: 'Course menu',
         introLabel: 'Intro',
         hero: 'Welcome to FaloClaro',
+        tokenProblemTitle: 'Link is invalid',
+        tokenProblemText:
+          'Looks like your lesson link is invalid or expired. Enter your email — we’ll send you a fresh link to lesson 1.',
+        tokenProblemEmailPlaceholder: 'Your email',
+        tokenProblemSend: 'Send me a new link',
+        tokenProblemSent: 'Done! Check your inbox — we sent a new link.',
         lead:
           'You’re in. Great!\nNow we’ll quickly show how the course and interface work, so it’s easy to navigate and learn without extra stress.',
         note:
@@ -114,6 +130,46 @@ export default function IntroClient() {
   );
 
   const s = strings[langKey];
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        if (!token) {
+          if (!cancelled) setTokenOk(false);
+          return;
+        }
+        const res = await fetch(`/api/subscription/check-token?token=${encodeURIComponent(token)}`);
+        const json = await res.json().catch(() => ({}));
+        const ok = !!json?.exists && !json?.isExpired;
+        if (!cancelled) setTokenOk(ok);
+      } catch {
+        if (!cancelled) setTokenOk(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [token]);
+
+  const resendLink = async () => {
+    setResendStatus('sending');
+    setResendError(null);
+    try {
+      const email = resendEmail.trim();
+      const resp = await fetch('/api/subscription/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, language: langKey }),
+      });
+      const json = await resp.json().catch(() => ({}));
+      if (!resp.ok) throw new Error(json?.error || 'Failed to send');
+      setResendStatus('sent');
+    } catch (e: any) {
+      setResendStatus('error');
+      setResendError(e?.message || 'Failed to send');
+    }
+  };
 
   const toggleSection = (key: string) => {
     setOpenSections((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -658,6 +714,65 @@ export default function IntroClient() {
 
       {/* Content */}
       <div className="max-w-md mx-auto px-4 pb-12">
+        {tokenOk === false ? (
+          <div
+            style={{
+              marginTop: '16px',
+              background: '#FFF7ED',
+              border: '1px solid #FDBA74',
+              borderRadius: '16px',
+              padding: '16px',
+            }}
+          >
+            <div style={{ fontSize: '16px', fontWeight: 800, color: '#9A3412' }}>{s.tokenProblemTitle}</div>
+            <div style={{ marginTop: '8px', fontSize: '14px', color: '#7C2D12', lineHeight: '1.4' }}>{s.tokenProblemText}</div>
+
+            <div style={{ marginTop: '12px', display: 'flex', gap: '10px' }}>
+              <input
+                value={resendEmail}
+                onChange={(e) => setResendEmail(e.target.value)}
+                placeholder={s.tokenProblemEmailPlaceholder}
+                style={{
+                  flex: 1,
+                  height: '44px',
+                  borderRadius: '12px',
+                  border: '1px solid rgba(0,0,0,0.12)',
+                  padding: '0 12px',
+                  fontSize: '16px',
+                  background: '#fff',
+                }}
+              />
+              <button
+                type="button"
+                onClick={resendLink}
+                disabled={resendStatus === 'sending' || !resendEmail.trim()}
+                style={{
+                  height: '44px',
+                  padding: '0 14px',
+                  borderRadius: '12px',
+                  border: 'none',
+                  background: '#34BF5D',
+                  color: '#fff',
+                  fontSize: '14px',
+                  fontWeight: 800,
+                  cursor: resendStatus === 'sending' || !resendEmail.trim() ? 'not-allowed' : 'pointer',
+                  opacity: resendStatus === 'sending' || !resendEmail.trim() ? 0.7 : 1,
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {s.tokenProblemSend}
+              </button>
+            </div>
+
+            {resendStatus === 'sent' ? (
+              <div style={{ marginTop: '10px', fontSize: '13px', color: '#166534', fontWeight: 700 }}>{s.tokenProblemSent}</div>
+            ) : null}
+            {resendStatus === 'error' && resendError ? (
+              <div style={{ marginTop: '10px', fontSize: '13px', color: '#b42318' }}>{resendError}</div>
+            ) : null}
+          </div>
+        ) : null}
+
         <div style={{ marginTop: '18px' }}>
           <div style={{ fontSize: '16px', color: '#6B7280', fontWeight: 600 }}>{s.introLabel}</div>
           <h1 style={{ fontSize: '40px', fontFamily: 'Orelega One', fontWeight: 400, color: '#111', marginTop: '10px', lineHeight: '1.05' }}>{s.hero}</h1>
